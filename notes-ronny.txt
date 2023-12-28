@@ -1,0 +1,15 @@
+github lens anschauen
+
+wsl install (linux subsystem)
+nvm installieren
+
+
+# autoamtischer code formatter und code qualität -> unused variables
+lint
+
+# prettier
+prettier
+
+
+# openssh einrichten
+private key mitteilen
