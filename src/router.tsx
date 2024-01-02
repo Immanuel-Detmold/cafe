@@ -1,4 +1,5 @@
 import { createHashRouter } from 'react-router-dom'
+import { Login } from './pages/Login'
 
 const path = window.location.pathname
 
@@ -14,5 +15,9 @@ export const router = createHashRouter([
   {
     path: 'contact',
     element: <div>Contact</div>,
+  },
+  {
+    path: 'login',
+    element: <Login />,
   },
 ])
