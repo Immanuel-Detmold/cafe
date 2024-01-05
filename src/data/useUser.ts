@@ -1,28 +1,26 @@
 import { useSyncExternalStore } from 'react'
-import { getUser, supabase } from '../services/supabase'
-import { UserResponse } from '@supabase/supabase-js'
+import { supabase } from '../services/supabase'
 
-let user: UserResponse | null = null
-getUser().then((u) => {
-  user = u
-})
+let session: Parameters<
+  Parameters<typeof supabase.auth.onAuthStateChange>[0]
+>[1] = null
 
 const subscribeToAuthChanges = (callback: () => void) => {
-  const updateUser = async () => {
-    user = await getUser()
-    console.log('🚀 ~ file: useUser.ts:10 ~ updateUser ~ user:', user)
-    callback()
-  }
   const {
     data: { subscription },
-  } = supabase.auth.onAuthStateChange(updateUser)
-  updateUser()
+  } = supabase.auth.onAuthStateChange((_, sessionData) => {
+    session = sessionData
+    callback()
+  })
   return () => {
     subscription.unsubscribe()
   }
 }
 
 export const useUser = () => {
-  const userData = useSyncExternalStore(subscribeToAuthChanges, () => user)
-  return { user: userData }
+  const sessionData = useSyncExternalStore(
+    subscribeToAuthChanges,
+    () => session,
+  )
+  return { user: sessionData?.user, session: sessionData }
 }
