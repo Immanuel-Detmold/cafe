@@ -5,8 +5,7 @@ const supabaseKey = import.meta.env.VITE_ANONKEY
 
 export const supabase = createClient(supabaseUrl, supabaseKey, {
   auth: {
-    persistSession: true,
-    storage: window.localStorage,
+    storageKey: 'supabase.auth.token',
   },
 })
 
@@ -34,5 +33,5 @@ export async function logout() {
 }
 
 export async function getUser() {
-  return await supabase.auth.getUser()
+  return (await supabase.auth.getSession()).data?.session?.user
 }
