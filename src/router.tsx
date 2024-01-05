@@ -1,22 +1,22 @@
-import { Link, createBrowserRouter, useOutlet } from 'react-router-dom'
+import { createBrowserRouter, useOutlet } from 'react-router-dom'
 import { Login } from './pages/Login'
 import { Me } from './pages/Me'
 import Navbar from './components/Navbar'
+import Open from './pages/Open'
+import ReadyForPickup from './pages/ReadyForPickup'
+import NewOrder from './pages/NewOrder'
 
+import Header from './components/Header'
+import AllProducts from './pages/AllProducts'
+
+// const [isWhiteMode, setWhiteMode] = useState(window.matchMedia('(prefers-color-scheme: dark)')
 
 const Navigation = () => {
   const outlet = useOutlet()
   return (
     <div>
-      <ul>
-        <li className="space-x-2">
-          <Link to="login">Login</Link>
-          <Link to="me">Me</Link>
-        </li>
-      </ul>
-
-      <Navbar/>
-
+      <Header />
+      <Navbar />
       {outlet}
     </div>
   )
@@ -35,6 +35,22 @@ export const router = createBrowserRouter(
         {
           path: 'me',
           element: <Me />,
+        },
+        {
+          path: 'open',
+          element: <Open />,
+        },
+        {
+          path: 'ready-for-pickup',
+          element: <ReadyForPickup />,
+        },
+        {
+          path: 'new-order',
+          element: <NewOrder />,
+        },
+        {
+          path: 'all-products',
+          element: <AllProducts />,
         },
       ],
     },
