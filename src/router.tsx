@@ -1,6 +1,8 @@
 import { Link, createBrowserRouter, useOutlet } from 'react-router-dom'
 import { Login } from './pages/Login'
 import { Me } from './pages/Me'
+import Navbar from './components/Navbar'
+
 
 const Navigation = () => {
   const outlet = useOutlet()
@@ -8,12 +10,13 @@ const Navigation = () => {
     <div>
       <ul>
         <li className="space-x-2">
-          <Link to="about">About</Link>
-          <Link to="contact">Contact</Link>
           <Link to="login">Login</Link>
           <Link to="me">Me</Link>
         </li>
       </ul>
+
+      <Navbar/>
+
       {outlet}
     </div>
   )
@@ -25,14 +28,6 @@ export const router = createBrowserRouter(
       path: '',
       element: <Navigation />,
       children: [
-        {
-          path: 'about',
-          element: <div>About</div>,
-        },
-        {
-          path: 'contact',
-          element: <div>Contact</div>,
-        },
         {
           path: 'login',
           element: <Login />,

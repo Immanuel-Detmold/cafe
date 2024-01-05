@@ -1,6 +1,5 @@
 import { RouterProvider } from 'react-router-dom'
 import { ThemeProvider } from '@/components/theme-provider'
-
 import { router } from './router'
 
 function App() {
@@ -10,5 +9,4 @@ function App() {
     </ThemeProvider>
   )
 }
-
 export default App
