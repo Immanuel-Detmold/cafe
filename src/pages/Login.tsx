@@ -1,7 +1,8 @@
-import { useForm } from 'react-hook-form'
-import { login, verifyOtp } from '../services/supabase'
 import { useState } from 'react'
+import { useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
+
+import { login, verifyOtp } from '../services/supabase'
 
 type EmailInputs = {
   email: string
