@@ -7,6 +7,10 @@ on:
 permissions:
   contents: write
 
+env:
+  VITE_SUPABASE_URL: ${{ vars.VITE_SUPABASE_URL }}
+  VITE_ANONKEY: ${{ vars.VITE_ANONKEY }}
+
 jobs:
   build:
     runs-on: ubuntu-latest
