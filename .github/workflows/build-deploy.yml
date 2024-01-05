@@ -24,10 +24,6 @@ jobs:
           cache: 'npm'
       - name: Install Dependencies
         run: npm ci
-      - name: show VITE_SUPABASE_URL
-        run: echo $VITE_SUPABASE_URL
-      - name: show VITE_ANONKEY
-        run: echo $VITE_ANONKEY
       - name: Build
         run: npm run build
       - name: Create 404 Page
