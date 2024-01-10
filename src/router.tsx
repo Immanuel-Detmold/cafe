@@ -8,17 +8,24 @@ import NewOrder from './pages/NewOrder'
 
 import Header from './components/Header'
 import AllProducts from './pages/AllProducts'
+import { ScrollArea } from '@/components/ui/scroll-area'
 
 // const [isWhiteMode, setWhiteMode] = useState(window.matchMedia('(prefers-color-scheme: dark)')
 
 const Navigation = () => {
   const outlet = useOutlet()
   return (
-    <div>
-      <Header />
-      <Navbar />
-      {outlet}
-    </div>
+    <>
+      <div className="h-screen relative h-100">
+        <Header />
+
+        <ScrollArea className="h-[83%] w-[100%] overflow-hidden">
+          <div className="container">{outlet}</div>
+        </ScrollArea>
+
+        <Navbar />
+      </div>
+    </>
   )
 }
 

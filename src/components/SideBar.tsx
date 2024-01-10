@@ -9,17 +9,17 @@ const SideBar = () => {
     <Sheet>
       <SheetTrigger>
         {/* <Bars3Icon className={isWhiteMode ? 'text-blue-300' :"text-amber-700 w-10 h-10"} /> */}
-        <Bars3Icon className="text-amber-700 w-10 h-10" />
+        <Bars3Icon className="text-secondary w-10 h-16 ml-3" />
       </SheetTrigger>
       <SheetContent side={'left'}>
         <SheetHeader className="text-left">
           <SheetTitle>Info</SheetTitle>
 
           {/*  Buttons */}
-          <Button>Alle Produkte</Button>
+          {/* <Button>Alle Produkte</Button>
           <Button>Alle Bestellungen</Button>
           <Button>Statistik (Offen)</Button>
-          <Button>Statistik (Abgeschlossen)</Button>
+          <Button>Statistik (Abgeschlossen)</Button> */}
 
           {/*  NavLinks */}
           <SheetClose asChild>
