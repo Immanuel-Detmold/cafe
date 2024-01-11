@@ -11,7 +11,7 @@ const Header = () => {
           <SideBar />
         </div>
         <div className="w-full text-center h-16 flex items-center font-bold">
-          <h1 className="text-center w-full text-foreground text-secondary">Titel der Seite</h1>
+          <h1 className="text-center w-full text-foreground text-white">Titel der Seite</h1>
         </div>
       </div>
     </header>

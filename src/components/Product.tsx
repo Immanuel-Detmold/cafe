@@ -1,19 +1,20 @@
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card'
+import { supabase } from '@/services/supabase';
+
+
+
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+
 
 const Product = ({ product }: { product: any }) => {
 
+  const publicUrl = supabase.storage
+    .from('ProductImages')
+    .getPublicUrl(product.Image).data.publicUrl
   return (
-    <div key={product.Id} className="h-full">
-      <Card className="overflow-hidden p-1 h-full" key={product.Id}>
+    <div className="h-full">
+      <Card className="overflow-hidden p-1 h-full" >
         <img
-          src={product.Image}
+          src={publicUrl}
           alt={product.Name}
           className="object-cover aspect-square rounded-md mx-auto"
         />

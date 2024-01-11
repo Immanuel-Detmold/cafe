@@ -27,15 +27,25 @@ const SideBar = () => {
               <div>Alle Produkte</div>
             </NavLink>
           </SheetClose>
-          <NavLink to="/" className={({ isActive }) => (isActive ? 'bg-gray-100 p-2 rounded-md' : 'p-2')}>
+          <SheetClose asChild>
+          <NavLink to="/all-products" className={({ isActive }) => (isActive ? 'bg-gray-100 p-2 rounded-md' : 'p-2')}>
             <div>Alle Bestellungen</div>
           </NavLink>
-          <NavLink to="/1" className={({ isActive }) => (isActive ? 'bg-gray-100 p-2 rounded-md' : 'p-2')}>
+          </SheetClose>
+          <NavLink to="/" className={({ isActive }) => (isActive ? 'bg-gray-100 p-2 rounded-md' : 'p-2')}>
             <div>Statistik (Offen)</div>
           </NavLink>
-          <NavLink to="/2" className={({ isActive }) => (isActive ? 'bg-gray-100 p-2 rounded-md' : 'p-2')}>
+          <NavLink to="/" className={({ isActive }) => (isActive ? 'bg-gray-100 p-2 rounded-md' : 'p-2')}>
             <div>Statistik (Abgeschlossen)</div>
           </NavLink>
+          <NavLink to="/Me" className={({ isActive }) => (isActive ? 'bg-gray-100 p-2 rounded-md' : 'p-2')}>
+            <div>Me</div>
+          </NavLink>
+          <NavLink to="/Login" className={({ isActive }) => (isActive ? 'bg-gray-100 p-2 rounded-md' : 'p-2')}>
+            <div>Login</div>
+          </NavLink>
+
+
         </SheetHeader>
         
       </SheetContent>

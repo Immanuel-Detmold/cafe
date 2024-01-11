@@ -1,11 +1,13 @@
-import Product from '@/components/Product'
 import useFetchProducts from '@/customFetch/useFetchProducts'
-import { Input } from '@/components/ui/input'
-import { useState } from 'react'
 import { ArrowPathRoundedSquareIcon } from '@heroicons/react/24/outline'
+import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 
-import sortSVG from '@/components/ui/icons/sort.svg'
+import Product from '@/components/Product'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
 
+import CreateProduct from './CreateProduct'
 
 const AllProducts = () => {
   const [searchTerm, setSearchTerm] = useState('')
@@ -29,19 +31,16 @@ const AllProducts = () => {
           placeholder="Produkt suchen"
           onChange={handleInputChange}
         />
-        <ArrowPathRoundedSquareIcon className="h-7 w-7 ml-auto ml-4 mr-1 hover:cursor-pointer" onClick={handleOrder}/>
-        {/* <sortSVG className="h-7 w-7 ml-auto mr-1 hover:cursor-pointer" onClick={handleOrder}/> */}
-        {/* <img
-          src="./src/components/ui/icons/sort.svg"
-          alt="sort"
-          className="h-7 w-7 ml-auto mr-1 hover:cursor-pointer "
+        <CreateProduct />
+        <ArrowPathRoundedSquareIcon
+          className="h-9 w-9 ml-auto ml-4 mr-1 hover:cursor-pointer"
           onClick={handleOrder}
-        ></img> */}
+        />
 
+        
       </div>
       {products && (
         <div className="grid gap-3 sm:gap-4 grid-cols-3 md:grid-cols-4 lg:grid-cols-6 mt-2">
-          {/*<div className="grid gap-4 grid-cols-max"> */}
           {products.map((product) => (
             <div key={product.Id} className="max-w-60">
               <Product product={product} />

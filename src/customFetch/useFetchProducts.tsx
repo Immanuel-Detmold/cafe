@@ -20,7 +20,7 @@ const useFetchProducts = (inputValue: unknown, ascendingg: boolean) => {
           .from('Products')
           .select()
           .order('Name', {ascending: ascendingg })
-          .like('Name', `%${inputValue}%`)
+          .ilike('Name', `%${inputValue}%`)
 
         if (error) {
           setError('Could not fetch Products!' as any)
