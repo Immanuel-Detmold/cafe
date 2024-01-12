@@ -6,10 +6,10 @@ import { useNavigate } from 'react-router-dom'
 import Product from '@/components/Product'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-
 import CreateProduct from './CreateProduct'
 
 const AllProducts = () => {
+  const navigate = useNavigate()
   const [searchTerm, setSearchTerm] = useState('')
   const [ascending, setAscending] = useState(true)
   const { products, error } = useFetchProducts(searchTerm, ascending)
@@ -32,11 +32,12 @@ const AllProducts = () => {
           onChange={handleInputChange}
         />
         <CreateProduct />
-        <ArrowPathRoundedSquareIcon
-          className="h-9 w-9 ml-auto ml-4 mr-1 hover:cursor-pointer"
-          onClick={handleOrder}
-        />
 
+        <i className="material-icons sorting hover:cursor-pointer select-none" onClick={handleOrder}>swap_vert</i>
+        {/* <i className="material-icons">delete</i> */}
+        {/* <i className="material-icons">edit</i> */}
+
+        
         
       </div>
       {products && (

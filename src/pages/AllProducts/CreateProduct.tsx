@@ -1,7 +1,9 @@
 import { useUser } from '@/data/useUser'
 import { supabase } from '@/services/supabase'
+import { Value } from '@radix-ui/react-select'
 import { useEffect, useState } from 'react'
 import { set } from 'react-hook-form'
+import { useNavigate } from 'react-router-dom'
 // Remove the unused import statement for uuid4
 import { v4 as uuidv4 } from 'uuid'
 
@@ -17,6 +19,13 @@ import {
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
+import {
   Sheet,
   SheetClose,
   SheetContent,
@@ -28,12 +37,14 @@ import {
 } from '@/components/ui/sheet'
 
 const CreateProduct = () => {
+  const navigate = useNavigate()
   const [name, setName] = useState('')
   const [price, setPrice] = useState('')
   const [category, setCategory] = useState('Auswählen')
   const [selectedImage, setSelectedImage] = useState(null)
-  const { user } = useUser()
   // const [img_uuid, setImg_uuid] = useState('')
+
+  const [missing_fields, setMissingFields] = useState<Boolean | null>(null)
 
   const handleAddProduct = async () => {
     var img_uuid = ''
@@ -78,8 +89,8 @@ const CreateProduct = () => {
 
   return (
     <Sheet>
-      <SheetTrigger asChild onClick={() => setCategory('Auswählen')}>
-        <Button variant="outline" className="mx-2">
+      <SheetTrigger asChild onClick={() => setCategory('')}>
+        <Button variant="outline" className="mx-2 select-none">
           + Neus Produkt
         </Button>
       </SheetTrigger>
@@ -111,70 +122,77 @@ const CreateProduct = () => {
             type="number"
             onChange={(e) => setPrice(e.target.value)}
             className="col-span-4"
-            placeholder="€"
+            placeholder="1,00 €"
+            step=".01"
           />
 
-          <Label htmlFor="username" className="col-span-4">
+          {/* Dropdown */}
+          {/* <Label htmlFor="username" className="col-span-4">
             Kategorie
-          </Label>
+          </Label> */}
           <div className="col-span-4">
-            <DropdownMenu>
-              <DropdownMenuTrigger className="text-right inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-secondary text-foreground hover:text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2 w-full">
-                {category}
-              </DropdownMenuTrigger>
-              <DropdownMenuContent>
-                <DropdownMenuLabel>Getränk</DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={() => setCategory('Kaffee')}>
-                  Kaffee
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setCategory('Tee')}>
-                  Tee
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setCategory('Kaltgetränk')}>
-                  Kaltgetränk
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setCategory('Heißgetränk')}>
-                  Heißgetränk
-                </DropdownMenuItem>
-                <DropdownMenuItem
-                  onClick={() => setCategory('Home Spezialität')}
-                >
+            <Select onValueChange={(value) => setCategory(value)}>
+              <SelectTrigger className="w-fill">
+                <SelectValue placeholder="Wähle Kategorie" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="Kaffee">Kaffee</SelectItem>
+                <SelectItem value="Heißgetränk">Heißgetränk</SelectItem>
+                <SelectItem value="Kaltgetränk">Kaltgetränk</SelectItem>
+                <SelectItem value="Tee">Tee</SelectItem>
+                <SelectItem value="Kuchen">Kuchen</SelectItem>
+                <SelectItem value="Süßes">Süßes</SelectItem>
+                <SelectItem value="Home Spezialität">
                   Home Spezialität
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuLabel>Essen</DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={() => setCategory('Süßigkeit')}>
-                  Süßigkeit
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setCategory('Kaffee')}>
-                  Kuchen
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-              </DropdownMenuContent>
-            </DropdownMenu>
+                </SelectItem>
+                <SelectItem value="Sonstiges">Sonstiges</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
 
-          <Label htmlFor="picture" className="col-span-4">
+          {/* Image */}
+          <Label htmlFor="picture" className="col-span-4 hover:cursor-pointer">
             Bild
           </Label>
           <Input
             id="picture"
             type="file"
-            className="col-span-4"
+            className="col-span-4 hover:cursor-pointer"
             onChange={(event) => {
               setSelectedImage(event.target.files[0])
             }}
           />
         </div>
+
         <SheetFooter>
           <SheetClose asChild>
-            <Button type="submit" onClick={handleAddProduct}>
+            <Button
+              type="submit"
+              onClick={(e) => {
+                e.preventDefault()
+
+                if (name == '' || price == '' || category == '') {
+                  setMissingFields(true)
+                  console.log('Error Missing Fields!')
+                  console.log(name)
+                  console.log(price)
+                  console.log(category)
+                } else {
+                  setMissingFields(false)
+                  handleAddProduct()
+                  navigate('/')
+                }
+              }}
+            >
               Speichern
             </Button>
           </SheetClose>
         </SheetFooter>
+        {missing_fields && (
+          <div className="text-red-500 text-center mt-2 font-bold">
+            Bitte fülle alle Felder aus!
+          </div>
+        )}
       </SheetContent>
     </Sheet>
   )

@@ -1,10 +1,16 @@
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger, SheetClose } from '@/components/ui/sheet'
-import { Bars3Icon } from '@heroicons/react/24/outline'
-import { Button } from '@/components/ui/button'
-import * as SheetPrimitive from '@radix-ui/react-dialog'
-import { NavLink } from 'react-router-dom'
+import { Bars3Icon } from '@heroicons/react/24/outline';
+import { useNavigate, useParams } from "react-router-dom";
+import { NavLink } from 'react-router-dom';
+
+
+
+import { Button } from '@/components/ui/button';
+import { Sheet, SheetClose, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
+
 
 const SideBar = () => {
+  const { id } = useParams();
+  console.log("Id: "+id)
   return (
     <Sheet>
       <SheetTrigger>
@@ -23,31 +29,58 @@ const SideBar = () => {
 
           {/*  NavLinks */}
           <SheetClose asChild>
-            <NavLink to="/all-products" className={({ isActive }) => (isActive ? 'bg-gray-100 p-2 rounded-md' : 'p-2')}>
+            <NavLink
+              to="/all-products"
+              className={({ isActive }) =>
+                isActive ? 'bg-gray-100 p-2 rounded-md' : 'p-2'
+              }
+            >
               <div>Alle Produkte</div>
             </NavLink>
           </SheetClose>
           <SheetClose asChild>
-          <NavLink to="/all-products" className={({ isActive }) => (isActive ? 'bg-gray-100 p-2 rounded-md' : 'p-2')}>
-            <div>Alle Bestellungen</div>
-          </NavLink>
+            <NavLink
+              to="/all-products"
+              className={({ isActive }) =>
+                isActive ? 'bg-gray-100 p-2 rounded-md' : 'p-2'
+              }
+            >
+              <div>Alle Bestellungen</div>
+            </NavLink>
           </SheetClose>
-          <NavLink to="/" className={({ isActive }) => (isActive ? 'bg-gray-100 p-2 rounded-md' : 'p-2')}>
+          <NavLink
+            to="/"
+            className={({ isActive }) =>
+              isActive ? 'bg-gray-100 p-2 rounded-md' : 'p-2'
+            }
+          >
             <div>Statistik (Offen)</div>
           </NavLink>
-          <NavLink to="/" className={({ isActive }) => (isActive ? 'bg-gray-100 p-2 rounded-md' : 'p-2')}>
+          <NavLink
+            to="/"
+            className={({ isActive }) =>
+              isActive ? 'bg-gray-100 p-2 rounded-md' : 'p-2'
+            }
+          >
             <div>Statistik (Abgeschlossen)</div>
           </NavLink>
-          <NavLink to="/Me" className={({ isActive }) => (isActive ? 'bg-gray-100 p-2 rounded-md' : 'p-2')}>
+          <NavLink
+            to="/Me"
+            className={({ isActive }) =>
+              isActive ? 'bg-gray-100 p-2 rounded-md' : 'p-2'
+            }
+          >
             <div>Me</div>
           </NavLink>
-          <NavLink to="/Login" className={({ isActive }) => (isActive ? 'bg-gray-100 p-2 rounded-md' : 'p-2')}>
+          <NavLink
+            to="/Login"
+            className={({ isActive }) =>
+              isActive ? 'bg-gray-100 p-2 rounded-md' : 'p-2'
+            }
+          >
             <div>Login</div>
           </NavLink>
-
-
         </SheetHeader>
-        
       </SheetContent>
     </Sheet>
   )
