@@ -1,0 +1,36 @@
+name: PR Build Test
+
+on:
+  pull_request:
+    branches: [main]
+
+permissions:
+  checks: write
+
+env:
+  VITE_SUPABASE_URL: ${{ vars.VITE_SUPABASE_URL }}
+  VITE_ANONKEY: ${{ vars.VITE_ANONKEY }}
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup
+        uses: ./.github/actions/setup
+      - name: Build
+        run: npm run build
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup
+        uses: ./.github/actions/setup
+      - name: Lint Report
+        run: npm run lint:report
+      - name: Annotate Linting Results
+        uses: ataylorme/eslint-annotate-action@v2
+        with:
+          fail-on-error: false

@@ -1,21 +1,15 @@
-import { createBrowserRouter, useOutlet } from 'react-router-dom';
+import { createBrowserRouter, useOutlet } from 'react-router-dom'
 
+import { ScrollArea } from '@/components/ui/scroll-area'
 
-
-import { ScrollArea } from '@/components/ui/scroll-area';
-
-
-
-import Header from './components/Header';
-import Navbar from './components/Navbar';
-import AllProducts from './pages/AllProducts/AllProducts';
-import { Login } from './pages/Login';
-import { Me } from './pages/Me';
-import NewOrder from './pages/NewOrder';
-import Open from './pages/Open';
-import ReadyForPickup from './pages/ReadyForPickup';
-import CreateProduct from './pages/AllProducts/CreateProduct';
-
+import Header from './components/Header'
+import Navbar from './components/Navbar'
+import AllProducts from './pages/AllProducts/AllProducts'
+import { Login } from './pages/Login'
+import { Me } from './pages/Me'
+import NewOrder from './pages/NewOrder'
+import Open from './pages/Open'
+import ReadyForPickup from './pages/ReadyForPickup'
 
 // const [isWhiteMode, setWhiteMode] = useState(window.matchMedia('(prefers-color-scheme: dark)')
 
@@ -23,7 +17,7 @@ const Navigation = () => {
   const outlet = useOutlet()
   return (
     <>
-      <div className="h-screen relative h-100">
+      <div className="h-100 relative h-screen">
         <Header />
 
         <ScrollArea className="h-[83%] w-[100%] overflow-hidden">

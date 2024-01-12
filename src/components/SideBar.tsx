@@ -1,21 +1,24 @@
-import { Bars3Icon } from '@heroicons/react/24/outline';
-import { useNavigate, useParams } from "react-router-dom";
-import { NavLink } from 'react-router-dom';
+import { Bars3Icon } from '@heroicons/react/24/outline'
+import { useParams } from 'react-router-dom'
+import { NavLink } from 'react-router-dom'
 
-
-
-import { Button } from '@/components/ui/button';
-import { Sheet, SheetClose, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
-
+import {
+  Sheet,
+  SheetClose,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from '@/components/ui/sheet'
 
 const SideBar = () => {
-  const { id } = useParams();
-  console.log("Id: "+id)
+  const { id } = useParams()
+  console.log('Id: ' + id)
   return (
     <Sheet>
       <SheetTrigger>
         {/* <Bars3Icon className={isWhiteMode ? 'text-blue-300' :"text-amber-700 w-10 h-10"} /> */}
-        <Bars3Icon className="text-secondary w-10 h-16 ml-3" />
+        <Bars3Icon className="ml-3 h-16 w-10 text-secondary" />
       </SheetTrigger>
       <SheetContent side={'left'}>
         <SheetHeader className="text-left">
@@ -32,7 +35,7 @@ const SideBar = () => {
             <NavLink
               to="/all-products"
               className={({ isActive }) =>
-                isActive ? 'bg-gray-100 p-2 rounded-md' : 'p-2'
+                isActive ? 'rounded-md bg-gray-100 p-2' : 'p-2'
               }
             >
               <div>Alle Produkte</div>
@@ -42,7 +45,7 @@ const SideBar = () => {
             <NavLink
               to="/all-products"
               className={({ isActive }) =>
-                isActive ? 'bg-gray-100 p-2 rounded-md' : 'p-2'
+                isActive ? 'rounded-md bg-gray-100 p-2' : 'p-2'
               }
             >
               <div>Alle Bestellungen</div>
@@ -51,7 +54,7 @@ const SideBar = () => {
           <NavLink
             to="/"
             className={({ isActive }) =>
-              isActive ? 'bg-gray-100 p-2 rounded-md' : 'p-2'
+              isActive ? 'rounded-md bg-gray-100 p-2' : 'p-2'
             }
           >
             <div>Statistik (Offen)</div>
@@ -59,7 +62,7 @@ const SideBar = () => {
           <NavLink
             to="/"
             className={({ isActive }) =>
-              isActive ? 'bg-gray-100 p-2 rounded-md' : 'p-2'
+              isActive ? 'rounded-md bg-gray-100 p-2' : 'p-2'
             }
           >
             <div>Statistik (Abgeschlossen)</div>
@@ -67,7 +70,7 @@ const SideBar = () => {
           <NavLink
             to="/Me"
             className={({ isActive }) =>
-              isActive ? 'bg-gray-100 p-2 rounded-md' : 'p-2'
+              isActive ? 'rounded-md bg-gray-100 p-2' : 'p-2'
             }
           >
             <div>Me</div>
@@ -75,7 +78,7 @@ const SideBar = () => {
           <NavLink
             to="/Login"
             className={({ isActive }) =>
-              isActive ? 'bg-gray-100 p-2 rounded-md' : 'p-2'
+              isActive ? 'rounded-md bg-gray-100 p-2' : 'p-2'
             }
           >
             <div>Login</div>
