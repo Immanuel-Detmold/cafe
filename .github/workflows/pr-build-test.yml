@@ -23,3 +23,9 @@ jobs:
         run: npm ci
       - name: Build
         run: npm run build
+      - name: Lint Report
+        run: npm run lint:report
+      - name: Annotate Linting Results
+        uses: ataylorme/eslint-annotate-action@v2
+        with:
+          fail-on-error: false
