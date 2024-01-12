@@ -1,24 +1,38 @@
-import { createBrowserRouter, useOutlet } from 'react-router-dom'
-import { Login } from './pages/Login'
-import { Me } from './pages/Me'
-import Navbar from './components/Navbar'
-import Open from './pages/Open'
-import ReadyForPickup from './pages/ReadyForPickup'
-import NewOrder from './pages/NewOrder'
+import { createBrowserRouter, useOutlet } from 'react-router-dom';
 
-import Header from './components/Header'
-import AllProducts from './pages/AllProducts'
+
+
+import { ScrollArea } from '@/components/ui/scroll-area';
+
+
+
+import Header from './components/Header';
+import Navbar from './components/Navbar';
+import AllProducts from './pages/AllProducts/AllProducts';
+import { Login } from './pages/Login';
+import { Me } from './pages/Me';
+import NewOrder from './pages/NewOrder';
+import Open from './pages/Open';
+import ReadyForPickup from './pages/ReadyForPickup';
+import CreateProduct from './pages/AllProducts/CreateProduct';
+
 
 // const [isWhiteMode, setWhiteMode] = useState(window.matchMedia('(prefers-color-scheme: dark)')
 
 const Navigation = () => {
   const outlet = useOutlet()
   return (
-    <div>
-      <Header />
-      <Navbar />
-      {outlet}
-    </div>
+    <>
+      <div className="h-screen relative h-100">
+        <Header />
+
+        <ScrollArea className="h-[83%] w-[100%] overflow-hidden">
+          <div className="container">{outlet}</div>
+        </ScrollArea>
+
+        <Navbar />
+      </div>
+    </>
   )
 }
 

@@ -5,7 +5,7 @@ import { router } from './router'
 function App() {
   return (
     <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
-      <RouterProvider router={router} />
+      <RouterProvider router={router}/>
     </ThemeProvider>
   )
 }
