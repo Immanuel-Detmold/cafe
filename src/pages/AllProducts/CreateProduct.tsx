@@ -1,21 +1,9 @@
-import { useUser } from '@/data/useUser'
 import { supabase } from '@/services/supabase'
-import { Value } from '@radix-ui/react-select'
-import { useEffect, useState } from 'react'
-import { set } from 'react-hook-form'
+import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-// Remove the unused import statement for uuid4
 import { v4 as uuidv4 } from 'uuid'
 
 import { Button } from '@/components/ui/button'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import {
@@ -41,17 +29,19 @@ const CreateProduct = () => {
   const [name, setName] = useState('')
   const [price, setPrice] = useState('')
   const [category, setCategory] = useState('Auswählen')
-  const [selectedImage, setSelectedImage] = useState(null)
+  const [selectedImage, setSelectedImage] = useState<File | undefined>(
+    undefined,
+  )
   // const [img_uuid, setImg_uuid] = useState('')
 
-  const [missing_fields, setMissingFields] = useState<Boolean | null>(null)
+  const [missing_fields, setMissingFields] = useState<boolean | null>(null)
 
   const handleAddProduct = async () => {
-    var img_uuid = ''
+    let img_uuid = ''
 
     // If an image is selected, upload it to Supabase Storage and get uuid from Image
     if (selectedImage) {
-      var img_uuid = await handleUpload(selectedImage)
+      img_uuid = await handleUpload(selectedImage)
     } else {
       img_uuid = ''
     }
@@ -89,7 +79,12 @@ const CreateProduct = () => {
 
   return (
     <Sheet>
-      <SheetTrigger asChild onClick={() => setCategory('')}>
+      <SheetTrigger
+        asChild
+        onClick={() => {
+          setCategory('')
+        }}
+      >
         <Button variant="outline" className="mx-2 select-none">
           + Neus Produkt
         </Button>
@@ -101,7 +96,7 @@ const CreateProduct = () => {
             Hier kannst du ein neues Produkt erstellen.
           </SheetDescription>
         </SheetHeader>
-        <div className="grid grid-cols-4 py-4 gap-4 items-center">
+        <div className="grid grid-cols-4 items-center gap-4 py-4">
           <Label htmlFor="name" className="col-span-4">
             Name
           </Label>
@@ -110,7 +105,9 @@ const CreateProduct = () => {
             value={name}
             className="col-span-4"
             placeholder="Produktname"
-            onChange={(e) => setName(e.target.value)}
+            onChange={(e) => {
+              setName(e.target.value)
+            }}
           />
 
           <Label htmlFor="username" className="col-span-4">
@@ -120,7 +117,9 @@ const CreateProduct = () => {
             id="price"
             value={price}
             type="number"
-            onChange={(e) => setPrice(e.target.value)}
+            onChange={(e) => {
+              setPrice(e.target.value)
+            }}
             className="col-span-4"
             placeholder="1,00 €"
             step=".01"
@@ -131,7 +130,11 @@ const CreateProduct = () => {
             Kategorie
           </Label> */}
           <div className="col-span-4">
-            <Select onValueChange={(value) => setCategory(value)}>
+            <Select
+              onValueChange={(value) => {
+                setCategory(value)
+              }}
+            >
               <SelectTrigger className="w-fill">
                 <SelectValue placeholder="Wähle Kategorie" />
               </SelectTrigger>
@@ -159,7 +162,7 @@ const CreateProduct = () => {
             type="file"
             className="col-span-4 hover:cursor-pointer"
             onChange={(event) => {
-              setSelectedImage(event.target.files[0])
+              setSelectedImage(event.target.files?.[0])
             }}
           />
         </div>
@@ -180,7 +183,12 @@ const CreateProduct = () => {
                 } else {
                   setMissingFields(false)
                   handleAddProduct()
-                  navigate('/')
+                    .then(() => {
+                      navigate('/')
+                    })
+                    .catch((error) => {
+                      console.log(error)
+                    })
                 }
               }}
             >
@@ -189,7 +197,7 @@ const CreateProduct = () => {
           </SheetClose>
         </SheetFooter>
         {missing_fields && (
-          <div className="text-red-500 text-center mt-2 font-bold">
+          <div className="mt-2 text-center font-bold text-red-500">
             Bitte fülle alle Felder aus!
           </div>
         )}
