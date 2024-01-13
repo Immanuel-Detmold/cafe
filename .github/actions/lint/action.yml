@@ -1,9 +1,12 @@
-name: 'Lint using ESLint'
-description: 'Lint using ESLint'
+name: 'Lint'
+description: 'Lint using ESLint and Prettier'
 
 runs:
   using: 'composite'
   steps:
     - name: Lint
       run: npm run lint
+      shell: bash
+    - name: Check Formatting
+      run: npm run lint:prettier
       shell: bash
