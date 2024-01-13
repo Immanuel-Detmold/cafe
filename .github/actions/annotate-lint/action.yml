@@ -10,4 +10,4 @@ runs:
     - name: Annotate Linting Results
       uses: ataylorme/eslint-annotate-action@v2
       with:
-        fail-on-error: false
+        fail-on-warning: true

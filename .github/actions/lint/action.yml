@@ -1,0 +1,9 @@
+name: 'Lint using ESLint'
+description: 'Lint using ESLint'
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Lint
+      run: npm run lint
+      shell: bash
