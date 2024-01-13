@@ -2,7 +2,9 @@
 @tailwind components;
 @tailwind utilities;
 
-body, html, #root {
+body,
+html,
+#root {
   height: 100%;
 }
 @layer base {
