@@ -1,9 +1,6 @@
-import { createBrowserRouter, useOutlet } from 'react-router-dom'
+import { createBrowserRouter } from 'react-router-dom'
 
-import { ScrollArea } from '@/components/ui/scroll-area'
-
-import Header from './components/Header'
-import Navbar from './components/Navbar'
+import { Navigation } from './components/Navigation'
 import AllProducts from './pages/AllProducts/AllProducts'
 import { Login } from './pages/Login'
 import { Me } from './pages/Me'
@@ -12,23 +9,6 @@ import Open from './pages/Open'
 import ReadyForPickup from './pages/ReadyForPickup'
 
 // const [isWhiteMode, setWhiteMode] = useState(window.matchMedia('(prefers-color-scheme: dark)')
-
-const Navigation = () => {
-  const outlet = useOutlet()
-  return (
-    <>
-      <div className="h-100 relative h-screen">
-        <Header />
-
-        <ScrollArea className="h-[83%] w-[100%] overflow-hidden">
-          <div className="container">{outlet}</div>
-        </ScrollArea>
-
-        <Navbar />
-      </div>
-    </>
-  )
-}
 
 export const router = createBrowserRouter(
   [

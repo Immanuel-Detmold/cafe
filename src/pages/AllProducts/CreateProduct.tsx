@@ -1,3 +1,4 @@
+import { useCreateProductMutation } from '@/data/useProducts'
 import { supabase } from '@/services/supabase'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
@@ -32,6 +33,7 @@ const CreateProduct = () => {
   const [selectedImage, setSelectedImage] = useState<File | undefined>(
     undefined,
   )
+  const { mutate: createProduct } = useCreateProductMutation()
   // const [img_uuid, setImg_uuid] = useState('')
 
   const [missing_fields, setMissingFields] = useState<boolean | null>(null)
@@ -45,23 +47,15 @@ const CreateProduct = () => {
     } else {
       img_uuid = ''
     }
-    const { data, error } = await supabase.from('Products').insert([
-      {
-        Name: name,
-        Price: price,
-        Category: category,
-        Image: img_uuid,
-      },
-    ])
-    if (error) {
-      console.log(error)
-    }
-    if (data) {
-      console.log(data)
-    }
+    createProduct({
+      Name: name,
+      Price: parseFloat(price),
+      Category: category,
+      Image: img_uuid,
+    })
   }
   // Upload Image to Supabase Storage
-  const handleUpload = async (file: any) => {
+  const handleUpload = async (file: File) => {
     const i_uuidv4 = uuidv4()
     const { data, error } = await supabase.storage
       .from('ProductImages')

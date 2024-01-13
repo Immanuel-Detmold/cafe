@@ -5,7 +5,9 @@
   "type": "module",
   "scripts": {
     "build": "tsc && vite build",
-    "dev": "vite",
+    "dev": "npm run dev:generate:ts && dev:vite",
+    "dev:generate:ts": "supabase gen types typescript --project-id hmwxeqgcfhhumndveboe > ./src/services/supabase.types.ts",
+    "dev:vite": "vite",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "lint:report": "npm run lint -- --output-file eslint_report.json --format json || exit 0",
     "prepare": "husky install",
@@ -27,6 +29,7 @@
     "@radix-ui/react-select": "^2.0.0",
     "@radix-ui/react-slot": "^1.0.2",
     "@supabase/supabase-js": "^2.39.2",
+    "@tanstack/react-query": "^5.17.10",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.0",
     "cmdk": "^0.2.0",
@@ -35,12 +38,13 @@
     "react-dom": "^18.2.0",
     "react-hook-form": "^7.49.2",
     "react-router-dom": "^6.21.1",
-    "react-svg-loader": "^3.0.3",
+    "react-svg-loader": "^3.0.0",
     "tailwind-merge": "^2.2.0",
     "tailwindcss-animate": "^1.0.7",
     "uuid": "^9.0.1"
   },
   "devDependencies": {
+    "@tanstack/eslint-plugin-query": "^5.17.7",
     "@trivago/prettier-plugin-sort-imports": "^4.3.0",
     "@types/node": "^20.10.6",
     "@types/react": "^18.2.43",
@@ -61,6 +65,7 @@
     "prettier": "3.2.1",
     "prettier-plugin-packagejson": "^2.4.9",
     "prettier-plugin-tailwindcss": "^0.5.11",
+    "supabase": "^1.131.4",
     "tailwindcss": "^3.4.0",
     "typescript": "^5.2.2",
     "vite": "^5.0.8"
