@@ -1,3 +1,4 @@
+import { type Product } from '@/data/useProducts'
 import { supabase } from '@/services/supabase'
 import { useNavigate } from 'react-router-dom'
 
@@ -8,17 +9,18 @@ import {
   CardTitle,
 } from '@/components/ui/card'
 
-const Product = ({ product }: { product: any }) => {
+const Product = ({ product }: { product: Product }) => {
   const navigate = useNavigate()
 
-  const publicUrl = supabase.storage
-    .from('ProductImages')
-    .getPublicUrl(product.Image).data.publicUrl
+  const imgUrl = product.Image
+    ? supabase.storage.from('ProductImages').getPublicUrl(product.Image).data
+        .publicUrl
+    : 'https://via.placeholder.com/150'
   return (
     <div className="h-full">
       <Card className="h-full overflow-hidden p-1">
         <img
-          src={publicUrl}
+          src={imgUrl}
           alt={product.Name}
           className="mx-auto aspect-square rounded-md object-cover"
         />

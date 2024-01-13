@@ -1,9 +1,11 @@
 import { createClient } from '@supabase/supabase-js'
 
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
-const supabaseKey = import.meta.env.VITE_ANONKEY
+import { Database } from './supabase.types'
 
-export const supabase = createClient(supabaseUrl, supabaseKey, {
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL as string
+const supabaseKey = import.meta.env.VITE_ANONKEY as string
+
+export const supabase = createClient<Database>(supabaseUrl, supabaseKey, {
   auth: {
     storageKey: 'supabase.auth.token',
   },
@@ -33,5 +35,5 @@ export async function logout() {
 }
 
 export async function getUser() {
-  return (await supabase.auth.getSession()).data?.session?.user
+  return (await supabase.auth.getSession()).data.session?.user
 }
