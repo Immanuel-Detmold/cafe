@@ -33,6 +33,7 @@ const CreateProduct = () => {
   const [selectedImage, setSelectedImage] = useState<File | undefined>(
     undefined,
   )
+  const [isLoading, setIsLoading] = useState(false)
 
   const { mutate: createProduct } = useCreateProductMutation()
   // const [img_uuid, setImg_uuid] = useState('')
@@ -66,8 +67,12 @@ const CreateProduct = () => {
       console.log(error)
     }
     if (data) {
+      const imgUrl = supabase.storage
+        .from('ProductImages')
+        .getPublicUrl(i_uuidv4).data.publicUrl
       console.log(data)
       console.log('IMG3: ' + i_uuidv4)
+      return imgUrl
     }
     return i_uuidv4
   }
@@ -167,9 +172,12 @@ const CreateProduct = () => {
             <Button
               className="w-full"
               type="submit"
+              disabled={isLoading}
               onClick={(e) => {
                 e.preventDefault()
-
+                if (isLoading) {
+                  return
+                }
                 if (name == '' || price == '' || category == '') {
                   setMissingFields(true)
                   console.log('Error Missing Fields!')
@@ -177,12 +185,15 @@ const CreateProduct = () => {
                   console.log(price)
                   console.log(category)
                 } else {
+                  setIsLoading(true)
                   setMissingFields(false)
                   handleAddProduct()
                     .then(() => {
-                      navigate('/')
+                      setIsLoading(false)
+                      navigate('/new-order')
                     })
                     .catch((error) => {
+                      setIsLoading(false)
                       console.log(error)
                     })
                 }

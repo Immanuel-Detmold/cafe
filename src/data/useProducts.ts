@@ -65,9 +65,12 @@ export const useDeleteProductMutation = () =>
 
       // If img exist -> remove from supabase storage
       if (product.Image) {
+        // Extract ImgID from URL
+        const parts = product.Image.split('/')
+        const imgId = parts[parts.length - 1]
         const { data, error: removeError } = await supabase.storage
           .from('ProductImages')
-          .remove([`${product.Image}`])
+          .remove([`${imgId}`])
 
         if (removeError) {
           throw removeError
