@@ -13,6 +13,7 @@
     "lint:report": "npm run lint -- --output-file eslint_report.json --format json || exit 0",
     "prepare": "husky install",
     "preview": "vite preview",
+    "serve": "vite --port 3000 --host",
     "start": "npm run dev"
   },
   "lint-staged": {
@@ -20,6 +21,8 @@
   },
   "dependencies": {
     "@heroicons/react": "^2.1.1",
+    "@radix-ui/react-alert-dialog": "^1.0.5",
+    "@radix-ui/react-avatar": "^1.0.4",
     "@radix-ui/react-dialog": "^1.0.5",
     "@radix-ui/react-dropdown-menu": "^2.0.6",
     "@radix-ui/react-label": "^2.0.2",
@@ -29,6 +32,7 @@
     "@radix-ui/react-scroll-area": "^1.0.5",
     "@radix-ui/react-select": "^2.0.0",
     "@radix-ui/react-slot": "^1.0.2",
+    "@radix-ui/react-toast": "^1.1.5",
     "@supabase/supabase-js": "^2.39.2",
     "@tanstack/react-query": "^5.17.10",
     "class-variance-authority": "^0.7.0",

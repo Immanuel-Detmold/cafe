@@ -4,7 +4,7 @@ import { Navigation } from './components/Navigation'
 import AllProducts from './pages/AllProducts/AllProducts'
 import { Login } from './pages/Login'
 import { Me } from './pages/Me'
-import NewOrder from './pages/NewOrder'
+import NewOrder from './pages/NewOrder/NewOrder'
 import Open from './pages/Open'
 import ReadyForPickup from './pages/ReadyForPickup'
 

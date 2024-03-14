@@ -12,8 +12,6 @@ import {
 } from '@/components/ui/sheet'
 
 const SideBar = () => {
-  const { id } = useParams()
-  console.log('Id: ' + id)
   return (
     <Sheet>
       <SheetTrigger>

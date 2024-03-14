@@ -1,3 +1,4 @@
+import { queryClient } from '@/App'
 import { supabase } from '@/services/supabase'
 import { Database } from '@/services/supabase.types'
 import { useMutation, useQuery } from '@tanstack/react-query'
@@ -24,6 +25,61 @@ export const useProductsQuery = ({
         throw error
       }
       return data
+    },
+  }) as {
+    data: Product
+    error: Error
+    isLoading: boolean
+  }
+
+// Get only one Product - Not used in this project
+export const useProductQuery = ({ id }: { id: number }) =>
+  useQuery({
+    queryKey: ['product', id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('Products')
+        .select()
+        .eq('id', id)
+        .single()
+
+      if (error) {
+        throw error
+      }
+      return data
+    },
+  })
+
+export const useDeleteProductMutation = () =>
+  useMutation({
+    mutationFn: async (product: Product) => {
+      const { error } = await supabase
+        .from('Products')
+        .delete()
+        .eq('id', product.id)
+      if (error) {
+        throw error
+      } else {
+        console.log('Product data deleted.')
+      }
+
+      // If img exist -> remove from supabase storage
+      if (product.Image) {
+        const { data, error: removeError } = await supabase.storage
+          .from('ProductImages')
+          .remove([`${product.Image}`])
+
+        if (removeError) {
+          throw removeError
+        } else {
+          console.log('Product Image removed.')
+          console.log(data)
+        }
+      }
+    },
+    onSuccess: async () => {
+      // After the mutation succeeds, invalidate the useProductsQuery
+      await queryClient.invalidateQueries({ queryKey: ['products'] })
     },
   })
 
