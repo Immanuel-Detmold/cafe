@@ -1,25 +1,21 @@
 import { useProductsQuery } from '@/data/useProducts'
 import { Product } from '@/data/useProducts'
 
-import { Button } from '@/components/ui/button'
-
 type GroupedProducts = Record<string, Product[]>
 
 const NewOrder = () => {
-  const {
-    data: products,
-    error,
-    isLoading,
-  } = useProductsQuery({ searchTerm: '', ascending: true })
-  if (error) {
-    console.log(error)
-  }
+  const { data: products } = useProductsQuery({
+    searchTerm: '',
+    ascending: true,
+  })
 
-  const groupedProducts = products?.reduce((grouped, product) => {
-    const key: string = product.Category
-    grouped[key] = grouped[key] ?? []
-    grouped[key].push(product)
-    return grouped
+  const groupedProducts = products?.reduce((groupMap, product) => {
+    const key = product.Category || 'Other'
+    const group = groupMap[key] ?? []
+    return {
+      ...groupMap,
+      [key]: [...group, product],
+    }
   }, {} as GroupedProducts)
 
   return (

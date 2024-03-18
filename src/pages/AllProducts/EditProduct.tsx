@@ -1,4 +1,4 @@
-import { Product, useCreateProductMutation } from '@/data/useProducts'
+import { Product } from '@/data/useProducts'
 import { useState } from 'react'
 
 import { Button } from '@/components/ui/button'
@@ -37,7 +37,6 @@ const EditProduct = ({ product }: { product: Product }) => {
     undefined,
   )
 
-  const { mutate: createProduct } = useCreateProductMutation()
   const [missing_fields, setMissingFields] = useState<boolean | null>(null)
 
   const handleEditProduct = (event: React.FormEvent) => {

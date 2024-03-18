@@ -1,4 +1,4 @@
-const Category = (data: any) => {
+const Category = () => {
   return (
     <>
       {/* <div>
