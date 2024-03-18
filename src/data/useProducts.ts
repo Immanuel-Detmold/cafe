@@ -26,11 +26,7 @@ export const useProductsQuery = ({
       }
       return data
     },
-  }) as {
-    data: Product
-    error: Error
-    isLoading: boolean
-  }
+  })
 
 // Get only one Product - Not used in this project
 export const useProductQuery = ({ id }: { id: number }) =>

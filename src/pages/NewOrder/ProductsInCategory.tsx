@@ -2,7 +2,6 @@ import { Product } from '@/data/useProducts'
 import { ShoppingCartIcon } from '@heroicons/react/24/outline'
 import { TrashIcon } from '@heroicons/react/24/outline'
 import { Label } from '@radix-ui/react-label'
-import { useState } from 'react'
 
 import { Avatar, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
@@ -11,9 +10,8 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover'
-import { Switch } from '@/components/ui/switch'
 
-const ProductsInCategory = (props: Product) => {
+const ProductsInCategory = (props: { products: Product[] }) => {
   const placeHolderImage =
     'https://hmwxeqgcfhhumndveboe.supabase.co/storage/v1/object/public/ProductImages/PlaceHolder.jpg?t=2024-03-14T12%3A07%3A02.697Z'
 
@@ -26,9 +24,7 @@ const ProductsInCategory = (props: Product) => {
               <Button variant="outline" className="h-14">
                 <Avatar className="">
                   <AvatarImage
-                    src={
-                      product.Image !== '' ? product.Image : placeHolderImage
-                    }
+                    src={product.Image ? product.Image : placeHolderImage}
                   />
                 </Avatar>
                 <Label className="ml-1">

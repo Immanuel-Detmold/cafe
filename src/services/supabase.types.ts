@@ -6,12 +6,11 @@ export type Json =
   | { [key: string]: Json | undefined }
   | Json[]
 
-export interface Database {
+export type Database = {
   public: {
     Tables: {
       Products: {
         Row: {
-          reduce(arg0: (grouped: any, product: any) => any, arg1: { [x: string]: { Category: string | null; created_at: string; id: number; Image: string | null; Name: string; Price: number | null }[] }): unknown
           Category: string | null
           created_at: string
           id: number

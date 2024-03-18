@@ -1,12 +1,9 @@
 import { useProductsQuery } from '@/data/useProducts'
 import { Product } from '@/data/useProducts'
-import { PlusCircleIcon } from '@heroicons/react/24/outline'
-import { MinusCircleIcon } from '@heroicons/react/24/outline'
 import { Label } from '@radix-ui/react-label'
 import { ShoppingCart } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { Switch } from '@/components/ui/switch'
 import { Textarea } from '@/components/ui/textarea'
@@ -17,31 +14,30 @@ import ProductsInCategory from './ProductsInCategory'
 type GroupedProducts = Record<string, Product[]>
 
 const NewOrder = () => {
-  const placeHolderImage =
-    'https://hmwxeqgcfhhumndveboe.supabase.co/storage/v1/object/public/ProductImages/PlaceHolder.jpg?t=2024-03-14T12%3A07%3A02.697Z'
-  const {
-    data: products,
-    error,
-    isLoading,
-  } = useProductsQuery({ searchTerm: '', ascending: true })
+  const { data: products, error } = useProductsQuery({
+    searchTerm: '',
+    ascending: true,
+  })
   if (error) {
     console.log(error)
   }
 
-  const groupedProducts = products?.reduce((grouped, product) => {
-    const key: string = product.Category
-    grouped[key] = grouped[key] ?? []
-    grouped[key].push(product)
-    return grouped
+  const groupedProducts = products?.reduce((groupMap, product) => {
+    const key = product.Category || 'Other'
+    const group = groupMap[key] ?? []
+    return {
+      ...groupMap,
+      [key]: [...group, product],
+    }
   }, {} as GroupedProducts)
 
   return (
     <div>
       {/* Change Quantity */}
-      {/* <div className="mt-2 flex items-center justify-items-center font-bold">
+      {/* <div className="flex items-center mt-2 font-bold justify-items-center">
         <h1 className="">Anzahl: 0</h1>
-        <MinusCircleIcon className="ml-2 h-8 w-8 hover:cursor-pointer" />
-        <PlusCircleIcon className="ml-2 h-8 w-8 hover:cursor-pointer" />
+        <MinusCircleIcon className="w-8 h-8 ml-2 hover:cursor-pointer" />
+        <PlusCircleIcon className="w-8 h-8 ml-2 hover:cursor-pointer" />
       </div> */}
 
       {/* Category and Product */}
