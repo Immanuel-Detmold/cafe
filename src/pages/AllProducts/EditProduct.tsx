@@ -1,8 +1,5 @@
-import { useCreateProductMutation } from '@/data/useProducts'
-import { supabase } from '@/services/supabase'
+import { Product } from '@/data/useProducts'
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { v4 as uuidv4 } from 'uuid'
 
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -19,78 +16,54 @@ import {
   SheetClose,
   SheetContent,
   SheetDescription,
-  SheetFooter,
   SheetHeader,
   SheetTitle,
   SheetTrigger,
 } from '@/components/ui/sheet'
 
-const CreateProduct = () => {
-  const navigate = useNavigate()
-  const [name, setName] = useState('')
-  const [price, setPrice] = useState('')
-  const [category, setCategory] = useState('Auswählen')
+import DeleteProduct from './DeleteProduct'
+
+// import { supabase } from '@/services/supabase'
+
+const EditProduct = ({ product }: { product: Product }) => {
+  // const { data: products, error } = useProductsQuery({ searchTerm: '', ascending: true })
+  // const {data: products, error} = useProductsQuery({id:""})
+
+  // const { data: , error } = useProductQuery({ id: product_id })
+  const [name, setName] = useState(product?.Name)
+  const [price, setPrice] = useState(product?.Price?.toString())
+  const [category, setCategory] = useState(product?.Category)
   const [selectedImage, setSelectedImage] = useState<File | undefined>(
     undefined,
   )
 
-  const { mutate: createProduct } = useCreateProductMutation()
-  // const [img_uuid, setImg_uuid] = useState('')
-
   const [missing_fields, setMissingFields] = useState<boolean | null>(null)
 
-  const handleAddProduct = async () => {
-    let img_uuid = ''
-
-    // If an image is selected, upload it to Supabase Storage and get uuid from Image
-    if (selectedImage) {
-      img_uuid = await handleUpload(selectedImage)
+  const handleEditProduct = (event: React.FormEvent) => {
+    event.preventDefault()
+    if (name === '' || price === '' || category === '') {
+      setMissingFields(true)
+      return
     } else {
-      img_uuid = ''
+      setMissingFields(false)
+      // To DO!
     }
-    createProduct({
-      Name: name,
-      Price: parseFloat(price),
-      Category: category,
-      Image: img_uuid,
-    })
-  }
-  // Upload Image to Supabase Storage
-  const handleUpload = async (file: File) => {
-    const i_uuidv4 = uuidv4()
-    const { data, error } = await supabase.storage
-      .from('ProductImages')
-      .upload('/' + i_uuidv4, file)
-
-    if (error) {
-      console.log(error)
-    }
-    if (data) {
-      console.log(data)
-      console.log('IMG3: ' + i_uuidv4)
-    }
-    return i_uuidv4
   }
 
   return (
     <Sheet>
-      <SheetTrigger
-        asChild
-        onClick={() => {
-          setCategory('')
-        }}
-      >
-        <Button variant="outline" className="mx-2 select-none">
-          + Neus Produkt
-        </Button>
+      {/* <Button onClick={testFunction}>test</Button> */}
+      <SheetTrigger asChild>
+        <i className="material-icons select-none text-right hover:cursor-pointer">
+          edit
+        </i>
       </SheetTrigger>
       <SheetContent>
         <SheetHeader>
-          <SheetTitle>Neus Produkt</SheetTitle>
-          <SheetDescription>
-            Hier kannst du ein neues Produkt erstellen.
-          </SheetDescription>
+          <SheetTitle>Produkt Bearbeiten</SheetTitle>
+          <SheetDescription>Passe dein Produkt an.</SheetDescription>
         </SheetHeader>
+
         <div className="grid grid-cols-4 items-center gap-4 py-4">
           <Label htmlFor="name" className="col-span-4">
             Name
@@ -126,6 +99,7 @@ const CreateProduct = () => {
           </Label> */}
           <div className="col-span-4">
             <Select
+              defaultValue={product?.Category ? product.Category : ''}
               onValueChange={(value) => {
                 setCategory(value)
               }}
@@ -154,44 +128,26 @@ const CreateProduct = () => {
           </Label>
           <Input
             id="picture"
+            value={selectedImage?.name ? selectedImage.name : ''}
             type="file"
             className="col-span-4 hover:cursor-pointer"
             onChange={(event) => {
               setSelectedImage(event.target.files?.[0])
             }}
-          />
+          ></Input>
         </div>
 
-        <SheetFooter>
-          <SheetClose asChild>
-            <Button
-              className="w-full"
-              type="submit"
-              onClick={(e) => {
-                e.preventDefault()
-
-                if (name == '' || price == '' || category == '') {
-                  setMissingFields(true)
-                  console.log('Error Missing Fields!')
-                  console.log(name)
-                  console.log(price)
-                  console.log(category)
-                } else {
-                  setMissingFields(false)
-                  handleAddProduct()
-                    .then(() => {
-                      navigate('/')
-                    })
-                    .catch((error) => {
-                      console.log(error)
-                    })
-                }
-              }}
-            >
+        <SheetClose asChild className="">
+          <div className="text-right">
+            <Button className="mb-4 w-full" onClick={handleEditProduct}>
               Speichern
             </Button>
-          </SheetClose>
-        </SheetFooter>
+          </div>
+        </SheetClose>
+
+        {/* Delete Produkt Button and Alert Box */}
+        <DeleteProduct product={product} />
+
         {missing_fields && (
           <div className="mt-2 text-center font-bold text-red-500">
             Bitte fülle alle Felder aus!
@@ -202,4 +158,4 @@ const CreateProduct = () => {
   )
 }
 
-export default CreateProduct
+export default EditProduct

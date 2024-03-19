@@ -1,6 +1,6 @@
 import { type Product } from '@/data/useProducts'
+import EditProduct from '@/pages/AllProducts/EditProduct'
 import { supabase } from '@/services/supabase'
-import { useNavigate } from 'react-router-dom'
 
 import {
   Card,
@@ -10,8 +10,6 @@ import {
 } from '@/components/ui/card'
 
 const Product = ({ product }: { product: Product }) => {
-  const navigate = useNavigate()
-
   const imgUrl = product.Image
     ? supabase.storage.from('ProductImages').getPublicUrl(product.Image).data
         .publicUrl
@@ -34,14 +32,8 @@ const Product = ({ product }: { product: Product }) => {
             <CardDescription className="m-0 text-xs md:text-lg">
               {product.Price} €
             </CardDescription>
-            <i
-              className="material-icons select-none text-right hover:cursor-pointer"
-              onClick={() => {
-                navigate('/')
-              }}
-            >
-              edit
-            </i>
+
+            <EditProduct product={product} />
           </div>
         </CardHeader>
         {/* <CardContent className="p-3 pt-0 text-sm md:p-6 md:pt-0 md:text-md">

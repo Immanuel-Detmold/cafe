@@ -1,5 +1,4 @@
 import { Bars3Icon } from '@heroicons/react/24/outline'
-import { useParams } from 'react-router-dom'
 import { NavLink } from 'react-router-dom'
 
 import {
@@ -12,8 +11,6 @@ import {
 } from '@/components/ui/sheet'
 
 const SideBar = () => {
-  const { id } = useParams()
-  console.log('Id: ' + id)
   return (
     <Sheet>
       <SheetTrigger>

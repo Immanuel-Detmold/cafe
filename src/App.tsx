@@ -5,7 +5,8 @@ import { ThemeProvider } from '@/components/theme-provider'
 
 import { router } from './router'
 
-const queryClient = new QueryClient()
+// {defaultOptions: {queries: {staleTime: 1000 * 2}}}
+export const queryClient = new QueryClient()
 
 function App() {
   return (
