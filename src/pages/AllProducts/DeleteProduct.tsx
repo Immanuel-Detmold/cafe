@@ -18,6 +18,7 @@ import { SheetClose } from '@/components/ui/sheet'
 
 const DeleteProduct = ({ product }: { product: Product }) => {
   const { mutate: deleteProductMutation } = useDeleteProductMutation()
+
   const handleDelete = () => {
     deleteProductMutation(product, {
       onSuccess: () => {

@@ -11,8 +11,8 @@ export const Navigation = () => {
       <div className="h-100 relative h-screen">
         <Header />
 
-        <ScrollArea className="h-[83%] w-[100%] overflow-hidden">
-          <div className="container">{outlet}</div>
+        <ScrollArea className="h-[83%] w-full overflow-hidden">
+          <div className="container mx-auto">{outlet}</div>
         </ScrollArea>
 
         <Navbar />

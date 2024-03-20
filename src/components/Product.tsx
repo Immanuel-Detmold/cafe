@@ -1,6 +1,5 @@
 import { type Product } from '@/data/useProducts'
 import EditProduct from '@/pages/AllProducts/EditProduct'
-import { supabase } from '@/services/supabase'
 
 import {
   Card,
@@ -11,9 +10,8 @@ import {
 
 const Product = ({ product }: { product: Product }) => {
   const imgUrl = product.Image
-    ? supabase.storage.from('ProductImages').getPublicUrl(product.Image).data
-        .publicUrl
-    : 'https://via.placeholder.com/150'
+    ? product.Image
+    : 'https://hmwxeqgcfhhumndveboe.supabase.co/storage/v1/object/public/ProductImages/PlaceHolder.jpg'
   return (
     <div className="h-full">
       <Card className="h-full overflow-hidden p-1">
