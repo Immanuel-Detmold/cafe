@@ -20,4 +20,6 @@ jobs:
       - name: Setup
         uses: ./.github/actions/setup
       - name: Build
-        run: npm run build
+        uses: ./.github/actions/build
+      - name: Deploy
+        uses: ./.github/actions/deploy
