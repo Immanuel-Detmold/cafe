@@ -4,11 +4,12 @@ import { Label } from '@radix-ui/react-label'
 import { ShoppingCart } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { Switch } from '@/components/ui/switch'
 import { Textarea } from '@/components/ui/textarea'
 
-import ExampleData from './ExampleData'
+import OrderDetailsPage from './OrderDetailsPage'
 import ProductsInCategory from './ProductsInCategory'
 
 type GroupedProducts = Record<string, Product[]>
@@ -33,13 +34,6 @@ const NewOrder = () => {
 
   return (
     <div>
-      {/* Change Quantity */}
-      {/* <div className="flex items-center mt-2 font-bold justify-items-center">
-        <h1 className="">Anzahl: 0</h1>
-        <MinusCircleIcon className="w-8 h-8 ml-2 hover:cursor-pointer" />
-        <PlusCircleIcon className="w-8 h-8 ml-2 hover:cursor-pointer" />
-      </div> */}
-
       {/* Category and Product */}
       <div className="mt-2">
         {groupedProducts &&
@@ -50,18 +44,20 @@ const NewOrder = () => {
               <ProductsInCategory products={products} />
             </div>
           ))}
-
-        {/* Examples of Products*/}
-        <ExampleData />
       </div>
 
       <div className="flex flex-col">
-        {/* Comment Fild */}
-        <Label className="my-2 font-bold">Kommentar</Label>
-        <Textarea className="mb-2"></Textarea>
+        {/* Comment Field */}
+        <Textarea
+          className="mt-2"
+          placeholder="Kommentar (optional)"
+        ></Textarea>
 
-        {/* Bezahlung */}
-        <Label className="font-bold">Bezahlung</Label>
+        {/* Customer Name */}
+        <Input className="mt-2" placeholder="Name (optional)" />
+
+        {/* Payment Method */}
+        <Label className="mt-2 font-bold">Bezahlung</Label>
         <RadioGroup defaultValue="Bar" className="mb-2 ml-1">
           <div className="flex items-center space-x-2">
             <RadioGroupItem value="Bar" id="r1" />
@@ -77,19 +73,22 @@ const NewOrder = () => {
           </div>
         </RadioGroup>
 
-        {/* Kosten */}
-        <Label className="mb-2 w-min whitespace-nowrap rounded-lg border p-2 font-bold text-orange-600">
-          Kosten: 12.5€
-        </Label>
+        {/* Costs */}
+
+        <div className="flex items-center">
+          <Label className="w-min whitespace-nowrap rounded-lg border p-2 font-bold text-orange-600">
+            Kosten: 12.5€
+          </Label>
+          <OrderDetailsPage />
+        </div>
 
         {/* Custom Price */}
-        <div>
-          <div className="flex items-center space-x-2">
-            <Switch id="airplane-mode" />
-            <Label htmlFor="airplane-mode" className="font-bold">
-              Kunde bezahlt abweichenden Preis
-            </Label>
-          </div>
+
+        <div className="mt-2 flex items-center space-x-2">
+          <Switch id="airplane-mode" />
+          <Label htmlFor="airplane-mode" className="font-bold">
+            Kunde bezahlt abweichenden Preis
+          </Label>
         </div>
 
         <Label className="mt-1">

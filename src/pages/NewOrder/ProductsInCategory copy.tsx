@@ -14,13 +14,7 @@ const ProductsInCategory = (props: { products: Product[] }) => {
   return (
     <div>
       {props.products?.map((product) => (
-        <div
-          key={product.id}
-          className="m-2 py-6"
-          onClick={() => {
-            console.log('Hi')
-          }}
-        >
+        <div key={product.id} className="m-2 py-6" onClick={() => {}}>
           <Avatar className="">
             <AvatarImage
               src={product.Image ? product.Image : placeHolderImage}
