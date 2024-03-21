@@ -24,7 +24,7 @@ const NewOrder = () => {
   }
 
   const groupedProducts = products?.reduce((groupMap, product) => {
-    const key = product.Category || 'Other'
+    const key = product.category || 'Other'
     const group = groupMap[key] ?? []
     return {
       ...groupMap,

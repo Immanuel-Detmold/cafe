@@ -9,26 +9,26 @@ import {
 } from '@/components/ui/card'
 
 const Product = ({ product }: { product: Product }) => {
-  const imgUrl = product.Image
-    ? product.Image
+  const imgUrl = product.image
+    ? product.image
     : 'https://hmwxeqgcfhhumndveboe.supabase.co/storage/v1/object/public/ProductImages/PlaceHolder.jpg'
   return (
     <div className="h-full">
       <Card className="h-full overflow-hidden p-1">
         <img
           src={imgUrl}
-          alt={product.Name}
+          alt={product.name}
           className="mx-auto aspect-square rounded-md object-cover"
         />
         <CardHeader className="p-1 sm:p-2 md:p-5">
           <CardDescription className="text-xs md:text-lg">
-            {product.Category}
+            {product.category}
           </CardDescription>
-          <CardTitle className="text-sm md:text-lg">{product.Name}</CardTitle>
+          <CardTitle className="text-sm md:text-lg">{product.name}</CardTitle>
 
           <div className="grid grid-cols-2">
             <CardDescription className="m-0 text-xs md:text-lg">
-              {product.Price} €
+              {product.price} €
             </CardDescription>
 
             <EditProduct product={product} />

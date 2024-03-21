@@ -70,11 +70,11 @@ const ProductsInCategory = (props: { products: Product[] }) => {
               >
                 <Avatar className="">
                   <AvatarImage
-                    src={product.Image ? product.Image : placeHolderImage}
+                    src={product.image ? product.image : placeHolderImage}
                   />
                 </Avatar>
                 <Label className="ml-1">
-                  {product.Name} ({product.Price}€)
+                  {product.name} ({product.price}€)
                 </Label>
                 <Label className="ml-1 text-green-700">
                   {orderItems.find((item) => item.product_id === product.id)
