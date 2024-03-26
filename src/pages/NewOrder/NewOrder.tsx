@@ -39,7 +39,7 @@ const NewOrder = () => {
   useEffect(() => {
     // Update Order Price
     setSumOrderPrice(calcOrderPrice({ dataOrderItems: dataOrderItems, products: products || [] }))
-  }, [dataOrderItems])
+  }, [dataOrderItems, products])
 
   // Grouped Products by Category
   const groupedProducts = products?.reduce((groupMap, product) => {
