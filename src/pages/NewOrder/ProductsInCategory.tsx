@@ -10,20 +10,29 @@ import { useState } from 'react'
 
 import { Avatar, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover'
 import { Textarea } from '@/components/ui/textarea'
 
 type propsProductInCategory = {
   products: Product[]
   dataOrderItems: OrderItem[]
-  handleAddOrder: (product_id: number, quantity: number, productComment: string) => void
+  handleAddOrder: (
+    product_id: number,
+    quantity: number,
+    productComment: string,
+  ) => void
   handleDeleteOrderItem: (product_id: number) => void
 }
 
 const ProductsInCategory = (props: propsProductInCategory) => {
   const [quantity, setQuantity] = useState<number>(1)
   const [productComment, setProductComment] = useState<string>('')
-  const placeHolderImage = 'https://hmwxeqgcfhhumndveboe.supabase.co/storage/v1/object/public/ProductImages/PlaceHolder.jpg?t=2024-03-14T12%3A07%3A02.697Z'
+  const placeHolderImage =
+    'https://hmwxeqgcfhhumndveboe.supabase.co/storage/v1/object/public/ProductImages/PlaceHolder.jpg?t=2024-03-14T12%3A07%3A02.697Z'
 
   return (
     <div className="flex flex-wrap">
@@ -41,14 +50,18 @@ const ProductsInCategory = (props: propsProductInCategory) => {
                 }}
               >
                 <Avatar className="">
-                  <AvatarImage src={product.image ? product.image : placeHolderImage} />
+                  <AvatarImage
+                    src={product.image ? product.image : placeHolderImage}
+                  />
                 </Avatar>
                 <Label className="ml-1 select-none">
                   {product.name} ({product.price}€)
                 </Label>
 
                 <Label className="ml-1 text-green-700">
-                  {props.dataOrderItems.find((item) => item.product_id === product.id)
+                  {props.dataOrderItems.find(
+                    (item) => item.product_id === product.id,
+                  )
                     ? `(${props.dataOrderItems.find((item) => item.product_id === product.id)?.quantity})`
                     : ''}
                 </Label>
@@ -61,7 +74,9 @@ const ProductsInCategory = (props: propsProductInCategory) => {
                 <div className="flex w-full max-w-sm items-center justify-between">
                   <div>
                     <Label className="font-bold">Anzahl:</Label>
-                    <Label className="ml-1 select-none font-bold">{quantity}</Label>
+                    <Label className="ml-1 select-none font-bold">
+                      {quantity}
+                    </Label>
                   </div>
                   {/* Minus and Plus Button */}
                   <div className="flex select-none">

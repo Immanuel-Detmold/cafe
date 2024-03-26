@@ -38,7 +38,12 @@ const NewOrder = () => {
 
   useEffect(() => {
     // Update Order Price
-    setSumOrderPrice(calcOrderPrice({ dataOrderItems: dataOrderItems, products: products || [] }))
+    setSumOrderPrice(
+      calcOrderPrice({
+        dataOrderItems: dataOrderItems,
+        products: products || [],
+      }),
+    )
   }, [dataOrderItems, products])
 
   // Grouped Products by Category
@@ -52,11 +57,20 @@ const NewOrder = () => {
   }, {} as GroupedProducts)
 
   // Const handleAddOrder
-  const handleAddOrder = (product_id: number, quantity: number, productComment: string): void => {
-    const existingItemIndex = dataOrderItems.findIndex((item) => item.product_id === product_id)
+  const handleAddOrder = (
+    product_id: number,
+    quantity: number,
+    productComment: string,
+  ): void => {
+    const existingItemIndex = dataOrderItems.findIndex(
+      (item) => item.product_id === product_id,
+    )
 
     // If item with same product_id and quantity exists, do nothing
-    if (existingItemIndex !== -1 && dataOrderItems[existingItemIndex]?.quantity === quantity) {
+    if (
+      existingItemIndex !== -1 &&
+      dataOrderItems[existingItemIndex]?.quantity === quantity
+    ) {
       console.log('Item with same quantity already in order:', dataOrderItems)
     }
     // If item with same product_id but different quantity exists, update quantity
@@ -81,7 +95,12 @@ const NewOrder = () => {
       setDataOrderItems((prevDataOrderItems) => {
         const updatedItems = [...prevDataOrderItems, newOrderItem]
         console.log('Added Item to Order:', updatedItems)
-        setSumOrderPrice(calcOrderPrice({ dataOrderItems: updatedItems, products: products || [] }))
+        setSumOrderPrice(
+          calcOrderPrice({
+            dataOrderItems: updatedItems,
+            products: products || [],
+          }),
+        )
         return updatedItems
       })
     }
@@ -89,7 +108,9 @@ const NewOrder = () => {
 
   // Delete Product from Orderlist
   const handleDeleteOrderItem = (product_id: number) => {
-    const updatedOrderItems = dataOrderItems.filter((item) => item.product_id !== product_id)
+    const updatedOrderItems = dataOrderItems.filter(
+      (item) => item.product_id !== product_id,
+    )
     setDataOrderItems(() => {
       console.log('Deleted Item in Orders:', updatedOrderItems)
       return updatedOrderItems
@@ -138,7 +159,11 @@ const NewOrder = () => {
 
         {/* Payment Method */}
         <Label className="mt-2 font-bold">Bezahlung</Label>
-        <RadioGroup defaultValue={paymentMethod} className="mb-2 ml-1" onValueChange={setPaymentMethod}>
+        <RadioGroup
+          defaultValue={paymentMethod}
+          className="mb-2 ml-1"
+          onValueChange={setPaymentMethod}
+        >
           <div className="flex items-center space-x-2">
             <RadioGroupItem value="cash" id="r1" />
             <Label htmlFor="r1">Bar</Label>
@@ -156,8 +181,14 @@ const NewOrder = () => {
         {/* Costs */}
 
         <div className="flex items-center">
-          <Label className="w-min whitespace-nowrap rounded-lg border p-2 font-bold text-orange-600">Summe: {sumOrderPrice}€</Label>
-          <OrderDetailsPage dataOrderItem={dataOrderItems} handleDeleteOrderItem={handleDeleteOrderItem} products={products || []} />
+          <Label className="w-min whitespace-nowrap rounded-lg border p-2 font-bold text-orange-600">
+            Summe: {sumOrderPrice}€
+          </Label>
+          <OrderDetailsPage
+            dataOrderItem={dataOrderItems}
+            handleDeleteOrderItem={handleDeleteOrderItem}
+            products={products || []}
+          />
         </div>
 
         {/* Custom Price */}
@@ -176,8 +207,9 @@ const NewOrder = () => {
         </div>
 
         <Label className="mt-1">
-          Da die Bezahlung auf Spendenbasis beruht, hat der Kunde das Recht, einen selbst bestimmten Betrag zu bezahlen. Ist das der Fall, aktiviere diese
-          Checkbox.
+          Da die Bezahlung auf Spendenbasis beruht, hat der Kunde das Recht,
+          einen selbst bestimmten Betrag zu bezahlen. Ist das der Fall,
+          aktiviere diese Checkbox.
         </Label>
         {/* Make Input field for custom number, if customer wants to pay custom price */}
         {customPrice && (
@@ -185,7 +217,13 @@ const NewOrder = () => {
             <Label htmlFor="custom-price" className="font-bold">
               Bezahlter Preis
             </Label>
-            <Input className="mt-1" id="custom-price" type="number" value={customPriceValue} onChange={(e) => setCustomPriceValue(e.target.value)} />
+            <Input
+              className="mt-1"
+              id="custom-price"
+              type="number"
+              value={customPriceValue}
+              onChange={(e) => setCustomPriceValue(e.target.value)}
+            />
           </div>
         )}
 
