@@ -50,10 +50,10 @@ const CreateProduct = () => {
       img_uuid = ''
     }
     createProduct({
-      Name: name,
-      Price: parseFloat(price),
-      Category: category,
-      Image: img_uuid,
+      name: name,
+      price: parseFloat(price),
+      category: category,
+      image: img_uuid,
     })
   }
   // Upload Image to Supabase Storage

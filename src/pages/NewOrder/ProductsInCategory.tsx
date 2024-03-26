@@ -1,9 +1,11 @@
+import { OrderItem } from '@/data/useOrders'
 import { Product } from '@/data/useProducts'
 import { ShoppingCartIcon } from '@heroicons/react/24/outline'
 import { TrashIcon } from '@heroicons/react/24/outline'
 import { PlusCircleIcon } from '@heroicons/react/24/outline'
 import { MinusCircleIcon } from '@heroicons/react/24/outline'
 import { Label } from '@radix-ui/react-label'
+import { PopoverClose } from '@radix-ui/react-popover'
 import { useState } from 'react'
 
 import { Avatar, AvatarImage } from '@/components/ui/avatar'
@@ -15,41 +17,20 @@ import {
 } from '@/components/ui/popover'
 import { Textarea } from '@/components/ui/textarea'
 
-export type OrderItem = {
-  product_id: number
-  quantity: number
-  comment: string
+type propsProductInCategory = {
+  products: Product[]
+  dataOrderItems: OrderItem[]
+  handleAddOrder: (
+    product_id: number,
+    quantity: number,
+    productComment: string,
+  ) => void
+  handleDeleteOrderItem: (product_id: number) => void
 }
 
-const ProductsInCategory = (props: { products: Product[] }) => {
-  const [orderItems, setOrderItems] = useState<OrderItem[]>([])
-  // const [clickedProductID, setClickedProductID] = useState<number>(0)
-
-  // Add Product to Order
-  const handleAddOrder = (product_id: number): void => {
-    setOrderItems((prevOrderItems) => {
-      const newOrderItem: OrderItem = {
-        product_id: product_id,
-        quantity: Quantity,
-        comment: productcomment,
-      }
-      return [...prevOrderItems, newOrderItem]
-    })
-
-    console.log('Added Item in Order:', orderItems)
-    setQuantity(1)
-    setProductComment('')
-  }
-  // Delete Product from Order
-  const handleDeleteOrderItem = (product_id: number) => {
-    setOrderItems((prevOrderItems) => {
-      return prevOrderItems.filter((item) => item.product_id !== product_id)
-    })
-    console.log('Deleted Item in Order:', orderItems)
-  }
-
-  const [Quantity, setQuantity] = useState<number>(1)
-  const [productcomment, setProductComment] = useState<string>('')
+const ProductsInCategory = (props: propsProductInCategory) => {
+  const [quantity, setQuantity] = useState<number>(1)
+  const [productComment, setProductComment] = useState<string>('')
   const placeHolderImage =
     'https://hmwxeqgcfhhumndveboe.supabase.co/storage/v1/object/public/ProductImages/PlaceHolder.jpg?t=2024-03-14T12%3A07%3A02.697Z'
 
@@ -70,15 +51,18 @@ const ProductsInCategory = (props: { products: Product[] }) => {
               >
                 <Avatar className="">
                   <AvatarImage
-                    src={product.Image ? product.Image : placeHolderImage}
+                    src={product.image ? product.image : placeHolderImage}
                   />
                 </Avatar>
-                <Label className="ml-1">
-                  {product.Name} ({product.Price}€)
+                <Label className="ml-1 select-none">
+                  {product.name} ({product.price}€)
                 </Label>
+
                 <Label className="ml-1 text-green-700">
-                  {orderItems.find((item) => item.product_id === product.id)
-                    ? `(${orderItems.find((item) => item.product_id === product.id)?.quantity})`
+                  {props.dataOrderItems.find(
+                    (item) => item.product_id === product.id,
+                  )
+                    ? `(${props.dataOrderItems.find((item) => item.product_id === product.id)?.quantity})`
                     : ''}
                 </Label>
               </Button>
@@ -90,13 +74,15 @@ const ProductsInCategory = (props: { products: Product[] }) => {
                 <div className="flex w-full max-w-sm items-center justify-between">
                   <div>
                     <Label className="font-bold">Anzahl:</Label>
-                    <Label className="ml-1 font-bold">{Quantity}</Label>
+                    <Label className="ml-1 select-none font-bold">
+                      {quantity}
+                    </Label>
                   </div>
                   {/* Minus and Plus Button */}
-                  <div className="flex">
+                  <div className="flex select-none">
                     <MinusCircleIcon
                       onClick={() => {
-                        if (Quantity > 1) {
+                        if (quantity > 1) {
                           setQuantity((prevQ) => prevQ - 1)
                         }
                       }}
@@ -113,24 +99,33 @@ const ProductsInCategory = (props: { products: Product[] }) => {
                 <Textarea
                   placeholder="Kommentar"
                   className="mt-2"
-                  value={productcomment}
+                  value={productComment}
                   onChange={(e) => {
                     setProductComment(e.target.value)
                   }}
                 />
-                <Button
-                  className="mt-2"
-                  onClick={() => handleAddOrder(product.id)}
-                >
-                  Hinzufügen <ShoppingCartIcon className="ml-1 h-5 w-5" />
-                </Button>
-                <Button
-                  onClick={() => {
-                    handleDeleteOrderItem(product.id)
-                  }}
-                >
-                  Entfernen <TrashIcon className="ml-1 h-5 w-5" />
-                </Button>
+                <PopoverClose asChild>
+                  <Button
+                    className="mt-2 w-full"
+                    onClick={() => {
+                      props.handleAddOrder(product.id, quantity, productComment)
+                      setQuantity(1)
+                      setProductComment('')
+                    }}
+                  >
+                    Hinzufügen <ShoppingCartIcon className="ml-1 h-5 w-5" />
+                  </Button>
+                </PopoverClose>
+                <PopoverClose asChild>
+                  <Button
+                    className="w-full"
+                    onClick={() => {
+                      props.handleDeleteOrderItem(product.id)
+                    }}
+                  >
+                    Entfernen <TrashIcon className="ml-1 h-5 w-5" />
+                  </Button>
+                </PopoverClose>
               </div>
             </PopoverContent>
           </Popover>

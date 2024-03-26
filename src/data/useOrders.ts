@@ -5,6 +5,12 @@ import { useQuery } from '@tanstack/react-query'
 export type Orders = Database['public']['Tables']['Orders']['Row']
 export type OrderItems = Database['public']['Tables']['OrderItems']['Row']
 
+export type OrderItem = {
+  product_id: number
+  quantity: number
+  comment: string
+}
+
 // Functions for Table Oders
 export const useOrdersQuery = () =>
   useQuery({

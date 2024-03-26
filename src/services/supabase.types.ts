@@ -11,8 +11,8 @@ export type Database = {
     Tables: {
       OrderItems: {
         Row: {
-          comment?: string | null
-          created_at?: string
+          comment: string | null
+          created_at: string
           id: number
           order_id: number | null
           product_id: number | null
@@ -53,9 +53,9 @@ export type Database = {
       }
       Orders: {
         Row: {
-          comment?: string | null
-          created_at?: string
-          customer_name?: string | null
+          comment: string | null
+          created_at: string
+          customer_name: string | null
           id: number
           price: number | null
           status: Database["public"]["Enums"]["order_status"] | null
@@ -80,28 +80,28 @@ export type Database = {
       }
       Products: {
         Row: {
-          Category: string | null
+          category: string | null
           created_at: string
           id: number
-          Image: string | null
-          Name: string
-          Price: number | null
+          image: string | null
+          name: string
+          price: number
         }
         Insert: {
-          Category?: string | null
+          category?: string | null
           created_at?: string
           id?: number
-          Image?: string | null
-          Name: string
-          Price?: number | null
+          image?: string | null
+          name: string
+          price: number
         }
         Update: {
-          Category?: string | null
+          category?: string | null
           created_at?: string
           id?: number
-          Image?: string | null
-          Name?: string
-          Price?: number | null
+          image?: string | null
+          name?: string
+          price?: number
         }
         Relationships: []
       }

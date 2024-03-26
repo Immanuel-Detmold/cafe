@@ -18,8 +18,8 @@ export const useProductsQuery = ({
       const { data, error } = await supabase
         .from('Products')
         .select()
-        .order('Name', { ascending })
-        .ilike('Name', `%${searchTerm}%`)
+        .order('name', { ascending })
+        .ilike('name', `%${searchTerm}%`)
 
       if (error) {
         throw error
@@ -60,9 +60,9 @@ export const useDeleteProductMutation = () =>
       }
 
       // If img exist -> remove from supabase storage
-      if (product.Image) {
+      if (product.image) {
         // Extract ImgID from URL
-        const parts = product.Image.split('/')
+        const parts = product.image.split('/')
         const imgId = parts[parts.length - 1]
         const { data, error: removeError } = await supabase.storage
           .from('ProductImages')

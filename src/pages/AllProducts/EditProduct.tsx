@@ -30,9 +30,9 @@ const EditProduct = ({ product }: { product: Product }) => {
   // const {data: products, error} = useProductsQuery({id:""})
 
   // const { data: , error } = useProductQuery({ id: product_id })
-  const [name, setName] = useState(product?.Name)
-  const [price, setPrice] = useState(product?.Price?.toString())
-  const [category, setCategory] = useState(product?.Category)
+  const [name, setName] = useState(product?.name)
+  const [price, setPrice] = useState(product?.price?.toString())
+  const [category, setCategory] = useState(product?.category)
   const [selectedImage, setSelectedImage] = useState<File | undefined>(
     undefined,
   )
@@ -99,7 +99,7 @@ const EditProduct = ({ product }: { product: Product }) => {
           </Label> */}
           <div className="col-span-4">
             <Select
-              defaultValue={product?.Category ? product.Category : ''}
+              defaultValue={product?.category ? product.category : ''}
               onValueChange={(value) => {
                 setCategory(value)
               }}
