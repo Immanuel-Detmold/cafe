@@ -227,7 +227,7 @@ const NewOrder = () => {
           </div>
         )}
 
-        <Button className="mb-2 mt-2 w-min bg-amber-600">
+        <Button className="mb-4 mt-2 w-min bg-amber-600">
           Absenden <ShoppingCart className="m-1 h-4 w-4"></ShoppingCart>
         </Button>
       </div>

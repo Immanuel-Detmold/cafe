@@ -10,7 +10,7 @@ const Header = () => {
         <div className="absolute left-0 top-0">
           <SideBar />
         </div>
-        <div className="flex h-16 w-full items-center text-center font-bold">
+        <div className="flex h-14 w-full items-center text-center font-bold">
           <h1 className="w-full text-center text-foreground text-white">
             {location.pathname === '/login'
               ? 'Login'

@@ -15,7 +15,7 @@ const SideBar = () => {
     <Sheet>
       <SheetTrigger>
         {/* <Bars3Icon className={isWhiteMode ? 'text-blue-300' :"text-amber-700 w-10 h-10"} /> */}
-        <Bars3Icon className="ml-3 h-16 w-10 text-secondary" />
+        <Bars3Icon className="ml-3 h-14 w-8 text-secondary" />
       </SheetTrigger>
       <SheetContent side={'left'}>
         <SheetHeader className="text-left">
