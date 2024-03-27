@@ -105,14 +105,6 @@ const ProductsInCategory = (props: propsProductInCategory) => {
                   onChange={(e) => {
                     setProductComment(e.target.value)
                   }}
-                  onFocus={(e) => {
-                    e.preventDefault()
-                    if (inputRef.current) {
-                      setTimeout(() => {
-                        inputRef.current?.blur()
-                      }, 1) // Blur after 100 milliseconds
-                    }
-                  }}
                 />
                 <PopoverClose asChild>
                   <Button
