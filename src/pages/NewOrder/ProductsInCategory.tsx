@@ -6,7 +6,7 @@ import { PlusCircleIcon } from '@heroicons/react/24/outline'
 import { MinusCircleIcon } from '@heroicons/react/24/outline'
 import { Label } from '@radix-ui/react-label'
 import { PopoverClose } from '@radix-ui/react-popover'
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 
 import { Avatar, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
@@ -31,6 +31,7 @@ type propsProductInCategory = {
 const ProductsInCategory = (props: propsProductInCategory) => {
   const [quantity, setQuantity] = useState<number>(1)
   const [productComment, setProductComment] = useState<string>('')
+  const inputRef = useRef<HTMLTextAreaElement>(null)
   const placeHolderImage =
     'https://hmwxeqgcfhhumndveboe.supabase.co/storage/v1/object/public/ProductImages/PlaceHolder.jpg?t=2024-03-14T12%3A07%3A02.697Z'
 
@@ -97,11 +98,20 @@ const ProductsInCategory = (props: propsProductInCategory) => {
                   </div>
                 </div>
                 <Textarea
+                  ref={inputRef}
                   placeholder="Kommentar"
                   className="mt-2"
                   value={productComment}
                   onChange={(e) => {
                     setProductComment(e.target.value)
+                  }}
+                  onFocus={(e) => {
+                    e.preventDefault()
+                    if (inputRef.current) {
+                      setTimeout(() => {
+                        inputRef.current?.blur()
+                      }, 10) // Blur after 100 milliseconds
+                    }
                   }}
                 />
                 <PopoverClose asChild>
