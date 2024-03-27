@@ -10,7 +10,7 @@ export const Navigation = () => {
   const outlet = useOutlet()
   return (
     <>
-      <div className="h-100 relative h-screen">
+      <div className="h-100 main-container relative h-screen">
         <Header />
 
         <ScrollArea className="h-[87%] w-full overflow-hidden">
