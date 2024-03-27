@@ -227,7 +227,10 @@ const NewOrder = () => {
           </div>
         )}
 
-        <Button className="mb-4 mt-2 w-min bg-amber-600">
+        <Button
+          className="mb-4 mt-2 w-min bg-amber-600"
+          disabled={dataOrderItems.length === 0}
+        >
           Absenden <ShoppingCart className="m-1 h-4 w-4"></ShoppingCart>
         </Button>
       </div>

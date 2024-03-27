@@ -1,5 +1,7 @@
 import { useOutlet } from 'react-router-dom'
 
+import { Toaster } from '@/components/ui/toaster'
+
 import Header from './Header'
 import Navbar from './Navbar'
 import { ScrollArea } from './ui/scroll-area'
@@ -16,6 +18,7 @@ export const Navigation = () => {
         </ScrollArea>
 
         <Navbar />
+        <Toaster />
       </div>
     </>
   )

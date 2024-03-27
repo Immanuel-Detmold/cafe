@@ -1,5 +1,8 @@
 import { Product } from '@/data/useProducts'
+import { useUpdateProductMutation } from '@/data/useProducts'
+import { supabase } from '@/services/supabase'
 import { useState } from 'react'
+import { v4 as uuidv4 } from 'uuid'
 
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -20,6 +23,8 @@ import {
   SheetTitle,
   SheetTrigger,
 } from '@/components/ui/sheet'
+import { Textarea } from '@/components/ui/textarea'
+import { useToast } from '@/components/ui/use-toast'
 
 import DeleteProduct from './DeleteProduct'
 
@@ -33,26 +38,84 @@ const EditProduct = ({ product }: { product: Product }) => {
   const [name, setName] = useState(product?.name)
   const [price, setPrice] = useState(product?.price?.toString())
   const [category, setCategory] = useState(product?.category)
+  const [method, setMethod] = useState<string | null>(product?.method)
+  const [sheetOpen, setSheetOpen] = useState(false)
+  const { toast } = useToast()
   const [selectedImage, setSelectedImage] = useState<File | undefined>(
     undefined,
   )
 
   const [missing_fields, setMissingFields] = useState<boolean | null>(null)
+  const { mutate: editProduct } = useUpdateProductMutation(product.id)
 
-  const handleEditProduct = (event: React.FormEvent) => {
+  const handleEditProduct = async (event: React.FormEvent) => {
+    let img_uuid: string | null = ''
+    if (selectedImage) {
+      img_uuid = await handleUpload(selectedImage)
+    } else {
+      img_uuid = product?.image
+    }
     event.preventDefault()
     if (name === '' || price === '' || category === '') {
       setMissingFields(true)
       return
     } else {
       setMissingFields(false)
-      // To DO!
+      editProduct({
+        name: name,
+        price: parseFloat(price),
+        category: category,
+        method: method,
+        image: img_uuid,
+      })
+
+      console.log('Updating Product!')
+      setSheetOpen(false)
+      toast({
+        title: 'Produkt aktualisiert!✅',
+      })
     }
   }
 
+  // Upload Image to Supabase Storage
+  const handleUpload = async (file: File) => {
+    // Remove Old Image if image existed
+    if (product.image) {
+      const parts = product.image.split('/')
+      const toDeleteImgId = parts[parts.length - 1]
+      const { data, error } = await supabase.storage
+        .from('ProductImages')
+        .remove(['' + toDeleteImgId])
+      if (error) {
+        console.log(error)
+      } else {
+        console.log('New Image: ', data)
+        console.log('Old Image ID: ', toDeleteImgId)
+      }
+    }
+
+    const i_uuidv4 = uuidv4()
+    const { data, error } = await supabase.storage
+      .from('ProductImages')
+      .upload('/' + i_uuidv4, file)
+
+    if (error) {
+      console.log(error)
+    }
+    if (data) {
+      const imgUrl = supabase.storage
+        .from('ProductImages')
+        .getPublicUrl(i_uuidv4).data.publicUrl
+      console.log('IMG3: ' + i_uuidv4)
+      return imgUrl
+    }
+    console.log('IMage?:', product.image)
+
+    return i_uuidv4
+  }
+
   return (
-    <Sheet>
-      {/* <Button onClick={testFunction}>test</Button> */}
+    <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
       <SheetTrigger asChild>
         <i className="material-icons select-none text-right hover:cursor-pointer">
           edit
@@ -93,10 +156,7 @@ const EditProduct = ({ product }: { product: Product }) => {
             step=".01"
           />
 
-          {/* Dropdown */}
-          {/* <Label htmlFor="username" className="col-span-4">
-            Kategorie
-          </Label> */}
+          {/* Dropdown Category */}
           <div className="col-span-4">
             <Select
               defaultValue={product?.category ? product.category : ''}
@@ -122,19 +182,29 @@ const EditProduct = ({ product }: { product: Product }) => {
             </Select>
           </div>
 
+          {/* Method */}
+          <Label className="col-span-4 w-full">Zubereitung</Label>
+          <Textarea
+            className="col-span-4 w-full"
+            placeholder="Kommentar (optional)"
+            value={method?.toString()}
+            onChange={(e) => {
+              setMethod(e.target.value)
+            }}
+          ></Textarea>
+
           {/* Image */}
           <Label htmlFor="picture" className="col-span-4 hover:cursor-pointer">
             Bild
           </Label>
           <Input
             id="picture"
-            value={selectedImage?.name ? selectedImage.name : ''}
             type="file"
             className="col-span-4 hover:cursor-pointer"
             onChange={(event) => {
               setSelectedImage(event.target.files?.[0])
             }}
-          ></Input>
+          />
         </div>
 
         <SheetClose asChild className="">

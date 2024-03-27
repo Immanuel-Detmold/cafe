@@ -14,7 +14,6 @@ import {
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog'
 import { Button } from '@/components/ui/button'
-import { SheetClose } from '@/components/ui/sheet'
 
 const DeleteProduct = ({ product }: { product: Product }) => {
   const { mutate: deleteProductMutation } = useDeleteProductMutation()
@@ -23,7 +22,7 @@ const DeleteProduct = ({ product }: { product: Product }) => {
     deleteProductMutation(product, {
       onSuccess: () => {
         void queryClient.invalidateQueries({ queryKey: ['products'] })
-        console.log('Product deleted')
+        console.log('Deletion Sucessfull!')
       },
       onError: (error) => {
         console.error('Failed to delete product:', error)
@@ -54,14 +53,13 @@ const DeleteProduct = ({ product }: { product: Product }) => {
         <AlertDialogFooter>
           <div className="block text-right">
             <AlertDialogCancel>Abbrechen</AlertDialogCancel>
-            <SheetClose>
-              <AlertDialogAction
-                className="ml-2 bg-red-700"
-                onClick={handleDelete}
-              >
-                Löschen
-              </AlertDialogAction>
-            </SheetClose>
+
+            <AlertDialogAction
+              className="ml-2 bg-red-700"
+              onClick={handleDelete}
+            >
+              Löschen
+            </AlertDialogAction>
           </div>
         </AlertDialogFooter>
       </AlertDialogContent>

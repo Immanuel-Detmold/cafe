@@ -30,7 +30,9 @@ const OrderDetailsPage = (props: propsOrderDetailsPage) => {
     <div className="ml-2">
       <Dialog>
         <DialogTrigger asChild>
-          <Button variant="outline">Details</Button>
+          <Button variant="outline" disabled={props.dataOrderItem.length === 0}>
+            Details
+          </Button>
         </DialogTrigger>
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>

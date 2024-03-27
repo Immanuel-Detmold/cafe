@@ -14,25 +14,25 @@ export type Database = {
           comment: string | null
           created_at: string
           id: number
-          order_id: number | null
-          product_id: number | null
-          quantity: number | null
+          order_id: number
+          product_id: number
+          quantity: number
         }
         Insert: {
           comment?: string | null
           created_at?: string
           id?: number
-          order_id?: number | null
-          product_id?: number | null
-          quantity?: number | null
+          order_id: number
+          product_id: number
+          quantity: number
         }
         Update: {
           comment?: string | null
           created_at?: string
           id?: number
-          order_id?: number | null
-          product_id?: number | null
-          quantity?: number | null
+          order_id?: number
+          product_id?: number
+          quantity?: number
         }
         Relationships: [
           {
@@ -57,24 +57,27 @@ export type Database = {
           created_at: string
           customer_name: string | null
           id: number
-          price: number | null
-          status: Database["public"]["Enums"]["order_status"] | null
+          payment_method: string | null
+          price: number
+          status: Database["public"]["Enums"]["order_status"]
         }
         Insert: {
           comment?: string | null
           created_at?: string
           customer_name?: string | null
           id?: number
-          price?: number | null
-          status?: Database["public"]["Enums"]["order_status"] | null
+          payment_method?: string | null
+          price: number
+          status: Database["public"]["Enums"]["order_status"]
         }
         Update: {
           comment?: string | null
           created_at?: string
           customer_name?: string | null
           id?: number
-          price?: number | null
-          status?: Database["public"]["Enums"]["order_status"] | null
+          payment_method?: string | null
+          price?: number
+          status?: Database["public"]["Enums"]["order_status"]
         }
         Relationships: []
       }
@@ -84,6 +87,7 @@ export type Database = {
           created_at: string
           id: number
           image: string | null
+          method: string | null
           name: string
           price: number
         }
@@ -92,6 +96,7 @@ export type Database = {
           created_at?: string
           id?: number
           image?: string | null
+          method?: string | null
           name: string
           price: number
         }
@@ -100,6 +105,7 @@ export type Database = {
           created_at?: string
           id?: number
           image?: string | null
+          method?: string | null
           name?: string
           price?: number
         }
