@@ -110,7 +110,7 @@ const ProductsInCategory = (props: propsProductInCategory) => {
                     if (inputRef.current) {
                       setTimeout(() => {
                         inputRef.current?.blur()
-                      }, 10) // Blur after 100 milliseconds
+                      }, 1) // Blur after 100 milliseconds
                     }
                   }}
                 />
