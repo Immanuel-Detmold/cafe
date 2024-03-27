@@ -1,9 +1,9 @@
 import { Bars3Icon } from '@heroicons/react/24/outline'
+import { useState } from 'react'
 import { NavLink } from 'react-router-dom'
 
 import {
   Sheet,
-  SheetClose,
   SheetContent,
   SheetHeader,
   SheetTitle,
@@ -11,48 +11,37 @@ import {
 } from '@/components/ui/sheet'
 
 const SideBar = () => {
+  const [sheetOpen, setSheetOpen] = useState(false)
   return (
-    <Sheet>
+    <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
       <SheetTrigger>
-        {/* <Bars3Icon className={isWhiteMode ? 'text-blue-300' :"text-amber-700 w-10 h-10"} /> */}
-        <Bars3Icon className="ml-3 h-16 w-10 text-secondary" />
+        <Bars3Icon className="ml-3 h-14 w-8 text-secondary" />
       </SheetTrigger>
       <SheetContent side={'left'}>
         <SheetHeader className="text-left">
           <SheetTitle>Info</SheetTitle>
 
-          {/*  Buttons */}
-          {/* <Button>Alle Produkte</Button>
-          <Button>Alle Bestellungen</Button>
-          <Button>Statistik (Offen)</Button>
-          <Button>Statistik (Abgeschlossen)</Button> */}
-
           {/*  NavLinks */}
-          <SheetClose asChild>
-            <NavLink
-              to="/all-products"
-              className={({ isActive }) =>
-                isActive ? 'rounded-md bg-gray-100 p-2' : 'p-2'
-              }
-            >
-              <div>Alle Produkte</div>
-            </NavLink>
-          </SheetClose>
-          <SheetClose asChild>
-            <NavLink
-              to="/all-products"
-              className={({ isActive }) =>
-                isActive ? 'rounded-md bg-gray-100 p-2' : 'p-2'
-              }
-            >
-              <div>Alle Bestellungen</div>
-            </NavLink>
-          </SheetClose>
+          <NavLink
+            to="/all-products"
+            className={({ isActive }) =>
+              isActive ? 'rounded-md bg-gray-100 p-2' : 'p-2'
+            }
+            onClick={() => {
+              setSheetOpen(false)
+            }}
+          >
+            <div>Alle Produkte</div>
+          </NavLink>
+
           <NavLink
             to="/"
             className={({ isActive }) =>
               isActive ? 'rounded-md bg-gray-100 p-2' : 'p-2'
             }
+            onClick={() => {
+              setSheetOpen(false)
+            }}
           >
             <div>Statistik (Offen)</div>
           </NavLink>
@@ -61,6 +50,9 @@ const SideBar = () => {
             className={({ isActive }) =>
               isActive ? 'rounded-md bg-gray-100 p-2' : 'p-2'
             }
+            onClick={() => {
+              setSheetOpen(false)
+            }}
           >
             <div>Statistik (Abgeschlossen)</div>
           </NavLink>
@@ -69,6 +61,9 @@ const SideBar = () => {
             className={({ isActive }) =>
               isActive ? 'rounded-md bg-gray-100 p-2' : 'p-2'
             }
+            onClick={() => {
+              setSheetOpen(false)
+            }}
           >
             <div>Me</div>
           </NavLink>
@@ -77,6 +72,9 @@ const SideBar = () => {
             className={({ isActive }) =>
               isActive ? 'rounded-md bg-gray-100 p-2' : 'p-2'
             }
+            onClick={() => {
+              setSheetOpen(false)
+            }}
           >
             <div>Login</div>
           </NavLink>

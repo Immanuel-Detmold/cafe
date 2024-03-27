@@ -56,7 +56,7 @@ export const useDeleteProductMutation = () =>
       if (error) {
         throw error
       } else {
-        console.log('Product data deleted.')
+        console.log('Product data deleted:', product)
       }
 
       // If img exist -> remove from supabase storage
@@ -71,8 +71,7 @@ export const useDeleteProductMutation = () =>
         if (removeError) {
           throw removeError
         } else {
-          console.log('Product Image removed.')
-          console.log(data)
+          console.log('Product Image removed.', data)
         }
       }
     },
@@ -92,5 +91,32 @@ export const useCreateProductMutation = () =>
         throw error
       }
       return data
+    },
+    onSuccess: async () => {
+      // After the mutation succeeds, invalidate the useProductsQuery
+      await queryClient.invalidateQueries({ queryKey: ['products'] })
+    },
+  })
+
+type UpdateProduct = Database['public']['Tables']['Products']['Update']
+
+export const useUpdateProductMutation = (product_id: number) =>
+  useMutation({
+    mutationFn: async (updatedProduct: UpdateProduct) => {
+      const { data, error } = await supabase
+        .from('Products')
+        .update(updatedProduct)
+        .eq('id', product_id)
+        .select()
+      if (error) {
+        console.log(error)
+        throw error
+      }
+
+      return data
+    },
+    onSuccess: async () => {
+      // After the mutation succeeds, invalidate the useProductsQuery
+      await queryClient.invalidateQueries({ queryKey: ['products'] })
     },
   })

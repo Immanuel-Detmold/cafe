@@ -1,7 +1,7 @@
 import { useCreateProductMutation } from '@/data/useProducts'
 import { supabase } from '@/services/supabase'
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+// import { useNavigate } from 'react-router-dom'
 import { v4 as uuidv4 } from 'uuid'
 
 import { Button } from '@/components/ui/button'
@@ -24,12 +24,17 @@ import {
   SheetTitle,
   SheetTrigger,
 } from '@/components/ui/sheet'
+import { Textarea } from '@/components/ui/textarea'
+import { useToast } from '@/components/ui/use-toast'
 
 const CreateProduct = () => {
-  const navigate = useNavigate()
+  // const navigate = useNavigate()
+  const { toast } = useToast()
   const [name, setName] = useState('')
   const [price, setPrice] = useState('')
   const [category, setCategory] = useState('Auswählen')
+  const [method, setMethod] = useState<string>('')
+  const [sheetOpen, setSheetOpen] = useState(false)
   const [selectedImage, setSelectedImage] = useState<File | undefined>(
     undefined,
   )
@@ -54,6 +59,10 @@ const CreateProduct = () => {
       price: parseFloat(price),
       category: category,
       image: img_uuid,
+      method: method,
+    })
+    toast({
+      title: 'Produkt wurde angelegt! ✅',
     })
   }
   // Upload Image to Supabase Storage
@@ -78,7 +87,7 @@ const CreateProduct = () => {
   }
 
   return (
-    <Sheet>
+    <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
       <SheetTrigger
         asChild
         onClick={() => {
@@ -153,6 +162,18 @@ const CreateProduct = () => {
             </Select>
           </div>
 
+          {/* Method */}
+
+          <Label className="col-span-4 w-full">Zubereitung</Label>
+          <Textarea
+            className="col-span-4 w-full"
+            placeholder="Kommentar (optional)"
+            value={method}
+            onChange={(e) => {
+              setMethod(e.target.value)
+            }}
+          ></Textarea>
+
           {/* Image */}
           <Label htmlFor="picture" className="col-span-4 hover:cursor-pointer">
             Bild
@@ -190,7 +211,8 @@ const CreateProduct = () => {
                   handleAddProduct()
                     .then(() => {
                       setIsLoading(false)
-                      navigate('/new-order')
+                      setSheetOpen(false)
+                      // navigate('/new-order')
                     })
                     .catch((error) => {
                       setIsLoading(false)

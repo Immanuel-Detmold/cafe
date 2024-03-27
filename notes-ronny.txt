@@ -13,3 +13,10 @@ prettier
 
 # openssh einrichten
 private key mitteilen
+
+
+Cache Programmieren
+
+Kategorien bei Offener Bestellung
+
+Zubereitung für Produkte
