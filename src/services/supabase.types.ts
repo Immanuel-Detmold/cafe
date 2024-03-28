@@ -119,7 +119,7 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      order_status: "waiting" | "ready" | "finished"
+      order_status: "waiting" | "processing" | "ready" | "finished"
     }
     CompositeTypes: {
       [_ in never]: never

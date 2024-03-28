@@ -1,4 +1,4 @@
-import { OrderItem } from '@/data/useOrders'
+import { OrderItem, useSaveOrderMutation } from '@/data/useOrders'
 import { useProductsQuery } from '@/data/useProducts'
 import { Product } from '@/data/useProducts'
 import { Label } from '@radix-ui/react-label'
@@ -10,6 +10,7 @@ import { Input } from '@/components/ui/input'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { Switch } from '@/components/ui/switch'
 import { Textarea } from '@/components/ui/textarea'
+import { useToast } from '@/components/ui/use-toast'
 
 import OrderDetailsPage from './OrderDetailsPage'
 import ProductsInCategory from './ProductsInCategory'
@@ -35,6 +36,7 @@ const NewOrder = () => {
   const [customPriceValue, setCustomPriceValue] = useState<string>('')
   const [orderComment, setOrderComment] = useState<string>('')
   const [orderName, setOrderName] = useState<string>('')
+  const { toast } = useToast()
 
   useEffect(() => {
     // Update Order Price
@@ -46,6 +48,22 @@ const NewOrder = () => {
     )
   }, [dataOrderItems, products])
 
+  // Load OrderItems from Cache if exists.
+  useEffect(() => {
+    if (products) {
+      const sessionData = sessionStorage.getItem('orderItems')
+      let sessionData2: OrderItem[] = []
+      if (sessionData) {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+        sessionData2 = JSON.parse(sessionData)
+      } else {
+        sessionData2 = []
+      }
+      console.log('Loaded dataOrderItems from Cache:', sessionData2)
+      setDataOrderItems(sessionData2)
+    }
+  }, [products])
+
   // Grouped Products by Category
   const groupedProducts = products?.reduce((groupMap, product) => {
     const key = product.category || 'Other'
@@ -56,7 +74,7 @@ const NewOrder = () => {
     }
   }, {} as GroupedProducts)
 
-  // Const handleAddOrder
+  // Const handleAddOrder. Only Local, no database
   const handleAddOrder = (
     product_id: number,
     quantity: number,
@@ -82,6 +100,7 @@ const NewOrder = () => {
           itemToUpdate.quantity = quantity // update the quantity
           console.log('Updated Item in Order:', updatedItems)
         }
+        sessionStorage.setItem('orderItems', JSON.stringify(updatedItems))
         return updatedItems // return the updated items
       })
     }
@@ -101,6 +120,7 @@ const NewOrder = () => {
             products: products || [],
           }),
         )
+        sessionStorage.setItem('orderItems', JSON.stringify(updatedItems))
         return updatedItems
       })
     }
@@ -113,8 +133,59 @@ const NewOrder = () => {
     )
     setDataOrderItems(() => {
       console.log('Deleted Item in Orders:', updatedOrderItems)
+      sessionStorage.setItem('orderItems', JSON.stringify(updatedOrderItems))
       return updatedOrderItems
     })
+  }
+
+  // Save Order
+  const {
+    mutate: saveOrder,
+    error: insertOrderError,
+    isSuccess,
+  } = useSaveOrderMutation()
+
+  const handleSumitOrder = () => {
+    // Save Order to Database
+
+    let orderPrice: number = 0
+    if (customPrice) {
+      orderPrice = parseFloat(customPriceValue)
+    } else {
+      orderPrice = sumOrderPrice
+    }
+
+    saveOrder({
+      customer_name: orderName,
+      comment: orderComment,
+      payment_method: paymentMethod,
+      price: orderPrice,
+      status: 'waiting',
+    })
+
+    console.log('Mutation data: ', isSuccess)
+
+    if (insertOrderError) {
+      console.log('Error Inserting: ', insertOrderError)
+      toast({
+        title: 'Bestellung konnte nicht gespeichert werden! ❌',
+      })
+    } else {
+      toast({
+        title: 'Bestellung wurde gespeichert! ✅',
+      })
+    }
+
+    // Clear Data
+    setDataOrderItems([])
+    setCustomPrice(false)
+    setCustomPriceValue('')
+    setOrderComment('')
+    setOrderName('')
+    setPaymentMethod('cash')
+    setSumOrderPrice(0)
+
+    sessionStorage.setItem('orderItems', JSON.stringify([]))
   }
 
   return (
@@ -230,6 +301,7 @@ const NewOrder = () => {
         <Button
           className="mb-4 mt-2 w-min bg-amber-600"
           disabled={dataOrderItems.length === 0}
+          onClick={handleSumitOrder}
         >
           Absenden <ShoppingCart className="m-1 h-4 w-4"></ShoppingCart>
         </Button>

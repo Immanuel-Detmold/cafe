@@ -11,8 +11,8 @@ export const useProductsQuery = ({
 }: {
   searchTerm: string
   ascending: boolean
-}) =>
-  useQuery({
+}) => {
+  return useQuery({
     queryKey: ['products', searchTerm, ascending],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -27,6 +27,7 @@ export const useProductsQuery = ({
       return data
     },
   })
+}
 
 // Get only one Product - Not used in this project
 export const useProductQuery = ({ id }: { id: number }) =>
