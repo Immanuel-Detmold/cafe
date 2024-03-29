@@ -43,7 +43,7 @@ export const useOrderItemsQuery = () =>
 export const useSaveOrderMutation = () => {
   return useMutation({
     mutationFn: async (order: InsertOrders) => {
-      const { data: supabaseData, error } = await supabase
+      const { data: data, error } = await supabase
         .from('Orders')
         .insert(order)
         .select()
@@ -51,11 +51,12 @@ export const useSaveOrderMutation = () => {
         console.log(error)
         throw error
       }
-      console.log('Order Data:', supabaseData)
-      return supabaseData
+      console.log('Order Data:', data)
+      return data
     },
   })
 }
+
 // function useSessionStorage(key: string) {
 //   const [value, setValue] = useState<OrderItem[]>(() => {
 //     const storedValue: string | null = sessionStorage.getItem(key);

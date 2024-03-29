@@ -139,11 +139,7 @@ const NewOrder = () => {
   }
 
   // Save Order
-  const {
-    mutate: saveOrder,
-    error: insertOrderError,
-    isSuccess,
-  } = useSaveOrderMutation()
+  const { mutate: saveOrder } = useSaveOrderMutation()
 
   const handleSumitOrder = () => {
     // Save Order to Database
@@ -155,26 +151,30 @@ const NewOrder = () => {
       orderPrice = sumOrderPrice
     }
 
-    saveOrder({
-      customer_name: orderName,
-      comment: orderComment,
-      payment_method: paymentMethod,
-      price: orderPrice,
-      status: 'waiting',
-    })
-
-    console.log('Mutation data: ', isSuccess)
-
-    if (insertOrderError) {
-      console.log('Error Inserting: ', insertOrderError)
-      toast({
-        title: 'Bestellung konnte nicht gespeichert werden! ❌',
-      })
-    } else {
-      toast({
-        title: 'Bestellung wurde gespeichert! ✅',
-      })
-    }
+    saveOrder(
+      {
+        customer_name: orderName,
+        comment: orderComment,
+        payment_method: paymentMethod,
+        price: orderPrice,
+        status: 'waiting',
+      },
+      {
+        onSuccess: (data) => {
+          console.log('Order saved on Success!', data)
+          // const order_id = data[0]?.id
+          toast({
+            title: 'Bestellung wurde gespeichert! ✅',
+          })
+        },
+        onError: (error) => {
+          console.log('Error saving Order:', error)
+          toast({
+            title: 'Bestellung konnte nicht gespeichert werden! ❌',
+          })
+        },
+      },
+    )
 
     // Clear Data
     setDataOrderItems([])
