@@ -48,10 +48,8 @@ export const useSaveOrderMutation = () => {
         .insert(order)
         .select()
       if (error) {
-        console.log(error)
         throw error
       }
-      console.log('Order Data:', data)
       return data
     },
   })
