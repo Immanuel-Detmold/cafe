@@ -5,7 +5,7 @@ import AllProducts from './pages/AllProducts/AllProducts'
 import { Login } from './pages/Login'
 import { Me } from './pages/Me'
 import NewOrder from './pages/NewOrder/NewOrder'
-import Open from './pages/Open'
+import Open from './pages/Open/Open'
 import ReadyForPickup from './pages/ReadyForPickup'
 
 // const [isWhiteMode, setWhiteMode] = useState(window.matchMedia('(prefers-color-scheme: dark)')

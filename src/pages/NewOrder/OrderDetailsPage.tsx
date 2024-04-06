@@ -90,37 +90,8 @@ const OrderDetailsPage = (props: propsOrderDetailsPage) => {
                 </div>
               )
             })}
-
-            {/* Example Data */}
-            {/* <div className="grid grid-cols-4 items-center gap-4">
-              <div className="flex items-center col-span-2">
-                <Label className="">Kaffee</Label>
-                <Avatar className="ml-1 h-6 w-6">
-                  <AvatarImage src={placeHolderImage} />
-                </Avatar>
-              </div>
-              <Label className="flex items-center">
-                2 <TrashIcon className="ml-2 h-5 w-5 cursor-pointer" />
-              </Label>
-              <Label>2€</Label>
-            </div>
-
-            <div className="grid grid-cols-4 items-center gap-4">
-              <div className="flex items-center col-span-2">
-                <Label className="">Tee</Label>
-                <Avatar className="ml-1 h-6 w-6">
-                  <AvatarImage src={placeHolderImage} />
-                </Avatar>
-              </div>
-              <Label className="flex items-center">
-                3 <TrashIcon className="ml-2 h-5 w-5 cursor-pointer" />
-              </Label>
-              <Label>4€</Label>
-            </div> */}
           </div>
-          <DialogFooter>
-            <Button type="submit">Speichern</Button>
-          </DialogFooter>
+          <DialogFooter></DialogFooter>
         </DialogContent>
       </Dialog>
     </div>

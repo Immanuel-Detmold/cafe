@@ -44,7 +44,7 @@ const ProductsInCategory = (props: propsProductInCategory) => {
             <PopoverTrigger asChild>
               <Button
                 variant="outline"
-                className="h-14"
+                className={`h-14 rounded-full px-2 ${props.dataOrderItems.some((item) => item.product_id === product.id) ? 'bg-gray-200' : ''}`}
                 onClick={() => {
                   setQuantity(1)
                   setProductComment('')

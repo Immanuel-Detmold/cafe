@@ -1,6 +1,11 @@
-import { OrderItem, useSaveOrderMutation } from '@/data/useOrders'
+import {
+  OrderItem,
+  useSaveOrderItemsMutation,
+  useSaveOrderMutation,
+} from '@/data/useOrders'
 import { useProductsQuery } from '@/data/useProducts'
 import { Product } from '@/data/useProducts'
+import { ArrowPathIcon } from '@heroicons/react/24/outline'
 import { Label } from '@radix-ui/react-label'
 import { ShoppingCart } from 'lucide-react'
 import { useEffect, useState } from 'react'
@@ -140,6 +145,8 @@ const NewOrder = () => {
 
   // Save Order
   const { mutate: saveOrder } = useSaveOrderMutation()
+  // Save OrderItems
+  const { mutate: saveOrderItems } = useSaveOrderItemsMutation()
 
   const handleSumitOrder = () => {
     // Save Order to Database
@@ -162,13 +169,16 @@ const NewOrder = () => {
       {
         onSuccess: (data) => {
           console.log('Order saved on Success!', data)
-          // const order_id = data[0]?.id
-          toast({
-            title: 'Bestellung wurde gespeichert! ✅',
-          })
+          const order_id = data[0]?.id
+          if (order_id) {
+            handleSaveOrderItems(order_id)
+          }
         },
         onError: (error) => {
           console.log('Error saving Order:', error)
+          // To DO! If Order Saved, but Failed to save OrderItmes, then Delete Order
+          // const { mutate: deleteOrder } = useDeleteOrderMutation()
+          // deleteOrder()
           toast({
             title: 'Bestellung konnte nicht gespeichert werden! ❌',
           })
@@ -186,6 +196,39 @@ const NewOrder = () => {
     setSumOrderPrice(0)
 
     sessionStorage.setItem('orderItems', JSON.stringify([]))
+  }
+
+  const handleSaveOrderItems = (order_id: number) => {
+    const orderItems = dataOrderItems.map((item) => {
+      return {
+        comment: item.comment,
+        order_id: order_id,
+        product_id: item.product_id,
+        product_name:
+          products?.find((product) => product.id === item.product_id)?.name ||
+          'unkown',
+        product_price:
+          products?.find((product) => product.id === item.product_id)?.price ||
+          0,
+        quantity: item.quantity,
+      }
+    })
+
+    console.log(orderItems)
+    saveOrderItems(orderItems, {
+      onSuccess: (data) => {
+        console.log('OrderItems saved on Success!', data)
+        toast({
+          title: 'Bestellung wurde gespeichert! ✅',
+        })
+      },
+      onError: (error) => {
+        console.log('Error saving OrderItems:', error)
+        toast({
+          title: 'Bestellung konnte nicht gespeichert werden! ❌',
+        })
+      },
+    })
   }
 
   return (
@@ -298,13 +341,32 @@ const NewOrder = () => {
           </div>
         )}
 
-        <Button
-          className="mb-4 mt-2 w-min bg-amber-600"
-          disabled={dataOrderItems.length === 0}
-          onClick={handleSumitOrder}
-        >
-          Absenden <ShoppingCart className="m-1 h-4 w-4"></ShoppingCart>
-        </Button>
+        <div className="mb-4 flex justify-between">
+          <Button
+            className="mb-4 mt-2 w-min bg-amber-600"
+            disabled={dataOrderItems.length === 0}
+            onClick={handleSumitOrder}
+          >
+            Absenden <ShoppingCart className="ml-1 h-4 w-4"></ShoppingCart>
+          </Button>
+
+          <Button
+            className=" ml-2 mt-2 w-min bg-amber-600"
+            disabled={dataOrderItems.length === 0}
+            onClick={() => {
+              setDataOrderItems([])
+              setCustomPrice(false)
+              setCustomPriceValue('')
+              setOrderComment('')
+              setOrderName('')
+              setPaymentMethod('cash')
+              setSumOrderPrice(0)
+            }}
+          >
+            Reset
+            <ArrowPathIcon className="ml-1 h-4 w-4" />
+          </Button>
+        </div>
       </div>
     </div>
   )

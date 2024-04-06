@@ -55,6 +55,41 @@ export const useSaveOrderMutation = () => {
   })
 }
 
+export type InsertOrderItems =
+  Database['public']['Tables']['OrderItems']['Insert']
+// Function save OrderItems
+export const useSaveOrderItemsMutation = () => {
+  return useMutation({
+    mutationFn: async (orderItems: InsertOrderItems[]) => {
+      const { data, error } = await supabase
+        .from('OrderItems')
+        .insert(orderItems)
+        .select()
+      if (error) {
+        throw error
+      }
+      return data
+    },
+  })
+}
+
+// Function delete Order
+export const useDeleteOrderMutation = () => {
+  return useMutation({
+    mutationFn: async (orderId: number) => {
+      const { data, error } = await supabase
+        .from('Orders')
+        .delete()
+        .eq('id', orderId)
+        .select()
+      if (error) {
+        throw error
+      }
+      return data
+    },
+  })
+}
+
 // function useSessionStorage(key: string) {
 //   const [value, setValue] = useState<OrderItem[]>(() => {
 //     const storedValue: string | null = sessionStorage.getItem(key);
