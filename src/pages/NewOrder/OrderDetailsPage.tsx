@@ -1,3 +1,4 @@
+import { imgPlaceHolder } from '@/data/data'
 import { OrderItem } from '@/data/useOrders'
 import { Product } from '@/data/useProducts'
 import { TrashIcon } from '@heroicons/react/24/outline'
@@ -23,9 +24,6 @@ type propsOrderDetailsPage = {
 }
 
 const OrderDetailsPage = (props: propsOrderDetailsPage) => {
-  const placeHolderImage =
-    'https://hmwxeqgcfhhumndveboe.supabase.co/storage/v1/object/public/ProductImages/PlaceHolder.jpg?t=2024-03-14T12%3A07%3A02.697Z'
-
   return (
     <div className="ml-2">
       <Dialog>
@@ -72,7 +70,7 @@ const OrderDetailsPage = (props: propsOrderDetailsPage) => {
                   <div className="col-span-2 flex items-center">
                     <Avatar className="h-6 w-6">
                       <AvatarImage
-                        src={product.image ? product.image : placeHolderImage}
+                        src={product.image ? product.image : imgPlaceHolder}
                       />
                     </Avatar>
                     <Label className="ml-1">{product.name}</Label>

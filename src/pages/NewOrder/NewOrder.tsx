@@ -361,6 +361,7 @@ const NewOrder = () => {
               setOrderName('')
               setPaymentMethod('cash')
               setSumOrderPrice(0)
+              sessionStorage.setItem('orderItems', JSON.stringify([]))
             }}
           >
             Reset

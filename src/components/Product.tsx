@@ -1,3 +1,4 @@
+import { imgPlaceHolder } from '@/data/data'
 import { type Product } from '@/data/useProducts'
 import EditProduct from '@/pages/AllProducts/EditProduct'
 
@@ -9,9 +10,7 @@ import {
 } from '@/components/ui/card'
 
 const Product = ({ product }: { product: Product }) => {
-  const imgUrl = product.image
-    ? product.image
-    : 'https://hmwxeqgcfhhumndveboe.supabase.co/storage/v1/object/public/ProductImages/PlaceHolder.jpg'
+  const imgUrl = product.image ? product.image : imgPlaceHolder
   return (
     <div className="h-full">
       <Card className="h-full overflow-hidden p-1">

@@ -13,11 +13,16 @@ export type OrderItem = {
 }
 
 // Functions for Table Oders
-export const useOrdersQuery = () =>
+type order_status = Database['public']['Enums']['order_status']
+
+export const useOrderQuery = (status: order_status) =>
   useQuery({
-    queryKey: ['orders'],
+    queryKey: ['orders', status],
     queryFn: async () => {
-      const { data, error } = await supabase.from('Orders').select()
+      const { data, error } = await supabase
+        .from('Orders')
+        .select()
+        .eq('status', status)
 
       if (error) {
         throw error
@@ -26,15 +31,20 @@ export const useOrdersQuery = () =>
     },
   })
 
-// Functions for Tablle OrderItems
-export const useOrderItemsQuery = () =>
+// Requests OrderItems with specific orderIds
+export const useOrderItemsQuery = (orderIds: number[]) =>
   useQuery({
-    queryKey: ['orderItems'],
+    queryKey: ['orderItems', orderIds],
     queryFn: async () => {
-      const { data, error } = await supabase.from('OrderItems').select()
+      const { data, error } = await supabase
+        .from('OrderItems')
+        .select()
+        .in('id', orderIds)
+
       if (error) {
         throw error
       }
+
       return data
     },
   })
