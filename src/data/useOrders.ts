@@ -1,36 +1,18 @@
+import { queryClient } from '@/App'
 import { supabase } from '@/services/supabase'
 import { Database } from '@/services/supabase.types'
 import { useMutation, useQuery } from '@tanstack/react-query'
 
-export type GetOrders = Database['public']['Tables']['Orders']['Row']
+export type Orders = Database['public']['Tables']['Orders']['Row']
 export type InsertOrders = Database['public']['Tables']['Orders']['Insert']
 export type OrderItems = Database['public']['Tables']['OrderItems']['Row']
-
 export type OrderItem = {
   product_id: number
   quantity: number
   comment: string
 }
 
-// Functions for Table Oders
-type order_status = Database['public']['Enums']['order_status']
-
-export const useOrderQuery = (status: order_status) =>
-  useQuery({
-    queryKey: ['orders', status],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from('Orders')
-        .select()
-        .eq('status', status)
-
-      if (error) {
-        throw error
-      }
-      return data
-    },
-  })
-
+export type order_status = Database['public']['Enums']['order_status']
 // Requests OrderItems with specific orderIds
 export const useOrderItemsQuery = (orderIds: number[]) =>
   useQuery({
@@ -97,20 +79,35 @@ export const useDeleteOrderMutation = () => {
       }
       return data
     },
+    onSuccess: async () => {
+      // After the mutation succeeds, invalidate the useProductsQuery
+      await queryClient.invalidateQueries({ queryKey: ['ordersAndItems'] })
+    },
   })
 }
 
-// function useSessionStorage(key: string) {
-//   const [value, setValue] = useState<OrderItem[]>(() => {
-//     const storedValue: string | null = sessionStorage.getItem(key);
-//     return storedValue ? JSON.parse(storedValue) : [];
-//   });
+// Get Order and Items in Order
+// Functions for Table Oders
 
-//   useEffect(() => {
-//     sessionStorage.setItem(key, JSON.stringify(value));
-//   }, [key, value]);
+export const useOrderAndItemsQuery = (status: order_status) =>
+  useQuery({
+    queryKey: ['ordersAndItems', status],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('Orders')
+        .select(
+          `*, 
+        OrderItems (*, 
+          Products (*)
+        )`,
+        )
+        .eq('status', status)
+        .gte('created_at', new Date().toISOString().split('T')[0] + ' 00:00:00')
+        .order('created_at', { ascending: false })
 
-//   return [value, setValue] as const;
-// }
-
-// export default useSessionStorage;
+      if (error) {
+        throw error
+      }
+      return data
+    },
+  })
