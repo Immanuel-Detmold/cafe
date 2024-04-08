@@ -10,18 +10,20 @@ import { Avatar, AvatarImage } from '@radix-ui/react-avatar'
 import { Label } from '@radix-ui/react-label'
 import { Separator } from '@radix-ui/react-select'
 
-import { Button } from '@/components/ui/button'
-
 import DeleteOrder from './DeleteOrder'
 import OrderDetails from './OrderDetails'
+import OrderStatusPage from './OrderStatusSelect'
 import { formatDateToTime } from './helperFunctions'
 
 const Open = () => {
-  const { data: openOrders, error } = useOrderAndItemsQuery('waiting')
+  const { data: openOrders, error } = useOrderAndItemsQuery([
+    'waiting',
+    'processing',
+  ])
 
   console.log(openOrders)
   return (
-    <div className="flex flex-col">
+    <div className="mb-6 flex flex-col">
       {error && <div>{JSON.stringify(error)}</div>}
       {(!openOrders || openOrders.length === 0) && (
         <Label className="mt-2 font-bold">Keine Bestellungen Vorhanden!</Label>
@@ -108,9 +110,11 @@ const Open = () => {
                 <OrderDetails />
                 <div className="flex w-full justify-end">
                   <DeleteOrder order={order} />
-                  <Button className="ml-2" variant="default">
+
+                  <OrderStatusPage order={order} />
+                  {/* <Button className="ml-2" variant="default">
                     In Bearbeitung
-                  </Button>
+                  </Button> */}
                 </div>
               </div>
             </div>

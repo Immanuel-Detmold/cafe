@@ -1,5 +1,5 @@
 import { queryClient } from '@/App'
-import { Orders, useDeleteOrderMutation } from '@/data/useOrders'
+import { Order, useDeleteOrderMutation } from '@/data/useOrders'
 import { TrashIcon } from '@heroicons/react/24/outline'
 
 import {
@@ -16,7 +16,7 @@ import {
 import { Button } from '@/components/ui/button'
 import { useToast } from '@/components/ui/use-toast'
 
-const DeleteOrder = ({ order }: { order: Orders }) => {
+const DeleteOrder = ({ order }: { order: Order }) => {
   const { mutate: deleteOrder } = useDeleteOrderMutation()
 
   const { toast } = useToast()
@@ -36,7 +36,7 @@ const DeleteOrder = ({ order }: { order: Orders }) => {
       <AlertDialogTrigger asChild>
         <div className="">
           <Button className="w-min bg-red-700" variant="destructive">
-            <TrashIcon className="mx-2 h-5 w-5" />
+            <TrashIcon className="h-4 w-4" />
           </Button>
         </div>
       </AlertDialogTrigger>

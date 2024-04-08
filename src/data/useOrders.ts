@@ -3,7 +3,7 @@ import { supabase } from '@/services/supabase'
 import { Database } from '@/services/supabase.types'
 import { useMutation, useQuery } from '@tanstack/react-query'
 
-export type Orders = Database['public']['Tables']['Orders']['Row']
+export type Order = Database['public']['Tables']['Orders']['Row']
 export type InsertOrders = Database['public']['Tables']['Orders']['Insert']
 export type OrderItems = Database['public']['Tables']['OrderItems']['Row']
 export type OrderItem = {
@@ -12,7 +12,7 @@ export type OrderItem = {
   comment: string
 }
 
-export type order_status = Database['public']['Enums']['order_status']
+export type OrderStatus = Database['public']['Enums']['order_status']
 // Requests OrderItems with specific orderIds
 export const useOrderItemsQuery = (orderIds: number[]) =>
   useQuery({
@@ -89,7 +89,7 @@ export const useDeleteOrderMutation = () => {
 // Get Order and Items in Order
 // Functions for Table Oders
 
-export const useOrderAndItemsQuery = (status: order_status) =>
+export const useOrderAndItemsQuery = (status: OrderStatus[]) =>
   useQuery({
     queryKey: ['ordersAndItems', status],
     queryFn: async () => {
@@ -101,7 +101,7 @@ export const useOrderAndItemsQuery = (status: order_status) =>
           Products (*)
         )`,
         )
-        .eq('status', status)
+        .in('status', status)
         .gte('created_at', new Date().toISOString().split('T')[0] + ' 00:00:00')
         .order('created_at', { ascending: false })
 
@@ -111,3 +111,24 @@ export const useOrderAndItemsQuery = (status: order_status) =>
       return data
     },
   })
+
+export const useChageOrderStatusMutation = (orderId: number) => {
+  return useMutation({
+    mutationFn: async (newStatus: OrderStatus) => {
+      const { data, error } = await supabase
+        .from('Orders')
+        .update({ status: newStatus })
+        .eq('id', orderId)
+        .select()
+
+      if (error) {
+        throw error
+      }
+      console.log(data)
+      return data
+    },
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ['ordersAndItems'] })
+    },
+  })
+}

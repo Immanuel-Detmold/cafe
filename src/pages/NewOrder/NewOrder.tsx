@@ -220,6 +220,7 @@ const NewOrder = () => {
         console.log('OrderItems saved on Success!', data)
         toast({
           title: 'Bestellung wurde gespeichert! ✅',
+          duration: 800,
         })
       },
       onError: (error) => {
