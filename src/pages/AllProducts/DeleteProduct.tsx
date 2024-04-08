@@ -14,17 +14,27 @@ import {
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog'
 import { Button } from '@/components/ui/button'
+import { useToast } from '@/components/ui/use-toast'
 
 const DeleteProduct = ({ product }: { product: Product }) => {
   const { mutate: deleteProductMutation } = useDeleteProductMutation()
+  const { toast } = useToast()
 
   const handleDelete = () => {
     deleteProductMutation(product, {
       onSuccess: () => {
-        void queryClient.invalidateQueries({ queryKey: ['products'] })
+        void queryClient.invalidateQueries({
+          queryKey: ['products'],
+        })
+        toast({ title: 'Produkt erfolgreich gelöscht! ✅' })
+
         console.log('Deletion Sucessfull!')
       },
       onError: (error) => {
+        toast({
+          title: 'Produkt konnte nicht gelöscht werden! ❌',
+          description: 'Produkt befindet sich womöglich in einer Bestellung.',
+        })
         console.error('Failed to delete product:', error)
       },
     })

@@ -124,7 +124,7 @@ export const useChageOrderStatusMutation = (orderId: number) => {
       if (error) {
         throw error
       }
-      console.log(data)
+
       return data
     },
     onSuccess: async () => {

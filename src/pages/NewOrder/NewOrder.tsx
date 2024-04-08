@@ -214,7 +214,6 @@ const NewOrder = () => {
       }
     })
 
-    console.log(orderItems)
     saveOrderItems(orderItems, {
       onSuccess: (data) => {
         console.log('OrderItems saved on Success!', data)

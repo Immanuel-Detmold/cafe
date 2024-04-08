@@ -1,6 +1,7 @@
 import { Product } from '@/data/useProducts'
 import { useUpdateProductMutation } from '@/data/useProducts'
 import { supabase } from '@/services/supabase'
+import { EditIcon } from 'lucide-react'
 import { useState } from 'react'
 import { v4 as uuidv4 } from 'uuid'
 
@@ -117,9 +118,10 @@ const EditProduct = ({ product }: { product: Product }) => {
   return (
     <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
       <SheetTrigger asChild>
-        <i className="material-icons select-none text-right hover:cursor-pointer">
+        {/* <i className="material-icons select-none text-right hover:cursor-pointer">
           edit
-        </i>
+        </i> */}
+        <EditIcon className="mb-1 mr-1 h-4 w-4 select-none text-right hover:cursor-pointer sm:mb-2 md:h-6 md:w-6 lg:h-7 lg:w-7"></EditIcon>
       </SheetTrigger>
       <SheetContent>
         <SheetHeader>
