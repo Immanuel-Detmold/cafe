@@ -104,6 +104,7 @@ const ProductsInCategory = (props: propsProductInCategory) => {
                   onChange={(e) => {
                     setProductComment(e.target.value)
                   }}
+                  tabIndex={-1}
                 />
                 <PopoverClose asChild>
                   <Button
