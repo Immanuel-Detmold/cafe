@@ -49,7 +49,7 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "public_OrderItems_product_name_fkey"
+            foreignKeyName: "public_OrderItems_product_id_fkey"
             columns: ["product_id"]
             isOneToOne: false
             referencedRelation: "Products"
@@ -91,6 +91,7 @@ export type Database = {
         Row: {
           category: string | null
           created_at: string
+          deleted: boolean | null
           id: number
           image: string | null
           method: string | null
@@ -100,6 +101,7 @@ export type Database = {
         Insert: {
           category?: string | null
           created_at?: string
+          deleted?: boolean | null
           id?: number
           image?: string | null
           method?: string | null
@@ -109,6 +111,7 @@ export type Database = {
         Update: {
           category?: string | null
           created_at?: string
+          deleted?: boolean | null
           id?: number
           image?: string | null
           method?: string | null

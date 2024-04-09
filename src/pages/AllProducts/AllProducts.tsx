@@ -10,7 +10,7 @@ const AllProducts = () => {
   const [searchTerm, setSearchTerm] = useState('')
   const [ascending, setAscending] = useState(true)
   const { data: products, error } = useProductsQuery({ searchTerm, ascending })
-
+  console.log(products)
   return (
     <>
       {error && <div>{JSON.stringify(error)}</div>}

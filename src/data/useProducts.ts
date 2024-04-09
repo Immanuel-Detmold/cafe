@@ -18,6 +18,7 @@ export const useProductsQuery = ({
       const { data, error } = await supabase
         .from('Products')
         .select()
+        .eq('deleted', false)
         .order('name', { ascending })
         .ilike('name', `%${searchTerm}%`)
 
@@ -47,13 +48,15 @@ export const useProductQuery = ({ id }: { id: number }) =>
     },
   })
 
+// Makes soft delete -> set deleted to true
 export const useDeleteProductMutation = () =>
   useMutation({
     mutationFn: async (product: Product) => {
       const { error } = await supabase
         .from('Products')
-        .delete()
+        .update({ deleted: true })
         .eq('id', product.id)
+
       if (error) {
         throw error
       } else {
