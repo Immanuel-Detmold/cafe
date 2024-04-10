@@ -1,5 +1,9 @@
 import { imgPlaceHolder } from '@/data/data'
-import { useOrderAndItemsQuery } from '@/data/useOrders'
+import {
+  useChageOrderStatusMutationV2,
+  useOrderAndItemsQuery,
+} from '@/data/useOrders'
+import { OrderStatus } from '@/data/useOrders'
 import { ShoppingBagIcon } from '@heroicons/react/24/outline'
 import { UserRoundIcon } from 'lucide-react'
 
@@ -11,10 +15,29 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover'
+import { useToast } from '@/components/ui/use-toast'
 
 const ReadyForPickup = () => {
   const { data: readyOrders } = useOrderAndItemsQuery(['ready'])
-  console.log(readyOrders)
+  const { mutate: changeStatus } = useChageOrderStatusMutationV2()
+
+  const { toast } = useToast()
+
+  const handleStatusUpdate = (orderId: number, status: OrderStatus) => {
+    changeStatus(
+      { newStatus: status, orderId: orderId },
+      {
+        onSuccess: (data) => {
+          console.log('Updated Order Status', data)
+          toast({ title: 'Bestellung Abgeschlossen ✅' })
+        },
+        onError: (error) => {
+          toast({ title: 'Fehler Status Update! ❌' })
+          console.log('Error Update Order Status: ', error)
+        },
+      },
+    )
+  }
 
   return (
     <>
@@ -79,12 +102,19 @@ const ReadyForPickup = () => {
                   variant={'default'}
                   tabIndex={-1}
                   onClick={() => {
-                    console.log('hi')
+                    handleStatusUpdate(order.id, 'finished')
                   }}
                 >
                   Abgeholt
                 </Button>
-                <Button className="m-1 w-40" variant={'default'} tabIndex={-1}>
+                <Button
+                  className="m-1 w-40"
+                  variant={'default'}
+                  tabIndex={-1}
+                  onClick={() => {
+                    handleStatusUpdate(order.id, 'processing')
+                  }}
+                >
                   In Bearbeitung
                 </Button>
               </PopoverContent>

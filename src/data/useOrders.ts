@@ -132,3 +132,31 @@ export const useChageOrderStatusMutation = (orderId: number) => {
     },
   })
 }
+
+// V2: Change Parameter position
+export const useChageOrderStatusMutationV2 = () => {
+  return useMutation({
+    mutationFn: async ({
+      newStatus,
+      orderId,
+    }: {
+      newStatus: OrderStatus
+      orderId: number
+    }) => {
+      const { data, error } = await supabase
+        .from('Orders')
+        .update({ status: newStatus })
+        .eq('id', orderId)
+        .select()
+
+      if (error) {
+        throw error
+      }
+
+      return data
+    },
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ['ordersAndItems'] })
+    },
+  })
+}
