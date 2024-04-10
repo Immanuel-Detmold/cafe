@@ -1,5 +1,5 @@
 import { imgPlaceHolder } from '@/data/data'
-import { useOrderAndItemsQuery } from '@/data/useOrders'
+import { useOrdersAndItemsQueryV2 } from '@/data/useOrders'
 import { ClipboardDocumentListIcon } from '@heroicons/react/24/outline'
 import {
   ChatBubbleBottomCenterTextIcon,
@@ -9,8 +9,7 @@ import { UserIcon } from '@heroicons/react/24/solid'
 import { Avatar, AvatarImage } from '@radix-ui/react-avatar'
 import { Label } from '@radix-ui/react-label'
 import { Separator } from '@radix-ui/react-select'
-import { ListFilterIcon } from 'lucide-react'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import { Input } from '@/components/ui/input'
 import {
@@ -21,21 +20,52 @@ import {
 
 import DeleteOrder from './DeleteOrder'
 import EditOrder from './EditOrder'
+import Filters from './Filters'
 import OrderStatusPage from './OrderStatusSelect'
 import { formatDateToTime } from './helperFunctions'
 
 const Open = () => {
-  const { data: openOrders, error } = useOrderAndItemsQuery([
-    'waiting',
-    'processing',
-  ])
   const [searchTerm, setSearchTerm] = useState('')
-  // const [category, setCategory] = useState('')
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([])
+  const [selectedProducts, setSelectedProducts] = useState<string[]>([])
 
-  console.log(openOrders)
-  console.log(searchTerm)
+  const { data: openOrders, error } = useOrdersAndItemsQueryV2({
+    states: ['waiting', 'processing'],
+    searchTerm: searchTerm,
+    categories: selectedCategories,
+    products: selectedProducts,
+  })
+  console.log('Data Open Orders: ', openOrders)
+
+  const handleCheckboxChange = (
+    type: string,
+    checked: string | boolean,
+    value: string,
+  ) => {
+    //IF Checkbox is checked add to selectedCategories List or remove it
+    if (type === 'category') {
+      if (checked) {
+        setSelectedCategories([...selectedCategories, value])
+      } else {
+        setSelectedCategories(
+          selectedCategories.filter((item) => item !== value),
+        )
+      }
+    }
+    if (type === 'product') {
+      if (checked) {
+        setSelectedProducts([...selectedProducts, value])
+      } else {
+        setSelectedProducts(selectedProducts.filter((item) => item !== value))
+      }
+    }
+  }
+
+  useEffect(() => {}, [selectedCategories])
+
   return (
     <div className="mb-6 flex flex-col">
+      {/* <Button onClick={() => {}}>Test</Button> */}
       <div className="mt-2 flex items-center">
         <Input
           className="w-[100%]"
@@ -44,7 +74,11 @@ const Open = () => {
             setSearchTerm(e.target.value)
           }}
         />
-        <ListFilterIcon className="mx-2 h-8 w-8 cursor-pointer" />
+        <Filters
+          handleCheckboxChange={handleCheckboxChange}
+          selectedCategories={selectedCategories}
+          selectedProducts={selectedProducts}
+        />
       </div>
       {error && <div>{JSON.stringify(error)}</div>}
       {(!openOrders || openOrders.length === 0) && (

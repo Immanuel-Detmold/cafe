@@ -9,6 +9,24 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      issues: {
+        Row: {
+          id: number
+          tags: string[] | null
+          title: string | null
+        }
+        Insert: {
+          id: number
+          tags?: string[] | null
+          title?: string | null
+        }
+        Update: {
+          id?: number
+          tags?: string[] | null
+          title?: string | null
+        }
+        Relationships: []
+      }
       OrderItems: {
         Row: {
           comment: string | null
@@ -59,37 +77,43 @@ export type Database = {
       }
       Orders: {
         Row: {
+          categories: string[]
           comment: string | null
           created_at: string
           customer_name: string | null
           id: number
           payment_method: string | null
           price: number
+          product_ids: string[]
           status: Database["public"]["Enums"]["order_status"]
         }
         Insert: {
+          categories: string[]
           comment?: string | null
           created_at?: string
           customer_name?: string | null
           id?: number
           payment_method?: string | null
           price: number
+          product_ids: string[]
           status: Database["public"]["Enums"]["order_status"]
         }
         Update: {
+          categories?: string[]
           comment?: string | null
           created_at?: string
           customer_name?: string | null
           id?: number
           payment_method?: string | null
           price?: number
+          product_ids?: string[]
           status?: Database["public"]["Enums"]["order_status"]
         }
         Relationships: []
       }
       Products: {
         Row: {
-          category: string | null
+          category: string
           created_at: string
           deleted: boolean | null
           id: number
@@ -99,7 +123,7 @@ export type Database = {
           price: number
         }
         Insert: {
-          category?: string | null
+          category: string
           created_at?: string
           deleted?: boolean | null
           id?: number
@@ -109,7 +133,7 @@ export type Database = {
           price: number
         }
         Update: {
-          category?: string | null
+          category?: string
           created_at?: string
           deleted?: boolean | null
           id?: number
@@ -117,6 +141,21 @@ export type Database = {
           method?: string | null
           name?: string
           price?: number
+        }
+        Relationships: []
+      }
+      Test: {
+        Row: {
+          created_at: string
+          id: number
+        }
+        Insert: {
+          created_at?: string
+          id?: number
+        }
+        Update: {
+          created_at?: string
+          id?: number
         }
         Relationships: []
       }

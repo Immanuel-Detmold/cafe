@@ -13,7 +13,11 @@ import ReadyForPickup from './pages/ReadyForPickup/ReadyForPickup'
 export const router = createBrowserRouter(
   [
     {
-      path: '',
+      path: 'screen',
+      element: <ReadyForPickup />,
+    },
+    {
+      path: 'admin',
       element: <Navigation />,
       children: [
         {
@@ -28,6 +32,7 @@ export const router = createBrowserRouter(
           path: 'open',
           element: <Open />,
         },
+
         {
           path: 'ready-for-pickup',
           element: <ReadyForPickup />,

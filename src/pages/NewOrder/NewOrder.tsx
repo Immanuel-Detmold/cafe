@@ -19,7 +19,11 @@ import { useToast } from '@/components/ui/use-toast'
 
 import OrderDetailsPage from './OrderDetailsPage'
 import ProductsInCategory from './ProductsInCategory'
-import { calcOrderPrice } from './utilityFunctions/handleOrder'
+import {
+  calcOrderPrice,
+  getProductIds,
+  getUniqueCategories,
+} from './utilityFunctions/handleOrder'
 
 type GroupedProducts = Record<string, Product[]>
 
@@ -158,6 +162,9 @@ const NewOrder = () => {
       orderPrice = sumOrderPrice
     }
 
+    const uniqueCategories = getUniqueCategories(dataOrderItems, products || [])
+    const uniqueProducts = getProductIds(dataOrderItems)
+
     saveOrder(
       {
         customer_name: orderName,
@@ -165,6 +172,8 @@ const NewOrder = () => {
         payment_method: paymentMethod,
         price: orderPrice,
         status: 'waiting',
+        categories: uniqueCategories,
+        product_ids: uniqueProducts,
       },
       {
         onSuccess: (data) => {
@@ -233,6 +242,7 @@ const NewOrder = () => {
 
   return (
     <div className="select-none">
+      {/* <Button onClick={() => { }}>Test</Button> */}
       {/* Category and Product */}
       <div className="mt-2">
         {groupedProducts &&

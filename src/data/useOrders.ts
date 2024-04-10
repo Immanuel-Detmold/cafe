@@ -6,6 +6,7 @@ import { useMutation, useQuery } from '@tanstack/react-query'
 export type Order = Database['public']['Tables']['Orders']['Row']
 export type InsertOrders = Database['public']['Tables']['Orders']['Insert']
 export type OrderItems = Database['public']['Tables']['OrderItems']['Row']
+
 export type OrderItem = {
   product_id: number
   quantity: number
@@ -88,7 +89,6 @@ export const useDeleteOrderMutation = () => {
 
 // Get Order and Items in Order
 // Functions for Table Oders
-
 export const useOrderAndItemsQuery = (status: OrderStatus[]) =>
   useQuery({
     queryKey: ['ordersAndItems', status],
@@ -104,6 +104,61 @@ export const useOrderAndItemsQuery = (status: OrderStatus[]) =>
         .in('status', status)
         .gte('created_at', new Date().toISOString().split('T')[0] + ' 00:00:00')
         .order('created_at', { ascending: false })
+
+      if (error) {
+        throw error
+      }
+      return data
+    },
+  })
+
+export const useOrdersAndItemsQueryV2 = ({
+  states,
+  searchTerm,
+  categories,
+  products,
+}: {
+  states: OrderStatus[]
+  searchTerm: string
+  categories: string[]
+  products: string[]
+}) =>
+  useQuery({
+    queryKey: ['ordersAndItems', states, searchTerm, categories, products],
+    queryFn: async () => {
+      const categoryFilter = categories
+        .map((category) => `categories.cs.{"${category}"}`)
+        .join(', ')
+
+      const productFilter = products
+        .map((productId) => `product_ids.cs.{"${productId}"}`)
+        .join(', ')
+
+      let query = supabase
+        .from('Orders')
+        .select(
+          `*, 
+        OrderItems (*,
+          Products (*)
+        )`,
+        )
+        .in('status', states)
+        .gte('created_at', new Date().toISOString().split('T')[0] + ' 00:00:00')
+        .order('created_at', { ascending: false })
+
+      if (searchTerm && !isNaN(Number(searchTerm))) {
+        query = query.eq('id', Number(searchTerm))
+      } else {
+        query = query.ilike('customer_name', `%${searchTerm}%`)
+      }
+      if (categories.length !== 0) {
+        query = query.or(categoryFilter)
+      }
+      if (products.length !== 0) {
+        query = query.or(productFilter)
+      }
+
+      const { data, error } = await query
 
       if (error) {
         throw error
