@@ -42,7 +42,7 @@ const ReadyForPickup = () => {
   return (
     <>
       {/* All Cards */}
-      <div className="grid grid-cols-1 gap-2 pt-2 md:grid-cols-2 md:gap-3 lg:grid-cols-3 lg:gap-4 lg:pt-4">
+      <div className="mx-2 grid grid-cols-1 gap-2 pt-2 md:grid-cols-2 md:gap-3 lg:grid-cols-3 lg:gap-4 lg:pt-4">
         {readyOrders &&
           readyOrders.map((order) => (
             <Popover key={order.id}>
