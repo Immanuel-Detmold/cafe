@@ -87,6 +87,10 @@ export const useDeleteOrderMutation = () => {
   })
 }
 
+export type OrdersAndItems = NonNullable<
+  ReturnType<typeof useOrderAndItemsQuery>['data']
+>
+
 // Get Order and Items in Order
 // Functions for Table Oders
 export const useOrderAndItemsQuery = (status: OrderStatus[]) =>

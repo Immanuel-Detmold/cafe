@@ -1,4 +1,4 @@
-import { Order, OrderItems } from '@/data/useOrders'
+import { Order, OrderItems, OrdersAndItems } from '@/data/useOrders'
 import { Product } from '@/data/useProducts'
 
 export const formatDateToTime = (timestamp: string): string => {
@@ -72,16 +72,16 @@ export type OpenOrder = Order & {
 //   }
 // }
 
-export const getCategoriesAndProducts = (orderData: OpenOrder[]) => {
+export const getCategoriesAndProducts = (orderData?: OrdersAndItems) => {
   if (orderData) {
     // Extract unique product objects from orders
     const currentProducts: Product[] = []
     orderData.forEach((order) =>
       order.OrderItems.forEach((item) => {
         if (
-          !currentProducts.some((product) => product.id === item.Products.id)
+          !currentProducts.some((product) => product.id === item.Products?.id)
         ) {
-          currentProducts.push(item.Products)
+          item.Products && currentProducts.push(item.Products)
         }
       }),
     )
@@ -90,7 +90,8 @@ export const getCategoriesAndProducts = (orderData: OpenOrder[]) => {
     const currentCategoriesSet = new Set<string>()
     orderData.forEach((order) =>
       order?.OrderItems.forEach((item) => {
-        currentCategoriesSet.add(item.Products.category)
+        item.Products?.category &&
+          currentCategoriesSet.add(item.Products.category)
       }),
     )
     const currentCategories = Array.from(currentCategoriesSet)
