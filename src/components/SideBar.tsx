@@ -23,7 +23,7 @@ const SideBar = () => {
 
           {/*  NavLinks */}
           <NavLink
-            to="/all-products"
+            to="./all-products"
             className={({ isActive }) =>
               isActive ? 'rounded-md bg-gray-100 p-2' : 'p-2'
             }
@@ -35,7 +35,7 @@ const SideBar = () => {
           </NavLink>
 
           <NavLink
-            to="/"
+            to="./"
             className={({ isActive }) =>
               isActive ? 'rounded-md bg-gray-100 p-2' : 'p-2'
             }
@@ -46,7 +46,7 @@ const SideBar = () => {
             <div>Statistik (Offen)</div>
           </NavLink>
           <NavLink
-            to="/"
+            to="./"
             className={({ isActive }) =>
               isActive ? 'rounded-md bg-gray-100 p-2' : 'p-2'
             }

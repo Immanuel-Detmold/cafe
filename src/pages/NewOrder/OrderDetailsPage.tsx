@@ -1,3 +1,4 @@
+import { imgPlaceHolder } from '@/data/data'
 import { OrderItem } from '@/data/useOrders'
 import { Product } from '@/data/useProducts'
 import { TrashIcon } from '@heroicons/react/24/outline'
@@ -23,9 +24,6 @@ type propsOrderDetailsPage = {
 }
 
 const OrderDetailsPage = (props: propsOrderDetailsPage) => {
-  const placeHolderImage =
-    'https://hmwxeqgcfhhumndveboe.supabase.co/storage/v1/object/public/ProductImages/PlaceHolder.jpg?t=2024-03-14T12%3A07%3A02.697Z'
-
   return (
     <div className="ml-2">
       <Dialog>
@@ -72,7 +70,7 @@ const OrderDetailsPage = (props: propsOrderDetailsPage) => {
                   <div className="col-span-2 flex items-center">
                     <Avatar className="h-6 w-6">
                       <AvatarImage
-                        src={product.image ? product.image : placeHolderImage}
+                        src={product.image ? product.image : imgPlaceHolder}
                       />
                     </Avatar>
                     <Label className="ml-1">{product.name}</Label>
@@ -90,37 +88,8 @@ const OrderDetailsPage = (props: propsOrderDetailsPage) => {
                 </div>
               )
             })}
-
-            {/* Example Data */}
-            {/* <div className="grid grid-cols-4 items-center gap-4">
-              <div className="flex items-center col-span-2">
-                <Label className="">Kaffee</Label>
-                <Avatar className="ml-1 h-6 w-6">
-                  <AvatarImage src={placeHolderImage} />
-                </Avatar>
-              </div>
-              <Label className="flex items-center">
-                2 <TrashIcon className="ml-2 h-5 w-5 cursor-pointer" />
-              </Label>
-              <Label>2€</Label>
-            </div>
-
-            <div className="grid grid-cols-4 items-center gap-4">
-              <div className="flex items-center col-span-2">
-                <Label className="">Tee</Label>
-                <Avatar className="ml-1 h-6 w-6">
-                  <AvatarImage src={placeHolderImage} />
-                </Avatar>
-              </div>
-              <Label className="flex items-center">
-                3 <TrashIcon className="ml-2 h-5 w-5 cursor-pointer" />
-              </Label>
-              <Label>4€</Label>
-            </div> */}
           </div>
-          <DialogFooter>
-            <Button type="submit">Speichern</Button>
-          </DialogFooter>
+          <DialogFooter></DialogFooter>
         </DialogContent>
       </Dialog>
     </div>

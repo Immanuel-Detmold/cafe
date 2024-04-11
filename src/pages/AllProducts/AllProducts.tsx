@@ -1,7 +1,7 @@
 import { useProductsQuery } from '@/data/useProducts'
 import { useState } from 'react'
 
-import Product from '@/components/Product'
+import ProductCard from '@/components/ProductCard'
 import { Input } from '@/components/ui/input'
 
 import CreateProduct from './CreateProduct'
@@ -10,7 +10,7 @@ const AllProducts = () => {
   const [searchTerm, setSearchTerm] = useState('')
   const [ascending, setAscending] = useState(true)
   const { data: products, error } = useProductsQuery({ searchTerm, ascending })
-
+  console.log('Data all Products: ', products)
   return (
     <>
       {error && <div>{JSON.stringify(error)}</div>}
@@ -39,7 +39,7 @@ const AllProducts = () => {
         <div className="mt-2 grid grid-cols-3 gap-3 sm:gap-4 md:grid-cols-4 lg:grid-cols-6">
           {products.map((product) => (
             <div key={product.id} className="max-w-60">
-              <Product product={product} />
+              <ProductCard product={product} />
             </div>
           ))}
         </div>

@@ -1,3 +1,4 @@
+import { imgPlaceHolder } from '@/data/data'
 import { OrderItem } from '@/data/useOrders'
 import { Product } from '@/data/useProducts'
 import { ShoppingCartIcon } from '@heroicons/react/24/outline'
@@ -32,8 +33,6 @@ const ProductsInCategory = (props: propsProductInCategory) => {
   const [quantity, setQuantity] = useState<number>(1)
   const [productComment, setProductComment] = useState<string>('')
   const inputRef = useRef<HTMLTextAreaElement>(null)
-  const placeHolderImage =
-    'https://hmwxeqgcfhhumndveboe.supabase.co/storage/v1/object/public/ProductImages/PlaceHolder.jpg?t=2024-03-14T12%3A07%3A02.697Z'
 
   return (
     <div className="flex flex-wrap">
@@ -44,7 +43,7 @@ const ProductsInCategory = (props: propsProductInCategory) => {
             <PopoverTrigger asChild>
               <Button
                 variant="outline"
-                className="h-14"
+                className={`h-14 rounded-full px-2 ${props.dataOrderItems.some((item) => item.product_id === product.id) ? 'bg-gray-200' : ''}`}
                 onClick={() => {
                   setQuantity(1)
                   setProductComment('')
@@ -52,7 +51,7 @@ const ProductsInCategory = (props: propsProductInCategory) => {
               >
                 <Avatar className="">
                   <AvatarImage
-                    src={product.image ? product.image : placeHolderImage}
+                    src={product.image ? product.image : imgPlaceHolder}
                   />
                 </Avatar>
                 <Label className="ml-1 select-none">
@@ -105,6 +104,7 @@ const ProductsInCategory = (props: propsProductInCategory) => {
                   onChange={(e) => {
                     setProductComment(e.target.value)
                   }}
+                  tabIndex={-1}
                 />
                 <PopoverClose asChild>
                   <Button

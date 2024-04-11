@@ -1,5 +1,5 @@
 import { queryClient } from '@/App'
-import { Product, useDeleteProductMutation } from '@/data/useProducts'
+import { Order, useDeleteOrderMutation } from '@/data/useOrders'
 import { TrashIcon } from '@heroicons/react/24/outline'
 
 import {
@@ -16,26 +16,17 @@ import {
 import { Button } from '@/components/ui/button'
 import { useToast } from '@/components/ui/use-toast'
 
-const DeleteProduct = ({ product }: { product: Product }) => {
-  const { mutate: deleteProductMutation } = useDeleteProductMutation()
+const DeleteOrder = ({ order }: { order: Order }) => {
+  const { mutate: deleteOrder } = useDeleteOrderMutation()
+
   const { toast } = useToast()
-
-  const handleDelete = () => {
-    deleteProductMutation(product, {
+  const handleDeleteOrder = (id: number) => {
+    deleteOrder(id, {
       onSuccess: () => {
-        void queryClient.invalidateQueries({
-          queryKey: ['products'],
-        })
-        toast({ title: 'Produkt erfolgreich gelöscht! ✅' })
-
+        console.log('Success Deleting Order!')
+        toast({ title: 'Bestellung gelöscht ✅' })
+        void queryClient.invalidateQueries({ queryKey: ['ordersAndItems'] })
         console.log('Deletion Sucessfull!')
-      },
-      onError: (error) => {
-        toast({
-          title: 'Produkt konnte nicht gelöscht werden! ❌',
-          description: 'Produkt befindet sich womöglich in einer Bestellung.',
-        })
-        console.error('Failed to delete product:', error)
       },
     })
   }
@@ -43,17 +34,16 @@ const DeleteProduct = ({ product }: { product: Product }) => {
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
-        <div className="text-right">
-          <Button className="w-full bg-red-700" variant="destructive">
-            Löschen
-            <TrashIcon className="ml-1 h-5 w-5" />
+        <div className="">
+          <Button className="w-min bg-red-700" variant="destructive">
+            <TrashIcon className="h-4 w-4" />
           </Button>
         </div>
       </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>
-            Möchtest du das Produkt wirklich löschen?
+            Möchtest du die Bestellung wirklich löschen?
           </AlertDialogTitle>
           <AlertDialogDescription>
             Diese Aktion kann nicht rückgängig gemacht werden.
@@ -61,12 +51,14 @@ const DeleteProduct = ({ product }: { product: Product }) => {
         </AlertDialogHeader>
 
         <AlertDialogFooter>
-          <div className="block text-right">
+          <div className="">
             <AlertDialogCancel>Abbrechen</AlertDialogCancel>
 
             <AlertDialogAction
               className="ml-2 bg-red-700"
-              onClick={handleDelete}
+              onClick={() => {
+                handleDeleteOrder(order.id)
+              }}
             >
               Löschen
             </AlertDialogAction>
@@ -77,4 +69,4 @@ const DeleteProduct = ({ product }: { product: Product }) => {
   )
 }
 
-export default DeleteProduct
+export default DeleteOrder

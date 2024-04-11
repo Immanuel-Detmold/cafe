@@ -1,22 +1,8 @@
-github lens anschauen
-
-wsl install (linux subsystem)
-nvm installieren
-
-
-# autoamtischer code formatter und code qualität -> unused variables
-lint
-
-# prettier
-prettier
-
-
-# openssh einrichten
-private key mitteilen
-
-
-Cache Programmieren
-
-Kategorien bei Offener Bestellung
-
-Zubereitung für Produkte
+To do:
+- Cache Programmieren für Filter
+- Filter auf und zuklappbar machen
+- Log-In Screen
+- Live Updates
+- Statistik Screen
+- Was ist mit Bezahlung? In der App möglich machen?
+- 

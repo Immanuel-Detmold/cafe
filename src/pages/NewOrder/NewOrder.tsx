@@ -1,6 +1,11 @@
-import { OrderItem } from '@/data/useOrders'
+import {
+  OrderItem,
+  useSaveOrderItemsMutation,
+  useSaveOrderMutation,
+} from '@/data/useOrders'
 import { useProductsQuery } from '@/data/useProducts'
 import { Product } from '@/data/useProducts'
+import { ArrowPathIcon } from '@heroicons/react/24/outline'
 import { Label } from '@radix-ui/react-label'
 import { ShoppingCart } from 'lucide-react'
 import { useEffect, useState } from 'react'
@@ -10,10 +15,15 @@ import { Input } from '@/components/ui/input'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { Switch } from '@/components/ui/switch'
 import { Textarea } from '@/components/ui/textarea'
+import { useToast } from '@/components/ui/use-toast'
 
 import OrderDetailsPage from './OrderDetailsPage'
 import ProductsInCategory from './ProductsInCategory'
-import { calcOrderPrice } from './utilityFunctions/handleOrder'
+import {
+  calcOrderPrice,
+  getProductIds,
+  getUniqueCategories,
+} from './utilityFunctions/handleOrder'
 
 type GroupedProducts = Record<string, Product[]>
 
@@ -35,6 +45,7 @@ const NewOrder = () => {
   const [customPriceValue, setCustomPriceValue] = useState<string>('')
   const [orderComment, setOrderComment] = useState<string>('')
   const [orderName, setOrderName] = useState<string>('')
+  const { toast } = useToast()
 
   useEffect(() => {
     // Update Order Price
@@ -46,6 +57,22 @@ const NewOrder = () => {
     )
   }, [dataOrderItems, products])
 
+  // Load OrderItems from Cache if exists.
+  useEffect(() => {
+    if (products) {
+      const sessionData = sessionStorage.getItem('orderItems')
+      let sessionData2: OrderItem[] = []
+      if (sessionData) {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+        sessionData2 = JSON.parse(sessionData)
+      } else {
+        sessionData2 = []
+      }
+      console.log('Loaded dataOrderItems from Cache:', sessionData2)
+      setDataOrderItems(sessionData2)
+    }
+  }, [products])
+
   // Grouped Products by Category
   const groupedProducts = products?.reduce((groupMap, product) => {
     const key = product.category || 'Other'
@@ -56,7 +83,7 @@ const NewOrder = () => {
     }
   }, {} as GroupedProducts)
 
-  // Const handleAddOrder
+  // Const handleAddOrder. Only Local, no database
   const handleAddOrder = (
     product_id: number,
     quantity: number,
@@ -82,6 +109,7 @@ const NewOrder = () => {
           itemToUpdate.quantity = quantity // update the quantity
           console.log('Updated Item in Order:', updatedItems)
         }
+        sessionStorage.setItem('orderItems', JSON.stringify(updatedItems))
         return updatedItems // return the updated items
       })
     }
@@ -101,6 +129,7 @@ const NewOrder = () => {
             products: products || [],
           }),
         )
+        sessionStorage.setItem('orderItems', JSON.stringify(updatedItems))
         return updatedItems
       })
     }
@@ -113,12 +142,107 @@ const NewOrder = () => {
     )
     setDataOrderItems(() => {
       console.log('Deleted Item in Orders:', updatedOrderItems)
+      sessionStorage.setItem('orderItems', JSON.stringify(updatedOrderItems))
       return updatedOrderItems
+    })
+  }
+
+  // Save Order
+  const { mutate: saveOrder } = useSaveOrderMutation()
+  // Save OrderItems
+  const { mutate: saveOrderItems } = useSaveOrderItemsMutation()
+
+  const handleSumitOrder = () => {
+    // Save Order to Database
+
+    let orderPrice: number = 0
+    if (customPrice) {
+      orderPrice = parseFloat(customPriceValue)
+    } else {
+      orderPrice = sumOrderPrice
+    }
+
+    const uniqueCategories = getUniqueCategories(dataOrderItems, products || [])
+    const uniqueProducts = getProductIds(dataOrderItems)
+
+    saveOrder(
+      {
+        customer_name: orderName,
+        comment: orderComment,
+        payment_method: paymentMethod,
+        price: orderPrice,
+        status: 'waiting',
+        categories: uniqueCategories,
+        product_ids: uniqueProducts,
+      },
+      {
+        onSuccess: (data) => {
+          console.log('Order saved on Success!', data)
+          const order_id = data[0]?.id
+          if (order_id) {
+            handleSaveOrderItems(order_id)
+          }
+        },
+        onError: (error) => {
+          console.log('Error saving Order:', error)
+          // To DO! If Order Saved, but Failed to save OrderItmes, then Delete Order
+          // const { mutate: deleteOrder } = useDeleteOrderMutation()
+          // deleteOrder()
+          toast({
+            title: 'Bestellung konnte nicht gespeichert werden! ❌',
+          })
+        },
+      },
+    )
+
+    // Clear Data
+    setDataOrderItems([])
+    setCustomPrice(false)
+    setCustomPriceValue('')
+    setOrderComment('')
+    setOrderName('')
+    setPaymentMethod('cash')
+    setSumOrderPrice(0)
+
+    sessionStorage.setItem('orderItems', JSON.stringify([]))
+  }
+
+  const handleSaveOrderItems = (order_id: number) => {
+    const orderItems = dataOrderItems.map((item) => {
+      return {
+        comment: item.comment,
+        order_id: order_id,
+        product_id: item.product_id,
+        product_name:
+          products?.find((product) => product.id === item.product_id)?.name ||
+          'unkown',
+        product_price:
+          products?.find((product) => product.id === item.product_id)?.price ||
+          0,
+        quantity: item.quantity,
+      }
+    })
+
+    saveOrderItems(orderItems, {
+      onSuccess: (data) => {
+        console.log('OrderItems saved on Success!', data)
+        toast({
+          title: 'Bestellung wurde gespeichert! ✅',
+          duration: 800,
+        })
+      },
+      onError: (error) => {
+        console.log('Error saving OrderItems:', error)
+        toast({
+          title: 'Bestellung konnte nicht gespeichert werden! ❌',
+        })
+      },
     })
   }
 
   return (
     <div className="select-none">
+      {/* <Button onClick={() => { }}>Test</Button> */}
       {/* Category and Product */}
       <div className="mt-2">
         {groupedProducts &&
@@ -227,12 +351,33 @@ const NewOrder = () => {
           </div>
         )}
 
-        <Button
-          className="mb-4 mt-2 w-min bg-amber-600"
-          disabled={dataOrderItems.length === 0}
-        >
-          Absenden <ShoppingCart className="m-1 h-4 w-4"></ShoppingCart>
-        </Button>
+        <div className="mb-4 flex justify-between">
+          <Button
+            className="mb-4 mt-2 w-min bg-amber-600"
+            disabled={dataOrderItems.length === 0}
+            onClick={handleSumitOrder}
+          >
+            Absenden <ShoppingCart className="ml-1 h-4 w-4"></ShoppingCart>
+          </Button>
+
+          <Button
+            className=" ml-2 mt-2 w-min bg-amber-600"
+            disabled={dataOrderItems.length === 0}
+            onClick={() => {
+              setDataOrderItems([])
+              setCustomPrice(false)
+              setCustomPriceValue('')
+              setOrderComment('')
+              setOrderName('')
+              setPaymentMethod('cash')
+              setSumOrderPrice(0)
+              sessionStorage.setItem('orderItems', JSON.stringify([]))
+            }}
+          >
+            Reset
+            <ArrowPathIcon className="ml-1 h-4 w-4" />
+          </Button>
+        </div>
       </div>
     </div>
   )
