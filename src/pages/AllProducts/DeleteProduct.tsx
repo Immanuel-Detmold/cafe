@@ -44,7 +44,11 @@ const DeleteProduct = ({ product }: { product: Product }) => {
     <AlertDialog>
       <AlertDialogTrigger asChild>
         <div className="text-right">
-          <Button className="w-full bg-red-700" variant="destructive">
+          <Button
+            className="w-full bg-red-700"
+            variant="destructive"
+            tabIndex={-1}
+          >
             Löschen
             <TrashIcon className="ml-1 h-5 w-5" />
           </Button>

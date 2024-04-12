@@ -11,6 +11,15 @@ export const supabase = createClient<Database>(supabaseUrl, supabaseKey, {
   },
 })
 
+export const realtimeChannelOrders = supabase.channel('order-db-changes').on(
+  'postgres_changes',
+  {
+    event: '*',
+    schema: 'public',
+  },
+  (payload) => console.log(payload),
+)
+
 export async function login({ email }: { email: string }) {
   return await supabase.auth.signInWithOtp({
     email,

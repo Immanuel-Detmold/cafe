@@ -1,5 +1,7 @@
+import { queryClient } from '@/App'
 import { imgPlaceHolder } from '@/data/data'
 import { useOrdersAndItemsQueryV2 } from '@/data/useOrders'
+import { realtimeChannelOrders, supabase } from '@/services/supabase'
 import { ClipboardDocumentListIcon } from '@heroicons/react/24/outline'
 import {
   ChatBubbleBottomCenterTextIcon,
@@ -62,6 +64,23 @@ const Open = () => {
   }
 
   useEffect(() => {}, [selectedCategories])
+
+  useEffect(() => {
+    supabase
+      .channel('order-db-changes')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+        },
+        (payload) => {
+          console.log('Realtime Payload: ', payload)
+          void queryClient.invalidateQueries({ queryKey: ['ordersAndItems'] })
+        },
+      )
+      .subscribe()
+  })
 
   return (
     <div className="mb-6 flex flex-col">

@@ -134,6 +134,7 @@ const EditProduct = ({ product }: { product: Product }) => {
             Name
           </Label>
           <Input
+            tabIndex={-1}
             id="name"
             value={name}
             className="col-span-4"
@@ -147,6 +148,7 @@ const EditProduct = ({ product }: { product: Product }) => {
             Preis
           </Label>
           <Input
+            tabIndex={-1}
             id="price"
             value={price}
             type="number"
@@ -166,7 +168,7 @@ const EditProduct = ({ product }: { product: Product }) => {
                 setCategory(value)
               }}
             >
-              <SelectTrigger className="w-fill">
+              <SelectTrigger className="w-fill" tabIndex={-1}>
                 <SelectValue placeholder="Wähle Kategorie" />
               </SelectTrigger>
               <SelectContent>
@@ -187,6 +189,7 @@ const EditProduct = ({ product }: { product: Product }) => {
           {/* Method */}
           <Label className="col-span-4 w-full">Zubereitung</Label>
           <Textarea
+            tabIndex={-1}
             className="col-span-4 w-full"
             placeholder="Kommentar (optional)"
             value={method?.toString()}
@@ -200,6 +203,7 @@ const EditProduct = ({ product }: { product: Product }) => {
             Bild
           </Label>
           <Input
+            tabIndex={-1}
             id="picture"
             type="file"
             className="col-span-4 hover:cursor-pointer"
@@ -211,7 +215,11 @@ const EditProduct = ({ product }: { product: Product }) => {
 
         <SheetClose asChild className="">
           <div className="text-right">
-            <Button className="mb-4 w-full" onClick={handleEditProduct}>
+            <Button
+              className="mb-4 w-full"
+              onClick={handleEditProduct}
+              tabIndex={-1}
+            >
               Speichern
             </Button>
           </div>

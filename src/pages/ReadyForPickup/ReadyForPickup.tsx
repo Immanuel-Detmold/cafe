@@ -1,11 +1,14 @@
+import { queryClient } from '@/App'
 import { imgPlaceHolder } from '@/data/data'
 import {
   useChageOrderStatusMutationV2,
   useOrderAndItemsQuery,
 } from '@/data/useOrders'
 import { OrderStatus } from '@/data/useOrders'
+import { supabase } from '@/services/supabase'
 import { ShoppingBagIcon } from '@heroicons/react/24/outline'
 import { UserRoundIcon } from 'lucide-react'
+import { useEffect } from 'react'
 
 import { Avatar, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
@@ -38,6 +41,23 @@ const ReadyForPickup = () => {
       },
     )
   }
+
+  useEffect(() => {
+    supabase
+      .channel('order-db-changes')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+        },
+        (payload) => {
+          console.log('Realtime Payload: ', payload)
+          void queryClient.invalidateQueries({ queryKey: ['ordersAndItems'] })
+        },
+      )
+      .subscribe()
+  })
 
   return (
     <>
