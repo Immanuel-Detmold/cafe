@@ -117,18 +117,18 @@ export const useOrderAndItemsQuery = (status: OrderStatus[]) =>
   })
 
 export const useOrdersAndItemsQueryV2 = ({
-  states,
+  statusList,
   searchTerm,
   categories,
   products,
 }: {
-  states: OrderStatus[]
+  statusList: OrderStatus[]
   searchTerm: string
   categories: string[]
   products: string[]
 }) =>
   useQuery({
-    queryKey: ['ordersAndItems', states, searchTerm, categories, products],
+    queryKey: ['ordersAndItems', statusList, searchTerm, categories, products],
     queryFn: async () => {
       const categoryFilter = categories
         .map((category) => `categories.cs.{"${category}"}`)
@@ -146,7 +146,7 @@ export const useOrdersAndItemsQueryV2 = ({
           Products (*)
         )`,
         )
-        .in('status', states)
+        .in('status', statusList)
         .gte('created_at', new Date().toISOString().split('T')[0] + ' 00:00:00')
         .order('created_at', { ascending: false })
 

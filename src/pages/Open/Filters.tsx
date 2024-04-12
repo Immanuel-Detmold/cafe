@@ -2,6 +2,12 @@ import { useOrderAndItemsQuery } from '@/data/useOrders'
 import { Label } from '@radix-ui/react-label'
 import { ListFilterIcon } from 'lucide-react'
 
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from '@/components/ui/accordion'
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
 import {
@@ -42,43 +48,57 @@ const Filters = ({
           </Button>
         </PopoverTrigger>
         <PopoverContent className="w-80">
-          {/* Head */}
-          <div className="grid gap-2">
-            {/* Categories */}
-            <h4 className="font-medium leading-none">Produktkategorie</h4>
-
-            {currentCategories &&
-              currentCategories.map((category) => (
-                <div key={category} className="flex items-center space-x-2">
-                  <Checkbox
-                    id={category}
-                    checked={selectedCategories.includes(category)}
-                    onCheckedChange={(e) => {
-                      handleCheckboxChange('category', e, category)
-                    }}
-                  />
-                  <Label>{category}</Label>
-                </div>
-              ))}
-
-            <h4 className="font-medium leading-none">Produkte</h4>
-            {currentProducts &&
-              currentProducts.map((product) => (
-                <div
-                  key={product.id.toString()}
-                  className="flex items-center space-x-2"
-                >
-                  <Checkbox
-                    id={product.id.toString()}
-                    checked={selectedProducts.includes(product.id.toString())}
-                    onCheckedChange={(e) => {
-                      handleCheckboxChange('product', e, product.id.toString())
-                    }}
-                  />
-                  <Label>{product.name}</Label>
-                </div>
-              ))}
-          </div>
+          <Accordion
+            type="multiple"
+            className="w-full"
+            defaultValue={['item-1']}
+          >
+            <AccordionItem value="item-1">
+              <AccordionTrigger>Produktkategorie</AccordionTrigger>
+              <AccordionContent>
+                {currentCategories &&
+                  currentCategories.map((category) => (
+                    <div key={category} className="flex items-center space-x-2">
+                      <Checkbox
+                        id={category}
+                        checked={selectedCategories.includes(category)}
+                        onCheckedChange={(e) => {
+                          handleCheckboxChange('category', e, category)
+                        }}
+                      />
+                      <Label>{category}</Label>
+                    </div>
+                  ))}
+              </AccordionContent>
+            </AccordionItem>
+            <AccordionItem value="item-2">
+              <AccordionTrigger>Produkte</AccordionTrigger>
+              <AccordionContent>
+                {currentProducts &&
+                  currentProducts.map((product) => (
+                    <div
+                      key={product.id.toString()}
+                      className="flex items-center space-x-2"
+                    >
+                      <Checkbox
+                        id={product.id.toString()}
+                        checked={selectedProducts.includes(
+                          product.id.toString(),
+                        )}
+                        onCheckedChange={(e) => {
+                          handleCheckboxChange(
+                            'product',
+                            e,
+                            product.id.toString(),
+                          )
+                        }}
+                      />
+                      <Label>{product.name}</Label>
+                    </div>
+                  ))}
+              </AccordionContent>
+            </AccordionItem>
+          </Accordion>
         </PopoverContent>
       </Popover>
     </div>

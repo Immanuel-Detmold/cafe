@@ -1,11 +1,11 @@
-import { queryClient } from '@/App'
+// import { queryClient } from '@/App'
 import { imgPlaceHolder } from '@/data/data'
 import {
   useChageOrderStatusMutationV2,
   useOrderAndItemsQuery,
 } from '@/data/useOrders'
 import { OrderStatus } from '@/data/useOrders'
-import { supabase } from '@/services/supabase'
+// import { supabase } from '@/services/supabase'
 import { ShoppingBagIcon } from '@heroicons/react/24/outline'
 import { UserRoundIcon } from 'lucide-react'
 import { useEffect } from 'react'
@@ -26,13 +26,26 @@ const ReadyForPickup = () => {
 
   const { toast } = useToast()
 
+  if (readyOrders) {
+    console.log('Ready Orders: ', readyOrders)
+  }
+
   const handleStatusUpdate = (orderId: number, status: OrderStatus) => {
     changeStatus(
       { newStatus: status, orderId: orderId },
       {
         onSuccess: (data) => {
-          console.log('Updated Order Status', data)
-          toast({ title: 'Bestellung Abgeschlossen ✅' })
+          if (status === 'finished') {
+            console.log('Updated Order Status', data)
+            toast({ title: 'Bestellung Abgeschlossen ✅', duration: 650 })
+          }
+          if (status === 'processing') {
+            console.log('Updated Order Status', data)
+            toast({
+              title: 'Bestellung zurück in Bearbeitung ✅',
+              duration: 650,
+            })
+          }
         },
         onError: (error) => {
           toast({ title: 'Fehler Status Update! ❌' })
@@ -43,20 +56,20 @@ const ReadyForPickup = () => {
   }
 
   useEffect(() => {
-    supabase
-      .channel('order-db-changes')
-      .on(
-        'postgres_changes',
-        {
-          event: '*',
-          schema: 'public',
-        },
-        (payload) => {
-          console.log('Realtime Payload: ', payload)
-          void queryClient.invalidateQueries({ queryKey: ['ordersAndItems'] })
-        },
-      )
-      .subscribe()
+    // supabase
+    //   .channel('order-db-changes')
+    //   .on(
+    //     'postgres_changes',
+    //     {
+    //       event: '*',
+    //       schema: 'public',
+    //     },
+    //     (payload) => {
+    //       console.log('Realtime Payload: ', payload)
+    //       void queryClient.invalidateQueries({ queryKey: ['ordersAndItems'] })
+    //     },
+    //   )
+    //   .subscribe()
   })
 
   return (
@@ -72,7 +85,7 @@ const ReadyForPickup = () => {
                   <div className="flex items-center justify-between">
                     {/* ID */}
                     <Label className="text-2xl font-bold sm:text-3xl md:text-4xl lg:text-7xl">
-                      #{order.id}
+                      #{order.id.toString().slice(-2)}
                     </Label>
                     {/* Customer Name */}
                     <div className="flex items-center">

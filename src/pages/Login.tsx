@@ -111,7 +111,7 @@ export const Login = () => {
         <CodeStep
           email={email}
           onDone={() => {
-            navigateTo('/me')
+            navigateTo('admin/me')
           }}
         />
       ) : (

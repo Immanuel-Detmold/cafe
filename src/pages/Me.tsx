@@ -1,9 +1,12 @@
+import { useNavigate } from 'react-router-dom'
+
 import { Button } from '@/components/ui/button'
 
 import { useUser } from '../data/useUser'
 import { logout } from '../services/supabase'
 
 export const Me = () => {
+  const navigate = useNavigate()
   const { user } = useUser()
   return (
     <div>
@@ -14,6 +17,7 @@ export const Me = () => {
           logout().catch((error) => {
             console.error('Logout failed', error)
           })
+          navigate('/admin/login')
         }}
       >
         Logout

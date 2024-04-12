@@ -35,7 +35,7 @@ const SideBar = () => {
           </NavLink>
 
           <NavLink
-            to="./"
+            to="./closed-orders"
             className={({ isActive }) =>
               isActive ? 'rounded-md bg-gray-100 p-2' : 'p-2'
             }
@@ -43,10 +43,11 @@ const SideBar = () => {
               setSheetOpen(false)
             }}
           >
-            <div>Statistik (Offen)</div>
+            <div>Abgeholt (Heute)</div>
           </NavLink>
+
           <NavLink
-            to="./"
+            to="/admin/statistic"
             className={({ isActive }) =>
               isActive ? 'rounded-md bg-gray-100 p-2' : 'p-2'
             }
@@ -54,10 +55,10 @@ const SideBar = () => {
               setSheetOpen(false)
             }}
           >
-            <div>Statistik (Abgeschlossen)</div>
+            <div>Statistik</div>
           </NavLink>
           <NavLink
-            to="/Me"
+            to="/admin/Me"
             className={({ isActive }) =>
               isActive ? 'rounded-md bg-gray-100 p-2' : 'p-2'
             }
@@ -68,7 +69,7 @@ const SideBar = () => {
             <div>Me</div>
           </NavLink>
           <NavLink
-            to="/Login"
+            to="/admin/Login"
             className={({ isActive }) =>
               isActive ? 'rounded-md bg-gray-100 p-2' : 'p-2'
             }
