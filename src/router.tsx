@@ -2,11 +2,13 @@ import { createBrowserRouter } from 'react-router-dom'
 
 import { Navigation } from './components/Navigation'
 import AllProducts from './pages/AllProducts/AllProducts'
-import { Login } from './pages/Login'
+import ClosedOrdersToday from './pages/ClosedOrdersToday'
 import { Me } from './pages/Me'
 import NewOrder from './pages/NewOrder/NewOrder'
 import Open from './pages/Open/Open'
 import ReadyForPickup from './pages/ReadyForPickup/ReadyForPickup'
+import LoginPw from './pages/Statistic/LoginPw'
+import StatisticPage from './pages/Statistic/StatisticPage'
 
 // const [isWhiteMode, setWhiteMode] = useState(window.matchMedia('(prefers-color-scheme: dark)')
 
@@ -22,7 +24,7 @@ export const router = createBrowserRouter(
       children: [
         {
           path: 'login',
-          element: <Login />,
+          element: <LoginPw />,
         },
         {
           path: 'me',
@@ -30,7 +32,7 @@ export const router = createBrowserRouter(
         },
         {
           path: 'open',
-          element: <Open />,
+          element: <Open statusList={['waiting', 'processing']} />,
         },
 
         {
@@ -44,6 +46,14 @@ export const router = createBrowserRouter(
         {
           path: 'all-products',
           element: <AllProducts />,
+        },
+        {
+          path: 'closed-orders',
+          element: <ClosedOrdersToday />,
+        },
+        {
+          path: 'statistic',
+          element: <StatisticPage />,
         },
       ],
     },

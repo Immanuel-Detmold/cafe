@@ -1,5 +1,5 @@
 import { imgPlaceHolder } from '@/data/data'
-import { useOrdersAndItemsQueryV2 } from '@/data/useOrders'
+import { OrderStatus, useOrdersAndItemsQueryV2 } from '@/data/useOrders'
 import { ClipboardDocumentListIcon } from '@heroicons/react/24/outline'
 import {
   ChatBubbleBottomCenterTextIcon,
@@ -24,44 +24,90 @@ import Filters from './Filters'
 import OrderStatusPage from './OrderStatusSelect'
 import { formatDateToTime } from './helperFunctions'
 
-const Open = () => {
+const Open = ({ statusList }: { statusList: OrderStatus[] }) => {
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedCategories, setSelectedCategories] = useState<string[]>([])
   const [selectedProducts, setSelectedProducts] = useState<string[]>([])
 
   const { data: openOrders, error } = useOrdersAndItemsQueryV2({
-    states: ['waiting', 'processing'],
+    statusList: statusList,
     searchTerm: searchTerm,
     categories: selectedCategories,
     products: selectedProducts,
   })
-  console.log('Data Open Orders: ', openOrders)
 
+  if (openOrders) {
+    console.log('Data Open Orders: ', openOrders)
+  }
+
+  // If Filter Checkbox is checked or unchecked
   const handleCheckboxChange = (
     type: string,
     checked: string | boolean,
     value: string,
   ) => {
-    //IF Checkbox is checked add to selectedCategories List or remove it
+    //If Checkbox is checked add to selectedCategories List or remove it
     if (type === 'category') {
       if (checked) {
-        setSelectedCategories([...selectedCategories, value])
+        setSelectedCategories(() => {
+          const updated = [...selectedCategories, value]
+          sessionStorage.setItem('selectedCategories', JSON.stringify(updated))
+          return updated
+        })
       } else {
-        setSelectedCategories(
-          selectedCategories.filter((item) => item !== value),
-        )
+        setSelectedCategories(() => {
+          const updated = selectedCategories.filter((item) => item !== value)
+          sessionStorage.setItem('selectedCategories', JSON.stringify(updated))
+          return updated
+        })
       }
     }
+    // If Filter for Type Product is checked or unchecked
     if (type === 'product') {
       if (checked) {
-        setSelectedProducts([...selectedProducts, value])
+        setSelectedProducts(() => {
+          const updated = [...selectedProducts, value]
+          sessionStorage.setItem('selectedProducts', JSON.stringify(updated))
+          return updated
+        })
       } else {
-        setSelectedProducts(selectedProducts.filter((item) => item !== value))
+        setSelectedProducts(() => {
+          const updated = selectedProducts.filter((item) => item !== value)
+          sessionStorage.setItem('selectedProducts', JSON.stringify(updated))
+          return updated
+        })
       }
     }
   }
 
-  useEffect(() => {}, [selectedCategories])
+  useEffect(() => {
+    // Load Cache Items
+    const selectedCategories = sessionStorage.getItem('selectedCategories')
+    if (selectedCategories) {
+      setSelectedCategories(JSON.parse(selectedCategories) as string[])
+    }
+    const selectedProducts = sessionStorage.getItem('selectedProducts')
+    if (selectedProducts) {
+      setSelectedProducts(JSON.parse(selectedProducts) as string[])
+    }
+  }, [])
+
+  useEffect(() => {
+    // supabase
+    //   .channel('order-db-changes')
+    //   .on(
+    //     'postgres_changes',
+    //     {
+    //       event: '*',
+    //       schema: 'public',
+    //     },
+    //     (payload) => {
+    //       console.log('Realtime Payload: ', payload)
+    //       void queryClient.invalidateQueries({ queryKey: ['ordersAndItems'] })
+    //     },
+    //   )
+    //   .subscribe()
+  })
 
   return (
     <div className="mb-6 flex flex-col">

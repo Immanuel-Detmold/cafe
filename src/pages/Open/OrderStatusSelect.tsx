@@ -24,7 +24,10 @@ const OrderStatusPage = ({ order }: { order: Order }) => {
     setOrderStatus(newStatus)
     changeOrderStatus(newStatus, {
       onSuccess: () => {
-        toast({ title: 'Status erfolgreich geändert ✅', duration: 800 })
+        toast({ title: 'Status erfolgreich geändert ✅', duration: 500 })
+      },
+      onError: () => {
+        toast({ title: 'Fehler beim Ändern des Status ❌' })
       },
     })
   }

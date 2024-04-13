@@ -61,14 +61,9 @@ const NewOrder = () => {
   useEffect(() => {
     if (products) {
       const sessionData = sessionStorage.getItem('orderItems')
-      let sessionData2: OrderItem[] = []
-      if (sessionData) {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-        sessionData2 = JSON.parse(sessionData)
-      } else {
-        sessionData2 = []
-      }
-      console.log('Loaded dataOrderItems from Cache:', sessionData2)
+      const sessionData2 = sessionData
+        ? (JSON.parse(sessionData) as OrderItem[])
+        : []
       setDataOrderItems(sessionData2)
     }
   }, [products])
@@ -228,7 +223,7 @@ const NewOrder = () => {
         console.log('OrderItems saved on Success!', data)
         toast({
           title: 'Bestellung wurde gespeichert! ✅',
-          duration: 800,
+          duration: 500,
         })
       },
       onError: (error) => {

@@ -110,6 +110,7 @@ const CreateProduct = () => {
             Name
           </Label>
           <Input
+            tabIndex={-1}
             id="name"
             value={name}
             className="col-span-4"
@@ -123,6 +124,7 @@ const CreateProduct = () => {
             Preis
           </Label>
           <Input
+            tabIndex={-1}
             id="price"
             value={price}
             type="number"
@@ -144,7 +146,7 @@ const CreateProduct = () => {
                 setCategory(value)
               }}
             >
-              <SelectTrigger className="w-fill">
+              <SelectTrigger className="w-fill" tabIndex={-1}>
                 <SelectValue placeholder="Wähle Kategorie" />
               </SelectTrigger>
               <SelectContent>
@@ -166,6 +168,7 @@ const CreateProduct = () => {
 
           <Label className="col-span-4 w-full">Zubereitung</Label>
           <Textarea
+            tabIndex={-1}
             className="col-span-4 w-full"
             placeholder="Kommentar (optional)"
             value={method}
@@ -179,6 +182,7 @@ const CreateProduct = () => {
             Bild
           </Label>
           <Input
+            tabIndex={-1}
             id="picture"
             type="file"
             className="col-span-4 hover:cursor-pointer"
@@ -191,6 +195,7 @@ const CreateProduct = () => {
         <SheetFooter>
           <SheetClose asChild>
             <Button
+              tabIndex={-1}
               className="w-full"
               type="submit"
               disabled={isLoading}

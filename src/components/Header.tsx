@@ -12,19 +12,23 @@ const Header = () => {
         </div>
         <div className="flex h-14 w-full items-center text-center font-bold">
           <h1 className="w-full text-center text-foreground text-white">
-            {location.pathname === '/login'
+            {location.pathname === 'admin/login'
               ? 'Login'
-              : location.pathname === '/me'
+              : location.pathname === '/admin/me'
                 ? 'Me'
-                : location.pathname === '/open'
+                : location.pathname === '/admin/open'
                   ? 'Offen'
-                  : location.pathname === '/ready-for-pickup'
+                  : location.pathname === '/admin/ready-for-pickup'
                     ? 'Abholbereit'
-                    : location.pathname === '/new-order'
+                    : location.pathname === '/admin/new-order'
                       ? 'Neue Bestellung'
-                      : location.pathname === '/all-products'
+                      : location.pathname === '/admin/all-products'
                         ? 'Alle Produkte'
-                        : ''}
+                        : location.pathname === '/admin/statistic'
+                          ? 'Statistik'
+                          : location.pathname === '/admin/Login'
+                            ? 'Login'
+                            : ''}
           </h1>
         </div>
       </div>

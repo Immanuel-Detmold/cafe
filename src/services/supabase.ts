@@ -1,3 +1,4 @@
+import { queryClient } from '@/App'
 import { createClient } from '@supabase/supabase-js'
 
 import { Database } from './supabase.types'
@@ -11,12 +12,40 @@ export const supabase = createClient<Database>(supabaseUrl, supabaseKey, {
   },
 })
 
+supabase
+  .channel('order-db-changes')
+  .on(
+    'postgres_changes',
+    {
+      event: '*',
+      schema: 'public',
+    },
+    (payload) => {
+      console.log('Realtime Payload: ', payload)
+      void queryClient.invalidateQueries({ queryKey: ['ordersAndItems'] })
+    },
+  )
+  .subscribe()
+
 export async function login({ email }: { email: string }) {
   return await supabase.auth.signInWithOtp({
     email,
     options: {
       shouldCreateUser: true,
     },
+  })
+}
+
+export async function loginWithPW({
+  email,
+  password,
+}: {
+  email: string
+  password: string
+}) {
+  return await supabase.auth.signInWithPassword({
+    email,
+    password,
   })
 }
 
