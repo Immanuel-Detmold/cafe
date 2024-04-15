@@ -138,6 +138,20 @@ export const useOrdersAndItemsQueryV2 = ({
         .map((productId) => `product_ids.cs.{"${productId}"}`)
         .join(', ')
 
+      // Get Date from Today, also include TimeZone
+      let currentDate = new Date()
+      const timeZoneOffset = currentDate.getTimezoneOffset() / 60
+
+      const subtractHours = currentDate.getHours() + timeZoneOffset
+      currentDate = new Date(
+        currentDate.getTime() - subtractHours * 60 * 60 * 1000,
+      )
+      const date = currentDate.toISOString().split('T')[0]
+      const time =
+        currentDate.toISOString().split('T')[1]?.split('.')[0] ?? '00:00:00'
+      const supabase_date = `${date} ${time}.0000+00`
+      // new Date().toISOString().split('T')[0] + ' 00:00:00'
+
       let query = supabase
         .from('Orders')
         .select(
@@ -147,7 +161,7 @@ export const useOrdersAndItemsQueryV2 = ({
         )`,
         )
         .in('status', statusList)
-        .gte('created_at', new Date().toISOString().split('T')[0] + ' 00:00:00')
+        .gte('created_at', supabase_date)
         .order('created_at', { ascending: false })
 
       if (searchTerm && !isNaN(Number(searchTerm))) {
