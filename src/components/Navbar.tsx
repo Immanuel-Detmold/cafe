@@ -5,7 +5,7 @@ import { NavLink } from 'react-router-dom'
 
 const Navbar = () => {
   return (
-    <nav className="absolute inset-x-0 bottom-0 flex w-full place-content-around border-t border-gray-700 border-opacity-15 bg-secondary pb-1 pt-2">
+    <nav className="absolute bottom-0 flex h-14 w-full place-content-around items-center border-t border-gray-700 border-opacity-15 bg-secondary pb-1 pt-2">
       <NavLink
         to="./new-order"
         className={({ isActive }) => (isActive ? '' : 'text-gray-400')}

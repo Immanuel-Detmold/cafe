@@ -346,7 +346,7 @@ const NewOrder = () => {
           </div>
         )}
 
-        <div className="mb-4 flex justify-between">
+        <div className="flex justify-between">
           <Button
             className="mb-4 mt-2 w-min bg-amber-600"
             disabled={dataOrderItems.length === 0}
