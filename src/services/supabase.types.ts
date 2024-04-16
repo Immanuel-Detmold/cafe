@@ -86,6 +86,7 @@ export type Database = {
           price: number
           product_ids: string[]
           status: Database["public"]["Enums"]["order_status"]
+          user_id: string | null
         }
         Insert: {
           categories: string[]
@@ -97,6 +98,7 @@ export type Database = {
           price: number
           product_ids: string[]
           status: Database["public"]["Enums"]["order_status"]
+          user_id?: string | null
         }
         Update: {
           categories?: string[]
@@ -108,6 +110,7 @@ export type Database = {
           price?: number
           product_ids?: string[]
           status?: Database["public"]["Enums"]["order_status"]
+          user_id?: string | null
         }
         Relationships: []
       }
@@ -121,6 +124,7 @@ export type Database = {
           method: string | null
           name: string
           price: number
+          user_id: string | null
         }
         Insert: {
           category: string
@@ -131,6 +135,7 @@ export type Database = {
           method?: string | null
           name: string
           price: number
+          user_id?: string | null
         }
         Update: {
           category?: string
@@ -141,6 +146,7 @@ export type Database = {
           method?: string | null
           name?: string
           price?: number
+          user_id?: string | null
         }
         Relationships: []
       }
