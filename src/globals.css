@@ -12,13 +12,14 @@ html,
 body {
   position: fixed;
   height: 100vh;
-  /* height: -webkit-fill-available; */
+  height: -webkit-fill-available;
 }
 
 .main-container {
   /* Max height screen */
+  position: relative;
   width: 100vw;
-  /* height: -webkit-fill-available; */
+  height: -webkit-fill-available;
 }
 
 @layer base {

@@ -14,7 +14,7 @@ export const Navigation = () => {
       <div className="main-container relative flex max-h-screen flex-col">
         <Header />
 
-        <div className="container mb-16 overflow-y-auto">{outlet}</div>
+        <div className="container mb-16 flex-1 overflow-y-auto">{outlet}</div>
 
         {/* <div className='border h-32'></div> */}
         <Navbar />
