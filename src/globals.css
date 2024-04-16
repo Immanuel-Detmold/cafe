@@ -11,6 +11,8 @@ html,
 
 html,
 body {
+  position: fixed;
+  overflow: hidden;
   height: -webkit-fill-available;
 }
 
