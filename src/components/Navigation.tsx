@@ -15,7 +15,9 @@ export const Navigation = () => {
       <div className="main-container relative overflow-x-hidden">
         <Header />
 
-        <div className="container mx-auto mb-20">{outlet}</div>
+        <div className="w-full overflow-x-hidden scroll-auto">
+          <div className="container mx-auto mb-32">{outlet}</div>
+        </div>
 
         <Navbar />
         <Toaster />
