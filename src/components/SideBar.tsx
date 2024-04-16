@@ -69,7 +69,7 @@ const SideBar = () => {
             <div>Me</div>
           </NavLink>
           <NavLink
-            to="/admin/Login"
+            to="/"
             className={({ isActive }) =>
               isActive ? 'rounded-md bg-gray-100 p-2' : 'p-2'
             }
