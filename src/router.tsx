@@ -1,4 +1,4 @@
-import { createBrowserRouter } from 'react-router-dom'
+import { createBrowserRouter, redirect } from 'react-router-dom'
 
 import { Navigation } from './components/Navigation'
 import AllProducts from './pages/AllProducts/AllProducts'
@@ -9,11 +9,23 @@ import Open from './pages/Open/Open'
 import ReadyForPickup from './pages/ReadyForPickup/ReadyForPickup'
 import LoginPw from './pages/Statistic/LoginPw'
 import StatisticPage from './pages/Statistic/StatisticPage'
+import { getUser } from './services/supabase'
 
 // const [isWhiteMode, setWhiteMode] = useState(window.matchMedia('(prefers-color-scheme: dark)')
 
 export const router = createBrowserRouter(
   [
+    {
+      path: '/',
+      loader: async () => {
+        const user = await getUser()
+        if (user) {
+          return redirect('/admin/new-order')
+        } else {
+          return redirect('/admin/login')
+        }
+      },
+    },
     {
       path: 'screen',
       element: <ReadyForPickup />,
