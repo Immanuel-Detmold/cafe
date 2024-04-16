@@ -6,7 +6,7 @@ import { defineConfig } from 'vite'
 
 export default defineConfig({
   plugins: [react()],
-  base: '/cafe',
+  base: process.env.BASE_PATH ?? '/cafe', // use environment variable BASE_PATH, fallback to '/cafe' if not set
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
