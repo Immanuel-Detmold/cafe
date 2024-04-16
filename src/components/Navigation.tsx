@@ -1,3 +1,4 @@
+// import { ScrollArea } from '@radix-ui/react-scroll-area'
 import { useOutlet } from 'react-router-dom'
 
 import { Toaster } from '@/components/ui/toaster'
@@ -11,15 +12,10 @@ export const Navigation = () => {
   const outlet = useOutlet()
   return (
     <>
-      <div className="h-100 main-container relative">
+      <div className="main-container relative overflow-x-hidden">
         <Header />
 
-        <div className="h-full w-full overflow-x-hidden scroll-auto">
-          <div className="container mx-auto mb-32">{outlet}</div>
-
-          {/* Make Space for Navbar */}
-          {/* <div className='h-32'></div> */}
-        </div>
+        <div className="container mx-auto mb-20">{outlet}</div>
 
         <Navbar />
         <Toaster />
