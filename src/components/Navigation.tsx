@@ -7,18 +7,16 @@ import Header from './Header'
 import Navbar from './Navbar'
 
 // import { ScrollArea } from './ui/scroll-area'
-
 export const Navigation = () => {
   const outlet = useOutlet()
   return (
     <>
-      <div className="main-container relative overflow-x-hidden">
+      <div className="main-container relative flex max-h-screen flex-col">
         <Header />
 
-        <div className="w-full overflow-x-hidden scroll-auto">
-          <div className="container mx-auto mb-32">{outlet}</div>
-        </div>
+        <div className="container mb-16 flex-1 overflow-y-auto">{outlet}</div>
 
+        {/* <div className='border h-32'></div> */}
         <Navbar />
         <Toaster />
       </div>

@@ -5,20 +5,22 @@
 body,
 html,
 #root {
-  height: 100vh;
   box-sizing: border-box;
 }
 
 html,
 body {
+  position: relative;
   height: -webkit-fill-available;
+  height: 100svh;
 }
 
 .main-container {
-  height: 100vh;
-  width: 100vw;
-  position: relative;
+  /* Max height screen */
   height: -webkit-fill-available;
+  position: relative;
+  width: 100vw;
+  height: 100svh;
 }
 
 @layer base {

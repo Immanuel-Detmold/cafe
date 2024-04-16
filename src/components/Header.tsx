@@ -5,8 +5,8 @@ import SideBar from './SideBar'
 const Header = () => {
   const location = useLocation()
   return (
-    <header className="sticky top-0 z-50 h-14 w-full bg-primary">
-      <div className="flex">
+    <header className="sticky top-0 z-50 bg-primary">
+      <div className="relative flex">
         <div className="absolute left-0 top-0">
           <SideBar />
         </div>
