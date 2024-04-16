@@ -1,4 +1,4 @@
-import { ScrollArea } from '@radix-ui/react-scroll-area'
+// import { ScrollArea } from '@radix-ui/react-scroll-area'
 import { useOutlet } from 'react-router-dom'
 
 import { Toaster } from '@/components/ui/toaster'
