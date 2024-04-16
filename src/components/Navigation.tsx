@@ -12,15 +12,10 @@ export const Navigation = () => {
   const outlet = useOutlet()
   return (
     <>
-      <div className="main-container relative overflow-hidden ">
+      <div className="relative h-screen w-screen overflow-x-hidden">
         <Header />
 
-        <ScrollArea className="h-full w-full overflow-x-hidden scroll-auto">
-          <div className="container mx-auto mb-32">{outlet}</div>
-
-          {/* Make Space for Navbar */}
-          {/* <div className='h-32'></div> */}
-        </ScrollArea>
+        <div className="container mx-auto mb-20">{outlet}</div>
 
         <Navbar />
         <Toaster />
