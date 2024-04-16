@@ -1,4 +1,5 @@
 // import { ScrollArea } from '@radix-ui/react-scroll-area'
+import { ScrollArea } from '@radix-ui/react-scroll-area'
 import { useOutlet } from 'react-router-dom'
 
 import { Toaster } from '@/components/ui/toaster'
@@ -7,17 +8,16 @@ import Header from './Header'
 import Navbar from './Navbar'
 
 // import { ScrollArea } from './ui/scroll-area'
-
 export const Navigation = () => {
   const outlet = useOutlet()
   return (
     <>
-      <div className="main-container relative overflow-x-hidden">
+      <div className="h-100 main-container relative h-screen">
         <Header />
 
-        <div className="w-full overflow-x-hidden scroll-auto">
-          <div className="container mx-auto mb-32">{outlet}</div>
-        </div>
+        <ScrollArea className="h-[87%] w-full overflow-auto">
+          <div className="container mx-auto">{outlet}</div>
+        </ScrollArea>
 
         <Navbar />
         <Toaster />
