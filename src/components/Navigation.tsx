@@ -12,7 +12,7 @@ export const Navigation = () => {
   const outlet = useOutlet()
   return (
     <>
-      <div className="relative h-screen w-screen overflow-x-hidden">
+      <div className="main-container relative overflow-x-hidden">
         <Header />
 
         <div className="container mx-auto mb-20">{outlet}</div>
