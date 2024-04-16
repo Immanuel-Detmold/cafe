@@ -10,17 +10,17 @@ html,
 
 html,
 body {
-  position: fixed;
-  height: 100svh;
+  position: relative;
   height: -webkit-fill-available;
+  height: 100svh;
 }
 
 .main-container {
   /* Max height screen */
-  height: 100svh;
+  height: -webkit-fill-available;
   position: relative;
   width: 100vw;
-  height: -webkit-fill-available;
+  height: 100svh;
 }
 
 @layer base {
