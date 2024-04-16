@@ -11,7 +11,7 @@ export const Navigation = () => {
   const outlet = useOutlet()
   return (
     <>
-      <div className="main-container relative max-h-screen overflow-hidden">
+      <div className="main-container relative max-h-screen overflow-x-hidden overflow-y-scroll">
         <Header />
 
         <div className="container mx-auto mb-20">{outlet}</div>
