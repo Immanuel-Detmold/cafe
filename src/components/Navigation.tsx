@@ -11,10 +11,12 @@ export const Navigation = () => {
   const outlet = useOutlet()
   return (
     <>
-      <div className="main-container relative max-h-screen overflow-x-hidden overflow-y-scroll">
+      <div className="main-container relative max-h-screen overflow-hidden overflow-x-hidden">
         <Header />
 
-        <div className="container mx-auto mb-20">{outlet}</div>
+        <div className="container mx-auto mb-20 h-full overflow-y-scroll">
+          {outlet}
+        </div>
 
         <Navbar />
         <Toaster />
