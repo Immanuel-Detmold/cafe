@@ -13,7 +13,7 @@ export const Navigation = () => {
   return (
     <>
       <div className="main-container relative overflow-x-hidden">
-       <Header />
+        <Header />
 
         <div className="w-full overflow-x-hidden scroll-auto">
           <div className="container mx-auto mb-32">{outlet}</div>
