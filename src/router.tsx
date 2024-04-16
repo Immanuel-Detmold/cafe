@@ -15,6 +15,10 @@ import StatisticPage from './pages/Statistic/StatisticPage'
 export const router = createBrowserRouter(
   [
     {
+      path: '/',
+      element: <LoginPw />,
+    },
+    {
       path: 'screen',
       element: <ReadyForPickup />,
     },
