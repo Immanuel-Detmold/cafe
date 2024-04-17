@@ -1,5 +1,6 @@
 import { useOrdersAndItemsQueryV2 } from '@/data/useOrders'
 import {
+  formatDate,
   getCurrentMonth,
   getEndOfDay,
   getStartOfDay,
@@ -8,7 +9,11 @@ import {
 import { Label } from '@radix-ui/react-label'
 import { useMemo, useState } from 'react'
 
+import { Switch } from '@/components/ui/switch'
+
+import Open from '../Open/Open'
 import DatePicker from './DatePicker'
+import OrderTable from './OrderTable'
 import {
   getDistinctDates,
   getSumOrders,
@@ -18,6 +23,7 @@ import {
 const StatisticPage = () => {
   const { monthDataFormat, monthName } = getCurrentMonth()
   const { yearDataFormat, year } = getThisYear()
+  const [showAllOrders, setShorAllOrders] = useState(false)
 
   const [selectedDate, setSelectedDate] = useState(
     new Date().toLocaleDateString('en-CA').toString(),
@@ -44,12 +50,8 @@ const StatisticPage = () => {
   const { data: filteredData } = useOrdersAndItemsQueryV2({
     statusList: ['finished'],
     startDate: selectedDate ? getStartOfDay(selectedDate) : '2000.01.01',
-    endDate: selectedDate ? getEndOfDay(selectedDate) : '3000.01.01',
+    endDate: selectedDate ? getEndOfDay(selectedDate) : '9000.01.01',
   })
-
-  if (filteredData) {
-    console.log(filteredData)
-  }
 
   const distinctOrders = useMemo(() => {
     if (!orders) return []
@@ -68,9 +70,9 @@ const StatisticPage = () => {
 
   return (
     <>
-      <div>
+      <div className="flex flex-col items-center">
         {/* First row, sum this month and this year */}
-        <div className="mt-2 grid grid-cols-1 gap-2 md:grid-cols-2 ">
+        <div className="mt-2 grid w-full grid-cols-1 gap-2 md:grid-cols-2">
           {/* Current month */}
           <div className="grid grid-cols-1 gap-1 rounded-lg border p-2">
             <Label className="text-base">Dieser Monat ({monthName})</Label>
@@ -88,21 +90,21 @@ const StatisticPage = () => {
             </Label>
             <Label className="text-muted-foreground">Umsatz</Label>
           </div>
+        </div>
 
-          {/* Select Date to filter */}
-          <div className="col-span-2 w-full">
-            {orders && distinctOrders && (
-              <DatePicker
-                distinctOrders={distinctOrders}
-                selectedDate={selectedDate}
-                setSelectedDate={setSelectedDate}
-              />
-            )}
-          </div>
+        {/* Select Date to filter */}
+        <div className="col-span-2 mt-2 w-full">
+          {orders && distinctOrders && (
+            <DatePicker
+              distinctOrders={distinctOrders}
+              selectedDate={selectedDate}
+              setSelectedDate={setSelectedDate}
+            />
+          )}
         </div>
 
         {/* Lower Block (Under Selected Date) */}
-        <div className="mt-2 grid grid-cols-1 gap-2 md:grid-cols-2 ">
+        <div className="mt-2 grid w-full grid-cols-2 gap-2 md:grid-cols-2 lg:grid-cols-4">
           {/* Count of Orders */}
           <div className="grid grid-cols-1 gap-1 rounded-lg border p-2">
             <Label className="text-base">Bestellungen</Label>
@@ -154,7 +156,30 @@ const StatisticPage = () => {
             <Label className="text-muted-foreground">Umsatz</Label>
           </div>
         </div>
+
+        {/* Table */}
+        {filteredData && <OrderTable filteredData={filteredData} />}
+
+        {/* Show All Orders on Button Press*/}
+        <div className="my-4 mr-auto flex items-center space-x-2">
+          <Switch
+            id="load-orders"
+            checked={showAllOrders}
+            onCheckedChange={() => {
+              setShorAllOrders(!showAllOrders)
+            }}
+          />
+          <Label htmlFor="load-orders">
+            Bestellungen vom {formatDate(selectedDate)} Laden
+          </Label>
+        </div>
       </div>
+      {showAllOrders && (
+        <Open
+          startDate={selectedDate ? getStartOfDay(selectedDate) : '2000.01.01'}
+          endDate={selectedDate ? getEndOfDay(selectedDate) : '9000.01.01'}
+        ></Open>
+      )}
     </>
   )
 }

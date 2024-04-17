@@ -77,8 +77,9 @@ export const formatDate = (date: string) => {
 }
 
 // Input: yyyy-mm-dd output supabase format 2024-04-16 12:38:56.333594+00. Calcualte the start of day
-export const getStartOfDay = (inputDate: string) => {
-  let currentDate = new Date(inputDate)
+export const getStartOfDay = (inputDate?: string) => {
+  let currentDate = new Date(inputDate?.toString() ?? new Date())
+
   const timeZoneOffset = currentDate.getTimezoneOffset() / 60
 
   const subtractHours = currentDate.getHours() + timeZoneOffset

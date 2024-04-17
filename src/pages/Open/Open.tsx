@@ -1,6 +1,9 @@
 import { imgPlaceHolder } from '@/data/data'
 import { OrderStatus, useOrdersAndItemsQueryV2 } from '@/data/useOrders'
-import { getTodaysDate } from '@/generalHelperFunctions.tsx/dateHelperFunctions'
+import {
+  getEndOfDay,
+  getStartOfDay,
+} from '@/generalHelperFunctions.tsx/dateHelperFunctions'
 import { ClipboardDocumentListIcon } from '@heroicons/react/24/outline'
 import {
   ChatBubbleBottomCenterTextIcon,
@@ -25,17 +28,31 @@ import Filters from './Filters'
 import OrderStatusPage from './OrderStatusSelect'
 import { formatDateToTime } from './helperFunctions'
 
-const Open = ({ statusList }: { statusList: OrderStatus[] }) => {
+const Open = ({
+  statusList,
+  startDate,
+  endDate,
+}: {
+  statusList?: OrderStatus[]
+  startDate?: string
+  endDate?: string
+}) => {
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedCategories, setSelectedCategories] = useState<string[]>([])
   const [selectedProducts, setSelectedProducts] = useState<string[]>([])
+
+  if (startDate === undefined || endDate === undefined) {
+    startDate = getStartOfDay()
+    endDate = getEndOfDay(startDate)
+  }
 
   const { data: openOrders, error } = useOrdersAndItemsQueryV2({
     statusList: statusList,
     searchTerm: searchTerm,
     categories: selectedCategories,
     products: selectedProducts,
-    startDate: getTodaysDate(),
+    startDate: startDate,
+    endDate: endDate,
   })
 
   if (openOrders) {
