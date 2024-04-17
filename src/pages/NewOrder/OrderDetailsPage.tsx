@@ -9,7 +9,6 @@ import {
   Dialog,
   DialogContent,
   DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -21,6 +20,7 @@ type propsOrderDetailsPage = {
   dataOrderItem: OrderItem[]
   handleDeleteOrderItem: (product_id: number) => void
   products: Product[]
+  sumOrderPrice: number
 }
 
 const OrderDetailsPage = (props: propsOrderDetailsPage) => {
@@ -47,7 +47,7 @@ const OrderDetailsPage = (props: propsOrderDetailsPage) => {
                 </Label>
               </div>
               <Label className="font-bold">Anzahl</Label>
-              <Label className="font-bold">Preis</Label>
+              <Label className="font-bold">Summe</Label>
             </div>
 
             <Separator />
@@ -88,8 +88,14 @@ const OrderDetailsPage = (props: propsOrderDetailsPage) => {
                 </div>
               )
             })}
+            <Separator />
+
+            <div className="grid grid-cols-4 gap-4">
+              <Label className="col-start-4 -mt-2 font-bold text-amber-600">
+                {props.sumOrderPrice}€
+              </Label>
+            </div>
           </div>
-          <DialogFooter></DialogFooter>
         </DialogContent>
       </Dialog>
     </div>

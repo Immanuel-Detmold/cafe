@@ -82,7 +82,7 @@ export type Database = {
           created_at: string
           customer_name: string | null
           id: number
-          payment_method: string | null
+          payment_method: string
           price: number
           product_ids: string[]
           status: Database["public"]["Enums"]["order_status"]
@@ -94,7 +94,7 @@ export type Database = {
           created_at?: string
           customer_name?: string | null
           id?: number
-          payment_method?: string | null
+          payment_method: string
           price: number
           product_ids: string[]
           status: Database["public"]["Enums"]["order_status"]
@@ -106,7 +106,7 @@ export type Database = {
           created_at?: string
           customer_name?: string | null
           id?: number
-          payment_method?: string | null
+          payment_method?: string
           price?: number
           product_ids?: string[]
           status?: Database["public"]["Enums"]["order_status"]

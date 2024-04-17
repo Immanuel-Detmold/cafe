@@ -1,7 +1,6 @@
 import { OrdersAndItems } from '@/data/useOrders'
 
 export const getSumOrders = (dataOrders: OrdersAndItems) => {
-  //   const sum = dataOrders.reduce((total, order) => total + order.amount, 0)
   const sum = dataOrders.reduce((total, order) => total + order.price, 0)
   return sum
 }
@@ -16,4 +15,25 @@ export const getDistinctDates = (dataOrders: OrdersAndItems) => {
   })
 
   return distinctDates
+}
+
+// Return sum of payment method
+export const getSumOrdersPayMethod = (
+  dataOrders: OrdersAndItems,
+  payment_method?: string,
+) => {
+  if (!payment_method) {
+    const sum = dataOrders.reduce((total, order) => total + order.price, 0)
+    return sum
+  }
+
+  const sum = dataOrders.reduce((total, order) => {
+    console.log(order)
+    if (order.payment_method === payment_method) {
+      return total + order.price
+    }
+    return total
+  }, 0)
+  console.log('Summe: ', sum)
+  return sum
 }

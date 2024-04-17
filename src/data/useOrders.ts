@@ -124,6 +124,7 @@ export const useOrdersAndItemsQueryV2 = ({
   products,
   startDate,
   endDate,
+  payment_method,
 }: {
   statusList?: OrderStatus[]
   searchTerm?: string
@@ -131,6 +132,7 @@ export const useOrdersAndItemsQueryV2 = ({
   products?: string[]
   startDate?: string
   endDate?: string
+  payment_method?: string
 }) =>
   useQuery({
     queryKey: [
@@ -141,6 +143,7 @@ export const useOrdersAndItemsQueryV2 = ({
       products,
       startDate,
       endDate,
+      payment_method,
     ],
     queryFn: async () => {
       let query = supabase

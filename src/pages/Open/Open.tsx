@@ -249,7 +249,10 @@ const Open = ({ statusList }: { statusList: OrderStatus[] }) => {
                   {/* Price */}
                   <div className="col-span-1 flex flex-col">
                     <Label className="text-right">
-                      {orderItem.Products?.price}€
+                      {orderItem.Products
+                        ? orderItem.Products.price * orderItem.quantity
+                        : 0}
+                      €
                     </Label>
                   </div>
                 </div>
