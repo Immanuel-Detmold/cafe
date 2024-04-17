@@ -123,12 +123,14 @@ export const useOrdersAndItemsQueryV2 = ({
   categories,
   products,
   startDate,
+  endDate,
 }: {
-  statusList: OrderStatus[]
-  searchTerm: string
-  categories: string[]
-  products: string[]
-  startDate: string
+  statusList?: OrderStatus[]
+  searchTerm?: string
+  categories?: string[]
+  products?: string[]
+  startDate?: string
+  endDate?: string
 }) =>
   useQuery({
     queryKey: [
@@ -138,16 +140,9 @@ export const useOrdersAndItemsQueryV2 = ({
       categories,
       products,
       startDate,
+      endDate,
     ],
     queryFn: async () => {
-      const categoryFilter = categories
-        .map((category) => `categories.cs.{"${category}"}`)
-        .join(', ')
-
-      const productFilter = products
-        .map((productId) => `product_ids.cs.{"${productId}"}`)
-        .join(', ')
-
       let query = supabase
         .from('Orders')
         .select(
@@ -156,19 +151,33 @@ export const useOrdersAndItemsQueryV2 = ({
           Products (*)
         )`,
         )
-        .in('status', statusList)
-        .gte('created_at', startDate)
         .order('created_at', { ascending: false })
 
+      if (statusList && statusList.length > 0) {
+        query = query.in('status', statusList)
+      }
+      if (startDate !== '' && startDate !== undefined) {
+        query = query.gte('created_at', startDate)
+      }
+      if (endDate !== '' && endDate !== undefined) {
+        query = query.lte('created_at', endDate)
+      }
       if (searchTerm && !isNaN(Number(searchTerm))) {
         query = query.eq('id', Number(searchTerm))
-      } else {
+      } else if (searchTerm && searchTerm.length > 0) {
         query = query.ilike('customer_name', `%${searchTerm}%`)
       }
-      if (categories.length !== 0) {
+      if (categories && categories.length > 0) {
+        const categoryFilter = categories
+          .map((category) => `categories.cs.{"${category}"}`)
+          .join(', ')
+
         query = query.or(categoryFilter)
       }
-      if (products.length !== 0) {
+      if (products && products.length > 0) {
+        const productFilter = products
+          .map((productId) => `product_ids.cs.{"${productId}"}`)
+          .join(', ')
         query = query.or(productFilter)
       }
       const { data, error } = await query

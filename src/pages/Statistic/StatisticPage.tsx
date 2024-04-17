@@ -4,13 +4,16 @@ import {
   getThisYear,
 } from '@/generalHelperFunctions.tsx/dateHelperFunctions'
 import { Label } from '@radix-ui/react-label'
+import { useState } from 'react'
 
 import DatePicker from './DatePicker'
-import { getSumOrders } from './helperFunctions'
+import { getDistinctDates, getSumOrders } from './helperFunctions'
 
 const StatisticPage = () => {
   const { monthDataFormat, monthName } = getCurrentMonth()
   const { yearDataFormat, year } = getThisYear()
+
+  const [selectedDate, setSelectedDate] = useState('')
 
   const { data: ordersMonth } = useOrdersAndItemsQueryV2({
     statusList: ['finished'],
@@ -28,13 +31,22 @@ const StatisticPage = () => {
     startDate: yearDataFormat,
   })
 
-  const sumMonth = ordersMonth ? getSumOrders(ordersMonth) : 0
-  const sumYear = ordersYear ? getSumOrders(ordersYear) : 0
+  const { data: orders } = useOrdersAndItemsQueryV2({})
 
-  // const sumMonth = ordersMonth? getSumOrders(ordersMonth) || 0
+  let distinctOrders: string[] = []
+  if (orders) {
+    distinctOrders = getDistinctDates(orders)
+  }
 
-  // console.log(ordersYear)
-  // console.log(ordersMonth)
+  // Get sum values
+  let sumMonth = 0
+  let sumYear = 0
+  if (ordersMonth) {
+    sumMonth = getSumOrders(ordersMonth)
+  }
+  if (ordersYear) {
+    sumYear = getSumOrders(ordersYear)
+  }
 
   return (
     <>
@@ -58,7 +70,17 @@ const StatisticPage = () => {
           <Label className="text-muted-foreground">Umsatz</Label>
         </div>
 
-        <DatePicker />
+        <div className="col-span-1 w-full">
+          {orders && distinctOrders && (
+            <DatePicker
+              distinctOrders={distinctOrders}
+              selectedDate={selectedDate}
+              setSelectedDate={setSelectedDate}
+            />
+          )}
+        </div>
+
+        <div>MOin</div>
       </div>
     </>
   )

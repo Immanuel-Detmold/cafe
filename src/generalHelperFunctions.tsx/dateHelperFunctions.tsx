@@ -63,3 +63,15 @@ export const getThisYear = () => {
     currentDate.split(' ')[1]
   return { yearDataFormat: currentYear, year: temp.split('-')[0] ?? '2000' }
 }
+
+// Format 2024-04-17T05:58:16.36199+00:00 -> 17.04.2024
+export const formatDate = (date: string) => {
+  const dateObject = new Date(date)
+
+  const formattedDate = dateObject.toLocaleString('de-DE', {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  })
+  return formattedDate
+}
