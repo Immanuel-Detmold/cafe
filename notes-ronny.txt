@@ -2,5 +2,6 @@ To do:
 - Statistik Screen
 - Was ist mit Bezahlung? In der App möglich machen?
 - Status Change in Open Order im Button Loading...
-- ProduktSeite. Ganz Unten sind die Preise nicht sichtbar
-- Safari Scrollbar Probleme
+- Dynamische Kategorien und Bezahlmethoden?
+- Sprachen
+- fix end Date

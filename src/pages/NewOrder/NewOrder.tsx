@@ -307,6 +307,7 @@ const NewOrder = () => {
             dataOrderItem={dataOrderItems}
             handleDeleteOrderItem={handleDeleteOrderItem}
             products={products || []}
+            sumOrderPrice={sumOrderPrice}
           />
         </div>
 

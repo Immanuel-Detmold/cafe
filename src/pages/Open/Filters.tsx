@@ -54,11 +54,17 @@ const Filters = ({
             defaultValue={['item-1']}
           >
             <AccordionItem value="item-1">
-              <AccordionTrigger>Produktkategorie</AccordionTrigger>
+              <AccordionTrigger className="-mb-3">
+                Produktkategorie
+              </AccordionTrigger>
+
               <AccordionContent>
                 {currentCategories &&
                   currentCategories.map((category) => (
-                    <div key={category} className="flex items-center space-x-2">
+                    <div
+                      key={category}
+                      className="mt-2 flex items-center space-x-1"
+                    >
                       <Checkbox
                         id={category}
                         checked={selectedCategories.includes(category)}
@@ -72,13 +78,13 @@ const Filters = ({
               </AccordionContent>
             </AccordionItem>
             <AccordionItem value="item-2">
-              <AccordionTrigger>Produkte</AccordionTrigger>
+              <AccordionTrigger className="-mb-3">Produkte</AccordionTrigger>
               <AccordionContent>
                 {currentProducts &&
                   currentProducts.map((product) => (
                     <div
                       key={product.id.toString()}
-                      className="flex items-center space-x-2"
+                      className="mt-2 flex items-center space-x-1"
                     >
                       <Checkbox
                         id={product.id.toString()}
