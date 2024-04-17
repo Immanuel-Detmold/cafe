@@ -77,7 +77,7 @@ const SideBar = () => {
               setSheetOpen(false)
             }}
           >
-            <div>Login 14:04</div>
+            <div>Login</div>
           </NavLink>
         </SheetHeader>
       </SheetContent>

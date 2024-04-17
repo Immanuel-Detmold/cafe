@@ -1,5 +1,6 @@
 import { imgPlaceHolder } from '@/data/data'
 import { OrderStatus, useOrdersAndItemsQueryV2 } from '@/data/useOrders'
+import { getTodaysDate } from '@/generalHelperFunctions.tsx/dateHelperFunctions'
 import { ClipboardDocumentListIcon } from '@heroicons/react/24/outline'
 import {
   ChatBubbleBottomCenterTextIcon,
@@ -34,6 +35,7 @@ const Open = ({ statusList }: { statusList: OrderStatus[] }) => {
     searchTerm: searchTerm,
     categories: selectedCategories,
     products: selectedProducts,
+    startDate: getTodaysDate(),
   })
 
   if (openOrders) {

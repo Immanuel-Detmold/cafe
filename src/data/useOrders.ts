@@ -1,4 +1,5 @@
 import { queryClient } from '@/App'
+import { getTodaysDate } from '@/generalHelperFunctions.tsx/dateHelperFunctions'
 import { supabase } from '@/services/supabase'
 import { Database } from '@/services/supabase.types'
 import { useMutation, useQuery } from '@tanstack/react-query'
@@ -106,7 +107,7 @@ export const useOrderAndItemsQuery = (status: OrderStatus[]) =>
         )`,
         )
         .in('status', status)
-        .gte('created_at', new Date().toISOString().split('T')[0] + ' 00:00:00')
+        .gte('created_at', getTodaysDate())
         .order('created_at', { ascending: false })
 
       if (error) {
@@ -121,14 +122,23 @@ export const useOrdersAndItemsQueryV2 = ({
   searchTerm,
   categories,
   products,
+  startDate,
 }: {
   statusList: OrderStatus[]
   searchTerm: string
   categories: string[]
   products: string[]
+  startDate: string
 }) =>
   useQuery({
-    queryKey: ['ordersAndItems', statusList, searchTerm, categories, products],
+    queryKey: [
+      'ordersAndItems',
+      statusList,
+      searchTerm,
+      categories,
+      products,
+      startDate,
+    ],
     queryFn: async () => {
       const categoryFilter = categories
         .map((category) => `categories.cs.{"${category}"}`)
@@ -137,20 +147,6 @@ export const useOrdersAndItemsQueryV2 = ({
       const productFilter = products
         .map((productId) => `product_ids.cs.{"${productId}"}`)
         .join(', ')
-
-      // Get Date from Today, also include TimeZone
-      let currentDate = new Date()
-      const timeZoneOffset = currentDate.getTimezoneOffset() / 60
-
-      const subtractHours = currentDate.getHours() + timeZoneOffset
-      currentDate = new Date(
-        currentDate.getTime() - subtractHours * 60 * 60 * 1000,
-      )
-      const date = currentDate.toISOString().split('T')[0]
-      const time =
-        currentDate.toISOString().split('T')[1]?.split('.')[0] ?? '00:00:00'
-      const supabase_date = `${date} ${time}.0000+00`
-      // new Date().toISOString().split('T')[0] + ' 00:00:00'
 
       let query = supabase
         .from('Orders')
@@ -161,7 +157,7 @@ export const useOrdersAndItemsQueryV2 = ({
         )`,
         )
         .in('status', statusList)
-        .gte('created_at', supabase_date)
+        .gte('created_at', startDate)
         .order('created_at', { ascending: false })
 
       if (searchTerm && !isNaN(Number(searchTerm))) {
@@ -175,7 +171,6 @@ export const useOrdersAndItemsQueryV2 = ({
       if (products.length !== 0) {
         query = query.or(productFilter)
       }
-
       const { data, error } = await query
 
       if (error) {

@@ -116,7 +116,9 @@ const ReadyForPickup = () => {
                                 }
                               />
                             </Avatar>
-                            <Label className="ml-1">Cafe</Label>
+                            <Label className="ml-1">
+                              {item.Products?.name}
+                            </Label>
                           </div>
                           {/* Quantity */}
                           <div className="flex items-center">
