@@ -9,7 +9,6 @@ import { OrderStatus } from '@/data/useOrders'
 import { ShoppingBagIcon } from '@heroicons/react/24/outline'
 import { UserRoundIcon } from 'lucide-react'
 import { useState } from 'react'
-import { set } from 'react-hook-form'
 
 import { Avatar, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
