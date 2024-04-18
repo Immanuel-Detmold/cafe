@@ -8,7 +8,6 @@ import { OrderStatus } from '@/data/useOrders'
 // import { supabase } from '@/services/supabase'
 import { ShoppingBagIcon } from '@heroicons/react/24/outline'
 import { UserRoundIcon } from 'lucide-react'
-import { useEffect } from 'react'
 
 import { Avatar, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
@@ -22,7 +21,7 @@ import { useToast } from '@/components/ui/use-toast'
 
 const ReadyForPickup = () => {
   const { data: readyOrders } = useOrderAndItemsQuery(['ready'])
-  const { mutate: changeStatus } = useChageOrderStatusMutationV2()
+  const { mutate: changeStatus, isPending } = useChageOrderStatusMutationV2()
 
   const { toast } = useToast()
 
@@ -54,23 +53,6 @@ const ReadyForPickup = () => {
       },
     )
   }
-
-  useEffect(() => {
-    // supabase
-    //   .channel('order-db-changes')
-    //   .on(
-    //     'postgres_changes',
-    //     {
-    //       event: '*',
-    //       schema: 'public',
-    //     },
-    //     (payload) => {
-    //       console.log('Realtime Payload: ', payload)
-    //       void queryClient.invalidateQueries({ queryKey: ['ordersAndItems'] })
-    //     },
-    //   )
-    //   .subscribe()
-  })
 
   return (
     <>
@@ -133,14 +115,14 @@ const ReadyForPickup = () => {
               <PopoverContent className="flex w-80 flex-col items-center justify-center">
                 <Label className="font-bold">Status Update</Label>
                 <Button
-                  className="m-2 w-40"
+                  className="m-2 w-40 bg-emerald-800 hover:bg-emerald-900"
                   variant={'default'}
                   tabIndex={-1}
                   onClick={() => {
                     handleStatusUpdate(order.id, 'finished')
                   }}
                 >
-                  Abgeholt
+                  {isPending ? 'Loading...' : 'Abgeholt'}
                 </Button>
                 <Button
                   className="m-1 w-40"
@@ -150,7 +132,7 @@ const ReadyForPickup = () => {
                     handleStatusUpdate(order.id, 'processing')
                   }}
                 >
-                  In Bearbeitung
+                  {isPending ? 'Loading...' : 'In Bearbeitung'}
                 </Button>
               </PopoverContent>
             </Popover>

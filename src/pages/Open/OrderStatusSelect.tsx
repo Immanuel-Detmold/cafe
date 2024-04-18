@@ -38,7 +38,7 @@ const OrderStatusPage = ({ order }: { order: Order }) => {
       defaultValue={orderStatus}
     >
       <SelectTrigger
-        className={`ml-2 w-[140px] ${orderStatus === 'processing' ? 'bg-amber-600 text-white' : ''}`}
+        className={`ml-2 w-[140px] ${orderStatus === 'processing' ? 'bg-amber-700 text-white' : orderStatus === 'finished' ? 'bg-emerald-800 text-white' : ''}`}
       >
         <SelectValue placeholder="Wähle Status" />
       </SelectTrigger>

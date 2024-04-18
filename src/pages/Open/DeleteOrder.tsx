@@ -24,7 +24,7 @@ const DeleteOrder = ({ order }: { order: Order }) => {
     deleteOrder(id, {
       onSuccess: () => {
         console.log('Success Deleting Order!')
-        toast({ title: 'Bestellung gelöscht ✅' })
+        toast({ title: 'Bestellung gelöscht ✅', duration: 800 })
         void queryClient.invalidateQueries({ queryKey: ['ordersAndItems'] })
         console.log('Deletion Sucessfull!')
       },

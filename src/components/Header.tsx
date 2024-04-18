@@ -5,14 +5,14 @@ import SideBar from './SideBar'
 const Header = () => {
   const location = useLocation()
   return (
-    <header className="sticky top-0 z-50 bg-primary">
+    <header className="cafe-color sticky top-0 z-50">
       <div className="relative flex">
         <div className="absolute left-0 top-0">
           <SideBar />
         </div>
         <div className="flex h-14 w-full items-center text-center font-bold">
           <h1 className="w-full text-center text-foreground text-white">
-            {location.pathname === 'admin/login'
+            {location.pathname === '/admin/login'
               ? 'Login'
               : location.pathname === '/admin/me'
                 ? 'Me'
@@ -28,7 +28,9 @@ const Header = () => {
                           ? 'Statistik'
                           : location.pathname === '/admin/Login'
                             ? 'Login'
-                            : ''}
+                            : location.pathname === '/admin/closed-orders'
+                              ? 'Abgeholt (Heute)'
+                              : ''}
           </h1>
         </div>
       </div>

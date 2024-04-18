@@ -1,8 +1,8 @@
 import { imgPlaceHolder } from '@/data/data'
 import { OrderStatus, useOrdersAndItemsQueryV2 } from '@/data/useOrders'
 import {
-  getEndOfDay,
-  getStartOfDay,
+  getEndOfDayToday,
+  getStartOfDayToday,
 } from '@/generalHelperFunctions.tsx/dateHelperFunctions'
 import { ClipboardDocumentListIcon } from '@heroicons/react/24/outline'
 import {
@@ -41,9 +41,9 @@ const Open = ({
   const [selectedCategories, setSelectedCategories] = useState<string[]>([])
   const [selectedProducts, setSelectedProducts] = useState<string[]>([])
 
-  if (startDate === undefined || endDate === undefined) {
-    startDate = getStartOfDay()
-    endDate = getEndOfDay(startDate)
+  if (startDate === undefined && endDate === undefined) {
+    startDate = getStartOfDayToday().finalDateString
+    endDate = getEndOfDayToday().endOfDayString
   }
 
   const { data: openOrders, error } = useOrdersAndItemsQueryV2({
@@ -110,23 +110,6 @@ const Open = ({
       setSelectedProducts(JSON.parse(selectedProducts) as string[])
     }
   }, [])
-
-  useEffect(() => {
-    // supabase
-    //   .channel('order-db-changes')
-    //   .on(
-    //     'postgres_changes',
-    //     {
-    //       event: '*',
-    //       schema: 'public',
-    //     },
-    //     (payload) => {
-    //       console.log('Realtime Payload: ', payload)
-    //       void queryClient.invalidateQueries({ queryKey: ['ordersAndItems'] })
-    //     },
-    //   )
-    //   .subscribe()
-  })
 
   return (
     <div className="mb-6 flex flex-col">

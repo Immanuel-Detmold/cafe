@@ -5,16 +5,24 @@ export const getSumOrders = (dataOrders: OrdersAndItems) => {
   return sum
 }
 
+// Get Distinct Dates
 export const getDistinctDates = (dataOrders: OrdersAndItems) => {
   const distinctDates: string[] = []
   dataOrders.forEach((order) => {
-    const date = order.created_at.split('T')[0] || '2000.01.01'
+    // Add Local Date to the List
+    const date = convertUTCToLocalTime(order.created_at)
     if (!distinctDates.includes(date)) {
       distinctDates.push(date)
     }
   })
-
   return distinctDates
+}
+
+export const convertUTCToLocalTime = (inputDate: string) => {
+  inputDate = inputDate?.split('.')[0] || ''
+  const dateUTC = new Date(inputDate)
+  const finalDate = dateUTC.toLocaleDateString('en-CA').toString()
+  return finalDate
 }
 
 // Return sum of payment method

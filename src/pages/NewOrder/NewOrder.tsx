@@ -237,7 +237,6 @@ const NewOrder = () => {
 
   return (
     <div className="select-none">
-      {/* <Button onClick={() => { }}>Test</Button> */}
       {/* Category and Product */}
       <div className="mt-2">
         {groupedProducts &&

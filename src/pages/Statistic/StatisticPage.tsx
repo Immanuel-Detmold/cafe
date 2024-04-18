@@ -28,6 +28,7 @@ const StatisticPage = () => {
   const [selectedDate, setSelectedDate] = useState(
     new Date().toLocaleDateString('en-CA').toString(),
   )
+  // console.log(selectedDate)
 
   const { data: ordersMonth } = useOrdersAndItemsQueryV2({
     statusList: ['finished'],
@@ -49,8 +50,8 @@ const StatisticPage = () => {
 
   const { data: filteredData } = useOrdersAndItemsQueryV2({
     statusList: ['finished'],
-    startDate: selectedDate ? getStartOfDay(selectedDate) : '2000.01.01',
-    endDate: selectedDate ? getEndOfDay(selectedDate) : '9000.01.01',
+    startDate: getStartOfDay(selectedDate).finalDateString,
+    endDate: getEndOfDay(selectedDate).endOfDayString,
   })
 
   const distinctOrders = useMemo(() => {
@@ -176,8 +177,8 @@ const StatisticPage = () => {
       </div>
       {showAllOrders && (
         <Open
-          startDate={selectedDate ? getStartOfDay(selectedDate) : '2000.01.01'}
-          endDate={selectedDate ? getEndOfDay(selectedDate) : '9000.01.01'}
+          startDate={getStartOfDay(selectedDate).finalDateString}
+          endDate={getEndOfDay(selectedDate).endOfDayString}
         ></Open>
       )}
     </>
