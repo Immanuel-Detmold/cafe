@@ -70,6 +70,3 @@ getEndOfDay('2024-04-02')
 //   .toLocaleDateString('de-CA', { hour12: false })
 //   .replace(', ', 'T')
 // console.log(test)
-
-const test = new Date().toLocaleDateString('de-CA').toString()
-console.log(test)

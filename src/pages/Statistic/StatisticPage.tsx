@@ -7,8 +7,10 @@ import {
   getThisYear,
 } from '@/generalHelperFunctions.tsx/dateHelperFunctions'
 import { Label } from '@radix-ui/react-label'
+import { FileTextIcon } from 'lucide-react'
 import { useMemo, useState } from 'react'
 
+import { Button } from '@/components/ui/button'
 import { Switch } from '@/components/ui/switch'
 
 import Open from '../Open/Open'
@@ -28,7 +30,6 @@ const StatisticPage = () => {
   const [selectedDate, setSelectedDate] = useState(
     new Date().toLocaleDateString('en-CA').toString(),
   )
-  // console.log(selectedDate)
 
   const { data: ordersMonth } = useOrdersAndItemsQueryV2({
     statusList: ['finished'],
@@ -157,6 +158,9 @@ const StatisticPage = () => {
             <Label className="text-muted-foreground">Umsatz</Label>
           </div>
         </div>
+        <Button className="ml-auto w-20">
+          PDF <FileTextIcon className="ml-2" />
+        </Button>
 
         {/* Table */}
         {filteredData && <OrderTable filteredData={filteredData} />}
@@ -171,7 +175,7 @@ const StatisticPage = () => {
             }}
           />
           <Label htmlFor="load-orders">
-            Bestellungen vom {formatDate(selectedDate)} Laden
+            Alle Bestellungen vom {formatDate(selectedDate)} Laden
           </Label>
         </div>
       </div>

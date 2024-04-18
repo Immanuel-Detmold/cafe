@@ -86,6 +86,13 @@ const CreateProduct = () => {
     return i_uuidv4
   }
 
+  const handlePriceChange = (inputValue: string) => {
+    const match = inputValue.match(/^(\d+)?([.,])?(\d{0,2})?$/)
+    if (match) {
+      setPrice(match[0])
+    }
+  }
+
   return (
     <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
       <SheetTrigger
@@ -129,7 +136,7 @@ const CreateProduct = () => {
             value={price}
             type="number"
             onChange={(e) => {
-              setPrice(e.target.value)
+              handlePriceChange(e.target.value)
             }}
             className="col-span-4"
             placeholder="1,00 €"

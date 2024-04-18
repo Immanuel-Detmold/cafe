@@ -4,9 +4,13 @@ To do:
 - Status Change in Open Order im Button Loading...
 - Dynamische Kategorien und Bezahlmethoden?
 - Sprachen
-- fix end Date
-
--fix moth and date. Time is correct, but not date
-- automatic dark mode? or edit dark mode? burger icon + sidebar fix. ready to pickup color
-- click auf abgeholt bei ready pickup screen -> loading...
 - edit button
+- suchleiste bei new-order
+- edit product und new product price rule
+- Logo Update
+
+IMPORTANT:
+- PDF export
+
+Later:
+Automatic Dark Mode

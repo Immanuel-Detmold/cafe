@@ -8,6 +8,8 @@ import { OrderStatus } from '@/data/useOrders'
 // import { supabase } from '@/services/supabase'
 import { ShoppingBagIcon } from '@heroicons/react/24/outline'
 import { UserRoundIcon } from 'lucide-react'
+import { useState } from 'react'
+import { set } from 'react-hook-form'
 
 import { Avatar, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
@@ -22,6 +24,7 @@ import { useToast } from '@/components/ui/use-toast'
 const ReadyForPickup = () => {
   const { data: readyOrders } = useOrderAndItemsQuery(['ready'])
   const { mutate: changeStatus, isPending } = useChageOrderStatusMutationV2()
+  const [clickedButton, setClickedButton] = useState('finished')
 
   const { toast } = useToast()
 
@@ -119,20 +122,26 @@ const ReadyForPickup = () => {
                   variant={'default'}
                   tabIndex={-1}
                   onClick={() => {
+                    setClickedButton('finished')
                     handleStatusUpdate(order.id, 'finished')
                   }}
                 >
-                  {isPending ? 'Loading...' : 'Abgeholt'}
+                  {isPending && clickedButton === 'finished'
+                    ? 'Loading...'
+                    : 'Abgeholt'}
                 </Button>
                 <Button
                   className="m-1 w-40"
                   variant={'default'}
                   tabIndex={-1}
                   onClick={() => {
+                    setClickedButton('processing')
                     handleStatusUpdate(order.id, 'processing')
                   }}
                 >
-                  {isPending ? 'Loading...' : 'In Bearbeitung'}
+                  {isPending && clickedButton === 'processing'
+                    ? 'Loading...'
+                    : 'In Bearbeitung'}
                 </Button>
               </PopoverContent>
             </Popover>

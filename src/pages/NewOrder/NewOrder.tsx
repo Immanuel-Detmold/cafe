@@ -234,6 +234,23 @@ const NewOrder = () => {
       },
     })
   }
+  const handlCustomPrice = (inputValue: string) => {
+    inputValue = inputValue.replace(/[^0-9.,]/g, '')
+    // Allow only one dot or comma and two decimal places after it
+    if (
+      inputValue.includes('-') ||
+      inputValue.includes('+') ||
+      inputValue.includes('e')
+    ) {
+      setCustomPriceValue('')
+    } else {
+      const match = inputValue.match(/^(\d+)?([.,])?(\d{0,2})?$/)
+
+      if (match) {
+        setCustomPriceValue(match[0])
+      }
+    }
+  }
 
   return (
     <div className="select-none">
@@ -341,7 +358,7 @@ const NewOrder = () => {
               id="custom-price"
               type="number"
               value={customPriceValue}
-              onChange={(e) => setCustomPriceValue(e.target.value)}
+              onChange={(e) => handlCustomPrice(e.target.value)}
             />
           </div>
         )}

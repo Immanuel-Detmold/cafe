@@ -17,14 +17,16 @@ import { useToast } from '@/components/ui/use-toast'
 
 const OrderStatusPage = ({ order }: { order: Order }) => {
   const [orderStatus, setOrderStatus] = useState<OrderStatus>(order.status)
-  const { mutate: changeOrderStatus } = useChageOrderStatusMutation(order.id)
+  const { mutate: changeOrderStatus, isPending } = useChageOrderStatusMutation(
+    order.id,
+  )
   const { toast } = useToast()
 
   const handleStatusChange = (newStatus: OrderStatus) => {
     setOrderStatus(newStatus)
     changeOrderStatus(newStatus, {
       onSuccess: () => {
-        toast({ title: 'Status erfolgreich geändert ✅', duration: 500 })
+        // toast({ title: 'Status erfolgreich geändert ✅', duration: 500 })
       },
       onError: () => {
         toast({ title: 'Fehler beim Ändern des Status ❌' })
@@ -44,10 +46,18 @@ const OrderStatusPage = ({ order }: { order: Order }) => {
       </SelectTrigger>
       <SelectContent>
         <SelectGroup>
-          <SelectItem value="waiting">Warten</SelectItem>
-          <SelectItem value="processing">In Bearbeitung</SelectItem>
-          <SelectItem value="ready">Abholbereit</SelectItem>
-          <SelectItem value="finished">Abgeholt</SelectItem>
+          <SelectItem value="waiting">
+            {isPending ? 'Loading...' : 'Warten'}
+          </SelectItem>
+          <SelectItem value="processing">
+            {isPending ? 'Loading...' : 'In Bearbeitung'}
+          </SelectItem>
+          <SelectItem value="ready">
+            {isPending ? 'Loading...' : 'Abholbereit'}
+          </SelectItem>
+          <SelectItem value="finished">
+            {isPending ? 'Loading...' : 'Abgeholt'}
+          </SelectItem>
         </SelectGroup>
       </SelectContent>
     </Select>
