@@ -1,21 +1,30 @@
-export const getTodaysDate = () => {
-  let currentDate = new Date()
-  const timeZoneOffset = currentDate.getTimezoneOffset() / 60
+export const getStartOfDayToday = () => {
+  const date = new Date()
+  const hoursInToday = date.getHours()
 
-  const subtractHours = currentDate.getHours() + timeZoneOffset
-  currentDate = new Date(currentDate.getTime() - subtractHours * 60 * 60 * 1000)
-  const date = currentDate.toISOString().split('T')[0]
-  const time =
-    currentDate.toISOString().split('T')[1]?.split('.')[0] ?? '00:00:00'
-  const supabase_date_format = `${date} ${time}.0000+00`
-  // new Date().toISOString().split('T')[0] + ' 00:00:00'
-  return supabase_date_format
+  const temp = new Date(Number(date) - hoursInToday * 60 * 60 * 1000)
+  temp.setMinutes(0)
+  temp.setSeconds(0)
+
+  const finalDateString = temp.toISOString().split('.')[0]
+
+  return { finalDate: temp, finalDateString }
+}
+
+export const getEndOfDayToday = () => {
+  const startOfDay = new Date(getStartOfDayToday().finalDate)
+
+  const endOfDay = new Date(Number(startOfDay) + 24 * 60 * 60 * 1000)
+  const endOfDayString = endOfDay.toISOString().split('.')[0]
+
+  return { endOfDay, endOfDayString }
 }
 
 export const getCurrentMonth = () => {
-  const currentDate = getTodaysDate()
+  const currentDate =
+    getStartOfDayToday().finalDateString ?? '2000-01-01T00:00:00'
   //   temp = 2021-09-01
-  const temp = currentDate.split(' ')[0] || '2000-01-01'
+  const temp = currentDate.split('T')[0] || '2000-01-01'
   const currentMonth =
     temp.split('-')[0] +
     '-' +
@@ -23,7 +32,7 @@ export const getCurrentMonth = () => {
     '-' +
     '01' +
     ' ' +
-    currentDate.split(' ')[1]
+    currentDate.split('T')[1]
 
   const month_index = parseInt(temp.split('-')[1] ?? '') || 1
 
@@ -49,9 +58,10 @@ export const getCurrentMonth = () => {
 }
 
 export const getThisYear = () => {
-  const currentDate = getTodaysDate()
+  const currentDate =
+    getStartOfDayToday().finalDateString ?? '2000-01-01T00:00:00'
   //   temp fromat = 2000-09-01
-  const temp = currentDate.split(' ')[0] || '2000-01-01'
+  const temp = currentDate.split('T')[0] || '2000-01-01'
 
   const currentYear =
     temp.split('-')[0] +
@@ -60,7 +70,7 @@ export const getThisYear = () => {
     '-' +
     '01' +
     ' ' +
-    currentDate.split(' ')[1]
+    currentDate.split('T')[1]
   return { yearDataFormat: currentYear, year: temp.split('-')[0] ?? '2000' }
 }
 
@@ -77,33 +87,31 @@ export const formatDate = (date: string) => {
 }
 
 // Input: yyyy-mm-dd output supabase format 2024-04-16 12:38:56.333594+00. Calcualte the start of day
-export const getStartOfDay = (inputDate?: string) => {
-  let currentDate = new Date(inputDate?.toString() ?? new Date())
-
-  const timeZoneOffset = currentDate.getTimezoneOffset() / 60
-
-  const subtractHours = currentDate.getHours() + timeZoneOffset
-  currentDate = new Date(currentDate.getTime() - subtractHours * 60 * 60 * 1000)
-  const date = currentDate.toISOString().split('T')[0]
-  const time =
-    currentDate.toISOString().split('T')[1]?.split('.')[0] ?? '00:00:00'
-  const supabase_date_format = `${date} ${time}.0000+00`
-
-  return supabase_date_format
+export const getStartOfDay = (inputDate: string) => {
+  const dateUTC = new Date(inputDate)
+  const finalDate = new Date(
+    dateUTC.getTime() + dateUTC.getTimezoneOffset() * 60 * 1000,
+  )
+  const finalDateString = finalDate.toISOString().split('.')[0]
+  return { finalDate, finalDateString }
 }
 
 export const getEndOfDay = (inputDate: string) => {
-  let currentDate = new Date(inputDate)
-  const timeZoneOffset = currentDate.getTimezoneOffset() / 60
+  const startOfDay = new Date(getStartOfDay(inputDate).finalDate)
+  const endOfDay = new Date(Number(startOfDay) + 24 * 60 * 60 * 1000)
+  const endOfDayString = endOfDay.toISOString().split('.')[0]
 
-  const subtractHours = currentDate.getHours() + timeZoneOffset
-  currentDate = new Date(currentDate.getTime() - subtractHours * 60 * 60 * 1000)
+  return { endOfDay, endOfDayString }
+}
 
-  currentDate = new Date(currentDate.getTime() + 24 * 60 * 60 * 1000 - 1)
-  const date = currentDate.toISOString().split('T')[0]
-  const time =
-    currentDate.toISOString().split('T')[1]?.split('.')[0] ?? '00:00:00'
-  const supabase_date_format = `${date} ${time}.0000+00`
+// Returns the day of Today in the format 17.04.2024
+export const todayDate = () => {
+  let date = new Date()
+  const timeZoneOffset = date.getTimezoneOffset() / 60
+  const subtractHours = date.getHours() + timeZoneOffset
+  date = new Date(date.getTime() - subtractHours * 60 * 60 * 1000)
 
-  return supabase_date_format
+  const dateStr = date.toISOString().split('T')[0]?.split('-') ?? []
+  const finalDate = `${dateStr[2]}.${dateStr[1]}.${dateStr[0]}`
+  return finalDate
 }

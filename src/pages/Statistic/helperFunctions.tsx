@@ -1,20 +1,34 @@
 import { OrderItems, OrdersAndItems } from '@/data/useOrders'
 
+// Get Sum of Orders for Statistic Page
 export const getSumOrders = (dataOrders: OrdersAndItems) => {
   const sum = dataOrders.reduce((total, order) => total + order.price, 0)
   return sum
 }
 
+// Get Distinct Dates
 export const getDistinctDates = (dataOrders: OrdersAndItems) => {
   const distinctDates: string[] = []
   dataOrders.forEach((order) => {
-    const date = order.created_at.split('T')[0] || '2000.01.01'
+    // Add Local Date to the List
+    const date = convertUTCToLocalTime(order.created_at)
     if (!distinctDates.includes(date)) {
       distinctDates.push(date)
     }
   })
 
   return distinctDates
+}
+
+// Convert UTC to Local Time Input: 2021-10-06T08:00:00.000Z -> Output: 2021-10-06
+export const convertUTCToLocalTime = (inputDate: string) => {
+  inputDate = inputDate?.split('.')[0] || ''
+  const dateUTC = new Date(inputDate)
+  const finalDate = new Date(
+    dateUTC.getTime() - dateUTC.getTimezoneOffset() * 60 * 1000,
+  )
+
+  return finalDate.toLocaleDateString('en-CA')
 }
 
 // Return sum of payment method
@@ -44,6 +58,7 @@ type ProductData = {
   sum: number
 }
 
+// Transform Orders to Product Groups for Statistic Page
 export const transformOrdersToProductGroups = (dataOrders: OrdersAndItems) => {
   const productData: ProductData[] = []
 

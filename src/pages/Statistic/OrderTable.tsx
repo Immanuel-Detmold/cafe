@@ -2,8 +2,7 @@ import { OrdersAndItems } from '@/data/useOrders'
 
 import {
   Table,
-  TableBody,
-  TableCaption,
+  TableBody, // TableCaption,
   TableCell,
   TableFooter,
   TableHead,
@@ -18,7 +17,7 @@ const OrderTable = ({ filteredData }: { filteredData: OrdersAndItems }) => {
 
   return (
     <Table className="mt-2">
-      <TableCaption>Produkte für diesen Tag</TableCaption>
+      {/* <TableHeader>Produkte für diesen Tag</TableHeader> */}
       <TableHeader>
         <TableRow>
           <TableHead className="w-[100px]">Produkt</TableHead>

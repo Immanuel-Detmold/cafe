@@ -4,4 +4,13 @@ To do:
 - Status Change in Open Order im Button Loading...
 - Dynamische Kategorien und Bezahlmethoden?
 - Sprachen
-- fix end Date
+- edit button
+- suchleiste bei new-order
+- edit product und new product price rule
+- Logo Update
+
+IMPORTANT:
+- PDF export
+
+Later:
+Automatic Dark Mode

@@ -17,61 +17,6 @@ export type OpenOrder = Order & {
   OrderItems: Array<OrderItems & { Products: Product }>
 }
 
-// export type OpenOrder = {
-//   comment: string | null;
-//   created_at: string;
-//   customer_name: string | null;
-//   id: number;
-//   payment_method: string | null;
-//   price: number;
-//   status: 'waiting' | 'processing' | 'ready' | 'finished';
-//   OrderItems: Array<{
-//     comment: string | null;
-//     created_at: string;
-//     id: number;
-//     order_id: number;
-//     product_id: number;
-//     product_name: string;
-//     product_price: number;
-//     quantity: number;
-//     Products: {
-//       category: string | null;
-//       created_at: string;
-//       deleted: boolean | null;
-//       id: number;
-//       image: string | null;
-//       method: string | null;
-//       name: string;
-//       price: number;
-//     };
-//   }>;
-// };
-
-// export const getCategoriesAndProducts = (orderData: OpenOrder[]) => {
-
-//   if(orderData){
-//   // Extract unique product objects from orders
-//   const currentProducts = [
-//     ...new Set(
-//       orderData.flatMap((order) =>
-//         order?.OrderItems.map((item) => item.Products),
-//       ),
-//     ),
-//   ]
-
-//   // Extract unique category names from products
-//   const currentCategories = [
-//     ...new Set(currentProducts.map((product) => product?.category)),
-//   ]
-//   console.log(currentCategories, currentProducts)
-
-//   return { currentCategories, currentProducts }
-//   }
-//   else{
-//     return {currentCategories: [], currentProducts: []}
-//   }
-// }
-
 export const getCategoriesAndProducts = (orderData?: OrdersAndItems) => {
   if (orderData) {
     // Extract unique product objects from orders

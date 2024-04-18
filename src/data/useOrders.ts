@@ -1,5 +1,5 @@
 import { queryClient } from '@/App'
-import { getTodaysDate } from '@/generalHelperFunctions.tsx/dateHelperFunctions'
+import { getStartOfDayToday } from '@/generalHelperFunctions.tsx/dateHelperFunctions'
 import { supabase } from '@/services/supabase'
 import { Database } from '@/services/supabase.types'
 import { useMutation, useQuery } from '@tanstack/react-query'
@@ -107,7 +107,7 @@ export const useOrderAndItemsQuery = (status: OrderStatus[]) =>
         )`,
         )
         .in('status', status)
-        .gte('created_at', getTodaysDate())
+        .gte('created_at', getStartOfDayToday().finalDateString)
         .order('created_at', { ascending: false })
 
       if (error) {
@@ -171,6 +171,7 @@ export const useOrdersAndItemsQueryV2 = ({
         query = query.ilike('customer_name', `%${searchTerm}%`)
       }
       if (categories && categories.length > 0) {
+        console.log(categories)
         const categoryFilter = categories
           .map((category) => `categories.cs.{"${category}"}`)
           .join(', ')
