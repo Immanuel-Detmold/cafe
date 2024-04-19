@@ -1,4 +1,5 @@
 import { OrdersAndItems } from '@/data/useOrders'
+import { centsToEuro } from '@/generalHelperFunctions.tsx/currencyHelperFunction'
 
 import {
   Table,
@@ -30,16 +31,16 @@ const OrderTable = ({ filteredData }: { filteredData: OrdersAndItems }) => {
         {productData.map((product) => (
           <TableRow key={product.id}>
             <TableCell className="font-medium">{product.name}</TableCell>
-            <TableCell>{product.price}</TableCell>
+            <TableCell>{centsToEuro(product.price)}</TableCell>
             <TableCell>{product.quantity}</TableCell>
-            <TableCell className="">{product.sum}</TableCell>
+            <TableCell className="">{centsToEuro(product.sum)}</TableCell>
           </TableRow>
         ))}
       </TableBody>
       <TableFooter>
         <TableRow>
           <TableCell colSpan={3}>Summe</TableCell>
-          <TableCell className="">{sum}€</TableCell>
+          <TableCell className="">{centsToEuro(sum)}€</TableCell>
         </TableRow>
       </TableFooter>
     </Table>

@@ -71,4 +71,14 @@
 // //   .replace(', ', 'T')
 // // console.log(test)
 
-console.log(24.77 + 8)
+const centsToEuro = (priceInCent) => {
+  return (priceInCent / 100).toFixed(2)
+}
+
+const EuroToCents = (priceInEuro) => {
+  const value = priceInEuro.toString().replace(',', '').replace('.', '')
+
+  return parseInt(value)
+}
+
+console.log(centsToEuro(232345))

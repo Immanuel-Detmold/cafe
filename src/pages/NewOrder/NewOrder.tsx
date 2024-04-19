@@ -5,6 +5,7 @@ import {
 } from '@/data/useOrders'
 import { useProductsQuery } from '@/data/useProducts'
 import { Product } from '@/data/useProducts'
+import { centsToEuro } from '@/generalHelperFunctions.tsx/currencyHelperFunction'
 import { ArrowPathIcon } from '@heroicons/react/24/outline'
 import { Label } from '@radix-ui/react-label'
 import { ShoppingCart } from 'lucide-react'
@@ -317,7 +318,7 @@ const NewOrder = () => {
 
         <div className="flex items-center">
           <Label className="w-min whitespace-nowrap rounded-lg border p-2 font-bold text-orange-600">
-            Summe: {sumOrderPrice}€
+            Summe: {centsToEuro(sumOrderPrice)}€
           </Label>
           <OrderDetailsPage
             dataOrderItem={dataOrderItems}

@@ -1,6 +1,7 @@
 import { imgPlaceHolder } from '@/data/data'
 import { OrderItem } from '@/data/useOrders'
 import { Product } from '@/data/useProducts'
+import { centsToEuro } from '@/generalHelperFunctions.tsx/currencyHelperFunction'
 import { ShoppingCartIcon } from '@heroicons/react/24/outline'
 import { TrashIcon } from '@heroicons/react/24/outline'
 import { PlusCircleIcon } from '@heroicons/react/24/outline'
@@ -55,7 +56,7 @@ const ProductsInCategory = (props: propsProductInCategory) => {
                   />
                 </Avatar>
                 <Label className="ml-1 select-none">
-                  {product.name} ({product.price}€)
+                  {product.name} ({centsToEuro(product.price)}€)
                 </Label>
 
                 <Label className="ml-1 text-green-700">

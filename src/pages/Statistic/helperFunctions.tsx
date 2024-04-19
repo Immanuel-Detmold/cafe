@@ -1,9 +1,10 @@
 import { OrderItems, OrdersAndItems } from '@/data/useOrders'
+import { centsToEuro } from '@/generalHelperFunctions.tsx/currencyHelperFunction'
 
 // Get Sum of Orders for Statistic Page
 export const getSumOrders = (dataOrders: OrdersAndItems) => {
   const sum = dataOrders.reduce((total, order) => total + order.price, 0)
-  return sum
+  return centsToEuro(sum)
 }
 
 // Get Distinct Dates
@@ -38,7 +39,7 @@ export const getSumOrdersPayMethod = (
 ) => {
   if (!payment_method) {
     const sum = dataOrders.reduce((total, order) => total + order.price, 0)
-    return sum
+    return centsToEuro(sum)
   }
 
   const sum = dataOrders.reduce((total, order) => {
@@ -47,7 +48,7 @@ export const getSumOrdersPayMethod = (
     }
     return total
   }, 0)
-  return sum
+  return centsToEuro(sum)
 }
 
 type ProductData = {
