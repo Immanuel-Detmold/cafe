@@ -7,6 +7,7 @@ import {
   getThisYear,
 } from '@/generalHelperFunctions.tsx/dateHelperFunctions'
 import { Label } from '@radix-ui/react-label'
+import { PDFDownloadLink } from '@react-pdf/renderer'
 import { FileTextIcon } from 'lucide-react'
 import { useMemo, useState } from 'react'
 
@@ -15,6 +16,7 @@ import { Switch } from '@/components/ui/switch'
 
 import Open from '../Open/Open'
 import DatePicker from './DatePicker'
+import OrdersPDF from './GeneratePDF/OrdersPDF'
 import OrderTable from './OrderTable'
 import {
   getDistinctDates,
@@ -61,14 +63,39 @@ const StatisticPage = () => {
   }, [orders])
 
   const sumMonth = useMemo(() => {
-    if (!ordersMonth) return 0
+    if (!ordersMonth) return '...'
     return getSumOrders(ordersMonth)
   }, [ordersMonth])
 
   const sumYear = useMemo(() => {
-    if (!ordersYear) return 0
+    if (!ordersYear) return '...'
     return getSumOrders(ordersYear)
   }, [ordersYear])
+
+  const sumCountOrders = useMemo(() => {
+    if (!filteredData) return '...'
+    return filteredData.length
+  }, [filteredData])
+
+  const sumTotalTurnover = useMemo(() => {
+    if (!filteredData) return '...'
+    return getSumOrdersPayMethod(filteredData) + '€'
+  }, [filteredData])
+
+  const sumTotalCash = useMemo(() => {
+    if (!filteredData) return '...'
+    return getSumOrdersPayMethod(filteredData, 'cash') + '€'
+  }, [filteredData])
+
+  const sumTotalPayPal = useMemo(() => {
+    if (!filteredData) return '...'
+    return getSumOrdersPayMethod(filteredData, 'paypal') + '€'
+  }, [filteredData])
+
+  const sumTotalCafeCard = useMemo(() => {
+    if (!filteredData) return '...'
+    return getSumOrdersPayMethod(filteredData, 'cafe_card') + '€'
+  }, [filteredData])
 
   return (
     <>
@@ -110,57 +137,67 @@ const StatisticPage = () => {
           {/* Count of Orders */}
           <div className="grid grid-cols-1 gap-1 rounded-lg border p-2">
             <Label className="text-base">Bestellungen</Label>
-            <Label className="text-2xl font-bold">
-              {filteredData ? filteredData.length : '...'}
-            </Label>
+            <Label className="text-2xl font-bold">{sumCountOrders}</Label>
             <Label className="text-muted-foreground">Umsatz</Label>
           </div>
 
           {/* Sum Price */}
           <div className="grid grid-cols-1 gap-1 rounded-lg border p-2">
             <Label className="text-base">Gesamt</Label>
-            <Label className="text-2xl font-bold">
-              {filteredData ? getSumOrdersPayMethod(filteredData) + '€' : '...'}
-            </Label>
+            <Label className="text-2xl font-bold">{sumTotalTurnover}</Label>
             <Label className="text-muted-foreground">Umsatz</Label>
           </div>
 
           {/* Sum Cash */}
           <div className="grid grid-cols-1 gap-1 rounded-lg border p-2">
             <Label className="text-base">Bar</Label>
-            <Label className="text-2xl font-bold">
-              {filteredData
-                ? getSumOrdersPayMethod(filteredData, 'cash') + '€'
-                : '...'}
-            </Label>
+            <Label className="text-2xl font-bold">{sumTotalCash}</Label>
             <Label className="text-muted-foreground">Umsatz</Label>
           </div>
 
-          {/* Sum Paypal */}
+          {/* Sum Cafe Card */}
           <div className="grid grid-cols-1 gap-1 rounded-lg border p-2">
             <Label className="text-base">Cafe Card</Label>
-            <Label className="text-2xl font-bold">
-              {filteredData
-                ? getSumOrdersPayMethod(filteredData, 'cafe_card') + '€'
-                : '...'}
-            </Label>
+            <Label className="text-2xl font-bold">{sumTotalCafeCard}</Label>
             <Label className="text-muted-foreground">Umsatz</Label>
           </div>
 
           {/* Sum Paypal */}
           <div className="grid grid-cols-1 gap-1 rounded-lg border p-2">
             <Label className="text-base">Paypal</Label>
-            <Label className="text-2xl font-bold">
-              {filteredData
-                ? getSumOrdersPayMethod(filteredData, 'paypal') + '€'
-                : '...'}
-            </Label>
+            <Label className="text-2xl font-bold">{sumTotalPayPal}</Label>
             <Label className="text-muted-foreground">Umsatz</Label>
           </div>
         </div>
-        <Button className="ml-auto w-20">
-          PDF <FileTextIcon className="ml-2" />
-        </Button>
+
+        {filteredData && (
+          <PDFDownloadLink
+            document={
+              <OrdersPDF
+                filteredData={filteredData}
+                selectedDate={formatDate(selectedDate)}
+                sumTotalTurnover={sumTotalTurnover}
+                sumTotalCash={sumTotalCash}
+                sumTotalPayPal={sumTotalPayPal}
+                sumTotalCafeCard={sumTotalCafeCard}
+              />
+            }
+            fileName="orders.pdf"
+            className="w-30 ml-auto"
+          >
+            {({ loading }) =>
+              loading ? (
+                <Button className="ml-auto">
+                  Loading PDF <FileTextIcon className="ml-2" />
+                </Button>
+              ) : (
+                <Button className="ml-auto">
+                  Download PDF <FileTextIcon className="ml-2" />
+                </Button>
+              )
+            }
+          </PDFDownloadLink>
+        )}
 
         {/* Table */}
         {filteredData && <OrderTable filteredData={filteredData} />}

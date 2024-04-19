@@ -7,6 +7,7 @@ import { Me } from './pages/Me'
 import NewOrder from './pages/NewOrder/NewOrder'
 import Open from './pages/Open/Open'
 import ReadyForPickup from './pages/ReadyForPickup/ReadyForPickup'
+import OrdersPDF from './pages/Statistic/GeneratePDF/OrdersPDF'
 import LoginPw from './pages/Statistic/LoginPw'
 import StatisticPage from './pages/Statistic/StatisticPage'
 import { getUser } from './services/supabase'
@@ -29,6 +30,10 @@ export const router = createBrowserRouter(
     {
       path: 'screen',
       element: <ReadyForPickup />,
+    },
+    {
+      path: 'orders-pdf',
+      element: <OrdersPDF />,
     },
     {
       path: 'admin',

@@ -58,7 +58,7 @@ const SideBar = () => {
           >
             <Label className="cursor-pointer">Statistik</Label>
           </NavLink>
-          <NavLink
+          {/* <NavLink
             to="/admin/Me"
             className={({ isActive }) =>
               isActive ? 'rounded-md bg-secondary p-2' : 'p-2'
@@ -68,7 +68,7 @@ const SideBar = () => {
             }}
           >
             <Label className="cursor-pointer">Me</Label>
-          </NavLink>
+          </NavLink> */}
           <NavLink
             to="/"
             className={({ isActive }) =>
