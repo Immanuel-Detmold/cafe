@@ -49,7 +49,7 @@ export default function DatePicker({
       </PopoverTrigger>
       <PopoverContent className="w-[200px] p-0">
         <Command>
-          <CommandInput placeholder="Suche nach Datum..." />
+          <CommandInput tabIndex={-1} placeholder="Suche nach Datum..." />
           <CommandEmpty>Kein Datum gefunden.</CommandEmpty>
           <CommandGroup>
             {distinctOrders.map((order) => (

@@ -1,5 +1,6 @@
 import { imgPlaceHolder } from '@/data/data'
 import { OrderStatus, useOrdersAndItemsQueryV2 } from '@/data/useOrders'
+import { centsToEuro } from '@/generalHelperFunctions.tsx/currencyHelperFunction'
 import {
   getEndOfDayToday,
   getStartOfDayToday,
@@ -160,7 +161,9 @@ const Open = ({
                 <Label className="text-right font-bold">
                   Bestellung: #{order.id.toString().slice(-2)}
                 </Label>
-                <Label className="text-right">Summe: {order.price}€</Label>
+                <Label className="text-right">
+                  Summe: {centsToEuro(order.price)}€
+                </Label>
               </div>
             </div>
 
@@ -205,7 +208,10 @@ const Open = ({
                               Kategorie: {orderItem.Products?.category}
                             </Label>
                             <Label className="ml-1">
-                              Preis: {orderItem.Products?.price}€
+                              Preis:{' '}
+                              {orderItem.Products &&
+                                centsToEuro(orderItem.Products.price)}
+                              €
                             </Label>
                           </div>
                         </div>
@@ -250,7 +256,9 @@ const Open = ({
                   <div className="col-span-1 flex flex-col">
                     <Label className="text-right">
                       {orderItem.Products
-                        ? orderItem.Products.price * orderItem.quantity
+                        ? centsToEuro(
+                            orderItem.Products.price * orderItem.quantity,
+                          )
                         : 0}
                       €
                     </Label>

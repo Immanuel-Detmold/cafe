@@ -1,4 +1,5 @@
 import { useCreateProductMutation } from '@/data/useProducts'
+import { EuroToCents } from '@/generalHelperFunctions.tsx/currencyHelperFunction'
 import { supabase } from '@/services/supabase'
 import { useState } from 'react'
 // import { useNavigate } from 'react-router-dom'
@@ -56,7 +57,7 @@ const CreateProduct = () => {
     }
     createProduct({
       name: name,
-      price: parseFloat(price),
+      price: EuroToCents(price),
       category: category,
       image: img_uuid,
       method: method,
@@ -86,11 +87,22 @@ const CreateProduct = () => {
     return i_uuidv4
   }
 
+  // inputValue = inputValue.replace(/\D/g, '')
+
   const handlePriceChange = (inputValue: string) => {
-    const match = inputValue.match(/^(\d+)?([.,])?(\d{0,2})?$/)
-    if (match) {
-      setPrice(match[0])
-    }
+    inputValue = inputValue.replace(/\D/g, '')
+    //remove any existing decimal
+    const p = inputValue.replace(',', '')
+
+    //get everything except the last 2 digits
+    const l = p.substring(-2, p.length - 2)
+
+    //get the last 2 digits
+    const r = p.substring(p.length - 2, p.length)
+
+    if (inputValue === ',') inputValue = ''
+    inputValue = l + ',' + r
+    setPrice(inputValue)
   }
 
   return (
@@ -134,7 +146,7 @@ const CreateProduct = () => {
             tabIndex={-1}
             id="price"
             value={price}
-            type="number"
+            type="string"
             onChange={(e) => {
               handlePriceChange(e.target.value)
             }}
@@ -211,7 +223,12 @@ const CreateProduct = () => {
                 if (isLoading) {
                   return
                 }
-                if (name == '' || price == '' || category == '') {
+                if (
+                  name == '' ||
+                  category == '' ||
+                  price == '' ||
+                  EuroToCents(price) == 0
+                ) {
                   setMissingFields(true)
                   console.log('Error Missing Fields!')
                   console.log(name)

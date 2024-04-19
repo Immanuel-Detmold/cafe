@@ -1,5 +1,9 @@
 import { Product } from '@/data/useProducts'
 import { useUpdateProductMutation } from '@/data/useProducts'
+import {
+  EuroToCents,
+  centsToEuro,
+} from '@/generalHelperFunctions.tsx/currencyHelperFunction'
 import { supabase } from '@/services/supabase'
 import { EditIcon } from 'lucide-react'
 import { useState } from 'react'
@@ -37,7 +41,7 @@ const EditProduct = ({ product }: { product: Product }) => {
 
   // const { data: , error } = useProductQuery({ id: product_id })
   const [name, setName] = useState(product?.name)
-  const [price, setPrice] = useState(product?.price?.toString())
+  const [price, setPrice] = useState(centsToEuro(product?.price).toString())
   const [category, setCategory] = useState(product?.category)
   const [method, setMethod] = useState<string | null>(product?.method)
   const [sheetOpen, setSheetOpen] = useState(false)
@@ -57,14 +61,19 @@ const EditProduct = ({ product }: { product: Product }) => {
       img_uuid = product?.image
     }
     event.preventDefault()
-    if (name === '' || price === '' || category === '') {
+    if (
+      name == '' ||
+      category == '' ||
+      price == '' ||
+      EuroToCents(price) == 0
+    ) {
       setMissingFields(true)
       return
     } else {
       setMissingFields(false)
       editProduct({
         name: name,
-        price: parseFloat(price),
+        price: EuroToCents(price),
         category: category,
         method: method,
         image: img_uuid,
@@ -115,6 +124,23 @@ const EditProduct = ({ product }: { product: Product }) => {
     return i_uuidv4
   }
 
+  const handlePriceChange = (inputValue: string) => {
+    inputValue = inputValue.replace(/\D/g, '')
+    //remove any existing decimal
+    const p = inputValue.replace(',', '')
+
+    //get everything except the last 2 digits
+    const l = p.substring(-2, p.length - 2)
+
+    //get the last 2 digits
+    const r = p.substring(p.length - 2, p.length)
+
+    //update the value
+    inputValue = l + ',' + r
+    if (inputValue === ',') inputValue = ''
+    setPrice(inputValue)
+  }
+
   return (
     <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
       <SheetTrigger asChild>
@@ -151,9 +177,9 @@ const EditProduct = ({ product }: { product: Product }) => {
             tabIndex={-1}
             id="price"
             value={price}
-            type="number"
+            type="string"
             onChange={(e) => {
-              setPrice(e.target.value)
+              handlePriceChange(e.target.value)
             }}
             className="col-span-4"
             placeholder="1,00 €"

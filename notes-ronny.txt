@@ -8,6 +8,9 @@ To do:
 - suchleiste bei new-order
 - edit product und new product price rule
 - Logo Update
+- make page for tracking cafe cards payments
+- Price float
+- navbar for PC
 
 IMPORTANT:
 - PDF export

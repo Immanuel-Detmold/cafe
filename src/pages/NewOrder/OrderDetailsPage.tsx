@@ -1,6 +1,7 @@
 import { imgPlaceHolder } from '@/data/data'
 import { OrderItem } from '@/data/useOrders'
 import { Product } from '@/data/useProducts'
+import { centsToEuro } from '@/generalHelperFunctions.tsx/currencyHelperFunction'
 import { TrashIcon } from '@heroicons/react/24/outline'
 
 import { Avatar, AvatarImage } from '@/components/ui/avatar'
@@ -84,7 +85,9 @@ const OrderDetailsPage = (props: propsOrderDetailsPage) => {
                       }
                     />
                   </Label>
-                  <Label>{product.price * orderItem.quantity}€</Label>
+                  <Label>
+                    {centsToEuro(product.price * orderItem.quantity)}€
+                  </Label>
                 </div>
               )
             })}
@@ -92,7 +95,7 @@ const OrderDetailsPage = (props: propsOrderDetailsPage) => {
 
             <div className="grid grid-cols-4 gap-4">
               <Label className="col-start-4 -mt-2 font-bold text-amber-600">
-                {props.sumOrderPrice}€
+                {centsToEuro(props.sumOrderPrice)}€
               </Label>
             </div>
           </div>
