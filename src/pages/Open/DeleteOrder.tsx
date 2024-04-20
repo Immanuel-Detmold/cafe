@@ -28,6 +28,9 @@ const DeleteOrder = ({ order }: { order: Order }) => {
         void queryClient.invalidateQueries({ queryKey: ['ordersAndItems'] })
         console.log('Deletion Sucessfull!')
       },
+      onError: () => {
+        toast({ title: 'Fehler: Bestellung konnte nicht gelöscht werden!' })
+      },
     })
   }
 

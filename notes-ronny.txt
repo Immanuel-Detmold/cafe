@@ -3,14 +3,16 @@ To do:
 - Was ist mit Bezahlung? In der App möglich machen?
 - Status Change in Open Order im Button Loading...
 - Dynamische Kategorien und Bezahlmethoden?
-- Sprachen
+- language
 - edit button
 - suchleiste bei new-order
 - edit product und new product price rule
 - Logo Update
 - make page for tracking cafe cards payments
-- Price float
 - navbar for PC
+- Tisch Nummbern
+
+- statistik, wieviel Geld ist noch auf karten drauf -> Summe karte - gekaufte karten
 
 IMPORTANT:
 - PDF export

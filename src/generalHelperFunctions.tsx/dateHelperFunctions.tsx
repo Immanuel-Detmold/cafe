@@ -1,3 +1,33 @@
+// 2024-04-20T07:06:50.841478+00:00 -> 07:06
+export const formatDateToTime = (timestamp: string): string => {
+  const date = new Date(timestamp)
+
+  // Format the time to hh:mm format
+  const time = date.toLocaleTimeString('de', {
+    hour: '2-digit',
+    minute: '2-digit',
+  })
+
+  return time.toString()
+}
+
+// 2024-04-20T07:06:50.841478+00:00 -> 20.04.2024 07:06
+export const formatDateToDateAndTime = (timestamp: string): string => {
+  const date = new Date(timestamp)
+
+  // Format the time to hh:mm format
+  const time = date.toLocaleTimeString('de', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false,
+  })
+
+  return time.toString()
+}
+
 export const getStartOfDayToday = () => {
   const date = new Date()
   const hoursInToday = date.getHours()

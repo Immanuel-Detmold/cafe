@@ -2,6 +2,7 @@ import { createBrowserRouter, redirect } from 'react-router-dom'
 
 import { Navigation } from './components/Navigation'
 import AllProducts from './pages/AllProducts/AllProducts'
+import CafeCards from './pages/CafeCards/CafeCardsPage'
 import ClosedOrdersToday from './pages/ClosedOrdersToday'
 import { Me } from './pages/Me'
 import NewOrder from './pages/NewOrder/NewOrder'
@@ -39,6 +40,10 @@ export const router = createBrowserRouter(
       path: 'admin',
       element: <Navigation />,
       children: [
+        {
+          path: 'cafe-cards',
+          element: <CafeCards />,
+        },
         {
           path: 'login',
           element: <LoginPw />,

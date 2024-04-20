@@ -1,4 +1,6 @@
+import { useCafeCards } from '@/data/useCafeCard'
 import { useOrdersAndItemsQueryV2 } from '@/data/useOrders'
+import { centsToEuro } from '@/generalHelperFunctions.tsx/currencyHelperFunction'
 import {
   formatDate,
   getCurrentMonth,
@@ -20,6 +22,8 @@ import OrdersPDF from './GeneratePDF/OrdersPDF'
 import OrderTable from './OrderTable'
 import {
   getDistinctDates,
+  getSumCafeCards,
+  getSumCafeCardsYear,
   getSumOrders,
   getSumOrdersPayMethod,
 } from './helperFunctions'
@@ -33,7 +37,7 @@ const StatisticPage = () => {
     new Date().toLocaleDateString('en-CA').toString(),
   )
 
-  const { data: ordersMonth } = useOrdersAndItemsQueryV2({
+  const { data: ordersMonth, isLoading: l1 } = useOrdersAndItemsQueryV2({
     statusList: ['finished'],
     searchTerm: '',
     categories: [],
@@ -41,7 +45,7 @@ const StatisticPage = () => {
     startDate: monthDataFormat,
   })
 
-  const { data: ordersYear } = useOrdersAndItemsQueryV2({
+  const { data: ordersYear, isLoading: l2 } = useOrdersAndItemsQueryV2({
     statusList: ['finished'],
     searchTerm: '',
     categories: [],
@@ -49,59 +53,86 @@ const StatisticPage = () => {
     startDate: yearDataFormat,
   })
 
-  const { data: orders } = useOrdersAndItemsQueryV2({})
+  const { data: cafeCardsThisYear, isLoading: l3 } = useCafeCards({
+    startDate: yearDataFormat,
+  })
 
-  const { data: filteredData } = useOrdersAndItemsQueryV2({
+  const { data: orders, isLoading: l4 } = useOrdersAndItemsQueryV2({})
+
+  const { data: filteredData, isLoading: l5 } = useOrdersAndItemsQueryV2({
     statusList: ['finished'],
     startDate: getStartOfDay(selectedDate).finalDateString,
     endDate: getEndOfDay(selectedDate).endOfDayString,
   })
 
+  // Get distinct dates
   const distinctOrders = useMemo(() => {
     if (!orders) return []
     return getDistinctDates(orders)
   }, [orders])
 
+  // Sum This Month
   const sumMonth = useMemo(() => {
     if (!ordersMonth) return '...'
     return getSumOrders(ordersMonth)
   }, [ordersMonth])
 
+  // Sum This Year
   const sumYear = useMemo(() => {
     if (!ordersYear) return '...'
     return getSumOrders(ordersYear)
   }, [ordersYear])
 
+  // Sum Cafe Cards
+  const sumCafeCards = useMemo(() => {
+    if (!cafeCardsThisYear) return 0
+    return getSumCafeCards(cafeCardsThisYear)
+  }, [cafeCardsThisYear])
+
+  // Sum Payed with Cafe Card this Year
+  const sumYearCafeCardsPayments = useMemo(() => {
+    if (!ordersYear) return 0
+    return getSumCafeCardsYear(ordersYear)
+  }, [ordersYear])
+
+  // Sum Count Orders
   const sumCountOrders = useMemo(() => {
     if (!filteredData) return '...'
     return filteredData.length
   }, [filteredData])
 
+  // Sum Total Turnover
   const sumTotalTurnover = useMemo(() => {
     if (!filteredData) return '...'
     return getSumOrdersPayMethod(filteredData) + '€'
   }, [filteredData])
 
+  // Sum Total Cash
   const sumTotalCash = useMemo(() => {
     if (!filteredData) return '...'
     return getSumOrdersPayMethod(filteredData, 'cash') + '€'
   }, [filteredData])
 
+  // Sum Total PayPal
   const sumTotalPayPal = useMemo(() => {
     if (!filteredData) return '...'
     return getSumOrdersPayMethod(filteredData, 'paypal') + '€'
   }, [filteredData])
 
+  // Sum Total Cafe Card
   const sumTotalCafeCard = useMemo(() => {
     if (!filteredData) return '...'
     return getSumOrdersPayMethod(filteredData, 'cafe_card') + '€'
   }, [filteredData])
-
   return (
     <>
+      <div className="h-2"></div>
+      {l1 && l2 && l3 && l4 && l5 && (
+        <Label className="mt-2 font-bold">Daten werden geladen...</Label>
+      )}
       <div className="flex flex-col items-center">
         {/* First row, sum this month and this year */}
-        <div className="mt-2 grid w-full grid-cols-1 gap-2 md:grid-cols-2">
+        <div className="mt-2 grid w-full grid-cols-1 gap-2 lg:grid-cols-3">
           {/* Current month */}
           <div className="grid grid-cols-1 gap-1 rounded-lg border p-2">
             <Label className="text-base">Dieser Monat ({monthName})</Label>
@@ -119,17 +150,30 @@ const StatisticPage = () => {
             </Label>
             <Label className="text-muted-foreground">Umsatz</Label>
           </div>
+
+          {/* Money not used and still on cards */}
+          <div className="grid grid-cols-1 gap-1 rounded-lg border p-2">
+            <Label className="text-base">
+              Übriges Guthaben auf Karten ({year})
+            </Label>
+            <Label className="text-2xl font-bold">
+              {cafeCardsThisYear
+                ? centsToEuro(sumCafeCards - sumYearCafeCardsPayments)
+                : '...'}
+            </Label>
+            <Label className="text-muted-foreground">Summe</Label>
+          </div>
         </div>
 
         {/* Select Date to filter */}
         <div className="col-span-2 mt-2 w-full">
-          {orders && distinctOrders && (
+          {
             <DatePicker
               distinctOrders={distinctOrders}
               selectedDate={selectedDate}
               setSelectedDate={setSelectedDate}
             />
-          )}
+          }
         </div>
 
         {/* Lower Block (Under Selected Date) */}
