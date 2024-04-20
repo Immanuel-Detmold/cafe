@@ -16,7 +16,13 @@ import {
 import { Button } from '@/components/ui/button'
 import { useToast } from '@/components/ui/use-toast'
 
-const SaveCafeCard = ({ price }: { price: string }) => {
+const SaveCafeCard = ({
+  price,
+  resetPrice,
+}: {
+  price: string
+  resetPrice: () => void
+}) => {
   const { mutate: saveCard } = useCreateCafeCard()
 
   const { toast } = useToast()
@@ -36,6 +42,7 @@ const SaveCafeCard = ({ price }: { price: string }) => {
         },
       },
     )
+    resetPrice()
   }
 
   return (

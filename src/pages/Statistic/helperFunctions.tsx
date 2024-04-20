@@ -1,10 +1,28 @@
+import { CafeCard } from '@/data/useCafeCard'
 import { OrderItems, OrdersAndItems } from '@/data/useOrders'
 import { centsToEuro } from '@/generalHelperFunctions.tsx/currencyHelperFunction'
 
-// Get Sum of Orders for Statistic Page
+// Get Sum Price of Orders
 export const getSumOrders = (dataOrders: OrdersAndItems) => {
   const sum = dataOrders.reduce((total, order) => total + order.price, 0)
   return centsToEuro(sum)
+}
+
+// Get Sum of Cafe Cards
+export const getSumCafeCards = (dataOrders: CafeCard[]) => {
+  const sum = dataOrders.reduce((total, card) => total + card.price, 0)
+  return sum
+}
+
+//  Get Sum of Cafe Cards for this Year
+export const getSumCafeCardsYear = (dataOrders: OrdersAndItems) => {
+  const sum = dataOrders.reduce((total, order) => {
+    if (order.payment_method === 'cafe_card') {
+      return total + order.price
+    }
+    return total
+  }, 0)
+  return sum
 }
 
 // Get Distinct Dates

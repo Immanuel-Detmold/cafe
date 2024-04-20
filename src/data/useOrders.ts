@@ -166,7 +166,8 @@ export const useOrdersAndItemsQueryV2 = ({
         query = query.lte('created_at', endDate)
       }
       if (searchTerm && !isNaN(Number(searchTerm))) {
-        query = query.eq('id', Number(searchTerm))
+        // query = query.eq('id', Number(searchTerm))
+        query = query.filter('id::text', 'ilike', `%${searchTerm}%`)
       } else if (searchTerm && searchTerm.length > 0) {
         query = query.ilike('customer_name', `%${searchTerm}%`)
       }

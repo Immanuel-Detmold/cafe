@@ -1,18 +1,6 @@
 import { Order, OrderItems, OrdersAndItems } from '@/data/useOrders'
 import { Product } from '@/data/useProducts'
 
-export const formatDateToTime = (timestamp: string): string => {
-  const date = new Date(timestamp)
-
-  // Format the time to hh:mm format
-  const time = date.toLocaleTimeString('de', {
-    hour: '2-digit',
-    minute: '2-digit',
-  })
-
-  return time.toString()
-}
-
 export type OpenOrder = Order & {
   OrderItems: Array<OrderItems & { Products: Product }>
 }

@@ -5,6 +5,7 @@ import {
   getEndOfDayToday,
   getStartOfDayToday,
 } from '@/generalHelperFunctions.tsx/dateHelperFunctions'
+import { formatDateToTime } from '@/generalHelperFunctions.tsx/dateHelperFunctions'
 import { ClipboardDocumentListIcon } from '@heroicons/react/24/outline'
 import {
   ChatBubbleBottomCenterTextIcon,
@@ -27,7 +28,6 @@ import DeleteOrder from './DeleteOrder'
 import EditOrder from './EditOrder'
 import Filters from './Filters'
 import OrderStatusPage from './OrderStatusSelect'
-import { formatDateToTime } from './helperFunctions'
 
 const Open = ({
   statusList,
