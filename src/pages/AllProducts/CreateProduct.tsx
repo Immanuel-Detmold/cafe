@@ -100,8 +100,8 @@ const CreateProduct = () => {
     //get the last 2 digits
     const r = p.substring(p.length - 2, p.length)
 
-    if (inputValue === ',') inputValue = ''
     inputValue = l + ',' + r
+    if (inputValue === ',') inputValue = ''
     setPrice(inputValue)
   }
 

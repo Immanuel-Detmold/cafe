@@ -30,7 +30,9 @@ const Header = () => {
                             ? 'Login'
                             : location.pathname === '/admin/closed-orders'
                               ? 'Abgeholt (Heute)'
-                              : ''}
+                              : location.pathname === '/admin/cafe-cards'
+                                ? 'Cafe Karten'
+                                : ''}
           </h1>
         </div>
       </div>

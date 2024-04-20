@@ -58,8 +58,8 @@ const SideBar = () => {
           >
             <Label className="cursor-pointer">Statistik</Label>
           </NavLink>
-          {/* <NavLink
-            to="/admin/Me"
+          <NavLink
+            to="/admin/cafe-cards"
             className={({ isActive }) =>
               isActive ? 'rounded-md bg-secondary p-2' : 'p-2'
             }
@@ -67,8 +67,8 @@ const SideBar = () => {
               setSheetOpen(false)
             }}
           >
-            <Label className="cursor-pointer">Me</Label>
-          </NavLink> */}
+            <Label className="cursor-pointer">Cafe Karten</Label>
+          </NavLink>
           <NavLink
             to="/"
             className={({ isActive }) =>
