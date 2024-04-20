@@ -4,6 +4,7 @@ import { Database } from '@/services/supabase.types'
 import { useMutation, useQuery } from '@tanstack/react-query'
 
 export type CafeCard = Database['public']['Tables']['CafeCards']['Row']
+export type CafeCardInsert = Database['public']['Tables']['CafeCards']['Insert']
 
 // Get Cafe Cards
 export const useCafeCards = ({ startDate }: { startDate?: string }) =>
@@ -32,7 +33,7 @@ export const useCafeCards = ({ startDate }: { startDate?: string }) =>
 
 export const useCreateCafeCard = () =>
   useMutation({
-    mutationFn: async (cafeCard: CafeCard) => {
+    mutationFn: async (cafeCard: CafeCardInsert) => {
       const { data, error } = await supabase
         .from('CafeCards')
         .insert([cafeCard])
