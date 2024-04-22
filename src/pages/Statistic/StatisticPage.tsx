@@ -23,7 +23,7 @@ import OrderTable from './OrderTable'
 import {
   getDistinctDates,
   getSumCafeCards,
-  getSumCafeCardsYear,
+  getSumCafeCardsOrders,
   getSumOrders,
   getSumOrdersPayMethod,
 } from './helperFunctions'
@@ -91,9 +91,9 @@ const StatisticPage = () => {
 
   // Sum Payed with Cafe Card this Year
   const sumYearCafeCardsPayments = useMemo(() => {
-    if (!ordersYear) return 0
-    return getSumCafeCardsYear(ordersYear)
-  }, [ordersYear])
+    if (!orders) return 0
+    return getSumCafeCardsOrders(orders)
+  }, [orders])
 
   // Sum Count Orders
   const sumCountOrders = useMemo(() => {
@@ -153,9 +153,7 @@ const StatisticPage = () => {
 
           {/* Money not used and still on cards */}
           <div className="grid grid-cols-1 gap-1 rounded-lg border p-2">
-            <Label className="text-base">
-              Übriges Guthaben auf Karten ({year})
-            </Label>
+            <Label className="text-base">Übriges Guthaben auf Karten</Label>
             <Label className="text-2xl font-bold">
               {cafeCardsThisYear
                 ? centsToEuro(sumCafeCards - sumYearCafeCardsPayments)

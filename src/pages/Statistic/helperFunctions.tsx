@@ -15,9 +15,9 @@ export const getSumCafeCards = (dataOrders: CafeCard[]) => {
 }
 
 //  Get Sum of Cafe Cards for this Year
-export const getSumCafeCardsYear = (dataOrders: OrdersAndItems) => {
+export const getSumCafeCardsOrders = (dataOrders: OrdersAndItems) => {
   const sum = dataOrders.reduce((total, order) => {
-    if (order.payment_method === 'cafe_card') {
+    if (order.payment_method === 'cafe_card' && order.status === 'finished') {
       return total + order.price
     }
     return total
