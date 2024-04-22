@@ -1,11 +1,16 @@
 import {
   OrderItem,
+  useOrdersAndItemsQueryV2,
   useSaveOrderItemsMutation,
   useSaveOrderMutation,
 } from '@/data/useOrders'
 import { useProductsQuery } from '@/data/useProducts'
 import { Product } from '@/data/useProducts'
 import { centsToEuro } from '@/generalHelperFunctions.tsx/currencyHelperFunction'
+import {
+  getEndOfDayToday,
+  getStartOfDayToday,
+} from '@/generalHelperFunctions.tsx/dateHelperFunctions'
 import { ArrowPathIcon } from '@heroicons/react/24/outline'
 import { Label } from '@radix-ui/react-label'
 import { ShoppingCart } from 'lucide-react'
@@ -33,6 +38,12 @@ const NewOrder = () => {
     searchTerm: '',
     ascending: true,
   })
+
+  const { data: orders } = useOrdersAndItemsQueryV2({
+    startDate: getStartOfDayToday().finalDateString,
+    endDate: getEndOfDayToday().endOfDayString,
+  })
+
   if (error) {
     console.log(error)
   }
@@ -189,6 +200,7 @@ const NewOrder = () => {
         categories: uniqueCategories,
         product_ids: uniqueProducts,
         table_number: tableNumber,
+        order_number: orders?.length.toString() || '0',
       },
       {
         onSuccess: (data) => {

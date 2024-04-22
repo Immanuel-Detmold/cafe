@@ -114,9 +114,9 @@ const Open = ({
 
   return (
     <div className="mb-6 flex w-full flex-col items-center">
-      <div className="orderWidth w-full">
+      <div className="orderWidth relative w-full">
         {/* Bestellung suchen und Filter */}
-        <div className="mt-2 flex items-center">
+        <div className="sticky top-0 z-50 flex items-center bg-background pt-2">
           <Input
             className="w-[100%]"
             placeholder="Bestellung suchen"
@@ -172,7 +172,7 @@ const Open = ({
                 {/* Right Info Box */}
                 <div className="flex flex-col">
                   <Label className="text-right font-bold">
-                    Bestellung: #{order.id.toString().slice(-2)}
+                    Bestellung: #{order.order_number}
                   </Label>
                   <Label className="text-right">
                     Summe: {centsToEuro(order.price)}€

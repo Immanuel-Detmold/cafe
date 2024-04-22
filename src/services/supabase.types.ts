@@ -103,6 +103,7 @@ export type Database = {
           created_at: string
           customer_name: string | null
           id: number
+          order_number: string
           payment_method: string
           price: number
           product_ids: string[]
@@ -116,6 +117,7 @@ export type Database = {
           created_at?: string
           customer_name?: string | null
           id?: number
+          order_number: string
           payment_method: string
           price: number
           product_ids: string[]
@@ -129,6 +131,7 @@ export type Database = {
           created_at?: string
           customer_name?: string | null
           id?: number
+          order_number?: string
           payment_method?: string
           price?: number
           product_ids?: string[]
