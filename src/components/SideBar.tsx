@@ -1,5 +1,13 @@
 import { Bars3Icon } from '@heroicons/react/24/outline'
 import { Label } from '@radix-ui/react-label'
+import {
+  BookCheckIcon,
+  CoffeeIcon,
+  CreditCardIcon,
+  LineChartIcon,
+  LogInIcon,
+  MonitorUpIcon,
+} from 'lucide-react'
 import { useState } from 'react'
 import { NavLink } from 'react-router-dom'
 
@@ -32,7 +40,10 @@ const SideBar = () => {
               setSheetOpen(false)
             }}
           >
-            <Label className="cursor-pointer">Alle Produkte</Label>
+            <div className="flex cursor-pointer">
+              <CoffeeIcon />
+              <Label className="ml-1 cursor-pointer">Alle Produkte</Label>
+            </div>
           </NavLink>
 
           <NavLink
@@ -44,7 +55,12 @@ const SideBar = () => {
               setSheetOpen(false)
             }}
           >
-            <Label className="cursor-pointer">Abgeschlossen (Heute)</Label>
+            <div className="flex cursor-pointer">
+              <BookCheckIcon />
+              <Label className="ml-1 cursor-pointer">
+                Abgeschlossen (Heute)
+              </Label>
+            </div>
           </NavLink>
 
           <NavLink
@@ -56,7 +72,10 @@ const SideBar = () => {
               setSheetOpen(false)
             }}
           >
-            <Label className="cursor-pointer">Statistik</Label>
+            <div className="flex cursor-pointer">
+              <LineChartIcon />
+              <Label className="ml-1 cursor-pointer">Statistik</Label>
+            </div>
           </NavLink>
           <NavLink
             to="/admin/cafe-cards"
@@ -67,8 +86,27 @@ const SideBar = () => {
               setSheetOpen(false)
             }}
           >
-            <Label className="cursor-pointer">Cafe Karten</Label>
+            <div className="flex cursor-pointer">
+              <CreditCardIcon />
+              <Label className="ml-1 cursor-pointer">Cafe Karten</Label>
+            </div>
           </NavLink>
+
+          <NavLink
+            to="/screen"
+            className={({ isActive }) =>
+              isActive ? 'rounded-md bg-secondary p-2' : 'p-2'
+            }
+            onClick={() => {
+              setSheetOpen(false)
+            }}
+          >
+            <div className="flex cursor-pointer">
+              <MonitorUpIcon />
+              <Label className="ml-1 cursor-pointer">Screen</Label>
+            </div>
+          </NavLink>
+
           <NavLink
             to="/"
             className={({ isActive }) =>
@@ -78,7 +116,10 @@ const SideBar = () => {
               setSheetOpen(false)
             }}
           >
-            <Label className="cursor-pointer">Login</Label>
+            <div className="flex cursor-pointer">
+              <LogInIcon />
+              <Label className="ml-1 cursor-pointer">Login </Label>
+            </div>
           </NavLink>
         </SheetHeader>
       </SheetContent>
