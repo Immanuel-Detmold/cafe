@@ -1,15 +1,13 @@
 To do:
-- Status Change in Open Order im Button Loading...
 - Dynamische Kategorien und Bezahlmethoden?
 - language
 - edit button
 - suchleiste bei new-order?
-- edit product und new product price rule
+- edit product
 - Logo Update
 - navbar for PC
-- Tisch Nummbern
 - Automatic Dark Mode
-- Geld auf Karte nicht nur von diesem Jahr, sondern insgesamt
 
 Later:
 - Was ist mit Bezahlung? In der App möglich machen?
+- Drucken

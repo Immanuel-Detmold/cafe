@@ -9,7 +9,7 @@ import {
   View,
 } from '@react-pdf/renderer'
 
-import cafeImage from './immanuelCafeBlack.png'
+import cafeImage from '/img/CafeBlack.png'
 
 Font.register({
   family: 'Oswald',

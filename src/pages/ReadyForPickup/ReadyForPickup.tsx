@@ -92,7 +92,7 @@ const ReadyForPickup = () => {
                           <div className="flex items-center">
                             <Avatar className="h-8 w-8 lg:h-10 lg:w-10">
                               <AvatarImage
-                                className=""
+                                className="aspect-square object-cover"
                                 src={
                                   item.Products && item.Products.image
                                     ? item.Products.image

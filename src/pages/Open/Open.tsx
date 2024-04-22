@@ -193,7 +193,7 @@ const Open = ({
                           <div className="flex">
                             <Avatar className="">
                               <AvatarImage
-                                className="h-6 w-6 rounded-full"
+                                className="aspect-square h-6 w-6 rounded-full object-cover"
                                 src={
                                   orderItem.Products && orderItem.Products.image
                                     ? orderItem.Products.image
