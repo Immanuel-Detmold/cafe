@@ -1,11 +1,16 @@
 import {
   OrderItem,
+  useOrdersAndItemsQueryV2,
   useSaveOrderItemsMutation,
   useSaveOrderMutation,
 } from '@/data/useOrders'
 import { useProductsQuery } from '@/data/useProducts'
 import { Product } from '@/data/useProducts'
 import { centsToEuro } from '@/generalHelperFunctions.tsx/currencyHelperFunction'
+import {
+  getEndOfDayToday,
+  getStartOfDayToday,
+} from '@/generalHelperFunctions.tsx/dateHelperFunctions'
 import { ArrowPathIcon } from '@heroicons/react/24/outline'
 import { Label } from '@radix-ui/react-label'
 import { ShoppingCart } from 'lucide-react'
@@ -33,6 +38,12 @@ const NewOrder = () => {
     searchTerm: '',
     ascending: true,
   })
+
+  const { data: orders } = useOrdersAndItemsQueryV2({
+    startDate: getStartOfDayToday().finalDateString,
+    endDate: getEndOfDayToday().endOfDayString,
+  })
+
   if (error) {
     console.log(error)
   }
@@ -46,6 +57,7 @@ const NewOrder = () => {
   const [customPriceValue, setCustomPriceValue] = useState<string>('')
   const [orderComment, setOrderComment] = useState<string>('')
   const [orderName, setOrderName] = useState<string>('')
+  const [tableNumber, setTableNumber] = useState<string>('')
   const { toast } = useToast()
 
   useEffect(() => {
@@ -66,6 +78,23 @@ const NewOrder = () => {
         ? (JSON.parse(sessionData) as OrderItem[])
         : []
       setDataOrderItems(sessionData2)
+    }
+    const sessionComment = sessionStorage.getItem('orderComment')
+    if (sessionComment) {
+      setOrderComment(sessionComment)
+    }
+    const sessionName = sessionStorage.getItem('orderName')
+    if (sessionName) {
+      setOrderName(sessionName)
+    }
+    const sessionTableNumber = sessionStorage.getItem('tableNumber')
+    if (sessionTableNumber) {
+      setTableNumber(sessionTableNumber)
+    }
+    const sessionPaymentMethod = sessionStorage.getItem('paymentMethod')
+    if (sessionPaymentMethod) {
+      console.log('Setting: ' + sessionPaymentMethod)
+      setPaymentMethod(sessionPaymentMethod)
     }
   }, [products])
 
@@ -170,6 +199,8 @@ const NewOrder = () => {
         status: 'waiting',
         categories: uniqueCategories,
         product_ids: uniqueProducts,
+        table_number: tableNumber,
+        order_number: orders?.length.toString() || '0',
       },
       {
         onSuccess: (data) => {
@@ -191,6 +222,10 @@ const NewOrder = () => {
       },
     )
 
+    handleResetOrder()
+  }
+
+  const handleResetOrder = () => {
     // Clear Data
     setDataOrderItems([])
     setCustomPrice(false)
@@ -199,8 +234,13 @@ const NewOrder = () => {
     setOrderName('')
     setPaymentMethod('cash')
     setSumOrderPrice(0)
+    setTableNumber('')
 
     sessionStorage.setItem('orderItems', JSON.stringify([]))
+    sessionStorage.setItem('orderComment', '')
+    sessionStorage.setItem('orderName', '')
+    sessionStorage.setItem('tableNumber', '')
+    sessionStorage.setItem('paymentMethod', 'cash')
   }
 
   const handleSaveOrderItems = (order_id: number) => {
@@ -253,6 +293,10 @@ const NewOrder = () => {
     }
   }
 
+  const handleSetTableNumber = (tableNumber: string) => {
+    setTableNumber(tableNumber)
+  }
+
   return (
     <div className="select-none">
       {/* Category and Product */}
@@ -280,6 +324,7 @@ const NewOrder = () => {
           value={orderComment}
           onChange={(e) => {
             setOrderComment(e.target.value)
+            sessionStorage.setItem('orderComment', e.target.value)
           }}
         ></Textarea>
 
@@ -290,15 +335,31 @@ const NewOrder = () => {
           value={orderName}
           onChange={(e) => {
             setOrderName(e.target.value)
+            sessionStorage.setItem('orderName', e.target.value)
+          }}
+        />
+
+        {/* Table Number */}
+        <Input
+          className="mt-2"
+          placeholder="Tischnummer (optional)"
+          value={tableNumber}
+          onChange={(e) => {
+            handleSetTableNumber(e.target.value)
+            sessionStorage.setItem('tableNumber', e.target.value)
           }}
         />
 
         {/* Payment Method */}
         <Label className="mt-2 font-bold">Bezahlung</Label>
         <RadioGroup
+          value={paymentMethod}
           defaultValue={paymentMethod}
           className="mb-2 ml-1"
-          onValueChange={setPaymentMethod}
+          onValueChange={(method) => {
+            setPaymentMethod(method)
+            sessionStorage.setItem('paymentMethod', method)
+          }}
         >
           <div className="flex items-center space-x-2">
             <RadioGroupItem value="cash" id="r1" />
@@ -375,16 +436,9 @@ const NewOrder = () => {
 
           <Button
             className=" ml-2 mt-2 w-min bg-amber-600"
-            disabled={dataOrderItems.length === 0}
+            // disabled={dataOrderItems.length === 0}
             onClick={() => {
-              setDataOrderItems([])
-              setCustomPrice(false)
-              setCustomPriceValue('')
-              setOrderComment('')
-              setOrderName('')
-              setPaymentMethod('cash')
-              setSumOrderPrice(0)
-              sessionStorage.setItem('orderItems', JSON.stringify([]))
+              handleResetOrder()
             }}
           >
             Reset

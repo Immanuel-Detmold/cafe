@@ -52,6 +52,7 @@ const ProductsInCategory = (props: propsProductInCategory) => {
               >
                 <Avatar className="">
                   <AvatarImage
+                    className="aspect-square object-cover"
                     src={product.image ? product.image : imgPlaceHolder}
                   />
                 </Avatar>

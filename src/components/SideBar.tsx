@@ -44,7 +44,7 @@ const SideBar = () => {
               setSheetOpen(false)
             }}
           >
-            <Label className="cursor-pointer">Abgeholt (Heute)</Label>
+            <Label className="cursor-pointer">Abgeschlossen (Heute)</Label>
           </NavLink>
 
           <NavLink

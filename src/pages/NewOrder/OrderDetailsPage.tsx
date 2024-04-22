@@ -71,6 +71,7 @@ const OrderDetailsPage = (props: propsOrderDetailsPage) => {
                   <div className="col-span-2 flex items-center">
                     <Avatar className="h-6 w-6">
                       <AvatarImage
+                        className="aspect-square object-cover"
                         src={product.image ? product.image : imgPlaceHolder}
                       />
                     </Avatar>

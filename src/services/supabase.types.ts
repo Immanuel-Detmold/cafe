@@ -14,16 +14,19 @@ export type Database = {
           created_at: string
           id: number
           price: number
+          user_id: string | null
         }
         Insert: {
           created_at?: string
           id?: number
           price: number
+          user_id?: string | null
         }
         Update: {
           created_at?: string
           id?: number
           price?: number
+          user_id?: string | null
         }
         Relationships: []
       }
@@ -100,10 +103,12 @@ export type Database = {
           created_at: string
           customer_name: string | null
           id: number
+          order_number: string
           payment_method: string
           price: number
           product_ids: string[]
           status: Database["public"]["Enums"]["order_status"]
+          table_number: string | null
           user_id: string | null
         }
         Insert: {
@@ -112,10 +117,12 @@ export type Database = {
           created_at?: string
           customer_name?: string | null
           id?: number
+          order_number: string
           payment_method: string
           price: number
           product_ids: string[]
           status: Database["public"]["Enums"]["order_status"]
+          table_number?: string | null
           user_id?: string | null
         }
         Update: {
@@ -124,10 +131,12 @@ export type Database = {
           created_at?: string
           customer_name?: string | null
           id?: number
+          order_number?: string
           payment_method?: string
           price?: number
           product_ids?: string[]
           status?: Database["public"]["Enums"]["order_status"]
+          table_number?: string | null
           user_id?: string | null
         }
         Relationships: []

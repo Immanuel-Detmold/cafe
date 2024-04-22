@@ -69,7 +69,7 @@ const ReadyForPickup = () => {
                   <div className="flex items-center justify-between">
                     {/* ID */}
                     <Label className="text-2xl font-bold sm:text-3xl md:text-4xl lg:text-7xl">
-                      #{order.id.toString().slice(-2)}
+                      #{order.order_number}
                     </Label>
                     {/* Customer Name */}
                     <div className="flex items-center">
@@ -90,9 +90,9 @@ const ReadyForPickup = () => {
                           key={item.id}
                         >
                           <div className="flex items-center">
-                            <Avatar className="">
+                            <Avatar className="h-8 w-8 lg:h-10 lg:w-10">
                               <AvatarImage
-                                className=""
+                                className="aspect-square object-cover"
                                 src={
                                   item.Products && item.Products.image
                                     ? item.Products.image

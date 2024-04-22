@@ -56,7 +56,7 @@ const OrderStatusPage = ({ order }: { order: Order }) => {
             {isPending ? 'Loading...' : 'Abholbereit'}
           </SelectItem>
           <SelectItem value="finished">
-            {isPending ? 'Loading...' : 'Abgeholt'}
+            {isPending ? 'Loading...' : 'Abgeschlossen'}
           </SelectItem>
         </SelectGroup>
       </SelectContent>
