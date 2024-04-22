@@ -1,0 +1,17 @@
+{
+  "name": "Cafe",
+  "short_name": "Cafe",
+  "start_url": "/cafe",
+  "icons": [
+    {
+      "src": "/cafe/img/icons/CafeBlack144x144.png",
+      "sizes": "144x144",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ],
+  "display": "fullscreen",
+  "background_color": "#ffffff",
+  "theme_color": "#000000",
+  "orientation": "portrait"
+}
