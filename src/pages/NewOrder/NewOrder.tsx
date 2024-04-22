@@ -93,7 +93,6 @@ const NewOrder = () => {
     }
     const sessionPaymentMethod = sessionStorage.getItem('paymentMethod')
     if (sessionPaymentMethod) {
-      console.log('Setting: ' + sessionPaymentMethod)
       setPaymentMethod(sessionPaymentMethod)
     }
   }, [products])
