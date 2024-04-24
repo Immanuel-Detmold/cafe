@@ -6,6 +6,8 @@ import { Label } from '@radix-ui/react-label'
 
 import { Card } from '@/components/ui/card'
 
+import { AspectRatio } from './ui/aspect-ratio'
+
 const Product = ({ product }: { product: Product }) => {
   const imgUrl = product.image ? product.image : imgPlaceHolder
   return (
@@ -13,11 +15,13 @@ const Product = ({ product }: { product: Product }) => {
       <Card className="h-full overflow-clip p-1">
         {/* Under Picture */}
         <div className="relative flex h-full flex-col p-1 sm:p-2">
-          <img
-            src={imgUrl}
-            alt={product.name}
-            className="mx-auto aspect-square rounded-md object-cover"
-          />
+          <AspectRatio ratio={1 / 1}>
+            <img
+              src={imgUrl}
+              alt={product.name}
+              className="mx-auto aspect-square rounded-md object-cover"
+            />
+          </AspectRatio>
           <Label className="mt-2 text-sm font-bold md:text-lg">
             {product.name}
           </Label>
