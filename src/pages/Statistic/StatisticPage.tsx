@@ -23,6 +23,7 @@ import OrderTable from './OrderTable'
 import {
   getDistinctDates,
   getSumCafeCards,
+  getSumCafeCardsGrouped,
   getSumCafeCardsOrders,
   getSumOrders,
   getSumOrdersPayMethod,
@@ -53,10 +54,10 @@ const StatisticPage = () => {
     startDate: yearDataFormat,
   })
 
-  const { data: cafeCardsThisYear, isLoading: l3 } = useCafeCards({
-    startDate: yearDataFormat,
-  })
+  // Gets all Cafe Cards from this year
+  const { data: cafeCardsAllTime, isLoading: l3 } = useCafeCards({})
 
+  // Returns all Orders
   const { data: orders, isLoading: l4 } = useOrdersAndItemsQueryV2({})
 
   const { data: filteredData, isLoading: l5 } = useOrdersAndItemsQueryV2({
@@ -85,9 +86,15 @@ const StatisticPage = () => {
 
   // Sum Cafe Cards
   const sumCafeCards = useMemo(() => {
-    if (!cafeCardsThisYear) return 0
-    return getSumCafeCards(cafeCardsThisYear)
-  }, [cafeCardsThisYear])
+    if (!cafeCardsAllTime) return 0
+    return getSumCafeCards(cafeCardsAllTime)
+  }, [cafeCardsAllTime])
+
+  // Sum Cafe Cards seperated by ammount. 5€ and 10€
+  const { tenCardCount, fiveCardCount } = useMemo(() => {
+    if (!cafeCardsAllTime) return { tenCardCount: '...', fiveCardCount: '...' }
+    return getSumCafeCardsGrouped(cafeCardsAllTime)
+  }, [cafeCardsAllTime])
 
   // Sum Payed with Cafe Card this Year
   const sumYearCafeCardsPayments = useMemo(() => {
@@ -132,7 +139,7 @@ const StatisticPage = () => {
       )}
       <div className="flex flex-col items-center">
         {/* First row, sum this month and this year */}
-        <div className="mt-2 grid w-full grid-cols-1 gap-2 lg:grid-cols-3">
+        <div className="mt-2 grid w-full grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-4">
           {/* Current month */}
           <div className="grid grid-cols-1 gap-1 rounded-lg border p-2">
             <Label className="text-base">Dieser Monat ({monthName})</Label>
@@ -155,11 +162,30 @@ const StatisticPage = () => {
           <div className="grid grid-cols-1 gap-1 rounded-lg border p-2">
             <Label className="text-base">Übriges Guthaben auf Karten</Label>
             <Label className="text-2xl font-bold">
-              {cafeCardsThisYear
-                ? centsToEuro(sumCafeCards - sumYearCafeCardsPayments)
+              {cafeCardsAllTime
+                ? centsToEuro(
+                    sumCafeCards - sumYearCafeCardsPayments,
+                  ).toString() + '€'
                 : '...'}
             </Label>
             <Label className="text-muted-foreground">Summe</Label>
+          </div>
+
+          {/* Summe Cafe Cards */}
+          <div className="grid grid-cols-1 gap-1 rounded-lg border p-2">
+            <Label className="text-base">Summe Café Karten</Label>
+            <Label className="text-2xl font-bold">
+              {cafeCardsAllTime
+                ? centsToEuro(sumCafeCards).toString() + '€'
+                : '...'}
+            </Label>
+            <Label className="text-muted-foreground">
+              {cafeCardsAllTime ? (
+                <Label className="text-muted-foreground">
+                  Summe (10€ x {tenCardCount} | 5€ x {fiveCardCount})
+                </Label>
+              ) : null}
+            </Label>
           </div>
         </div>
 
@@ -199,7 +225,7 @@ const StatisticPage = () => {
 
           {/* Sum Cafe Card */}
           <div className="grid grid-cols-1 gap-1 rounded-lg border p-2">
-            <Label className="text-base">Cafe Card</Label>
+            <Label className="text-base">Café Karte</Label>
             <Label className="text-2xl font-bold">{sumTotalCafeCard}</Label>
             <Label className="text-muted-foreground">Umsatz</Label>
           </div>

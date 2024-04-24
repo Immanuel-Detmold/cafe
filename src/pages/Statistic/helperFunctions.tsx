@@ -25,6 +25,20 @@ export const getSumCafeCardsOrders = (dataOrders: OrdersAndItems) => {
   return sum
 }
 
+export const getSumCafeCardsGrouped = (dataCards: CafeCard[]) => {
+  let tenCardCount = 0
+  let fiveCardCount = 0
+  dataCards.forEach((card) => {
+    if (card.price === 1000) {
+      tenCardCount++
+    }
+    if (card.price === 500) {
+      fiveCardCount++
+    }
+  })
+  return { tenCardCount, fiveCardCount }
+}
+
 // Get Distinct Dates
 export const getDistinctDates = (dataOrders: OrdersAndItems) => {
   const distinctDates: string[] = []

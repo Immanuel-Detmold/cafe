@@ -33,23 +33,22 @@ const SaveCafeCard = ({
       { price: cents },
       {
         onSuccess: () => {
-          // console.log('Saved Cafe Card')
-          toast({ title: 'Cafe Karte angelegt ✅', duration: 500 })
+          toast({ title: 'Cafe Karte angelegt ✅', duration: 1000 })
           void queryClient.invalidateQueries({ queryKey: ['cafeCard'] })
+          resetPrice()
         },
         onError: () => {
           toast({ title: 'Cafe Karte konnte nicht angelegt werden!' })
         },
       },
     )
-    resetPrice()
   }
 
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
         <div className="">
-          <Button className="w-40" variant="default">
+          <Button className="w-40" variant="default" disabled={price === ''}>
             Bestellen <ShoppingCart className="ml-1 h-4 w-4"></ShoppingCart>
           </Button>
         </div>
@@ -63,10 +62,7 @@ const SaveCafeCard = ({
           <div className="">
             <AlertDialogCancel>Abbrechen</AlertDialogCancel>
 
-            <AlertDialogAction
-              className="ml-2 bg-emerald-800 hover:bg-emerald-900"
-              onClick={handleAddCafeCard}
-            >
+            <AlertDialogAction className="ml-2" onClick={handleAddCafeCard}>
               Bestellen
             </AlertDialogAction>
           </div>
