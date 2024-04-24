@@ -1,3 +1,4 @@
+import { useProductCategories } from '@/data/useProductCategories'
 import { Product } from '@/data/useProducts'
 import { useUpdateProductMutation } from '@/data/useProducts'
 import {
@@ -52,6 +53,7 @@ const EditProduct = ({ product }: { product: Product }) => {
 
   const [missing_fields, setMissingFields] = useState<boolean | null>(null)
   const { mutate: editProduct } = useUpdateProductMutation(product.id)
+  const { data: categoryData } = useProductCategories()
 
   const handleEditProduct = async (event: React.FormEvent) => {
     let img_uuid: string | null = ''
@@ -198,15 +200,11 @@ const EditProduct = ({ product }: { product: Product }) => {
                 <SelectValue placeholder="Wähle Kategorie" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="Kaffee">Kaffee</SelectItem>
-                <SelectItem value="Heißgetränk">Heißgetränk</SelectItem>
-                <SelectItem value="Kaltgetränk">Kaltgetränk</SelectItem>
-                <SelectItem value="Tee">Tee</SelectItem>
-                <SelectItem value="Kuchen">Kuchen</SelectItem>
-                <SelectItem value="Süßes">Süßes</SelectItem>
-                <SelectItem value="Home Spezialität">
-                  Home Spezialität
-                </SelectItem>
+                {categoryData?.map((category) => (
+                  <SelectItem key={category.id} value={category.category}>
+                    {category.category}
+                  </SelectItem>
+                ))}
                 <SelectItem value="Sonstiges">Sonstiges</SelectItem>
               </SelectContent>
             </Select>

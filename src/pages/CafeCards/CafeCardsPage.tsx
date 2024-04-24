@@ -1,11 +1,6 @@
-import {
-  EuroToCents,
-  centsToEuro,
-} from '@/generalHelperFunctions.tsx/currencyHelperFunction'
 import { Label } from '@radix-ui/react-label'
 import { useState } from 'react'
 
-import { Input } from '@/components/ui/input'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 
 import CardHistory from './CardHistory'
@@ -15,37 +10,13 @@ const CafeCards = () => {
   const [price, setPrice] = useState('')
 
   const handleCardClick = (priceInput: string) => {
-    if (price === '') {
-      setPrice(priceInput)
-    } else {
-      const priceInput2 = EuroToCents(priceInput)
-      const prevPrice = EuroToCents(price)
-
-      const newPrice = priceInput2 + prevPrice
-      setPrice(centsToEuro(newPrice))
-    }
+    setPrice(priceInput)
   }
 
-  const handlePriceChange = (inputValue: string) => {
-    inputValue = inputValue.replace(/\D/g, '')
-    //remove any existing decimal
-    const p = inputValue.replace(',', '')
-
-    //get everything except the last 2 digits
-    const l = p.substring(-2, p.length - 2)
-
-    //get the last 2 digits
-    const r = p.substring(p.length - 2, p.length)
-
-    inputValue = l + ',' + r
-    if (inputValue === ',') inputValue = ''
-    setPrice(inputValue)
-  }
-
+  // Forwarded to child component
   const resetPrice = () => {
     setPrice('')
   }
-
   return (
     <>
       <div className="mt-2 flex justify-center">
@@ -92,20 +63,12 @@ const CafeCards = () => {
                   </Label>
                 </div>
               </div>
-
               <Label className="cinzel-decorative-bold text-3xl font-bold">
                 Summe
               </Label>
-              <Input
-                className="w-80"
-                placeholder="1,00 €"
-                value={price}
-                type="string"
-                onChange={(e) => {
-                  handlePriceChange(e.target.value)
-                }}
-              />
-
+              <Label>
+                {price} {price && '€'}
+              </Label>
               <SaveCafeCard price={price} resetPrice={resetPrice} />
             </div>
           </TabsContent>
