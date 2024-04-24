@@ -1,3 +1,4 @@
+import ChangeCategories from './ChangeCategories'
 import PasswordChange from './PasswordChange'
 import RegisterNewUser from './RegisterNewUser'
 
@@ -8,7 +9,7 @@ const SettingsPage = () => {
         <div className="mt-2 grid w-full place-content-center gap-2">
           <RegisterNewUser />
           <PasswordChange />
-          {/* <ChangeCategories/> */}
+          <ChangeCategories />
         </div>
       </div>
     </>

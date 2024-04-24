@@ -9,6 +9,9 @@ To do:
 - register screen / change password
 - loading bei "Absenden"
 - regsiter
+- Kartenanzahl implementieren
+- Summe aller Karten anzeigen 
+- Anzahl von 5er und 10er trennen
 
 cursor pointer in settings for label
 
