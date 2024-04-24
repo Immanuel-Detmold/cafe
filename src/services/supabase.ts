@@ -27,6 +27,7 @@ supabase
   )
   .subscribe()
 
+// Login
 export async function login({ email }: { email: string }) {
   return await supabase.auth.signInWithOtp({
     email,
@@ -36,6 +37,7 @@ export async function login({ email }: { email: string }) {
   })
 }
 
+// Login with Password
 export async function loginWithPW({
   email,
   password,
@@ -49,6 +51,7 @@ export async function loginWithPW({
   })
 }
 
+// Verify OTP
 export async function verifyOtp({
   email,
   token,
@@ -59,10 +62,39 @@ export async function verifyOtp({
   return await supabase.auth.verifyOtp({ email, token, type: 'email' })
 }
 
+// Logout
 export async function logout() {
   return await supabase.auth.signOut()
 }
 
 export async function getUser() {
   return (await supabase.auth.getSession()).data.session?.user
+}
+
+// Create new User / Register User
+export async function registerUser({
+  email,
+  password,
+  name,
+}: {
+  email: string
+  password: string
+  name: string
+}) {
+  return await supabase.auth.signUp({
+    email,
+    password,
+    options: {
+      data: {
+        name: name,
+      },
+    },
+  })
+}
+
+// Change Password
+export async function changePassword({ newPassword }: { newPassword: string }) {
+  return await supabase.auth.updateUser({
+    password: newPassword,
+  })
 }

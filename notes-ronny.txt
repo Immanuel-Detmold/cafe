@@ -1,12 +1,16 @@
 To do:
 - Dynamische Kategorien und Bezahlmethoden?
 - language
-- edit button
 - suchleiste bei new-order?
-- edit product
-- Logo Update
+- edit order
 - navbar for PC
 - Automatic Dark Mode
+- Bar Chart - Tortendiagram
+- register screen / change password
+- loading bei "Absenden"
+- regsiter
+
+cursor pointer in settings for label
 
 Later:
 - Was ist mit Bezahlung? In der App möglich machen?

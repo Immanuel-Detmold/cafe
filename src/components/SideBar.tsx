@@ -1,3 +1,5 @@
+import { useUser } from '@/data/useUser'
+import { logout } from '@/services/supabase'
 import { Bars3Icon } from '@heroicons/react/24/outline'
 import { Label } from '@radix-ui/react-label'
 import {
@@ -6,10 +8,13 @@ import {
   CreditCardIcon,
   LineChartIcon,
   LogInIcon,
+  LogOutIcon,
   MonitorUpIcon,
+  SettingsIcon,
+  User2Icon,
 } from 'lucide-react'
 import { useState } from 'react'
-import { NavLink } from 'react-router-dom'
+import { NavLink, useNavigate } from 'react-router-dom'
 
 import {
   Sheet,
@@ -21,16 +26,18 @@ import {
 
 const SideBar = () => {
   const [sheetOpen, setSheetOpen] = useState(false)
+  const navigate = useNavigate()
+  const { user } = useUser()
   return (
     <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
       <SheetTrigger>
         <Bars3Icon className="ml-3 h-14 w-8 text-white" />
       </SheetTrigger>
       <SheetContent side={'left'}>
-        <SheetHeader className="text-left">
+        <SheetHeader className="relative text-left">
           <SheetTitle>Info</SheetTitle>
 
-          {/*  NavLinks */}
+          {/*  All Products */}
           <NavLink
             to="./all-products"
             className={({ isActive }) =>
@@ -46,6 +53,7 @@ const SideBar = () => {
             </div>
           </NavLink>
 
+          {/* Finished (Today) */}
           <NavLink
             to="./closed-orders"
             className={({ isActive }) =>
@@ -63,6 +71,7 @@ const SideBar = () => {
             </div>
           </NavLink>
 
+          {/* Statistic */}
           <NavLink
             to="/admin/statistic"
             className={({ isActive }) =>
@@ -77,6 +86,8 @@ const SideBar = () => {
               <Label className="ml-1 cursor-pointer">Statistik</Label>
             </div>
           </NavLink>
+
+          {/* Cafe Cards */}
           <NavLink
             to="/admin/cafe-cards"
             className={({ isActive }) =>
@@ -92,6 +103,7 @@ const SideBar = () => {
             </div>
           </NavLink>
 
+          {/* Screen */}
           <NavLink
             to="/screen"
             className={({ isActive }) =>
@@ -107,6 +119,7 @@ const SideBar = () => {
             </div>
           </NavLink>
 
+          {/* Login */}
           <NavLink
             to="/"
             className={({ isActive }) =>
@@ -122,6 +135,46 @@ const SideBar = () => {
             </div>
           </NavLink>
         </SheetHeader>
+
+        {/* Footer */}
+        <div className="absolute bottom-4">
+          {/* Settings */}
+          <NavLink
+            to="/admin/settings"
+            className={({ isActive }) =>
+              isActive ? 'rounded-md bg-secondary p-2' : 'p-2'
+            }
+            onClick={() => {
+              setSheetOpen(false)
+            }}
+          >
+            <div className="flex cursor-pointer">
+              <SettingsIcon />
+              <Label className="ml-1 cursor-pointer">Einstellungen </Label>
+            </div>
+          </NavLink>
+
+          {/* Logout */}
+          <div
+            className="flex cursor-pointer"
+            onClick={() => {
+              logout().catch((error) => {
+                console.error('Logout failed', error)
+              })
+              navigate('/admin/login')
+            }}
+          >
+            <LogOutIcon />
+            <Label className="ml-1 cursor-pointer">Logout</Label>
+          </div>
+
+          {user?.user_metadata.name && (
+            <div className="mt-6 flex">
+              <User2Icon />
+              <Label className="ml-1"> {user?.user_metadata.name}</Label>
+            </div>
+          )}
+        </div>
       </SheetContent>
     </Sheet>
   )

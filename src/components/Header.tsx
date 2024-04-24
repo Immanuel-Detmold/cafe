@@ -32,7 +32,9 @@ const Header = () => {
                               ? 'Abgeholt (Heute)'
                               : location.pathname === '/admin/cafe-cards'
                                 ? 'Cafe Karten'
-                                : ''}
+                                : location.pathname === '/admin/settings'
+                                  ? 'Einstellungen'
+                                  : ''}
           </h1>
         </div>
       </div>

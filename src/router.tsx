@@ -4,12 +4,13 @@ import { Navigation } from './components/Navigation'
 import AllProducts from './pages/AllProducts/AllProducts'
 import CafeCards from './pages/CafeCards/CafeCardsPage'
 import ClosedOrdersToday from './pages/ClosedOrdersToday'
+import LoginPw from './pages/LoginPw'
 import { Me } from './pages/Me'
 import NewOrder from './pages/NewOrder/NewOrder'
 import Open from './pages/Open/Open'
 import ReadyForPickup from './pages/ReadyForPickup/ReadyForPickup'
+import SettingsPage from './pages/Settings/SettingsPage'
 import OrdersPDF from './pages/Statistic/GeneratePDF/OrdersPDF'
-import LoginPw from './pages/Statistic/LoginPw'
 import StatisticPage from './pages/Statistic/StatisticPage'
 import { getUser } from './services/supabase'
 
@@ -40,6 +41,10 @@ export const router = createBrowserRouter(
       path: 'admin',
       element: <Navigation />,
       children: [
+        {
+          path: 'settings',
+          element: <SettingsPage />,
+        },
         {
           path: 'cafe-cards',
           element: <CafeCards />,
