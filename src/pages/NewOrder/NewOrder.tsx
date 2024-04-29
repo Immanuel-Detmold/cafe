@@ -6,7 +6,10 @@ import {
 } from '@/data/useOrders'
 import { useProductsQuery } from '@/data/useProducts'
 import { Product } from '@/data/useProducts'
-import { centsToEuro } from '@/generalHelperFunctions.tsx/currencyHelperFunction'
+import {
+  EuroToCents,
+  centsToEuro,
+} from '@/generalHelperFunctions.tsx/currencyHelperFunction'
 import {
   getEndOfDayToday,
   getStartOfDayToday,
@@ -54,10 +57,16 @@ const NewOrder = () => {
   // Abweichender Preis:
   const [customPrice, setCustomPrice] = useState<boolean>(false)
   // customPriceValue muss ein String sein, damit das Input Feld leer sein kann
-  const [customPriceValue, setCustomPriceValue] = useState<string>('')
+  const [customPriceValue, setCustomPriceValue] = useState('')
   const [orderComment, setOrderComment] = useState<string>('')
   const [orderName, setOrderName] = useState<string>('')
   const [tableNumber, setTableNumber] = useState<string>('')
+
+  // Add filter to NewOrder Page
+  // const [searchTerm, setSearchTerm] = useState('')
+  // const [selectedCategories, setSelectedCategories] = useState<string[]>([])
+  // const [selectedProducts, setSelectedProducts] = useState<string[]>([])
+
   const { toast } = useToast()
 
   useEffect(() => {
@@ -181,7 +190,7 @@ const NewOrder = () => {
 
     let orderPrice: number = 0
     if (customPrice) {
-      orderPrice = parseFloat(customPriceValue)
+      orderPrice = EuroToCents(customPriceValue)
     } else {
       orderPrice = sumOrderPrice
     }
@@ -274,22 +283,21 @@ const NewOrder = () => {
       },
     })
   }
-  const handlCustomPrice = (inputValue: string) => {
-    inputValue = inputValue.replace(/[^0-9.,]/g, '')
-    // Allow only one dot or comma and two decimal places after it
-    if (
-      inputValue.includes('-') ||
-      inputValue.includes('+') ||
-      inputValue.includes('e')
-    ) {
-      setCustomPriceValue('')
-    } else {
-      const match = inputValue.match(/^(\d+)?([.,])?(\d{0,2})?$/)
 
-      if (match) {
-        setCustomPriceValue(match[0])
-      }
-    }
+  const handleCustomPrice = (inputValue: string) => {
+    inputValue = inputValue.replace(/\D/g, '')
+    //remove any existing decimal
+    const p = inputValue.replace(',', '')
+
+    //get everything except the last 2 digits
+    const l = p.substring(-2, p.length - 2)
+
+    //get the last 2 digits
+    const r = p.substring(p.length - 2, p.length)
+
+    inputValue = l + ',' + r
+    if (inputValue === ',') inputValue = ''
+    setCustomPriceValue(inputValue)
   }
 
   const handleSetTableNumber = (tableNumber: string) => {
@@ -417,9 +425,9 @@ const NewOrder = () => {
             <Input
               className="mt-1"
               id="custom-price"
-              type="number"
+              type="string"
               value={customPriceValue}
-              onChange={(e) => handlCustomPrice(e.target.value)}
+              onChange={(e) => handleCustomPrice(e.target.value)}
             />
           </div>
         )}
