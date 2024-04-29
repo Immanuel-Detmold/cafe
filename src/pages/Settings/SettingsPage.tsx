@@ -1,6 +1,7 @@
 import ChangeCategories from './ChangeCategories'
 import PasswordChange from './PasswordChange'
 import RegisterNewUser from './RegisterNewUser'
+import ResetOrderNumber from './ResetOrderNumber'
 
 const SettingsPage = () => {
   return (
@@ -10,6 +11,7 @@ const SettingsPage = () => {
           <RegisterNewUser />
           <PasswordChange />
           <ChangeCategories />
+          <ResetOrderNumber />
         </div>
       </div>
     </>

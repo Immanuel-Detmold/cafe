@@ -3,6 +3,8 @@ import { supabase } from '@/services/supabase'
 import { Database } from '@/services/supabase.types'
 import { useMutation, useQuery } from '@tanstack/react-query'
 
+import { saveUserAction } from './userLog'
+
 export type InsertProductCategories =
   Database['public']['Tables']['ProductCategories']['Insert']
 
@@ -38,8 +40,13 @@ export const useDeleteCategory = () => {
       }
       return data
     },
-    onSuccess: async () => {
+    onSuccess: async (data) => {
       await queryClient.invalidateQueries({ queryKey: ['categories'] })
+
+      await saveUserAction({
+        action: data,
+        short_description: `Delete Category: ${data[0]?.category}`,
+      })
     },
   })
 }
@@ -58,7 +65,12 @@ export const useAddCategory = () =>
       }
       return data
     },
-    onSuccess: async () => {
+    onSuccess: async (data) => {
       await queryClient.invalidateQueries({ queryKey: ['categories'] })
+
+      await saveUserAction({
+        action: data,
+        short_description: `Add Category: ${data[0]?.category}`,
+      })
     },
   })

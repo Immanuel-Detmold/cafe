@@ -10,11 +10,11 @@ const AllProducts = () => {
   const [searchTerm, setSearchTerm] = useState('')
   const [ascending, setAscending] = useState(true)
   const { data: products, error } = useProductsQuery({ searchTerm, ascending })
-  console.log('Data all Products: ', products)
   return (
     <>
       {error && <div>{JSON.stringify(error)}</div>}
-      <div className="header flex h-16 items-center p-2">
+
+      <div className="header sticky top-0 z-50 flex bg-white pb-1 pt-2">
         <Input
           className="w-[100%]"
           placeholder="Produkt suchen"

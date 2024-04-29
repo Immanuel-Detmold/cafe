@@ -27,10 +27,6 @@ const ReadyForPickup = () => {
 
   const { toast } = useToast()
 
-  if (readyOrders) {
-    console.log('Ready Orders: ', readyOrders)
-  }
-
   const handleStatusUpdate = (orderId: number, status: OrderStatus) => {
     changeStatus(
       { newStatus: status, orderId: orderId },

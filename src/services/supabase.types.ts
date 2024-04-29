@@ -9,6 +9,30 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      AppData: {
+        Row: {
+          created_at: string
+          id: number
+          key: string
+          last_edit: string
+          value: string
+        }
+        Insert: {
+          created_at?: string
+          id?: number
+          key: string
+          last_edit?: string
+          value: string
+        }
+        Update: {
+          created_at?: string
+          id?: number
+          key?: string
+          last_edit?: string
+          value?: string
+        }
+        Relationships: []
+      }
       CafeCards: {
         Row: {
           created_at: string
@@ -210,6 +234,36 @@ export type Database = {
         Update: {
           created_at?: string
           id?: number
+        }
+        Relationships: []
+      }
+      UserActions: {
+        Row: {
+          action: Json
+          created_at: string
+          email: string
+          id: number
+          name: string | null
+          short_description: string
+          user_id: string | null
+        }
+        Insert: {
+          action: Json
+          created_at?: string
+          email: string
+          id?: number
+          name?: string | null
+          short_description: string
+          user_id?: string | null
+        }
+        Update: {
+          action?: Json
+          created_at?: string
+          email?: string
+          id?: number
+          name?: string | null
+          short_description?: string
+          user_id?: string | null
         }
         Relationships: []
       }

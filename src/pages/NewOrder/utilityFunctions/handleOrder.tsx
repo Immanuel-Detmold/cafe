@@ -1,5 +1,7 @@
+import { AppData } from '@/data/useAppData'
 import { OrderItem } from '@/data/useOrders'
 import { Product } from '@/data/useProducts'
+import { checkSameDay } from '@/generalHelperFunctions.tsx/dateHelperFunctions'
 
 type propUpdatePrice = {
   dataOrderItems: OrderItem[]
@@ -42,4 +44,30 @@ export const getProductIds = (dataOrderItems: OrderItem[]) => {
     productIds.push(orderItem.product_id.toString())
   })
   return productIds
+}
+
+export const GetOrderNumber = (appData: AppData) => {
+  if (appData === undefined) {
+    return '1'
+  }
+
+  // if date it different, reset order number
+
+  // checkSameDay(appData)
+  const order_number_row = appData.find((data) => data.key === 'order_number')
+
+  const orderNumber = order_number_row?.value ?? '0'
+
+  const last_edit = order_number_row?.last_edit ?? '1'
+  const sameDay = checkSameDay(last_edit)
+
+  if (!sameDay) {
+    return '1'
+  }
+  const number = (parseInt(orderNumber) + 1) % 100
+
+  if (number === 0) {
+    return '1'
+  }
+  return number.toString()
 }

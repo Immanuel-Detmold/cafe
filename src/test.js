@@ -71,14 +71,16 @@
 // //   .replace(', ', 'T')
 // // console.log(test)
 
-const centsToEuro = (priceInCent) => {
-  return (priceInCent / 100).toFixed(2)
-}
+// returns true, if input date is same date as today
+// export const checkSameDay = (inputDate) => {
+//   const inputDateLocal = new Date(inputDate).toLocaleDateString()
+//   const LocalDate = new Date().toLocaleDateString()
 
-const EuroToCents = (priceInEuro) => {
-  const value = priceInEuro.toString().replace(',', '').replace('.', '')
+//   if(inputDateLocal === LocalDate) {
+//     return true
+//   } else {
+//     return false
+//   }
+// }
 
-  return parseInt(value)
-}
-
-console.log(centsToEuro(232345))
+// console.log(checkSameDay('2024-04-28 15:10:14+00'))

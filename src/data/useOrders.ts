@@ -4,6 +4,8 @@ import { supabase } from '@/services/supabase'
 import { Database } from '@/services/supabase.types'
 import { useMutation, useQuery } from '@tanstack/react-query'
 
+import { saveUserAction } from './userLog'
+
 export type Order = Database['public']['Tables']['Orders']['Row']
 export type InsertOrders = Database['public']['Tables']['Orders']['Insert']
 export type OrderItems = Database['public']['Tables']['OrderItems']['Row']
@@ -33,11 +35,41 @@ export const useOrderItemsQuery = (orderIds: number[]) =>
     },
   })
 
+// Get data from Table Orders
+export const useOrder = ({
+  startDate,
+  endDate,
+}: {
+  startDate?: string
+  endDate?: string
+}) =>
+  useQuery({
+    queryKey: ['orders', startDate, endDate],
+    queryFn: async () => {
+      let query = supabase.from('Orders').select()
+
+      if (startDate !== '' && startDate !== undefined) {
+        query = query.gte('created_at', startDate)
+      }
+      if (endDate !== '' && endDate !== undefined) {
+        query = query.lte('created_at', endDate)
+      }
+
+      const { data, error } = await query
+
+      if (error) {
+        throw error
+      }
+
+      return data
+    },
+  })
+
 // Function save Order
 export const useSaveOrderMutation = () => {
   return useMutation({
     mutationFn: async (order: InsertOrders) => {
-      const { data: data, error } = await supabase
+      const { data, error } = await supabase
         .from('Orders')
         .insert(order)
         .select()
@@ -46,11 +78,18 @@ export const useSaveOrderMutation = () => {
       }
       return data
     },
+    onSuccess: async (data) => {
+      await saveUserAction({
+        action: data,
+        short_description: `Save Order: ${data[0]?.order_number}`,
+      })
+    },
   })
 }
 
 export type InsertOrderItems =
   Database['public']['Tables']['OrderItems']['Insert']
+
 // Function save OrderItems
 export const useSaveOrderItemsMutation = () => {
   return useMutation({
@@ -63,6 +102,17 @@ export const useSaveOrderItemsMutation = () => {
         throw error
       }
       return data
+    },
+    onSuccess: async (data) => {
+      let productNames = ''
+      for (let i = 0; i < data.length; i++) {
+        productNames += data[i]?.product_name + ', '
+      }
+
+      await saveUserAction({
+        action: data,
+        short_description: `Save OrderItems: ${productNames.slice(0, -2)}`,
+      })
     },
   })
 }
@@ -81,9 +131,14 @@ export const useDeleteOrderMutation = () => {
       }
       return data
     },
-    onSuccess: async () => {
+    onSuccess: async (data) => {
       // After the mutation succeeds, invalidate the useProductsQuery
       await queryClient.invalidateQueries({ queryKey: ['ordersAndItems'] })
+
+      await saveUserAction({
+        action: data,
+        short_description: `Delete Order: ${data[0]?.order_number}`,
+      })
     },
   })
 }
@@ -190,7 +245,9 @@ export const useOrdersAndItemsQueryV2 = ({
       if (error) {
         throw error
       }
-      return data
+
+      const formatedData = sortDataOrderItems(data)
+      return formatedData
     },
   })
 
@@ -211,6 +268,10 @@ export const useChageOrderStatusMutation = (orderId: number) => {
     },
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ['ordersAndItems'] })
+      // await saveUserAction({
+      //   action: data,
+      //   short_description: `Change Order Status: ${data[0]?.order_number} - ${data[0]?.status}`,
+      // })
     },
   })
 }
@@ -241,4 +302,47 @@ export const useChageOrderStatusMutationV2 = () => {
       await queryClient.invalidateQueries({ queryKey: ['ordersAndItems'] })
     },
   })
+}
+
+// Update OrderItem Status (Column finished) (click on shopping bag)
+export const useUpdateOrderItemStatusMutation = () => {
+  return useMutation({
+    mutationFn: async ({
+      orderItemId,
+      newStatus,
+      created_at,
+    }: {
+      orderItemId: number
+      newStatus: boolean
+      created_at: string
+    }) => {
+      const { data, error } = await supabase
+        .from('OrderItems')
+        .update({ finished: newStatus, created_at: created_at })
+        .eq('id', orderItemId)
+        .select()
+
+      if (error) {
+        throw error
+      }
+      return data
+    },
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ['ordersAndItems'] })
+    },
+  })
+}
+
+// Sort OrderItems after product_name
+const sortDataOrderItems = (orderAndItems: OrdersAndItems) => {
+  const formatedData = orderAndItems.map((order) => {
+    const sorted = order.OrderItems.sort((a, b) =>
+      a.product_name.localeCompare(b.product_name),
+    )
+    return {
+      ...order,
+      OrderItems: sorted,
+    }
+  })
+  return formatedData
 }

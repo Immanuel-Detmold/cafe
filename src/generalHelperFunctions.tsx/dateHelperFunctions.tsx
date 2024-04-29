@@ -145,3 +145,15 @@ export const todayDate = () => {
   const finalDate = `${dateStr[2]}.${dateStr[1]}.${dateStr[0]}`
   return finalDate
 }
+
+// returns true, if input date is same date as today
+export const checkSameDay = (inputDate: string) => {
+  const inputDateLocal = new Date(inputDate).toLocaleDateString()
+  const LocalDate = new Date().toLocaleDateString()
+
+  if (inputDateLocal === LocalDate) {
+    return true
+  } else {
+    return false
+  }
+}

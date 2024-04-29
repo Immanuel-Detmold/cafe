@@ -19,7 +19,6 @@ import { useToast } from '@/components/ui/use-toast'
 
 const CardHistory = () => {
   const { data: cardData } = useCafeCards({})
-  console.log(cardData)
 
   const { mutate: deleteCard } = useDeleteCafeCard()
   const { toast } = useToast()
