@@ -3,6 +3,8 @@ import { supabase } from '@/services/supabase'
 import { Database } from '@/services/supabase.types'
 import { useMutation, useQuery } from '@tanstack/react-query'
 
+import { saveUserAction } from './userLog'
+
 export type Product = Database['public']['Tables']['Products']['Row']
 
 export const useProductsQuery = ({
@@ -52,10 +54,11 @@ export const useProductQuery = ({ id }: { id: number }) =>
 export const useDeleteProductMutation = () =>
   useMutation({
     mutationFn: async (product: Product) => {
-      const { error } = await supabase
+      const { data: productData, error } = await supabase
         .from('Products')
         .update({ deleted: true })
         .eq('id', product.id)
+        .select()
 
       if (error) {
         throw error
@@ -78,10 +81,16 @@ export const useDeleteProductMutation = () =>
           console.log('Product Image removed.', data)
         }
       }
+      return productData
     },
-    onSuccess: async () => {
+    onSuccess: async (data) => {
       // After the mutation succeeds, invalidate the useProductsQuery
       await queryClient.invalidateQueries({ queryKey: ['products'] })
+
+      await saveUserAction({
+        action: data,
+        short_description: `Delteted Product: ${data[0]?.name}`,
+      })
     },
   })
 
@@ -90,15 +99,23 @@ type InsertProduct = Database['public']['Tables']['Products']['Insert']
 export const useCreateProductMutation = () =>
   useMutation({
     mutationFn: async (newProduct: InsertProduct) => {
-      const { data, error } = await supabase.from('Products').insert(newProduct)
+      const { data, error } = await supabase
+        .from('Products')
+        .insert(newProduct)
+        .select()
       if (error) {
         throw error
       }
       return data
     },
-    onSuccess: async () => {
+    onSuccess: async (data) => {
       // After the mutation succeeds, invalidate the useProductsQuery
       await queryClient.invalidateQueries({ queryKey: ['products'] })
+
+      await saveUserAction({
+        action: data,
+        short_description: `Created Product: ${data[0]?.name}`,
+      })
     },
   })
 
@@ -119,8 +136,13 @@ export const useUpdateProductMutation = (product_id: number) =>
 
       return data
     },
-    onSuccess: async () => {
+    onSuccess: async (data) => {
       // After the mutation succeeds, invalidate the useProductsQuery
       await queryClient.invalidateQueries({ queryKey: ['products'] })
+
+      await saveUserAction({
+        action: data,
+        short_description: `Edit Product: ${data[0]?.name}`,
+      })
     },
   })

@@ -10,7 +10,7 @@ const Navbar = () => {
         to="./new-order"
         className={({ isActive }) => (isActive ? '' : 'text-gray-400')}
       >
-        <ClipboardDocumentListIcon className="mx-auto h-7 w-7" />
+        <ClipboardDocumentListIcon className="mx-auto h-9 w-9" />
         <div className="mx-auto text-center text-sm">Neu</div>
       </NavLink>
 
@@ -18,7 +18,7 @@ const Navbar = () => {
         to="./open"
         className={({ isActive }) => (isActive ? '' : 'text-gray-400')}
       >
-        <UserGroupIcon className="mx-auto h-7 w-7" />
+        <UserGroupIcon className="mx-auto h-9 w-9" />
         <div className="mx-auto text-center text-xs">Offen</div>
       </NavLink>
 
@@ -26,7 +26,7 @@ const Navbar = () => {
         to="./ready-for-pickup"
         className={({ isActive }) => (isActive ? '' : 'text-gray-400')}
       >
-        <BellAlertIcon className="mx-auto h-7 w-7" />
+        <BellAlertIcon className="mx-auto h-9 w-9" />
         <div className="text-xs">Abholbereit</div>
       </NavLink>
     </nav>

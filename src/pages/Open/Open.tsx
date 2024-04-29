@@ -1,5 +1,10 @@
 import { imgPlaceHolder } from '@/data/data'
-import { OrderStatus, useOrdersAndItemsQueryV2 } from '@/data/useOrders'
+import {
+  OrderItems,
+  OrderStatus,
+  useOrdersAndItemsQueryV2,
+  useUpdateOrderItemStatusMutation,
+} from '@/data/useOrders'
 import { centsToEuro } from '@/generalHelperFunctions.tsx/currencyHelperFunction'
 import {
   getEndOfDayToday,
@@ -23,6 +28,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover'
+import { useToast } from '@/components/ui/use-toast'
 
 import DeleteOrder from './DeleteOrder'
 import EditOrder from './EditOrder'
@@ -41,7 +47,9 @@ const Open = ({
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedCategories, setSelectedCategories] = useState<string[]>([])
   const [selectedProducts, setSelectedProducts] = useState<string[]>([])
+  const [clickedItem, setClickedItem] = useState('')
 
+  const { toast } = useToast()
   if (startDate === undefined && endDate === undefined) {
     startDate = getStartOfDayToday().finalDateString
     endDate = getEndOfDayToday().endOfDayString
@@ -55,10 +63,6 @@ const Open = ({
     startDate: startDate,
     endDate: endDate,
   })
-
-  if (openOrders) {
-    console.log('Data Open Orders: ', openOrders)
-  }
 
   // If Filter Checkbox is checked or unchecked
   const handleCheckboxChange = (
@@ -98,6 +102,27 @@ const Open = ({
         })
       }
     }
+  }
+
+  const { mutate: updateOrderItemStatus, isPending } =
+    useUpdateOrderItemStatusMutation()
+
+  const handleOrderItemStatus = (orderItem: OrderItems) => {
+    const newStatus = !orderItem.finished
+    updateOrderItemStatus(
+      {
+        orderItemId: orderItem.id,
+        newStatus: newStatus,
+        created_at: orderItem.created_at,
+      },
+      {
+        onError: () => {
+          toast({
+            title: 'Status konnte nicht aktualisiert werden! ❌',
+          })
+        },
+      },
+    )
   }
 
   useEffect(() => {
@@ -191,7 +216,7 @@ const Open = ({
                         <PopoverTrigger asChild>
                           {/* Click on Avatar or Product Name to Show Product Details */}
                           <div className="flex">
-                            <Avatar className="">
+                            <Avatar className="cursor-pointer">
                               <AvatarImage
                                 className="aspect-square h-6 w-6 rounded-full object-cover"
                                 src={
@@ -259,10 +284,24 @@ const Open = ({
                       )}
                     </div>
 
-                    {/* Quantity */}
-                    <div className="item-center col-span-1 flex">
-                      <ShoppingBagIcon className="h-6" />
-                      <Label>{orderItem.quantity}</Label>
+                    {/* Quantity and Order Status*/}
+                    <div
+                      className="item-center col-span-1 flex cursor-pointer"
+                      onClick={() => setClickedItem(orderItem.id.toString())}
+                    >
+                      {/* Set only clicked OrderItem to "..." (isPending) */}
+                      {isPending && clickedItem === orderItem.id.toString() ? (
+                        '...'
+                      ) : (
+                        <ShoppingBagIcon
+                          className={`h-6 ${orderItem.finished ? 'text-emerald-600' : ''}`}
+                          onClick={() => handleOrderItemStatus(orderItem)}
+                        />
+                      )}
+
+                      <Label className="cursor-pointer">
+                        {orderItem.quantity}
+                      </Label>
                     </div>
 
                     {/* Price */}

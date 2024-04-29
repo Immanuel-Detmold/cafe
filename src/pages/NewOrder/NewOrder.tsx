@@ -1,16 +1,15 @@
+import { useAppData, useUpdateAppData } from '@/data/useAppData'
 import {
   OrderItem,
-  useOrdersAndItemsQueryV2,
   useSaveOrderItemsMutation,
   useSaveOrderMutation,
 } from '@/data/useOrders'
 import { useProductsQuery } from '@/data/useProducts'
 import { Product } from '@/data/useProducts'
-import { centsToEuro } from '@/generalHelperFunctions.tsx/currencyHelperFunction'
 import {
-  getEndOfDayToday,
-  getStartOfDayToday,
-} from '@/generalHelperFunctions.tsx/dateHelperFunctions'
+  EuroToCents,
+  centsToEuro,
+} from '@/generalHelperFunctions.tsx/currencyHelperFunction'
 import { ArrowPathIcon } from '@heroicons/react/24/outline'
 import { Label } from '@radix-ui/react-label'
 import { ShoppingCart } from 'lucide-react'
@@ -26,6 +25,7 @@ import { useToast } from '@/components/ui/use-toast'
 import OrderDetailsPage from './OrderDetailsPage'
 import ProductsInCategory from './ProductsInCategory'
 import {
+  GetOrderNumber,
   calcOrderPrice,
   getProductIds,
   getUniqueCategories,
@@ -34,18 +34,16 @@ import {
 type GroupedProducts = Record<string, Product[]>
 
 const NewOrder = () => {
+  const { toast } = useToast()
+
+  const { data: appData } = useAppData()
+  const { mutate: updateAppData } = useUpdateAppData()
   const { data: products, error } = useProductsQuery({
     searchTerm: '',
     ascending: true,
   })
-
-  const { data: orders } = useOrdersAndItemsQueryV2({
-    startDate: getStartOfDayToday().finalDateString,
-    endDate: getEndOfDayToday().endOfDayString,
-  })
-
   if (error) {
-    console.log(error)
+    toast({ title: 'Fehler beim Laden der Produkte! ❌' })
   }
 
   const [dataOrderItems, setDataOrderItems] = useState<OrderItem[]>([])
@@ -54,11 +52,16 @@ const NewOrder = () => {
   // Abweichender Preis:
   const [customPrice, setCustomPrice] = useState<boolean>(false)
   // customPriceValue muss ein String sein, damit das Input Feld leer sein kann
-  const [customPriceValue, setCustomPriceValue] = useState<string>('')
+  const [customPriceValue, setCustomPriceValue] = useState('')
   const [orderComment, setOrderComment] = useState<string>('')
   const [orderName, setOrderName] = useState<string>('')
   const [tableNumber, setTableNumber] = useState<string>('')
-  const { toast } = useToast()
+  const [orderNumber, setOrderNumber] = useState<string>('1')
+
+  // Add filter to NewOrder Page
+  // const [searchTerm, setSearchTerm] = useState('')
+  // const [selectedCategories, setSelectedCategories] = useState<string[]>([])
+  // const [selectedProducts, setSelectedProducts] = useState<string[]>([])
 
   useEffect(() => {
     // Update Order Price
@@ -68,7 +71,8 @@ const NewOrder = () => {
         products: products || [],
       }),
     )
-  }, [dataOrderItems, products])
+    setOrderNumber(GetOrderNumber(appData))
+  }, [dataOrderItems, products, appData])
 
   // Load OrderItems from Cache if exists.
   useEffect(() => {
@@ -121,22 +125,19 @@ const NewOrder = () => {
     if (
       existingItemIndex !== -1 &&
       dataOrderItems[existingItemIndex]?.quantity === quantity
-    ) {
-      console.log('Item with same quantity already in order:', dataOrderItems)
-    }
-    // If item with same product_id but different quantity exists, update quantity
-    if (existingItemIndex !== -1) {
-      setDataOrderItems((prevItems) => {
-        const updatedItems = [...prevItems] // create a copy of the previous items
-        const itemToUpdate = updatedItems[existingItemIndex]
-        if (itemToUpdate) {
-          itemToUpdate.quantity = quantity // update the quantity
-          console.log('Updated Item in Order:', updatedItems)
-        }
-        sessionStorage.setItem('orderItems', JSON.stringify(updatedItems))
-        return updatedItems // return the updated items
-      })
-    }
+    )
+      if (existingItemIndex !== -1) {
+        // If item with same product_id but different quantity exists, update quantity
+        setDataOrderItems((prevItems) => {
+          const updatedItems = [...prevItems] // create a copy of the previous items
+          const itemToUpdate = updatedItems[existingItemIndex]
+          if (itemToUpdate) {
+            itemToUpdate.quantity = quantity // update the quantity
+          }
+          sessionStorage.setItem('orderItems', JSON.stringify(updatedItems))
+          return updatedItems // return the updated items
+        })
+      }
     // If item does not exist in orderItems, add new item
     if (existingItemIndex === -1) {
       const newOrderItem: OrderItem = {
@@ -146,7 +147,7 @@ const NewOrder = () => {
       }
       setDataOrderItems((prevDataOrderItems) => {
         const updatedItems = [...prevDataOrderItems, newOrderItem]
-        console.log('Added Item to Order:', updatedItems)
+        // Add Item to OrderItems
         setSumOrderPrice(
           calcOrderPrice({
             dataOrderItems: updatedItems,
@@ -165,23 +166,24 @@ const NewOrder = () => {
       (item) => item.product_id !== product_id,
     )
     setDataOrderItems(() => {
-      console.log('Deleted Item in Orders:', updatedOrderItems)
+      // Delete Item from OrderItems
       sessionStorage.setItem('orderItems', JSON.stringify(updatedOrderItems))
       return updatedOrderItems
     })
   }
 
   // Save Order
-  const { mutate: saveOrder } = useSaveOrderMutation()
+  const { mutate: saveOrder, isPending: loadingOrder } = useSaveOrderMutation()
   // Save OrderItems
-  const { mutate: saveOrderItems } = useSaveOrderItemsMutation()
+  const { mutate: saveOrderItems, isPending: loadingOrderItems } =
+    useSaveOrderItemsMutation()
 
   const handleSumitOrder = () => {
     // Save Order to Database
 
     let orderPrice: number = 0
     if (customPrice) {
-      orderPrice = parseFloat(customPriceValue)
+      orderPrice = EuroToCents(customPriceValue)
     } else {
       orderPrice = sumOrderPrice
     }
@@ -199,18 +201,21 @@ const NewOrder = () => {
         categories: uniqueCategories,
         product_ids: uniqueProducts,
         table_number: tableNumber,
-        order_number: orders?.length.toString() || '0',
+        order_number: orderNumber,
       },
       {
         onSuccess: (data) => {
-          console.log('Order saved on Success!', data)
+          // Save new Order Number
+          updateAppData({
+            key: 'order_number',
+            value: parseInt(orderNumber).toString(),
+          })
           const order_id = data[0]?.id
           if (order_id) {
             handleSaveOrderItems(order_id)
           }
         },
-        onError: (error) => {
-          console.log('Error saving Order:', error)
+        onError: () => {
           // To DO! If Order Saved, but Failed to save OrderItmes, then Delete Order
           // const { mutate: deleteOrder } = useDeleteOrderMutation()
           // deleteOrder()
@@ -243,6 +248,7 @@ const NewOrder = () => {
   }
 
   const handleSaveOrderItems = (order_id: number) => {
+    // Map to get Product name and Price, because OrderItems only have product_id and price could change
     const orderItems = dataOrderItems.map((item) => {
       return {
         comment: item.comment,
@@ -259,37 +265,34 @@ const NewOrder = () => {
     })
 
     saveOrderItems(orderItems, {
-      onSuccess: (data) => {
-        console.log('OrderItems saved on Success!', data)
+      onSuccess: () => {
         toast({
           title: 'Bestellung wurde gespeichert! ✅',
           duration: 500,
         })
       },
-      onError: (error) => {
-        console.log('Error saving OrderItems:', error)
+      onError: () => {
         toast({
           title: 'Bestellung konnte nicht gespeichert werden! ❌',
         })
       },
     })
   }
-  const handlCustomPrice = (inputValue: string) => {
-    inputValue = inputValue.replace(/[^0-9.,]/g, '')
-    // Allow only one dot or comma and two decimal places after it
-    if (
-      inputValue.includes('-') ||
-      inputValue.includes('+') ||
-      inputValue.includes('e')
-    ) {
-      setCustomPriceValue('')
-    } else {
-      const match = inputValue.match(/^(\d+)?([.,])?(\d{0,2})?$/)
 
-      if (match) {
-        setCustomPriceValue(match[0])
-      }
-    }
+  const handleCustomPrice = (inputValue: string) => {
+    inputValue = inputValue.replace(/\D/g, '')
+    //remove any existing decimal
+    const p = inputValue.replace(',', '')
+
+    //get everything except the last 2 digits
+    const l = p.substring(-2, p.length - 2)
+
+    //get the last 2 digits
+    const r = p.substring(p.length - 2, p.length)
+
+    inputValue = l + ',' + r
+    if (inputValue === ',') inputValue = ''
+    setCustomPriceValue(inputValue)
   }
 
   const handleSetTableNumber = (tableNumber: string) => {
@@ -417,9 +420,9 @@ const NewOrder = () => {
             <Input
               className="mt-1"
               id="custom-price"
-              type="number"
+              type="string"
               value={customPriceValue}
-              onChange={(e) => handlCustomPrice(e.target.value)}
+              onChange={(e) => handleCustomPrice(e.target.value)}
             />
           </div>
         )}
@@ -430,7 +433,8 @@ const NewOrder = () => {
             disabled={dataOrderItems.length === 0}
             onClick={handleSumitOrder}
           >
-            Absenden <ShoppingCart className="ml-1 h-4 w-4"></ShoppingCart>
+            {loadingOrder || loadingOrderItems ? 'Loading...' : 'Absenden'}{' '}
+            <ShoppingCart className="ml-1 h-4 w-4"></ShoppingCart>
           </Button>
 
           <Button

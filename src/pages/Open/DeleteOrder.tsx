@@ -17,16 +17,14 @@ import { Button } from '@/components/ui/button'
 import { useToast } from '@/components/ui/use-toast'
 
 const DeleteOrder = ({ order }: { order: Order }) => {
-  const { mutate: deleteOrder } = useDeleteOrderMutation()
+  const { mutate: deleteOrder, isPending } = useDeleteOrderMutation()
 
   const { toast } = useToast()
   const handleDeleteOrder = (id: number) => {
     deleteOrder(id, {
       onSuccess: () => {
-        console.log('Success Deleting Order!')
         toast({ title: 'Bestellung gelöscht ✅', duration: 800 })
         void queryClient.invalidateQueries({ queryKey: ['ordersAndItems'] })
-        console.log('Deletion Sucessfull!')
       },
       onError: () => {
         toast({ title: 'Fehler: Bestellung konnte nicht gelöscht werden!' })
@@ -39,7 +37,7 @@ const DeleteOrder = ({ order }: { order: Order }) => {
       <AlertDialogTrigger asChild>
         <div className="">
           <Button className="w-min bg-red-700" variant="destructive">
-            <TrashIcon className="h-4 w-4" />
+            {isPending ? <p>...</p> : <TrashIcon className="h-4 w-4" />}
           </Button>
         </div>
       </AlertDialogTrigger>

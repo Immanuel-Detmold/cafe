@@ -58,9 +58,6 @@ const OrderDetailsPage = (props: propsOrderDetailsPage) => {
                 (product) => product.id === orderItem.product_id,
               )
               if (!product) {
-                console.error(
-                  `Product not found for id: ${orderItem.product_id}`,
-                )
                 return null
               }
               return (
