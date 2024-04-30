@@ -139,11 +139,10 @@ const SideBar = () => {
         {/* Footer */}
         <div className="absolute bottom-4">
           {/* Settings */}
+
           <NavLink
             to="/admin/settings"
-            className={({ isActive }) =>
-              isActive ? 'rounded-md bg-secondary p-2' : 'p-2'
-            }
+            className="p-2"
             onClick={() => {
               setSheetOpen(false)
             }}
@@ -153,7 +152,6 @@ const SideBar = () => {
               <Label className="ml-1 cursor-pointer">Einstellungen </Label>
             </div>
           </NavLink>
-
           {/* Logout */}
           <div
             className="flex cursor-pointer"

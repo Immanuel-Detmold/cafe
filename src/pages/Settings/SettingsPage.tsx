@@ -1,4 +1,5 @@
 import ChangeCategories from './ChangeCategories'
+import DesignPage from './DesignPage'
 import PasswordChange from './PasswordChange'
 import RegisterNewUser from './RegisterNewUser'
 import ResetOrderNumber from './ResetOrderNumber'
@@ -12,6 +13,7 @@ const SettingsPage = () => {
           <PasswordChange />
           <ChangeCategories />
           <ResetOrderNumber />
+          <DesignPage />
         </div>
       </div>
     </>
