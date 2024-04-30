@@ -1,9 +1,7 @@
-import { Label } from '@radix-ui/react-label'
-import { ChevronRightIcon, UserRoundIcon } from 'lucide-react'
-import { useNavigate } from 'react-router-dom'
-
-import { Button } from '@/components/ui/button'
-
+// import { Label } from '@radix-ui/react-label'
+// import { ChevronRightIcon, UserRoundIcon } from 'lucide-react'
+// import { useNavigate } from 'react-router-dom'
+// import { Button } from '@/components/ui/button'
 import ChangeCategories from './ChangeCategories'
 import DesignPage from './DesignPage'
 import PasswordChange from './PasswordChange'
@@ -11,7 +9,7 @@ import RegisterNewUser from './RegisterNewUser'
 import ResetOrderNumber from './ResetOrderNumber'
 
 const SettingsPage = () => {
-  const navigate = useNavigate()
+  // const navigate = useNavigate()
 
   return (
     <>
