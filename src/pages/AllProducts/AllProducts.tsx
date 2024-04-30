@@ -14,7 +14,7 @@ const AllProducts = () => {
     <>
       {error && <div>{JSON.stringify(error)}</div>}
 
-      <div className="header sticky top-0 z-50 flex bg-white pb-1 pt-2">
+      <div className="header sticky top-0 z-50 flex bg-background pb-1 pt-2">
         <Input
           className="w-[100%]"
           placeholder="Produkt suchen"

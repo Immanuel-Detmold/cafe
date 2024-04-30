@@ -9,6 +9,7 @@ import { Me } from './pages/Me'
 import NewOrder from './pages/NewOrder/NewOrder'
 import Open from './pages/Open/Open'
 import ReadyForPickup from './pages/ReadyForPickup/ReadyForPickup'
+import ManageUsers from './pages/Settings/ManageUsers'
 import SettingsPage from './pages/Settings/SettingsPage'
 import OrdersPDF from './pages/Statistic/GeneratePDF/OrdersPDF'
 import StatisticPage from './pages/Statistic/StatisticPage'
@@ -45,6 +46,11 @@ export const router = createBrowserRouter(
           path: 'settings',
           element: <SettingsPage />,
         },
+        {
+          path: 'settings/manage-users',
+          element: <ManageUsers />,
+        },
+
         {
           path: 'cafe-cards',
           element: <CafeCards />,

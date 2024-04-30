@@ -1,6 +1,10 @@
+import { useUser } from '@/data/useUser'
 import { createContext, useContext, useEffect, useState } from 'react'
 
-type Theme = 'dark' | 'light' | 'system'
+// const { user } = useUser()
+// const theme = (user?.user_metadata.design ?? 'system') as string
+
+export type Theme = 'dark' | 'light' | 'system'
 
 interface ThemeProviderProps {
   children: React.ReactNode
@@ -30,7 +34,14 @@ export function ThemeProvider({
     () => (localStorage.getItem(storageKey) as Theme) || defaultTheme,
   )
 
+  const { user } = useUser()
+
   useEffect(() => {
+    // Load Supabase Data UserData and set the theme
+    const theme = (user?.user_metadata.design ?? 'system') as Theme
+    console.log(theme)
+    setTheme(theme)
+
     const root = window.document.documentElement
 
     root.classList.remove('light', 'dark')
@@ -46,7 +57,7 @@ export function ThemeProvider({
     }
 
     root.classList.add(theme)
-  }, [theme])
+  }, [theme, user])
 
   const value = {
     theme,

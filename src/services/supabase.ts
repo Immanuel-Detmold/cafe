@@ -23,6 +23,7 @@ supabase
     (payload) => {
       console.log('Realtime Payload: ', payload)
       void queryClient.invalidateQueries({ queryKey: ['ordersAndItems'] })
+      void queryClient.invalidateQueries({ queryKey: ['appData'] })
     },
   )
   .subscribe()
@@ -76,10 +77,12 @@ export async function registerUser({
   email,
   password,
   name,
+  role,
 }: {
   email: string
   password: string
   name: string
+  role: string
 }) {
   return await supabase.auth.signUp({
     email,
@@ -87,6 +90,7 @@ export async function registerUser({
     options: {
       data: {
         name: name,
+        role: role,
       },
     },
   })
