@@ -5,6 +5,7 @@ import { useState } from 'react'
 
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { useToast } from '@/components/ui/use-toast'
 
 const RegisterNewUser = () => {
@@ -13,6 +14,7 @@ const RegisterNewUser = () => {
   const [password, setPassword] = useState('')
   const [name, setName] = useState('')
   const [error, setError] = useState('')
+  const [userRole, setUserRole] = useState('user')
   const { toast } = useToast()
 
   // Register new user
@@ -20,7 +22,12 @@ const RegisterNewUser = () => {
     if (email === '' || password === '' || name === '') {
       setError('Bitte fülle alle Felder aus.')
     } else {
-      const { data, error } = await registerUser({ email, password, name })
+      const { data, error } = await registerUser({
+        email,
+        password,
+        name,
+        role: userRole,
+      })
 
       if (error) {
         console.error(error)
@@ -84,6 +91,24 @@ const RegisterNewUser = () => {
               setName(e.target.value)
             }}
           />
+
+          {/* User Role */}
+          <RadioGroup
+            defaultValue={userRole}
+            className="mt-2"
+            onValueChange={(value) => {
+              setUserRole(value)
+            }}
+          >
+            <div className="flex items-center space-x-2">
+              <RadioGroupItem value="user" id="user" />
+              <Label htmlFor="user">Normaler Benutzer</Label>
+            </div>
+            <div className="flex items-center space-x-2">
+              <RadioGroupItem value="admin" id="admin" />
+              <Label htmlFor="admin">Admin</Label>
+            </div>
+          </RadioGroup>
 
           <Button
             className="mt-2"
