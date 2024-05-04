@@ -3,7 +3,22 @@ import { useLocation } from 'react-router-dom'
 import SideBar from './SideBar'
 
 const Header = () => {
-  const location = useLocation()
+  const titleMap = {
+    '/admin/login': 'Login',
+    '/admin/me': 'Me',
+    '/admin/open': 'Offen',
+    '/admin/ready-for-pickup': 'Abholbereit',
+    '/admin/new-order': 'Neue Bestellung',
+    '/admin/all-products': 'Alle Produkte',
+    '/admin/statistic': 'Statistik',
+    '/admin/Login': 'Login',
+    '/admin/closed-orders': 'Abgeholt (Heute)',
+    '/admin/cafe-cards': 'Cafe Karten',
+    '/admin/settings': 'Einstellungen',
+  }
+
+  const { pathname } = useLocation()
+
   return (
     <header className="cafe-color sticky top-0 z-50">
       <div className="relative flex">
@@ -12,29 +27,7 @@ const Header = () => {
         </div>
         <div className="flex h-14 w-full items-center text-center font-bold">
           <h1 className="w-full text-center text-foreground text-white">
-            {location.pathname === '/admin/login'
-              ? 'Login'
-              : location.pathname === '/admin/me'
-                ? 'Me'
-                : location.pathname === '/admin/open'
-                  ? 'Offen'
-                  : location.pathname === '/admin/ready-for-pickup'
-                    ? 'Abholbereit'
-                    : location.pathname === '/admin/new-order'
-                      ? 'Neue Bestellung'
-                      : location.pathname === '/admin/all-products'
-                        ? 'Alle Produkte'
-                        : location.pathname === '/admin/statistic'
-                          ? 'Statistik'
-                          : location.pathname === '/admin/Login'
-                            ? 'Login'
-                            : location.pathname === '/admin/closed-orders'
-                              ? 'Abgeholt (Heute)'
-                              : location.pathname === '/admin/cafe-cards'
-                                ? 'Cafe Karten'
-                                : location.pathname === '/admin/settings'
-                                  ? 'Einstellungen'
-                                  : ''}
+            {titleMap[pathname as keyof typeof titleMap] || ''}
           </h1>
         </div>
       </div>

@@ -39,7 +39,6 @@ export function ThemeProvider({
   useEffect(() => {
     // Load Supabase Data UserData and set the theme
     const theme = (user?.user_metadata.design ?? 'system') as Theme
-    console.log(theme)
     setTheme(theme)
 
     const root = window.document.documentElement
