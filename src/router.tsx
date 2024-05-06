@@ -11,6 +11,7 @@ import Open from './pages/Open/Open'
 import ReadyForPickup from './pages/ReadyForPickup/ReadyForPickup'
 import ManageUsers from './pages/Settings/ManageUsers'
 import SettingsPage from './pages/Settings/SettingsPage'
+import UserInfo from './pages/Settings/UserInfo'
 import OrdersPDF from './pages/Statistic/GeneratePDF/OrdersPDF'
 import StatisticPage from './pages/Statistic/StatisticPage'
 import { getUser } from './services/supabase'
@@ -42,6 +43,7 @@ export const router = createBrowserRouter(
       path: 'admin',
       element: <Navigation />,
       children: [
+        { path: 'cafe-cards', element: <CafeCards /> },
         {
           path: 'settings',
           element: <SettingsPage />,
@@ -50,10 +52,9 @@ export const router = createBrowserRouter(
           path: 'settings/manage-users',
           element: <ManageUsers />,
         },
-
         {
-          path: 'cafe-cards',
-          element: <CafeCards />,
+          path: 'settings/manage-users/:userId',
+          element: <UserInfo />,
         },
         {
           path: 'login',
