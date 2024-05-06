@@ -38,11 +38,15 @@ const Filters = ({
   const { currentCategories, currentProducts } =
     getCategoriesAndProducts(openOrders)
 
+  console.log('currentCategories', currentCategories)
   return (
     <div>
       <Popover>
         <PopoverTrigger asChild>
-          <Button variant="outline" className="ml-2">
+          <Button
+            variant="outline"
+            className={`ml-2 ${selectedCategories?.length > 0 || selectedProducts?.length > 0 ? 'bg-amber-600 text-white' : ''}`}
+          >
             Filter
             <ListFilterIcon className="mx-2 h-6 w-6 cursor-pointer" />
           </Button>
@@ -72,7 +76,9 @@ const Filters = ({
                           handleCheckboxChange('category', e, category)
                         }}
                       />
-                      <Label>{category}</Label>
+                      <Label className="cursor-pointer" htmlFor={category}>
+                        {category}
+                      </Label>
                     </div>
                   ))}
               </AccordionContent>
@@ -99,7 +105,12 @@ const Filters = ({
                           )
                         }}
                       />
-                      <Label>{product.name}</Label>
+                      <Label
+                        className="cursor-pointer"
+                        htmlFor={product.id.toString()}
+                      >
+                        {product.name}
+                      </Label>
                     </div>
                   ))}
               </AccordionContent>
