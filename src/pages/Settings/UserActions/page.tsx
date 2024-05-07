@@ -2,7 +2,6 @@ import { useUserActionsQuery } from '@/data/useUserActions.tsx'
 import { getDistinctDatesUser } from '@/pages/Statistic/helperFunctions'
 import { ChevronLeftIcon } from 'lucide-react'
 import { useMemo } from 'react'
-import { useNavigate } from 'react-router-dom'
 
 import { Button } from '@/components/ui/button'
 
@@ -11,7 +10,7 @@ import { DataTable } from './data-table'
 
 export default function UserActions() {
   const { data: userActions } = useUserActionsQuery()
-  const navigate = useNavigate()
+
   const distinctDates = useMemo(() => {
     if (!userActions) return []
     return getDistinctDatesUser(userActions)
@@ -29,13 +28,8 @@ export default function UserActions() {
         />
       )}
 
-      <Button
-        className="ml-auto mt-2"
-        onClick={() => {
-          navigate('/admin/settings')
-        }}
-      >
-        <ChevronLeftIcon className="cursor-pointer" />
+      <Button className="ml-auto mt-2">
+        <ChevronLeftIcon />
       </Button>
     </div>
   )
