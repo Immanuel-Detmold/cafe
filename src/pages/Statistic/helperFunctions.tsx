@@ -1,5 +1,6 @@
 import { CafeCard } from '@/data/useCafeCard'
 import { OrderItems, OrdersAndItems } from '@/data/useOrders'
+import { UserActionsType } from '@/data/useUserActions.tsx'
 import { centsToEuro } from '@/generalHelperFunctions.tsx/currencyHelperFunction'
 
 // Get Sum Price of Orders
@@ -45,6 +46,20 @@ export const getDistinctDates = (dataOrders: OrdersAndItems) => {
   dataOrders.forEach((order) => {
     // Add Local Date to the List
     const date = convertUTCToLocalTime(order.created_at)
+    if (!distinctDates.includes(date)) {
+      distinctDates.push(date)
+    }
+  })
+
+  return distinctDates
+}
+
+// Get Distinct Dates UserActions
+export const getDistinctDatesUser = (dataUserActions: UserActionsType[]) => {
+  const distinctDates: string[] = []
+  dataUserActions.forEach((action) => {
+    // Add Local Date to the List
+    const date = convertUTCToLocalTime(action.created_at)
     if (!distinctDates.includes(date)) {
       distinctDates.push(date)
     }

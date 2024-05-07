@@ -3,7 +3,7 @@ import { supabase } from '@/services/supabase'
 import { Database } from '@/services/supabase.types'
 import { useMutation, useQuery } from '@tanstack/react-query'
 
-import { saveUserAction } from './userLog'
+import { saveUserAction } from './useUserActions.tsx'
 
 export type InsertProductCategories =
   Database['public']['Tables']['ProductCategories']['Insert']

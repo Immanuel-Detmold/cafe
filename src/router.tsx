@@ -11,6 +11,7 @@ import Open from './pages/Open/Open'
 import ReadyForPickup from './pages/ReadyForPickup/ReadyForPickup'
 import ManageUsers from './pages/Settings/ManageUsers'
 import SettingsPage from './pages/Settings/SettingsPage'
+import UserActions from './pages/Settings/UserActions/page'
 import UserInfo from './pages/Settings/UserInfo'
 import OrdersPDF from './pages/Statistic/GeneratePDF/OrdersPDF'
 import StatisticPage from './pages/Statistic/StatisticPage'
@@ -55,6 +56,10 @@ export const router = createBrowserRouter(
         {
           path: 'settings/manage-users/:userId',
           element: <UserInfo />,
+        },
+        {
+          path: 'settings/user-actions',
+          element: <UserActions />,
         },
         {
           path: 'login',

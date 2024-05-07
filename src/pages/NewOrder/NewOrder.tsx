@@ -22,6 +22,7 @@ import { Switch } from '@/components/ui/switch'
 import { Textarea } from '@/components/ui/textarea'
 import { useToast } from '@/components/ui/use-toast'
 
+import Filters from './Filters'
 import OrderDetailsPage from './OrderDetailsPage'
 import ProductsInCategory from './ProductsInCategory'
 import {
@@ -34,18 +35,6 @@ import {
 type GroupedProducts = Record<string, Product[]>
 
 const NewOrder = () => {
-  const { toast } = useToast()
-
-  const { data: appData } = useAppData()
-  const { mutate: updateAppData } = useUpdateAppData()
-  const { data: products, error } = useProductsQuery({
-    searchTerm: '',
-    ascending: true,
-  })
-  if (error) {
-    toast({ title: 'Fehler beim Laden der Produkte! ❌' })
-  }
-
   const [dataOrderItems, setDataOrderItems] = useState<OrderItem[]>([])
   const [sumOrderPrice, setSumOrderPrice] = useState<number>(0)
   const [paymentMethod, setPaymentMethod] = useState<string>('cash')
@@ -59,9 +48,27 @@ const NewOrder = () => {
   const [orderNumber, setOrderNumber] = useState<string>('1')
 
   // Add filter to NewOrder Page
-  // const [searchTerm, setSearchTerm] = useState('')
-  // const [selectedCategories, setSelectedCategories] = useState<string[]>([])
-  // const [selectedProducts, setSelectedProducts] = useState<string[]>([])
+  const [searchTerm, setSearchTerm] = useState('')
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([])
+
+  const { toast } = useToast()
+
+  const { data: appData } = useAppData()
+  const { mutate: updateAppData } = useUpdateAppData()
+  const { data: products, error } = useProductsQuery({
+    searchTerm: '',
+    ascending: true,
+  })
+
+  const { data: products_filtered } = useProductsQuery({
+    searchTerm: searchTerm,
+    ascending: true,
+    categories: selectedCategories,
+  })
+
+  if (error) {
+    toast({ title: 'Fehler beim Laden der Produkte! ❌' })
+  }
 
   useEffect(() => {
     // Update Order Price
@@ -99,17 +106,38 @@ const NewOrder = () => {
     if (sessionPaymentMethod) {
       setPaymentMethod(sessionPaymentMethod)
     }
+
+    // Load Selected Categories
+    const sessionSelectedCategories = sessionStorage.getItem(
+      'selectedCategoriesNewOrder',
+    )
+    if (sessionSelectedCategories) {
+      setSelectedCategories(JSON.parse(sessionSelectedCategories) as string[])
+    }
   }, [products])
 
   // Grouped Products by Category
-  const groupedProducts = products?.reduce((groupMap, product) => {
-    const key = product.category || 'Other'
-    const group = groupMap[key] ?? []
-    return {
-      ...groupMap,
-      [key]: [...group, product],
-    }
-  }, {} as GroupedProducts)
+  // const groupedProducts = products?.reduce((groupMap, product) => {
+  //   const key = product.category || 'Other'
+  //   const group = groupMap[key] ?? []
+  //   return {
+  //     ...groupMap,
+  //     [key]: [...group, product],
+  //   }
+  // }, {} as GroupedProducts)
+
+  // Grouped Products by Category (for search term and filter)
+  const groupedProducts_filtered = products_filtered?.reduce(
+    (groupMap, product) => {
+      const key = product.category || 'Other'
+      const group = groupMap[key] ?? []
+      return {
+        ...groupMap,
+        [key]: [...group, product],
+      }
+    },
+    {} as GroupedProducts,
+  )
 
   // Const handleAddOrder. Only Local, no database
   const handleAddOrder = (
@@ -299,23 +327,69 @@ const NewOrder = () => {
     setTableNumber(tableNumber)
   }
 
+  // Handle CheckboxChange for Filter
+  const handleCheckboxChange = (
+    type: string,
+    checked: string | boolean,
+    value: string,
+  ) => {
+    //If Checkbox is checked add to selectedCategories List or remove it
+    if (type === 'category') {
+      if (checked) {
+        setSelectedCategories(() => {
+          const updated = [...selectedCategories, value]
+          sessionStorage.setItem(
+            'selectedCategoriesNewOrder',
+            JSON.stringify(updated),
+          )
+          return updated
+        })
+      } else {
+        setSelectedCategories(() => {
+          const updated = selectedCategories.filter((item) => item !== value)
+          sessionStorage.setItem(
+            'selectedCategoriesNewOrder',
+            JSON.stringify(updated),
+          )
+          return updated
+        })
+      }
+    }
+  }
+
   return (
     <div className="select-none">
+      <div className="header sticky top-0 z-50 flex items-center bg-background pb-1 pt-2">
+        <Input
+          className="w-[100%]"
+          placeholder="Produkt suchen"
+          onChange={(e) => {
+            setSearchTerm(e.target.value)
+          }}
+        />
+        <Filters
+          handleCheckboxChange={handleCheckboxChange}
+          selectedCategories={selectedCategories}
+        />
+      </div>
+
       {/* Category and Product */}
       <div className="mt-2">
-        {groupedProducts &&
-          Object.entries(groupedProducts).map(([category, products]) => (
-            <div key={category} className="flex flex-col">
-              <h2 className="w-full font-bold">{category}</h2>
-              {/* Iterate over each product in the current category */}
-              <ProductsInCategory
-                products={products}
-                dataOrderItems={dataOrderItems}
-                handleAddOrder={handleAddOrder}
-                handleDeleteOrderItem={handleDeleteOrderItem}
-              />
-            </div>
-          ))}
+        {groupedProducts_filtered &&
+          Object.entries(groupedProducts_filtered).map(
+            ([category, products]) => (
+              <div key={category} className="flex flex-col">
+                <h2 className="w-full font-bold">{category}</h2>
+                {/* Iterate over each product in the current category */}
+                <ProductsInCategory
+                  products={products}
+                  dataOrderItems={dataOrderItems}
+                  handleAddOrder={handleAddOrder}
+                  handleDeleteOrderItem={handleDeleteOrderItem}
+                />
+              </div>
+            ),
+          )}
       </div>
 
       <div className="flex flex-col">
