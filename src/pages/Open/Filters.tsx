@@ -1,4 +1,5 @@
 import { useOrderAndItemsQuery } from '@/data/useOrders'
+import { Product, useProductsQuery } from '@/data/useProducts'
 import { Label } from '@radix-ui/react-label'
 import { ListFilterIcon } from 'lucide-react'
 
@@ -38,7 +39,41 @@ const Filters = ({
   const { currentCategories, currentProducts } =
     getCategoriesAndProducts(openOrders)
 
-  console.log('currentCategories', currentCategories)
+  const { data: products } = useProductsQuery({
+    searchTerm: '',
+    ascending: true,
+  })
+  const combinedCategories = Array.from(
+    new Set([...currentCategories, ...selectedCategories]),
+  )
+
+  // Get Combined Products currentProducts and selectedProducts
+  // selectedProducts is in format ["123", "23", ...]
+  // currentProducts is in format [{id: 123, name: "Product 1"}, {id: 23, name: "Product 2"}, ...]
+  const getCombinedProducts = (
+    currentProducts: Product[],
+    selectedProducts: string[],
+  ) => {
+    const combinedProducts = [...currentProducts]
+    selectedProducts.forEach((id) => {
+      const product = products?.find((p) => p.id.toString() === id)
+      if (product && !combinedProducts.some((p) => p.id === product.id)) {
+        combinedProducts.push(product)
+      }
+    })
+    return combinedProducts
+  }
+
+  const combinedProducts = getCombinedProducts(
+    currentProducts,
+    selectedProducts,
+  )
+  console.log('curr: ', currentProducts)
+  console.log('sel: ', selectedProducts)
+  console.log('Comb: ', combinedProducts)
+  // const combinedProducts = Array.from(new Set([...currentProducts, ...selectedProducts]))
+
+  // console.log(currentProducts)
   return (
     <div>
       <Popover>
@@ -63,8 +98,8 @@ const Filters = ({
               </AccordionTrigger>
 
               <AccordionContent>
-                {currentCategories &&
-                  currentCategories.map((category) => (
+                {combinedCategories &&
+                  combinedCategories.map((category) => (
                     <div
                       key={category}
                       className="mt-2 flex items-center space-x-1"
@@ -86,8 +121,8 @@ const Filters = ({
             <AccordionItem value="item-2">
               <AccordionTrigger className="-mb-3">Produkte</AccordionTrigger>
               <AccordionContent>
-                {currentProducts &&
-                  currentProducts.map((product) => (
+                {combinedProducts &&
+                  combinedProducts.map((product) => (
                     <div
                       key={product.id.toString()}
                       className="mt-2 flex items-center space-x-1"

@@ -1,19 +1,10 @@
 To do:
-- Dynamische Kategorien und Bezahlmethoden?
 - language
-- suchleiste bei new-order?
+- suchleiste und Filter bei new-order
 - edit order
 - navbar for PC
-- Automatic Dark Mode
 - Bar Chart - Tortendiagram
-- register screen / change password
-- loading bei "Absenden"
-- regsiter
-- Kartenanzahl implementieren
-- Summe aller Karten anzeigen 
-- Anzahl von 5er und 10er trennen
-
-cursor pointer in settings for label
+- forgot password 
 
 Later:
 - Was ist mit Bezahlung? In der App möglich machen?

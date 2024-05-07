@@ -3,26 +3,35 @@ import { supabase } from '@/services/supabase'
 import { Database } from '@/services/supabase.types'
 import { useMutation, useQuery } from '@tanstack/react-query'
 
-import { saveUserAction } from './userLog'
+import { saveUserAction } from './useUserActions.tsx'
 
 export type Product = Database['public']['Tables']['Products']['Row']
 
 export const useProductsQuery = ({
   searchTerm,
   ascending,
+  categories,
 }: {
   searchTerm: string
   ascending: boolean
+  categories?: string[]
 }) => {
   return useQuery({
-    queryKey: ['products', searchTerm, ascending],
+    queryKey: ['products', searchTerm, ascending, categories],
     queryFn: async () => {
-      const { data, error } = await supabase
+      console.log('Cats: ', categories)
+      let query = supabase
         .from('Products')
         .select()
         .eq('deleted', false)
         .order('name', { ascending })
         .ilike('name', `%${searchTerm}%`)
+
+      if (categories && categories.length > 0) {
+        query = query.in('category', categories)
+      }
+
+      const { data, error } = await query
 
       if (error) {
         throw error

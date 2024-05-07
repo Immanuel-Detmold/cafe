@@ -18,13 +18,13 @@ import {
 } from '@/components/ui/popover'
 
 type DatePickerProps = {
-  distinctOrders: string[]
+  distinctDates: string[]
   selectedDate: string
   setSelectedDate: React.Dispatch<React.SetStateAction<string>>
 }
 
 export default function DatePicker({
-  distinctOrders,
+  distinctDates,
   selectedDate,
   setSelectedDate,
 }: DatePickerProps) {
@@ -41,7 +41,7 @@ export default function DatePicker({
         >
           {selectedDate
             ? formatDate(
-                distinctOrders.find((order) => order === selectedDate) || '',
+                distinctDates.find((order) => order === selectedDate) || '',
               )
             : 'Wähle Datum...'}
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
@@ -52,7 +52,7 @@ export default function DatePicker({
           <CommandInput tabIndex={-1} placeholder="Suche nach Datum..." />
           <CommandEmpty>Kein Datum gefunden.</CommandEmpty>
           <CommandGroup>
-            {distinctOrders.map((order) => (
+            {distinctDates.map((order) => (
               <CommandItem
                 key={order}
                 value={order}

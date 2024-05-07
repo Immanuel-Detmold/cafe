@@ -15,6 +15,7 @@ const Header = () => {
     '/admin/closed-orders': 'Abgeholt (Heute)',
     '/admin/cafe-cards': 'Cafe Karten',
     '/admin/settings': 'Einstellungen',
+    '/admin/settings/user-actions': 'Benutzeraktionen',
   }
 
   const { pathname } = useLocation()

@@ -1,6 +1,7 @@
 // Save User Action
 import { supabase } from '@/services/supabase'
-import { Json } from '@/services/supabase.types'
+import { Database, Json } from '@/services/supabase.types'
+import { useQuery } from '@tanstack/react-query'
 
 // Input: email, name, action, user_id. Save User Action
 export const saveUserAction = async ({
@@ -42,3 +43,22 @@ export const saveUserAction = async ({
   }
   return data
 }
+
+export type UserActionsType = Database['public']['Tables']['UserActions']['Row']
+
+export const useUserActionsQuery = () =>
+  useQuery({
+    queryKey: ['userActions'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('UserActions')
+        .select()
+        .order('created_at', { ascending: false })
+
+      if (error) {
+        throw error
+      }
+
+      return data
+    },
+  })

@@ -1,6 +1,6 @@
 import { useUser } from '@/data/useUser'
 import { Label } from '@radix-ui/react-label'
-import { ChevronRightIcon, UserRoundIcon } from 'lucide-react'
+import { ChevronRightIcon, HistoryIcon, UserRoundIcon } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
@@ -46,6 +46,22 @@ const SettingsPage = () => {
               <div className="flex items-center">
                 <UserRoundIcon />{' '}
                 <Label className="ml-1 cursor-pointer">Manage Users</Label>
+              </div>
+              <ChevronRightIcon className="" />
+            </Button>
+          )}
+
+          {/* User Logs */}
+          {userRole === 'admin' && (
+            <Button
+              className="flex justify-between"
+              onClick={() => {
+                navigate('/admin/settings/user-actions')
+              }}
+            >
+              <div className="flex items-center">
+                <HistoryIcon />{' '}
+                <Label className="ml-1 cursor-pointer">Benutzer Aktionen</Label>
               </div>
               <ChevronRightIcon className="" />
             </Button>
