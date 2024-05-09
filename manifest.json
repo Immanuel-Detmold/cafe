@@ -10,7 +10,7 @@
       "purpose": "any"
     }
   ],
-  "display": "minimal-ui",
+  "display": "standalone",
   "background_color": "#292929",
   "theme_color": "#292929",
   "orientation": "portrait"
