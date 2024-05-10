@@ -24,7 +24,6 @@ const SettingsPage = () => {
     }
   }, [user])
 
-  console.log(user?.user_metadata.role)
   return (
     <>
       <div className="flex flex-col items-center">
