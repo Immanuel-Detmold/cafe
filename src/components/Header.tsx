@@ -25,7 +25,7 @@ const Header = () => {
 
   const { pathname } = useLocation()
   const { user } = useUser()
-  console.log(user)
+
   useEffect(() => {
     if (pathname.split('/').pop() === 'login') {
       setNormalScreen(false)

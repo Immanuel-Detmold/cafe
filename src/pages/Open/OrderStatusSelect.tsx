@@ -3,7 +3,7 @@ import {
   OrderStatus,
   useChageOrderStatusMutation,
 } from '@/data/useOrders'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import {
   Select,
@@ -17,13 +17,20 @@ import { useToast } from '@/components/ui/use-toast'
 
 const OrderStatusPage = ({ order }: { order: Order }) => {
   const [orderStatus, setOrderStatus] = useState<OrderStatus>(order.status)
+  // const [orderStatusName, setOrderStatusName] = useState<string>('')
+
   const { mutate: changeOrderStatus, isPending } = useChageOrderStatusMutation(
     order.id,
   )
+
+  useEffect(() => {
+    setOrderStatus(order.status)
+  }, [order])
+
   const { toast } = useToast()
 
   const handleStatusChange = (newStatus: OrderStatus) => {
-    setOrderStatus(newStatus)
+    // setOrderStatus(newStatus)
     changeOrderStatus(newStatus, {
       onSuccess: () => {
         // toast({ title: 'Status erfolgreich geändert ✅', duration: 500 })
@@ -38,6 +45,7 @@ const OrderStatusPage = ({ order }: { order: Order }) => {
     <Select
       onValueChange={(status: OrderStatus) => handleStatusChange(status)}
       defaultValue={orderStatus}
+      value={orderStatus}
     >
       <SelectTrigger
         className={`ml-2 w-[140px] ${orderStatus === 'processing' ? 'bg-amber-600 text-white' : orderStatus === 'finished' ? 'bg-emerald-800 text-white' : ''}`}

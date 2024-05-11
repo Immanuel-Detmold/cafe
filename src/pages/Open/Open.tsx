@@ -330,7 +330,7 @@ const Open = ({
                   {order.comment && '' + order.comment}
                 </Label>
                 <div className="mt-2 flex justify-between">
-                  <EditOrder />
+                  <EditOrder orderId={order.id} />
                   <div className="flex w-full justify-end">
                     <DeleteOrder order={order} />
                     <OrderStatusPage order={order} />
