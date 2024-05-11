@@ -68,9 +68,6 @@ const Filters = ({
     currentProducts,
     selectedProducts,
   )
-  console.log('curr: ', currentProducts)
-  console.log('sel: ', selectedProducts)
-  console.log('Comb: ', combinedProducts)
   // const combinedProducts = Array.from(new Set([...currentProducts, ...selectedProducts]))
 
   // console.log(currentProducts)

@@ -19,7 +19,6 @@ export const useProductsQuery = ({
   return useQuery({
     queryKey: ['products', searchTerm, ascending, categories],
     queryFn: async () => {
-      console.log('Cats: ', categories)
       let query = supabase
         .from('Products')
         .select()
@@ -71,8 +70,6 @@ export const useDeleteProductMutation = () =>
 
       if (error) {
         throw error
-      } else {
-        console.log('Product data deleted:', product)
       }
 
       // If img exist -> remove from supabase storage

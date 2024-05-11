@@ -1,6 +1,9 @@
-import { useLocation } from 'react-router-dom'
+import { useUser } from '@/data/useUser'
+import { useEffect, useState } from 'react'
+import { useLocation, useNavigate } from 'react-router-dom'
 
 import SideBar from './SideBar'
+import { Button } from './ui/button'
 
 const Header = () => {
   const titleMap = {
@@ -18,10 +21,36 @@ const Header = () => {
     '/admin/settings/user-actions': 'Benutzeraktionen',
   }
 
-  const { pathname } = useLocation()
+  const [normalScreen, setNormalScreen] = useState(true)
 
+  const { pathname } = useLocation()
+  const { user } = useUser()
+  console.log(user)
+  useEffect(() => {
+    if (pathname.split('/').pop() === 'login') {
+      setNormalScreen(false)
+    } else {
+      setNormalScreen(true)
+    }
+  }, [pathname])
+
+  const navigate = useNavigate()
   return (
     <header className="cafe-color sticky top-0 z-50">
+      {!user && normalScreen && (
+        <div className="absolute right-2 top-2 z-50 cursor-pointer">
+          <Button
+            variant="link"
+            onClick={() => {
+              navigate('/admin/login')
+            }}
+            className="text-amber-600"
+          >
+            Login
+          </Button>
+        </div>
+      )}
+
       <div className="relative flex">
         <div className="absolute left-0 top-0">
           <SideBar />
