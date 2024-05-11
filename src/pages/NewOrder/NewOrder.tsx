@@ -113,9 +113,12 @@ const NewOrder = () => {
         setCustomPriceValue(centsToEuro(editData.price))
       }
 
-      // setDataOrderItems(editData?.orderItems)
+      // Set OrderNumber to old oder Number
+      setOrderNumber(editData.order_number)
+    } else {
+      setOrderNumber(GetOrderNumber(appData))
     }
-  }, [editData, products, orderIdEdit])
+  }, [editData, products, orderIdEdit, appData])
   // -----------
 
   useEffect(() => {
@@ -126,8 +129,7 @@ const NewOrder = () => {
         products: products || [],
       }),
     )
-    setOrderNumber(GetOrderNumber(appData))
-  }, [dataOrderItems, products, appData])
+  }, [dataOrderItems, products])
 
   // Load OrderItems from Cache if exists.
   useEffect(() => {
@@ -284,18 +286,21 @@ const NewOrder = () => {
         // id: orderIdEdit ? parseInt(orderIdEdit) : undefined,
       },
       {
-        onSuccess: (data) => {
+        onSuccess: (order) => {
           // If editOrder is true, then delete it before adding new Order
           if (orderIdEdit) {
             deleteOrder(parseInt(orderIdEdit))
           }
 
-          // Save new Order Number
-          updateAppData({
-            key: 'order_number',
-            value: parseInt(orderNumber).toString(),
-          })
-          const order_id = data[0]?.id
+          // Increase Order Number if not edited
+          if (!orderIdEdit) {
+            updateAppData({
+              key: 'order_number',
+              value: orderNumber,
+            })
+          }
+
+          const order_id = order[0]?.id
           if (order_id) {
             handleSaveOrderItems(order_id)
           }
