@@ -1,8 +1,10 @@
 import { useAppData, useUpdateAppData } from '@/data/useAppData'
 import {
   OrderItem,
+  useDeleteOrderMutation,
   useSaveOrderItemsMutation,
   useSaveOrderMutation,
+  useSingleOrder,
 } from '@/data/useOrders'
 import { useProductsQuery } from '@/data/useProducts'
 import { Product } from '@/data/useProducts'
@@ -14,6 +16,7 @@ import { ArrowPathIcon } from '@heroicons/react/24/outline'
 import { Label } from '@radix-ui/react-label'
 import { ShoppingCart } from 'lucide-react'
 import { useEffect, useState } from 'react'
+import { useParams } from 'react-router-dom'
 
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -51,6 +54,14 @@ const NewOrder = () => {
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedCategories, setSelectedCategories] = useState<string[]>([])
 
+  // For Edit Order --- Get OrderId from URL
+  const [orderIdEdit, setOrderIdEdit] = useState<string>()
+  const { orderId } = useParams()
+  useEffect(() => {
+    orderId && setOrderIdEdit(orderId)
+  }, [orderId])
+  // -------------------------------------
+
   const { toast } = useToast()
 
   const { data: appData } = useAppData()
@@ -69,6 +80,43 @@ const NewOrder = () => {
   if (error) {
     toast({ title: 'Fehler beim Laden der Produkte! ❌' })
   }
+
+  // Load Order from Database if Edit Order ---
+  const { data: editData } = useSingleOrder({
+    orderId: orderId,
+  })
+  useEffect(() => {
+    if (editData) {
+      editData.comment && setOrderComment(editData.comment)
+      editData.customer_name && setOrderName(editData.customer_name)
+      editData.payment_method && setPaymentMethod(editData.payment_method)
+      editData.table_number && setTableNumber(editData.table_number)
+      setOrderNumber(editData.order_number)
+
+      // Get Sum Price of orderItems and check if eidtData.Price is the same, if not set custom price
+      const orderItems: OrderItem[] = []
+      editData.OrderItems.forEach((item) => {
+        orderItems.push({
+          product_id: item.product_id,
+          quantity: item.quantity,
+          comment: item.comment || '',
+        })
+      })
+      setDataOrderItems(orderItems)
+      const orderItemsPrice = calcOrderPrice({
+        dataOrderItems: orderItems,
+        products: products || [],
+      })
+
+      if (orderItemsPrice !== editData.price) {
+        setCustomPrice(true)
+        setCustomPriceValue(centsToEuro(editData.price))
+      }
+
+      // setDataOrderItems(editData?.orderItems)
+    }
+  }, [editData, products, orderIdEdit])
+  // -----------
 
   useEffect(() => {
     // Update Order Price
@@ -153,19 +201,21 @@ const NewOrder = () => {
     if (
       existingItemIndex !== -1 &&
       dataOrderItems[existingItemIndex]?.quantity === quantity
-    )
-      if (existingItemIndex !== -1) {
-        // If item with same product_id but different quantity exists, update quantity
-        setDataOrderItems((prevItems) => {
-          const updatedItems = [...prevItems] // create a copy of the previous items
-          const itemToUpdate = updatedItems[existingItemIndex]
-          if (itemToUpdate) {
-            itemToUpdate.quantity = quantity // update the quantity
-          }
-          sessionStorage.setItem('orderItems', JSON.stringify(updatedItems))
-          return updatedItems // return the updated items
-        })
-      }
+    ) {
+      return
+    }
+    if (existingItemIndex !== -1) {
+      // If item with same product_id but different quantity exists, update quantity
+      setDataOrderItems((prevItems) => {
+        const updatedItems = [...prevItems] // create a copy of the previous items
+        const itemToUpdate = updatedItems[existingItemIndex]
+        if (itemToUpdate) {
+          itemToUpdate.quantity = quantity // update the quantity
+        }
+        sessionStorage.setItem('orderItems', JSON.stringify(updatedItems))
+        return updatedItems // return the updated items
+      })
+    }
     // If item does not exist in orderItems, add new item
     if (existingItemIndex === -1) {
       const newOrderItem: OrderItem = {
@@ -200,6 +250,7 @@ const NewOrder = () => {
     })
   }
 
+  const { mutate: deleteOrder } = useDeleteOrderMutation()
   // Save Order
   const { mutate: saveOrder, isPending: loadingOrder } = useSaveOrderMutation()
   // Save OrderItems
@@ -230,9 +281,15 @@ const NewOrder = () => {
         product_ids: uniqueProducts,
         table_number: tableNumber,
         order_number: orderNumber,
+        // id: orderIdEdit ? parseInt(orderIdEdit) : undefined,
       },
       {
         onSuccess: (data) => {
+          // If editOrder is true, then delete it before adding new Order
+          if (orderIdEdit) {
+            deleteOrder(parseInt(orderIdEdit))
+          }
+
           // Save new Order Number
           updateAppData({
             key: 'order_number',

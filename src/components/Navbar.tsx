@@ -1,6 +1,7 @@
 import { UserGroupIcon } from '@heroicons/react/16/solid'
 import { ClipboardDocumentListIcon } from '@heroicons/react/24/outline'
 import { BellAlertIcon } from '@heroicons/react/24/outline'
+import { Label } from '@radix-ui/react-label'
 import { NavLink } from 'react-router-dom'
 
 const Navbar = () => {
@@ -11,7 +12,7 @@ const Navbar = () => {
         className={({ isActive }) => (isActive ? '' : 'text-gray-400')}
       >
         <ClipboardDocumentListIcon className="mx-auto h-9 w-9" />
-        <div className="mx-auto text-center text-sm">Neu</div>
+        <Label className="mx-auto text-center text-sm">Neu</Label>
       </NavLink>
 
       <NavLink
@@ -19,7 +20,7 @@ const Navbar = () => {
         className={({ isActive }) => (isActive ? '' : 'text-gray-400')}
       >
         <UserGroupIcon className="mx-auto h-9 w-9" />
-        <div className="mx-auto text-center text-xs">Offen</div>
+        <Label className="mx-auto text-center text-xs">Offen</Label>
       </NavLink>
 
       <NavLink
@@ -27,7 +28,7 @@ const Navbar = () => {
         className={({ isActive }) => (isActive ? '' : 'text-gray-400')}
       >
         <BellAlertIcon className="mx-auto h-9 w-9" />
-        <div className="text-xs">Abholbereit</div>
+        <Label className="text mx-auto text-xs">Abholbereit</Label>
       </NavLink>
     </nav>
   )

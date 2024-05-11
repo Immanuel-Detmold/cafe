@@ -227,7 +227,6 @@ export const useOrdersAndItemsQueryV2 = ({
         query = query.ilike('customer_name', `%${searchTerm}%`)
       }
       if (categories && categories.length > 0) {
-        console.log(categories)
         const categoryFilter = categories
           .map((category) => `categories.cs.{"${category}"}`)
           .join(', ')
@@ -346,3 +345,27 @@ const sortDataOrderItems = (orderAndItems: OrdersAndItems) => {
   })
   return formatedData
 }
+
+export const useSingleOrder = ({ orderId }: { orderId: string | undefined }) =>
+  useQuery({
+    queryKey: ['singleOrder', orderId],
+    queryFn: async () => {
+      if (!orderId) return null
+      const { data, error } = await supabase
+        .from('Orders')
+        .select(
+          `*, 
+        OrderItems (*,
+          Products (*)
+        )`,
+        )
+        .eq('id', orderId)
+        .single()
+
+      if (error) {
+        throw error
+      }
+      console.log(data)
+      return data
+    },
+  })
