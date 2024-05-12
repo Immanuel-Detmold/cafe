@@ -56,7 +56,7 @@ const ProductsInCategory = (props: propsProductInCategory) => {
                     src={product.image ? product.image : imgPlaceHolder}
                   />
                 </Avatar>
-                <Label className="ml-1 select-none">
+                <Label className="ml-1 cursor-pointer select-none">
                   {product.name} ({centsToEuro(product.price)}€)
                 </Label>
 
