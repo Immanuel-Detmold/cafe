@@ -102,3 +102,8 @@ export async function changePassword({ newPassword }: { newPassword: string }) {
     password: newPassword,
   })
 }
+
+// Reset Password
+export async function resetPassword({ email }: { email: string }) {
+  return await supabase.auth.resetPasswordForEmail(email)
+}

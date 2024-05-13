@@ -2,10 +2,12 @@ import { createBrowserRouter, redirect } from 'react-router-dom'
 
 import { Navigation } from './components/Navigation'
 import AllProducts from './pages/AllProducts/AllProducts'
+import ForgotPassword from './pages/Authentication/ForgotPassword'
+import LoginPw from './pages/Authentication/LoginPw'
+import { Me } from './pages/Authentication/Me'
+import UpdatePassword from './pages/Authentication/UpdatePassword'
 import CafeCards from './pages/CafeCards/CafeCardsPage'
 import ClosedOrdersToday from './pages/ClosedOrdersToday'
-import LoginPw from './pages/LoginPw'
-import { Me } from './pages/Me'
 import NewOrder from './pages/NewOrder/NewOrder'
 import Open from './pages/Open/Open'
 import ReadyForPickup from './pages/ReadyForPickup/ReadyForPickup'
@@ -40,6 +42,7 @@ export const router = createBrowserRouter(
       path: 'orders-pdf',
       element: <OrdersPDF />,
     },
+
     {
       path: 'admin',
       element: <Navigation />,
@@ -66,6 +69,14 @@ export const router = createBrowserRouter(
           element: <LoginPw />,
         },
         {
+          path: 'forgot-pw',
+          element: <ForgotPassword />,
+        },
+        {
+          path: 'update-pw',
+          element: <UpdatePassword />,
+        },
+        {
           path: 'me',
           element: <Me />,
         },
@@ -73,7 +84,6 @@ export const router = createBrowserRouter(
           path: 'open',
           element: <Open statusList={['waiting', 'processing']} />,
         },
-
         {
           path: 'ready-for-pickup',
           element: <ReadyForPickup />,

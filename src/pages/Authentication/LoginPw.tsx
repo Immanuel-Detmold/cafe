@@ -18,12 +18,7 @@ const LoginPw = () => {
     handleSubmit,
     setError,
     formState: { errors, isSubmitting },
-  } = useForm<FormFields>({
-    // defaultValues: {
-    //   email: 'cafe@cafe',
-    //   password: 'cafe@cafe',
-    // },
-  })
+  } = useForm<FormFields>({})
 
   const onSubmit: SubmitHandler<FormFields> = async (data) => {
     try {
@@ -61,10 +56,24 @@ const LoginPw = () => {
           <Input {...register('password')} type="password" required></Input>
         </div>
 
-        <Button type="submit" className="mt-4" disabled={isSubmitting}>
-          {isSubmitting ? 'Loading...' : 'Login'}
-        </Button>
-        {errors.root && <Label className="mt-2">{errors.root?.message}</Label>}
+        <div className="mt-4 flex w-full flex-col items-center justify-center">
+          <Button type="submit" className="w-full" disabled={isSubmitting}>
+            {isSubmitting ? 'Loading...' : 'Login'}
+          </Button>
+          <Button
+            className="mt-2 w-full"
+            onClick={() => {
+              navigate('/admin/forgot-pw')
+            }}
+            variant={'ghost'}
+            tabIndex={-1}
+          >
+            Passwort vergessen
+          </Button>
+          {errors.root && (
+            <Label className="mt-2 text-red-500">{errors.root?.message}</Label>
+          )}
+        </div>
       </form>
     </div>
   )
