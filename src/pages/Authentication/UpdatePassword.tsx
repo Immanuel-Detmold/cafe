@@ -26,13 +26,14 @@ const UpdatePassword = () => {
     const { data, error } = await changePassword({ newPassword: password })
     setLoading(false)
 
-    if (data) {
+    if (data.user != null) {
+      console.log('data', data)
       toast({ title: 'Password aktualisiert! ✅' })
       setError('')
       navigate('/admin/new-order')
     }
     if (error) {
-      setError('Error updating password.')
+      setError(error.message)
     }
   }
 
