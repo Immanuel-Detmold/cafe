@@ -11,7 +11,7 @@ import {
 import { Label } from '@radix-ui/react-label'
 import { PDFDownloadLink } from '@react-pdf/renderer'
 import { FileTextIcon } from 'lucide-react'
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 
 import { Button } from '@/components/ui/button'
 import { Switch } from '@/components/ui/switch'
@@ -34,9 +34,7 @@ const StatisticPage = () => {
   const { yearDataFormat, year } = getThisYear()
   const [showAllOrders, setShorAllOrders] = useState(false)
 
-  const [selectedDate, setSelectedDate] = useState(
-    new Date().toLocaleDateString('en-CA').toString(),
-  )
+  const [selectedDate, setSelectedDate] = useState('')
 
   const { data: ordersMonth, isLoading: l1 } = useOrdersAndItemsQueryV2({
     statusList: ['finished'],
@@ -62,8 +60,9 @@ const StatisticPage = () => {
 
   const { data: filteredData, isLoading: l5 } = useOrdersAndItemsQueryV2({
     statusList: ['finished'],
-    startDate: getStartOfDay(selectedDate).finalDateString,
-    endDate: getEndOfDay(selectedDate).endOfDayString,
+    startDate: getStartOfDay(selectedDate || '2000-01-01T00:00:00')
+      .finalDateString,
+    endDate: getEndOfDay(selectedDate || '2024-05-01T00:00:00').endOfDayString,
   })
 
   // Get distinct dates
@@ -131,6 +130,13 @@ const StatisticPage = () => {
     if (!filteredData) return '...'
     return getSumOrdersPayMethod(filteredData, 'cafe_card') + '€'
   }, [filteredData])
+
+  useEffect(() => {
+    if (distinctOrders.length > 0 && distinctOrders !== undefined) {
+      setSelectedDate(distinctOrders[0] || '')
+    }
+  }, [distinctOrders])
+
   return (
     <>
       <div className="h-2"></div>
@@ -194,51 +200,55 @@ const StatisticPage = () => {
           {
             <DatePicker
               distinctDates={distinctOrders}
-              selectedDate={selectedDate}
+              selectedDate={selectedDate || ''}
               setSelectedDate={setSelectedDate}
             />
           }
         </div>
 
-        {/* Lower Block (Under Selected Date) */}
-        <div className="mt-2 grid w-full grid-cols-2 gap-2 md:grid-cols-2 lg:grid-cols-4">
-          {/* Count of Orders */}
-          <div className="grid grid-cols-1 gap-1 rounded-lg border p-2">
-            <Label className="text-base">Bestellungen</Label>
-            <Label className="text-2xl font-bold">{sumCountOrders}</Label>
-            <Label className="text-muted-foreground">Umsatz</Label>
-          </div>
+        {selectedDate && filteredData && (
+          <div className="w-full">
+            {/* Lower Block (Under Selected Date) */}
+            <div className="mt-2 grid w-full grid-cols-2 gap-2 md:grid-cols-2 lg:grid-cols-4">
+              {/* Count of Orders */}
+              <div className="grid grid-cols-1 gap-1 rounded-lg border p-2">
+                <Label className="text-base">Bestellungen</Label>
+                <Label className="text-2xl font-bold">{sumCountOrders}</Label>
+                <Label className="text-muted-foreground">Umsatz</Label>
+              </div>
 
-          {/* Sum Price */}
-          <div className="grid grid-cols-1 gap-1 rounded-lg border p-2">
-            <Label className="text-base">Gesamt</Label>
-            <Label className="text-2xl font-bold">{sumTotalTurnover}</Label>
-            <Label className="text-muted-foreground">Umsatz</Label>
-          </div>
+              {/* Sum Price */}
+              <div className="grid grid-cols-1 gap-1 rounded-lg border p-2">
+                <Label className="text-base">Gesamt</Label>
+                <Label className="text-2xl font-bold">{sumTotalTurnover}</Label>
+                <Label className="text-muted-foreground">Umsatz</Label>
+              </div>
 
-          {/* Sum Cash */}
-          <div className="grid grid-cols-1 gap-1 rounded-lg border p-2">
-            <Label className="text-base">Bar</Label>
-            <Label className="text-2xl font-bold">{sumTotalCash}</Label>
-            <Label className="text-muted-foreground">Umsatz</Label>
-          </div>
+              {/* Sum Cash */}
+              <div className="grid grid-cols-1 gap-1 rounded-lg border p-2">
+                <Label className="text-base">Bar</Label>
+                <Label className="text-2xl font-bold">{sumTotalCash}</Label>
+                <Label className="text-muted-foreground">Umsatz</Label>
+              </div>
 
-          {/* Sum Cafe Card */}
-          <div className="grid grid-cols-1 gap-1 rounded-lg border p-2">
-            <Label className="text-base">Café Karte</Label>
-            <Label className="text-2xl font-bold">{sumTotalCafeCard}</Label>
-            <Label className="text-muted-foreground">Umsatz</Label>
-          </div>
+              {/* Sum Cafe Card */}
+              <div className="grid grid-cols-1 gap-1 rounded-lg border p-2">
+                <Label className="text-base">Café Karte</Label>
+                <Label className="text-2xl font-bold">{sumTotalCafeCard}</Label>
+                <Label className="text-muted-foreground">Umsatz</Label>
+              </div>
 
-          {/* Sum Paypal */}
-          <div className="grid grid-cols-1 gap-1 rounded-lg border p-2">
-            <Label className="text-base">Paypal</Label>
-            <Label className="text-2xl font-bold">{sumTotalPayPal}</Label>
-            <Label className="text-muted-foreground">Umsatz</Label>
+              {/* Sum Paypal */}
+              <div className="grid grid-cols-1 gap-1 rounded-lg border p-2">
+                <Label className="text-base">Paypal</Label>
+                <Label className="text-2xl font-bold">{sumTotalPayPal}</Label>
+                <Label className="text-muted-foreground">Umsatz</Label>
+              </div>
+            </div>
           </div>
-        </div>
+        )}
 
-        {filteredData && (
+        {filteredData && selectedDate && (
           <PDFDownloadLink
             document={
               <OrdersPDF
@@ -268,23 +278,26 @@ const StatisticPage = () => {
         )}
 
         {/* Table */}
-        {filteredData && <OrderTable filteredData={filteredData} />}
+        {filteredData && selectedDate && (
+          <OrderTable filteredData={filteredData} />
+        )}
 
-        {/* Show All Orders on Button Press*/}
-        <div className="my-4 mr-auto flex items-center space-x-2">
-          <Switch
-            id="load-orders"
-            checked={showAllOrders}
-            onCheckedChange={() => {
-              setShorAllOrders(!showAllOrders)
-            }}
-          />
-          <Label htmlFor="load-orders">
-            Alle Bestellungen vom {formatDate(selectedDate)} Laden
-          </Label>
-        </div>
+        {filteredData && selectedDate && (
+          <div className="my-4 mr-auto flex items-center space-x-2">
+            <Switch
+              id="load-orders"
+              checked={showAllOrders}
+              onCheckedChange={() => {
+                setShorAllOrders(!showAllOrders)
+              }}
+            />
+            <Label htmlFor="load-orders">
+              Alle Bestellungen vom {formatDate(selectedDate)} Laden
+            </Label>
+          </div>
+        )}
       </div>
-      {showAllOrders && (
+      {showAllOrders && selectedDate && (
         <Open
           startDate={getStartOfDay(selectedDate).finalDateString}
           endDate={getEndOfDay(selectedDate).endOfDayString}

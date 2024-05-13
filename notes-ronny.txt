@@ -1,10 +1,9 @@
 To do:
 - language
-- suchleiste und Filter bei new-order
-- edit order
 - navbar for PC
 - Bar Chart - Tortendiagram
 - forgot password 
+-edge functions for manage users
 
 Later:
 - Was ist mit Bezahlung? In der App möglich machen?

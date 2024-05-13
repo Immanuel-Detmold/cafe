@@ -84,3 +84,5 @@
 // }
 
 // console.log(checkSameDay('2024-04-28 15:10:14+00'))
+
+console.log(new Date('2000-01-01'))
