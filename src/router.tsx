@@ -1,7 +1,9 @@
 import { createBrowserRouter, redirect } from 'react-router-dom'
 
+import TestComponent from './TestComponent'
 import { Navigation } from './components/Navigation'
 import AllProducts from './pages/AllProducts/AllProducts'
+import CreateProductV2 from './pages/AllProducts/CreateProduct/CreateProductV2'
 import ForgotPassword from './pages/Authentication/ForgotPassword'
 import LoginPw from './pages/Authentication/LoginPw'
 import { Me } from './pages/Authentication/Me'
@@ -13,7 +15,7 @@ import Open from './pages/Open/Open'
 import ReadyForPickup from './pages/ReadyForPickup/ReadyForPickup'
 import ManageUsers from './pages/Settings/ManageUsers'
 import SettingsPage from './pages/Settings/SettingsPage'
-import UserActions from './pages/Settings/UserActions/page'
+import UserActions from './pages/Settings/UserActions/UserActions'
 import UserInfo from './pages/Settings/UserInfo'
 import OrdersPDF from './pages/Statistic/GeneratePDF/OrdersPDF'
 import StatisticPage from './pages/Statistic/StatisticPage'
@@ -42,12 +44,16 @@ export const router = createBrowserRouter(
       path: 'orders-pdf',
       element: <OrdersPDF />,
     },
-
     {
       path: 'admin',
       element: <Navigation />,
       children: [
         { path: 'cafe-cards', element: <CafeCards /> },
+        { path: 'create-product', element: <CreateProductV2 /> },
+        {
+          path: 'all-products/:productId',
+          element: <CreateProductV2 />,
+        },
         {
           path: 'settings',
           element: <SettingsPage />,
@@ -107,6 +113,10 @@ export const router = createBrowserRouter(
         {
           path: 'statistic',
           element: <StatisticPage />,
+        },
+        {
+          path: 'test',
+          element: <TestComponent />,
         },
       ],
     },

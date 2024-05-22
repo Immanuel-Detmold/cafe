@@ -19,12 +19,20 @@ const Header = () => {
     '/admin/cafe-cards': 'Cafe Karten',
     '/admin/settings': 'Einstellungen',
     '/admin/settings/user-actions': 'Benutzeraktionen',
+    '/admin/create-product': 'Produkt erstellen',
   }
-
   const [normalScreen, setNormalScreen] = useState(true)
 
   const { pathname } = useLocation()
   const { user } = useUser()
+
+  const getTitle = (path: string) => {
+    if (path.startsWith('/admin/all-products/')) {
+      return 'Produkt bearbeiten'
+    } else {
+      return titleMap[path as keyof typeof titleMap]
+    }
+  }
 
   useEffect(() => {
     if (pathname.split('/').pop() === 'login') {
@@ -57,7 +65,7 @@ const Header = () => {
         </div>
         <div className="flex h-14 w-full items-center text-center font-bold">
           <h1 className="w-full text-center text-foreground text-white">
-            {titleMap[pathname as keyof typeof titleMap] || ''}
+            {getTitle(pathname) || ''}
           </h1>
         </div>
       </div>

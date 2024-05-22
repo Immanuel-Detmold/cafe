@@ -54,24 +54,6 @@ export type Database = {
         }
         Relationships: []
       }
-      issues: {
-        Row: {
-          id: number
-          tags: string[] | null
-          title: string | null
-        }
-        Insert: {
-          id: number
-          tags?: string[] | null
-          title?: string | null
-        }
-        Update: {
-          id?: number
-          tags?: string[] | null
-          title?: string | null
-        }
-        Relationships: []
-      }
       OrderItems: {
         Row: {
           comment: string | null
@@ -193,9 +175,11 @@ export type Database = {
           deleted: boolean | null
           id: number
           image: string | null
+          images: string[] | null
           method: string | null
           name: string
           price: number
+          product_details: Json | null
           user_id: string | null
         }
         Insert: {
@@ -204,9 +188,11 @@ export type Database = {
           deleted?: boolean | null
           id?: number
           image?: string | null
+          images?: string[] | null
           method?: string | null
           name: string
           price: number
+          product_details?: Json | null
           user_id?: string | null
         }
         Update: {
@@ -215,9 +201,11 @@ export type Database = {
           deleted?: boolean | null
           id?: number
           image?: string | null
+          images?: string[] | null
           method?: string | null
           name?: string
           price?: number
+          product_details?: Json | null
           user_id?: string | null
         }
         Relationships: []
@@ -264,6 +252,27 @@ export type Database = {
           name?: string | null
           short_description?: string
           user_id?: string | null
+        }
+        Relationships: []
+      }
+      UserTable: {
+        Row: {
+          created_at: string
+          display_name: string | null
+          id: string
+          role: string | null
+        }
+        Insert: {
+          created_at?: string
+          display_name?: string | null
+          id?: string
+          role?: string | null
+        }
+        Update: {
+          created_at?: string
+          display_name?: string | null
+          id?: string
+          role?: string | null
         }
         Relationships: []
       }

@@ -1,6 +1,7 @@
 import { queryClient } from '@/App'
 import { Product, useDeleteProductMutation } from '@/data/useProducts'
 import { TrashIcon } from '@heroicons/react/24/outline'
+import { useNavigate } from 'react-router-dom'
 
 import {
   AlertDialog,
@@ -17,8 +18,10 @@ import { Button } from '@/components/ui/button'
 import { useToast } from '@/components/ui/use-toast'
 
 const DeleteProduct = ({ product }: { product: Product }) => {
-  const { mutate: deleteProductMutation } = useDeleteProductMutation()
+  const { mutate: deleteProductMutation, isPending } =
+    useDeleteProductMutation()
   const { toast } = useToast()
+  const navigate = useNavigate()
 
   const handleDelete = () => {
     deleteProductMutation(product, {
@@ -27,8 +30,7 @@ const DeleteProduct = ({ product }: { product: Product }) => {
           queryKey: ['products'],
         })
         toast({ title: 'Produkt erfolgreich gelöscht! ✅' })
-
-        console.log('Deletion Sucessfull!')
+        navigate('/admin/all-products')
       },
       onError: (error) => {
         toast({
@@ -43,13 +45,14 @@ const DeleteProduct = ({ product }: { product: Product }) => {
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
-        <div className="text-right">
+        <div className="">
           <Button
             className="w-full bg-red-700"
             variant="destructive"
             tabIndex={-1}
+            disabled={isPending}
           >
-            Löschen
+            {isPending ? 'Loading...' : 'Löschen'}
             <TrashIcon className="ml-1 h-5 w-5" />
           </Button>
         </div>
