@@ -6,7 +6,10 @@ import {
   useUpdateProductMutationV2,
   useUploadProductImagesMutation,
 } from '@/data/useProducts'
-import { EuroToCents } from '@/generalHelperFunctions.tsx/currencyHelperFunction'
+import {
+  EuroToCents,
+  centsToEuro,
+} from '@/generalHelperFunctions.tsx/currencyHelperFunction'
 import { Label } from '@radix-ui/react-label'
 import { ChevronLeftIcon, SaveIcon } from 'lucide-react'
 import { useEffect, useState } from 'react'
@@ -103,8 +106,10 @@ const CreateProductV2 = () => {
             toast({
               title: 'Bilder werden hochgeladen...',
             })
+
             handleAddImages(product)
           } else {
+            navigate('/admin/all-products')
             toast({
               title: 'Produkt wurde angelegt!✅',
             })
@@ -125,11 +130,13 @@ const CreateProductV2 = () => {
               toast({
                 title: 'Bilder werden hochgeladen...',
               })
+
               handleAddImages()
             } else {
               toast({
                 title: 'Produkt wurde aktualisiert!✅',
               })
+              navigate('/admin/all-products')
             }
           },
         },
@@ -182,7 +189,7 @@ const CreateProductV2 = () => {
         const { name, price, category, method, product_details } =
           productData.data
         setName(name)
-        setPrice(price.toString())
+        setPrice(centsToEuro(price))
         setCategory(category)
         if (method) {
           setMethod(method)

@@ -10,7 +10,6 @@ import {
   LogInIcon,
   LogOutIcon,
   MonitorUpIcon,
-  PlusCircleIcon,
   SettingsIcon,
   User2Icon,
 } from 'lucide-react'
@@ -133,22 +132,6 @@ const SideBar = () => {
             <div className="flex cursor-pointer">
               <LogInIcon />
               <Label className="ml-1 cursor-pointer">Login</Label>
-            </div>
-          </NavLink>
-
-          {/* New Product */}
-          <NavLink
-            to="/admin/create-product"
-            className={({ isActive }) =>
-              isActive ? 'rounded-md bg-secondary p-2' : 'p-2'
-            }
-            onClick={() => {
-              setSheetOpen(false)
-            }}
-          >
-            <div className="flex cursor-pointer">
-              <PlusCircleIcon />
-              <Label className="ml-1 cursor-pointer">Neues Produkt</Label>
             </div>
           </NavLink>
         </SheetHeader>

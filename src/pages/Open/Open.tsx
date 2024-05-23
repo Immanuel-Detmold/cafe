@@ -219,9 +219,12 @@ const Open = ({
                             <Avatar className="cursor-pointer">
                               <AvatarImage
                                 className="aspect-square h-6 w-6 rounded-full object-cover"
+                                //  (orderItem.Products.images && orderItem.Products.images.length > 0) ?  orderItem.Products.images[0] : imgPlaceHolder
                                 src={
-                                  orderItem.Products && orderItem.Products.image
-                                    ? orderItem.Products.image
+                                  orderItem.Products &&
+                                  orderItem.Products.images &&
+                                  orderItem.Products.images.length > 0
+                                    ? orderItem.Products.images[0]
                                     : imgPlaceHolder
                                 }
                               />
@@ -233,8 +236,16 @@ const Open = ({
                         </PopoverTrigger>
                         <PopoverContent className="w-80">
                           <div className="flex">
+                            {/* (orderItem.Products.images && orderItem.Products.images.length > 0) ?  orderItem.Products.images[0] : imgPlaceHolder */}
+                            {/* (orderItem.Products.images && orderItem.Products.length > 0) ? orderItem.Products.images[0] : imgPlaceHolder */}
+
                             <img
-                              src={orderItem.Products?.image || imgPlaceHolder}
+                              src={
+                                orderItem.Products?.images &&
+                                orderItem.Products.images.length > 0
+                                  ? orderItem.Products.images[0]
+                                  : imgPlaceHolder
+                              }
                               alt={orderItem.Products?.name}
                               className="aspect-square w-20 rounded-md object-cover"
                             />

@@ -53,7 +53,11 @@ const ProductsInCategory = (props: propsProductInCategory) => {
                 <Avatar className="">
                   <AvatarImage
                     className="aspect-square object-cover"
-                    src={product.image ? product.image : imgPlaceHolder}
+                    src={
+                      product.images && product.images.length > 0
+                        ? product.images[0]
+                        : imgPlaceHolder
+                    }
                   />
                 </Avatar>
                 <Label className="ml-1 cursor-pointer select-none">

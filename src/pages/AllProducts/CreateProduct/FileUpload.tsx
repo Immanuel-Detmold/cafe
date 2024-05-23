@@ -87,6 +87,7 @@ const FileUpload: React.FC<FileUploadProps> = ({ files, setFiles }) => {
       </div>
 
       <section className="flex h-full w-full flex-col overflow-auto p-8">
+        {/* Drag and Drop files */}
         <header className="flex flex-col items-center justify-center border-2 border-dashed border-gray-400 py-12">
           <p className="mb-3 flex flex-wrap justify-center font-semibold">
             <Label>Drag and drop your files anywhere or</Label>
@@ -140,19 +141,26 @@ const FileUpload: React.FC<FileUploadProps> = ({ files, setFiles }) => {
                         src={URL.createObjectURL(file)}
                       />
                     )}
-                    <section className="absolute top-0 z-20 flex w-full flex-col break-words rounded-md px-3 py-2 text-xs ">
-                      <h1 className="flex-1 rounded-md bg-primary p-1 text-secondary">
+
+                    {/* Filename, File Size, Delete Button*/}
+                    <section className="absolute top-0 z-20 flex min-h-[160px] w-full flex-col justify-between break-words rounded-md px-3 py-2 text-xs">
+                      {/* File Name */}
+                      <h1 className="rounded-md bg-secondary p-1">
                         {file?.name ?? ''}
                       </h1>
+
                       <div className="flex items-center">
-                        <span className="p-1 text-secondary">
-                          <FileIcon className="h-4 w-4" />
-                        </span>
-                        <p className="size p-1 text-xs text-secondary hover:text-primary">
-                          {formatFileSize(file?.size ?? 0)}
-                        </p>
+                        {/* File Icon and Fil Size */}
+                        <div className="flex rounded-md bg-secondary">
+                          <span className="p-1">
+                            <FileIcon className="h-4 w-4 " />
+                          </span>
+                          <p className="size p-1 text-xs">
+                            {formatFileSize(file?.size ?? 0)}
+                          </p>
+                        </div>
                         <button
-                          className="delete ml-auto rounded-md bg-primary p-1 text-secondary hover:text-gray-700 focus:outline-none"
+                          className="delete ml-auto rounded-md bg-secondary p-1 hover:text-primary focus:outline-none"
                           onClick={() => handleDelete(key)}
                         >
                           <TrashIcon className="h-5 w-5" />

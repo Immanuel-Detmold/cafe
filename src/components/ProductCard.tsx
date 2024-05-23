@@ -11,7 +11,10 @@ import { AspectRatio } from './ui/aspect-ratio'
 
 const Product = ({ product }: { product: Product }) => {
   const navigate = useNavigate()
-  const imgUrl = product.image ? product.image : imgPlaceHolder
+  const imgUrl =
+    product.images && product.images.length > 0
+      ? product.images[0]
+      : imgPlaceHolder
   return (
     <div className="h-full">
       <Card className="h-full overflow-clip p-1">
