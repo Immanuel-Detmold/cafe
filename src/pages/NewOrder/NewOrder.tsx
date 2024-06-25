@@ -421,7 +421,8 @@ const NewOrder = () => {
 
   return (
     <div className="select-none">
-      <div className="header sticky top-0 z-50 flex items-center bg-background pb-1 pt-2">
+      {/* <ProductDetails /> */}
+      <div className="header sticky top-0 z-10 flex items-center bg-background pb-1 pt-2">
         <Input
           className="w-[100%]"
           placeholder="Produkt suchen"
@@ -440,7 +441,7 @@ const NewOrder = () => {
         {groupedProducts_filtered &&
           Object.entries(groupedProducts_filtered).map(
             ([category, products]) => (
-              <div key={category} className="flex flex-col">
+              <div key={category} className="">
                 <h2 className="w-full font-bold">{category}</h2>
                 {/* Iterate over each product in the current category */}
                 <ProductsInCategory

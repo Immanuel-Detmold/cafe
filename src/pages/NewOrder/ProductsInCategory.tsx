@@ -36,12 +36,33 @@ const ProductsInCategory = (props: propsProductInCategory) => {
   const inputRef = useRef<HTMLTextAreaElement>(null)
 
   return (
-    <div className="flex flex-wrap">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
       {/* <Button onClick={() => console.log(orderItems)}>Test</Button> */}
       {props.products?.map((product: Product) => (
-        <div key={product.id} className="m-1 w-min">
+        <div
+          key={product.id}
+          className="m-1 flex w-min items-center justify-between"
+        >
+          {/* Minus and Plus Button */}
+          <div className="flex select-none">
+            <MinusCircleIcon
+              onClick={() => {
+                if (quantity > 1) {
+                  setQuantity((prevQ) => prevQ - 1)
+                }
+              }}
+              className="h-8 w-8 cursor-pointer"
+            />
+            <PlusCircleIcon
+              onClick={() => {
+                setQuantity((prevQ) => prevQ + 1)
+              }}
+              className="h-8 w-8 cursor-pointer"
+            />
+          </div>
+
           <Popover>
-            <PopoverTrigger asChild>
+            <PopoverTrigger asChild className="ml-2">
               <Button
                 variant="outline"
                 className={`h-14 rounded-full px-2 ${props.dataOrderItems.some((item) => item.product_id === product.id) ? 'bg-secondary' : ''}`}
@@ -84,23 +105,6 @@ const ProductsInCategory = (props: propsProductInCategory) => {
                       {quantity}
                     </Label>
                   </div>
-                  {/* Minus and Plus Button */}
-                  <div className="flex select-none">
-                    <MinusCircleIcon
-                      onClick={() => {
-                        if (quantity > 1) {
-                          setQuantity((prevQ) => prevQ - 1)
-                        }
-                      }}
-                      className="h-8 w-8 cursor-pointer"
-                    />
-                    <PlusCircleIcon
-                      onClick={() => {
-                        setQuantity((prevQ) => prevQ + 1)
-                      }}
-                      className="h-8 w-8 cursor-pointer"
-                    />
-                  </div>
                 </div>
                 <Textarea
                   ref={inputRef}
@@ -121,7 +125,8 @@ const ProductsInCategory = (props: propsProductInCategory) => {
                       setProductComment('')
                     }}
                   >
-                    Hinzufügen <ShoppingCartIcon className="ml-1 h-5 w-5" />
+                    Hinzufügen
+                    <ShoppingCartIcon className="ml-1 h-5 w-5" />
                   </Button>
                 </PopoverClose>
                 <PopoverClose asChild>
@@ -131,7 +136,8 @@ const ProductsInCategory = (props: propsProductInCategory) => {
                       props.handleDeleteOrderItem(product.id)
                     }}
                   >
-                    Entfernen <TrashIcon className="ml-1 h-5 w-5" />
+                    Entfernen
+                    <TrashIcon className="ml-1 h-5 w-5" />
                   </Button>
                 </PopoverClose>
               </div>

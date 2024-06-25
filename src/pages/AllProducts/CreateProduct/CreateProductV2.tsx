@@ -28,10 +28,12 @@ import {
 import { Textarea } from '@/components/ui/textarea'
 import { useToast } from '@/components/ui/use-toast'
 
+import ProductOptions, {
+  ProductDetails,
+} from '../../../components/ProductOptions'
 import DeleteProduct from '../DeleteProduct'
 import DisplayImages from './DisplayImages'
 import FileUpload from './FileUpload'
-import ProductOptions, { ProductDetails } from './ProductOptions'
 import { removeEmptyValues } from './helperFunction'
 
 const initialProductDetails: ProductDetails = {

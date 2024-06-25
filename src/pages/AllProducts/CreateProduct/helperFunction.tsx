@@ -1,4 +1,4 @@
-import { ProductDetails } from './ProductOptions'
+import { ProductDetails } from '../../../components/ProductOptions'
 
 export const removeEmptyValues = (ProductDetails: ProductDetails) => {
   let newOptions = ProductDetails.options.map((option) => {

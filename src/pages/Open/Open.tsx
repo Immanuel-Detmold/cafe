@@ -48,8 +48,8 @@ const Open = ({
   const [selectedCategories, setSelectedCategories] = useState<string[]>([])
   const [selectedProducts, setSelectedProducts] = useState<string[]>([])
   const [clickedItem, setClickedItem] = useState('')
-
   const { toast } = useToast()
+
   if (startDate === undefined && endDate === undefined) {
     startDate = getStartOfDayToday().finalDateString
     endDate = getEndOfDayToday().endOfDayString

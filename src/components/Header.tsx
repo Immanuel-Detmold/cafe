@@ -44,9 +44,9 @@ const Header = () => {
 
   const navigate = useNavigate()
   return (
-    <header className="cafe-color sticky top-0 z-50">
+    <header className="cafe-color sticky top-0 z-20">
       {!user && normalScreen && (
-        <div className="absolute right-2 top-2 z-50 cursor-pointer">
+        <div className="absolute right-2 top-2 z-20 cursor-pointer">
           <Button
             variant="link"
             onClick={() => {
