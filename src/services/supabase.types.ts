@@ -54,6 +54,54 @@ export type Database = {
         }
         Relationships: []
       }
+      Inventory: {
+        Row: {
+          category: string
+          comment: string | null
+          created_at: string
+          deleted: boolean
+          id: number
+          name: string
+          quantity: number
+        }
+        Insert: {
+          category: string
+          comment?: string | null
+          created_at?: string
+          deleted?: boolean
+          id?: number
+          name: string
+          quantity?: number
+        }
+        Update: {
+          category?: string
+          comment?: string | null
+          created_at?: string
+          deleted?: boolean
+          id?: number
+          name?: string
+          quantity?: number
+        }
+        Relationships: []
+      }
+      InventoryCategories: {
+        Row: {
+          category: string
+          created_at: string
+          id: number
+        }
+        Insert: {
+          category: string
+          created_at?: string
+          id?: number
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          id?: number
+        }
+        Relationships: []
+      }
       OrderItems: {
         Row: {
           comment: string | null

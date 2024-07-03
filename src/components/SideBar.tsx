@@ -12,6 +12,7 @@ import {
   MonitorUpIcon,
   SettingsIcon,
   User2Icon,
+  WarehouseIcon,
 } from 'lucide-react'
 import { useState } from 'react'
 import { NavLink, useNavigate } from 'react-router-dom'
@@ -116,6 +117,22 @@ const SideBar = () => {
             <div className="flex cursor-pointer">
               <MonitorUpIcon />
               <Label className="ml-1 cursor-pointer">Screen</Label>
+            </div>
+          </NavLink>
+
+          {/* Inventar */}
+          <NavLink
+            to="/admin/inventory"
+            className={({ isActive }) =>
+              isActive ? 'rounded-md bg-secondary p-2' : 'p-2'
+            }
+            onClick={() => {
+              setSheetOpen(false)
+            }}
+          >
+            <div className="flex cursor-pointer">
+              <WarehouseIcon />
+              <Label className="ml-1 cursor-pointer">Inventar</Label>
             </div>
           </NavLink>
 

@@ -20,6 +20,8 @@ const Header = () => {
     '/admin/settings': 'Einstellungen',
     '/admin/settings/user-actions': 'Benutzeraktionen',
     '/admin/create-product': 'Produkt erstellen',
+    '/admin/inventory': 'Inventar',
+    '/admin/inventory/new-item': 'Neues Item',
   }
   const [normalScreen, setNormalScreen] = useState(true)
 
@@ -29,6 +31,11 @@ const Header = () => {
   const getTitle = (path: string) => {
     if (path.startsWith('/admin/all-products/')) {
       return 'Produkt bearbeiten'
+    } else if (
+      path.startsWith('/admin/inventory/') &&
+      !path.endsWith('new-item')
+    ) {
+      return 'Item bearbeiten'
     } else {
       return titleMap[path as keyof typeof titleMap]
     }
