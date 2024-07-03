@@ -54,21 +54,51 @@ export type Database = {
         }
         Relationships: []
       }
-      issues: {
+      Inventory: {
         Row: {
+          category: string
+          comment: string | null
+          created_at: string
+          deleted: boolean
           id: number
-          tags: string[] | null
-          title: string | null
+          name: string
+          quantity: number
         }
         Insert: {
-          id: number
-          tags?: string[] | null
-          title?: string | null
+          category: string
+          comment?: string | null
+          created_at?: string
+          deleted?: boolean
+          id?: number
+          name: string
+          quantity?: number
         }
         Update: {
+          category?: string
+          comment?: string | null
+          created_at?: string
+          deleted?: boolean
           id?: number
-          tags?: string[] | null
-          title?: string | null
+          name?: string
+          quantity?: number
+        }
+        Relationships: []
+      }
+      InventoryCategories: {
+        Row: {
+          category: string
+          created_at: string
+          id: number
+        }
+        Insert: {
+          category: string
+          created_at?: string
+          id?: number
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          id?: number
         }
         Relationships: []
       }
@@ -193,9 +223,11 @@ export type Database = {
           deleted: boolean | null
           id: number
           image: string | null
+          images: string[] | null
           method: string | null
           name: string
           price: number
+          product_details: Json | null
           user_id: string | null
         }
         Insert: {
@@ -204,9 +236,11 @@ export type Database = {
           deleted?: boolean | null
           id?: number
           image?: string | null
+          images?: string[] | null
           method?: string | null
           name: string
           price: number
+          product_details?: Json | null
           user_id?: string | null
         }
         Update: {
@@ -215,9 +249,11 @@ export type Database = {
           deleted?: boolean | null
           id?: number
           image?: string | null
+          images?: string[] | null
           method?: string | null
           name?: string
           price?: number
+          product_details?: Json | null
           user_id?: string | null
         }
         Relationships: []
@@ -264,6 +300,27 @@ export type Database = {
           name?: string | null
           short_description?: string
           user_id?: string | null
+        }
+        Relationships: []
+      }
+      UserTable: {
+        Row: {
+          created_at: string
+          display_name: string | null
+          id: string
+          role: string | null
+        }
+        Insert: {
+          created_at?: string
+          display_name?: string | null
+          id?: string
+          role?: string | null
+        }
+        Update: {
+          created_at?: string
+          display_name?: string | null
+          id?: string
+          role?: string | null
         }
         Relationships: []
       }
