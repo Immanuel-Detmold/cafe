@@ -90,7 +90,7 @@ const FileUpload: React.FC<FileUploadProps> = ({ files, setFiles }) => {
         {/* Drag and Drop files */}
         <header className="flex flex-col items-center justify-center border-2 border-dashed border-gray-400 py-12">
           <p className="mb-3 hidden flex-wrap justify-center font-semibold sm:block">
-            <Label>Drag and drop your files here or</Label>
+            <Label>Ziehe deine Dateien hierher oder</Label>
           </p>
           <input
             id="hidden-input"
@@ -103,7 +103,7 @@ const FileUpload: React.FC<FileUploadProps> = ({ files, setFiles }) => {
             id="button"
             onClick={() => document.getElementById('hidden-input')?.click()}
           >
-            Select files
+            Wähle Dateien
           </Button>
         </header>
 
@@ -119,7 +119,7 @@ const FileUpload: React.FC<FileUploadProps> = ({ files, setFiles }) => {
                 alt="no data"
               />
               <span className="text-small text-gray-500">
-                No files selected
+                Keine Dateien ausgewählt
               </span>
             </li>
           ) : (
