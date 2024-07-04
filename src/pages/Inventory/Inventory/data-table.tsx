@@ -1,6 +1,5 @@
 'use client'
 
-import DatePicker from '@/pages/Statistic/DatePicker'
 import { Label } from '@radix-ui/react-label'
 import {
   ColumnDef,
@@ -16,6 +15,7 @@ import {
 } from '@tanstack/react-table'
 import { EyeOffIcon } from 'lucide-react'
 import * as React from 'react'
+import { useNavigate } from 'react-router-dom'
 
 import { Button } from '@/components/ui/button'
 import {
@@ -43,13 +43,13 @@ interface DataTableProps<TData, TValue> {
 export function DataTable<TData, TValue>({
   columns,
   data,
-  dataDates,
+  // dataDates,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = React.useState<SortingState>([])
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     [],
   )
-  const [selectedDate, setSelectedDate] = React.useState<string>('')
+  // const [selectedDate, setSelectedDate] = React.useState<string>('')
 
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({})
@@ -71,49 +71,55 @@ export function DataTable<TData, TValue>({
     onColumnVisibilityChange: setColumnVisibility,
   })
 
-  React.useEffect(() => {
-    // Selected Date
-    if (selectedDate) {
-      table.getColumn('created_at')?.setFilterValue(selectedDate)
-    } else {
-      table.getColumn('created_at')?.setFilterValue('')
-    }
-  }, [selectedDate, table])
+  React.useEffect(() => {}, [table])
 
+  const navigate = useNavigate()
   return (
     <div>
       {/* Filter Label and Visibility*/}
       <div className="flex items-center justify-between">
         <Label className="font-bold">Filter</Label>
 
-        {/* Columns Visibility*/}
-        <div className="ml-2 flex flex-col-reverse">
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline" className="">
-                <EyeOffIcon />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              {table
-                .getAllColumns()
-                .filter((column) => column.getCanHide())
-                .map((column) => {
-                  return (
-                    <DropdownMenuCheckboxItem
-                      key={column.id}
-                      className="capitalize"
-                      checked={column.getIsVisible()}
-                      onCheckedChange={(value) =>
-                        column.toggleVisibility(!!value)
-                      }
-                    >
-                      {column.id}
-                    </DropdownMenuCheckboxItem>
-                  )
-                })}
-            </DropdownMenuContent>
-          </DropdownMenu>
+        {/* Right Side */}
+        <div className="flex">
+          {/* Columns Visibility*/}
+          <div className="ml-2 flex flex-col-reverse">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" className="">
+                  <EyeOffIcon />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                {table
+                  .getAllColumns()
+                  .filter((column) => column.getCanHide())
+                  .map((column) => {
+                    return (
+                      <DropdownMenuCheckboxItem
+                        key={column.id}
+                        className="capitalize"
+                        checked={column.getIsVisible()}
+                        onCheckedChange={(value) =>
+                          column.toggleVisibility(!!value)
+                        }
+                      >
+                        {column.id}
+                      </DropdownMenuCheckboxItem>
+                    )
+                  })}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+          {/* Add NEw Item */}
+          <Button
+            onClick={() => {
+              navigate('/admin/inventory/new-item')
+            }}
+            className="ml-2"
+          >
+            + Neues Item
+          </Button>
         </div>
       </div>
       <div className="mb-4 mt-2 flex">
@@ -128,37 +134,24 @@ export function DataTable<TData, TValue>({
             className=""
           />
           <Input
-            placeholder="Filter Email..."
-            value={(table.getColumn('email')?.getFilterValue() as string) ?? ''}
-            onChange={(event) =>
-              table.getColumn('email')?.setFilterValue(event.target.value)
-            }
-            className=""
-          />
-          <Input
-            placeholder="Filter Kurzbeschreibung..."
+            placeholder="Filter Kategorie..."
             value={
-              (table
-                .getColumn('short_description')
-                ?.getFilterValue() as string) ?? ''
+              (table.getColumn('category')?.getFilterValue() as string) ?? ''
             }
             onChange={(event) =>
-              table
-                .getColumn('short_description')
-                ?.setFilterValue(event.target.value)
+              table.getColumn('category')?.setFilterValue(event.target.value)
             }
             className=""
           />
-
           {/* Filter Date */}
-          <DatePicker
+          {/* <DatePicker
             distinctDates={dataDates}
             selectedDate={selectedDate}
             setSelectedDate={setSelectedDate}
-          />
+          /> */}
         </div>
       </div>
-      <Label className="font-bold">Benutzeraktionen</Label>
+      <Label className="font-bold">Inventar</Label>
       <div className="mt-2 rounded-md border">
         <Table>
           <TableHeader>

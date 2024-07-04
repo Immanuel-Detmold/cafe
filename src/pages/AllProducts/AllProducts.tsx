@@ -1,16 +1,17 @@
 import { useProductsQuery } from '@/data/useProducts'
 import { ArrowDownUpIcon } from 'lucide-react'
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 import ProductCard from '@/components/ProductCard'
+import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-
-import CreateProduct from './CreateProduct'
 
 const AllProducts = () => {
   const [searchTerm, setSearchTerm] = useState('')
   const [ascending, setAscending] = useState(true)
   const { data: products, error } = useProductsQuery({ searchTerm, ascending })
+  const navigate = useNavigate()
   return (
     <>
       {error && <div>{JSON.stringify(error)}</div>}
@@ -23,7 +24,16 @@ const AllProducts = () => {
             setSearchTerm(e.target.value)
           }}
         />
-        <CreateProduct />
+        {/* <CreateProduct /> */}
+        <Button
+          variant="default"
+          className="mx-2"
+          onClick={() => {
+            navigate('/admin/create-product')
+          }}
+        >
+          + Neus Produkt
+        </Button>
 
         <ArrowDownUpIcon
           className="select-none hover:cursor-pointer"

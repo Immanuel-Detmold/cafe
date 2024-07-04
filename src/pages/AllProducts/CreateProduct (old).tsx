@@ -75,7 +75,7 @@ const CreateProduct = () => {
       .upload('/' + i_uuidv4, file)
 
     if (error) {
-      console.log(error)
+      toast({ title: 'Fehler beim Upload des Bildes!' })
     }
     if (data) {
       const imgUrl = supabase.storage
@@ -228,9 +228,6 @@ const CreateProduct = () => {
                 ) {
                   setMissingFields(true)
                   console.log('Error Missing Fields!')
-                  console.log(name)
-                  console.log(price)
-                  console.log(category)
                 } else {
                   setIsLoading(true)
                   setMissingFields(false)

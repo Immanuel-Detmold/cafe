@@ -1,19 +1,23 @@
 import { createBrowserRouter, redirect } from 'react-router-dom'
 
+import TestComponent from './TestComponent'
 import { Navigation } from './components/Navigation'
 import AllProducts from './pages/AllProducts/AllProducts'
+import CreateProductV2 from './pages/AllProducts/CreateProduct/CreateProductV2'
 import ForgotPassword from './pages/Authentication/ForgotPassword'
 import LoginPw from './pages/Authentication/LoginPw'
 import { Me } from './pages/Authentication/Me'
 import UpdatePassword from './pages/Authentication/UpdatePassword'
 import CafeCards from './pages/CafeCards/CafeCardsPage'
 import ClosedOrdersToday from './pages/ClosedOrdersToday'
+import Inventory from './pages/Inventory/Inventory/Inventory'
+import NewItem from './pages/Inventory/NewItem'
 import NewOrder from './pages/NewOrder/NewOrder'
 import Open from './pages/Open/Open'
 import ReadyForPickup from './pages/ReadyForPickup/ReadyForPickup'
 import ManageUsers from './pages/Settings/ManageUsers'
 import SettingsPage from './pages/Settings/SettingsPage'
-import UserActions from './pages/Settings/UserActions/page'
+import UserActions from './pages/Settings/UserActions/UserActions'
 import UserInfo from './pages/Settings/UserInfo'
 import OrdersPDF from './pages/Statistic/GeneratePDF/OrdersPDF'
 import StatisticPage from './pages/Statistic/StatisticPage'
@@ -48,6 +52,23 @@ export const router = createBrowserRouter(
       element: <Navigation />,
       children: [
         { path: 'cafe-cards', element: <CafeCards /> },
+        { path: 'create-product', element: <CreateProductV2 /> },
+        {
+          path: 'inventory',
+          element: <Inventory />,
+        },
+        {
+          path: 'inventory/:id',
+          element: <NewItem />,
+        },
+        {
+          path: 'inventory/new-item',
+          element: <NewItem />,
+        },
+        {
+          path: 'all-products/:productId',
+          element: <CreateProductV2 />,
+        },
         {
           path: 'settings',
           element: <SettingsPage />,
@@ -107,6 +128,10 @@ export const router = createBrowserRouter(
         {
           path: 'statistic',
           element: <StatisticPage />,
+        },
+        {
+          path: 'test',
+          element: <TestComponent />,
         },
       ],
     },

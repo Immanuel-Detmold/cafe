@@ -69,7 +69,11 @@ const OrderDetailsPage = (props: propsOrderDetailsPage) => {
                     <Avatar className="h-6 w-6">
                       <AvatarImage
                         className="aspect-square object-cover"
-                        src={product.image ? product.image : imgPlaceHolder}
+                        src={
+                          product.images && product.images.length > 0
+                            ? product.images[0]
+                            : imgPlaceHolder
+                        }
                       />
                     </Avatar>
                     <Label className="ml-1">{product.name}</Label>

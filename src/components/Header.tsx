@@ -19,12 +19,27 @@ const Header = () => {
     '/admin/cafe-cards': 'Cafe Karten',
     '/admin/settings': 'Einstellungen',
     '/admin/settings/user-actions': 'Benutzeraktionen',
+    '/admin/create-product': 'Produkt erstellen',
+    '/admin/inventory': 'Inventar',
+    '/admin/inventory/new-item': 'Neues Item',
   }
-
   const [normalScreen, setNormalScreen] = useState(true)
 
   const { pathname } = useLocation()
   const { user } = useUser()
+
+  const getTitle = (path: string) => {
+    if (path.startsWith('/admin/all-products/')) {
+      return 'Produkt bearbeiten'
+    } else if (
+      path.startsWith('/admin/inventory/') &&
+      !path.endsWith('new-item')
+    ) {
+      return 'Item bearbeiten'
+    } else {
+      return titleMap[path as keyof typeof titleMap]
+    }
+  }
 
   useEffect(() => {
     if (pathname.split('/').pop() === 'login') {
@@ -36,9 +51,9 @@ const Header = () => {
 
   const navigate = useNavigate()
   return (
-    <header className="cafe-color sticky top-0 z-50">
+    <header className="cafe-color sticky top-0 z-20">
       {!user && normalScreen && (
-        <div className="absolute right-2 top-2 z-50 cursor-pointer">
+        <div className="absolute right-2 top-2 z-20 cursor-pointer">
           <Button
             variant="link"
             onClick={() => {
@@ -57,7 +72,7 @@ const Header = () => {
         </div>
         <div className="flex h-14 w-full items-center text-center font-bold">
           <h1 className="w-full text-center text-foreground text-white">
-            {titleMap[pathname as keyof typeof titleMap] || ''}
+            {getTitle(pathname) || ''}
           </h1>
         </div>
       </div>

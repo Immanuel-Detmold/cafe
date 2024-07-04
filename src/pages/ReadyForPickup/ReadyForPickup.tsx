@@ -89,9 +89,12 @@ const ReadyForPickup = () => {
                             <Avatar className="h-8 w-8 lg:h-10 lg:w-10">
                               <AvatarImage
                                 className="aspect-square object-cover"
+                                // (item.Products.images && item.Products.images.length > 0) ? item.Products.images[0] : imgPlaceHolder
                                 src={
-                                  item.Products && item.Products.image
-                                    ? item.Products.image
+                                  item.Products &&
+                                  item.Products.images &&
+                                  item.Products.images.length > 0
+                                    ? item.Products.images[0]
                                     : imgPlaceHolder
                                 }
                               />

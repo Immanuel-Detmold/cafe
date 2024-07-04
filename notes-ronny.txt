@@ -2,7 +2,7 @@ To do:
 - language
 - navbar for PC
 - Bar Chart - Tortendiagram
-- forgot password 
+- create/edit product. Dateigröße besser anzeigen
 -edge functions for manage users
 
 Later:

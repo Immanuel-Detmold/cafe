@@ -1,15 +1,20 @@
 import { imgPlaceHolder } from '@/data/data'
 import { type Product } from '@/data/useProducts'
 import { centsToEuro } from '@/generalHelperFunctions.tsx/currencyHelperFunction'
-import EditProduct from '@/pages/AllProducts/EditProduct'
 import { Label } from '@radix-ui/react-label'
+import { EditIcon } from 'lucide-react'
+import { useNavigate } from 'react-router-dom'
 
 import { Card } from '@/components/ui/card'
 
 import { AspectRatio } from './ui/aspect-ratio'
 
 const Product = ({ product }: { product: Product }) => {
-  const imgUrl = product.image ? product.image : imgPlaceHolder
+  const navigate = useNavigate()
+  const imgUrl =
+    product.images && product.images.length > 0
+      ? product.images[0]
+      : imgPlaceHolder
   return (
     <div className="h-full">
       <Card className="h-full overflow-clip p-1">
@@ -31,7 +36,13 @@ const Product = ({ product }: { product: Product }) => {
           </Label>
 
           <div className="absolute bottom-0 right-0">
-            <EditProduct product={product} />
+            <EditIcon
+              className="mb-2 mr-2 cursor-pointer"
+              onClick={() => {
+                navigate('/admin/all-products/' + product.id)
+              }}
+            />
+            {/* <EditProduct product={product} /> */}
           </div>
         </div>
         {/* <CardContent className="p-3 pt-0 text-sm md:p-6 md:pt-0 md:text-md">

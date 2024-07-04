@@ -68,6 +68,21 @@ export const getDistinctDatesUser = (dataUserActions: UserActionsType[]) => {
   return distinctDates
 }
 
+export const getDistinctDatesData = <T extends { created_at: string }>(
+  data: T[],
+) => {
+  const distinctDates: string[] = []
+  data.forEach((item) => {
+    // Add Local Date to the List
+    const date = convertUTCToLocalTime(item.created_at)
+    if (!distinctDates.includes(date)) {
+      distinctDates.push(date)
+    }
+  })
+
+  return distinctDates
+}
+
 // Convert UTC to Local Time Input: 2021-10-06T08:00:00.000Z -> Output: 2021-10-06
 export const convertUTCToLocalTime = (inputDate: string) => {
   inputDate = inputDate?.split('.')[0] || ''
