@@ -195,7 +195,6 @@ const CreateProductV2 = () => {
           setMethod(method)
         }
         if (product_details) {
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
           setProductDetails(product_details as ProductDetails)
         }
       }
