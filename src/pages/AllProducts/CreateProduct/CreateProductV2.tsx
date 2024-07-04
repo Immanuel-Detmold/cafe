@@ -285,10 +285,10 @@ const CreateProductV2 = () => {
           </div>
 
           {/* Product Options */}
-          <ProductOptions
+          {/* <ProductOptions
             productDetails={productDetails}
             setProductDetails={setProductDetails}
-          />
+          /> */}
 
           {/* Images */}
           <FileUpload files={files} setFiles={setFiles} />
