@@ -1,5 +1,5 @@
 import { Label } from '@radix-ui/react-label'
-import { FileIcon, TrashIcon, UploadCloudIcon } from 'lucide-react'
+import { FileIcon, TrashIcon } from 'lucide-react'
 import React, { ChangeEvent, DragEvent, useState } from 'react'
 
 import { Button } from '@/components/ui/button'
@@ -80,8 +80,8 @@ const FileUpload: React.FC<FileUploadProps> = ({ files, setFiles }) => {
       >
         {Object.values(files).length == 0 && (
           <>
-            <UploadCloudIcon className="mt-[100px] h-16 w-16" />
-            <p className="text-lg">Drop files to upload</p>
+            {/* <UploadCloudIcon className="mt-[100px] h-16 w-16" />
+            <p className="text-lg">Drop files to upload</p> */}
           </>
         )}
       </div>
@@ -89,8 +89,8 @@ const FileUpload: React.FC<FileUploadProps> = ({ files, setFiles }) => {
       <section className="flex h-full w-full flex-col overflow-auto p-8">
         {/* Drag and Drop files */}
         <header className="flex flex-col items-center justify-center border-2 border-dashed border-gray-400 py-12">
-          <p className="mb-3 flex flex-wrap justify-center font-semibold">
-            <Label>Drag and drop your files anywhere or</Label>
+          <p className="mb-3 hidden flex-wrap justify-center font-semibold sm:block">
+            <Label>Drag and drop your files here or</Label>
           </p>
           <input
             id="hidden-input"
@@ -114,7 +114,7 @@ const FileUpload: React.FC<FileUploadProps> = ({ files, setFiles }) => {
               className="flex h-full w-full flex-col items-center justify-center text-center"
             >
               <img
-                className="mx-auto mt-20 w-32"
+                className="mx-auto w-32"
                 src="https://user-images.githubusercontent.com/507615/54591670-ac0a0180-4a65-11e9-846c-e55ffce0fe7b.png"
                 alt="no data"
               />
@@ -127,7 +127,7 @@ const FileUpload: React.FC<FileUploadProps> = ({ files, setFiles }) => {
               const file = files[key]
               const isImage = file?.type.match('image.*')
               return (
-                <li key={key} className="ml-2 block h-40 w-40">
+                <li key={key} className="ml-2 mt-1 block h-40 w-40">
                   <article
                     tabIndex={0}
                     className={`focus:shadow-outline group relative h-full w-full cursor-pointer rounded-md bg-gray-100 shadow-sm focus:outline-none ${
