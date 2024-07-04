@@ -44,7 +44,7 @@ const ProductsInCategory = (props: propsProductInCategory) => {
           className="m-1 flex w-min items-center justify-between"
         >
           {/* Minus and Plus Button */}
-          <div className="flex select-none">
+          {/* <div className="flex select-none">
             <MinusCircleIcon
               onClick={() => {
                 if (quantity > 1) {
@@ -59,7 +59,7 @@ const ProductsInCategory = (props: propsProductInCategory) => {
               }}
               className="h-8 w-8 cursor-pointer"
             />
-          </div>
+          </div> */}
 
           <Popover>
             <PopoverTrigger asChild className="ml-2">
@@ -99,11 +99,29 @@ const ProductsInCategory = (props: propsProductInCategory) => {
             <PopoverContent className="w-auto">
               <div className="flex flex-col gap-1">
                 <div className="flex w-full max-w-sm items-center justify-between">
-                  <div>
-                    <Label className="font-bold">Anzahl:</Label>
-                    <Label className="ml-1 select-none font-bold">
-                      {quantity}
-                    </Label>
+                  <div className="flex w-full justify-between">
+                    <div>
+                      <Label className="font-bold">Anzahl:</Label>
+                      <Label className="ml-1 select-none font-bold">
+                        {quantity}
+                      </Label>
+                    </div>
+                    <div className="flex select-none">
+                      <MinusCircleIcon
+                        onClick={() => {
+                          if (quantity > 1) {
+                            setQuantity((prevQ) => prevQ - 1)
+                          }
+                        }}
+                        className="h-8 w-8 cursor-pointer"
+                      />
+                      <PlusCircleIcon
+                        onClick={() => {
+                          setQuantity((prevQ) => prevQ + 1)
+                        }}
+                        className="h-8 w-8 cursor-pointer"
+                      />
+                    </div>
                   </div>
                 </div>
                 <Textarea
