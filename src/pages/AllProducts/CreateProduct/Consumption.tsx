@@ -39,8 +39,9 @@ const Consumption = ({ consumption, setConsumption }: ConsumptionProp) => {
           <Select
             onValueChange={(value) => {
               const newConsumption = [...consumption]
-              if (newConsumption[index]) {
-                newConsumption[index].name = value
+              const c = newConsumption[index]
+              if (c) {
+                c.name = value
               }
               setConsumption(newConsumption)
             }}
@@ -67,8 +68,9 @@ const Consumption = ({ consumption, setConsumption }: ConsumptionProp) => {
             onChange={(e) => {
               const validValue = e.target.value.replace(/[^0-9]/g, '') // Remove non-numeric characters
               const newConsumption = [...consumption]
-              if (newConsumption[index]) {
-                newConsumption[index].quantity = validValue
+              const c = newConsumption[index]
+              if (c) {
+                c.quantity = validValue
               }
               setConsumption(newConsumption)
             }}
