@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 
 import ChangeCategories from './ChangeCategories'
+import ChangeInventoryCategories from './ChangeInventoryCategories'
 import DesignPage from './DesignPage'
 import PasswordChange from './PasswordChange'
 import RegisterNewUser from './RegisterNewUser'
@@ -32,6 +33,7 @@ const SettingsPage = () => {
           <PasswordChange />
           {userRole === 'admin' && <RegisterNewUser />}
           {userRole === 'admin' && <ChangeCategories />}
+          {userRole === 'admin' && <ChangeInventoryCategories />}
           {userRole === 'admin' && <ResetOrderNumber />}
 
           {/* Manage Users */}

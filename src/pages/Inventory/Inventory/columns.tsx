@@ -2,7 +2,7 @@
 // You can use a Zod schema here if you want.
 import { Inventory } from '@/data/useInventory'
 import { ColumnDef } from '@tanstack/react-table'
-import { ArrowUpDown } from 'lucide-react'
+import { ArrowUpDown, Edit2Icon } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 
 import { Button } from '@/components/ui/button'
@@ -19,6 +19,20 @@ const Columns = () => {
 
   const columns: ColumnDef<Inventory>[] = [
     {
+      accessorKey: 'edit',
+      header: 'Edit',
+      cell: ({ row }) => (
+        <Button
+          variant={'ghost'}
+          onClick={() => {
+            navigate(`/admin/inventory/${row.original.id}`)
+          }}
+        >
+          <Edit2Icon className="h-4 w-4" />
+        </Button>
+      ),
+    },
+    {
       accessorKey: 'name',
       header: ({ column }) => {
         return (
@@ -27,20 +41,6 @@ const Columns = () => {
             onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
           >
             Name
-            <ArrowUpDown className="ml-2 h-4 w-4" />
-          </Button>
-        )
-      },
-    },
-    {
-      accessorKey: 'category',
-      header: ({ column }) => {
-        return (
-          <Button
-            variant="ghost"
-            onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-          >
-            Category
             <ArrowUpDown className="ml-2 h-4 w-4" />
           </Button>
         )
@@ -61,6 +61,34 @@ const Columns = () => {
       },
     },
     {
+      accessorKey: 'unit',
+      header: ({ column }) => {
+        return (
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+          >
+            Einheit
+            <ArrowUpDown className="ml-2 h-4 w-4" />
+          </Button>
+        )
+      },
+    },
+    {
+      accessorKey: 'category',
+      header: ({ column }) => {
+        return (
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+          >
+            Category
+            <ArrowUpDown className="ml-2 h-4 w-4" />
+          </Button>
+        )
+      },
+    },
+    {
       accessorKey: 'comment',
       header: ({ column }) => {
         return (
@@ -73,20 +101,6 @@ const Columns = () => {
           </Button>
         )
       },
-    },
-    {
-      accessorKey: 'edit',
-      header: 'Edit',
-      cell: ({ row }) => (
-        <Button
-          variant={'ghost'}
-          onClick={() => {
-            navigate(`/admin/inventory/${row.id}`)
-          }}
-        >
-          Editieren
-        </Button>
-      ),
     },
   ]
 

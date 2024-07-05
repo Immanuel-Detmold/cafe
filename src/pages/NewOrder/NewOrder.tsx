@@ -14,7 +14,7 @@ import {
 } from '@/generalHelperFunctions.tsx/currencyHelperFunction'
 import { ArrowPathIcon } from '@heroicons/react/24/outline'
 import { Label } from '@radix-ui/react-label'
-import { ShoppingCart } from 'lucide-react'
+import { Loader2Icon, ShoppingCart } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 
@@ -560,7 +560,11 @@ const NewOrder = () => {
             disabled={dataOrderItems.length === 0}
             onClick={handleSumitOrder}
           >
-            {loadingOrder || loadingOrderItems ? 'Loading...' : 'Absenden'}{' '}
+            {loadingOrder || loadingOrderItems ? (
+              <Loader2Icon className="h-8 w-8 animate-spin" />
+            ) : (
+              'Absenden'
+            )}{' '}
             <ShoppingCart className="ml-1 h-4 w-4"></ShoppingCart>
           </Button>
 

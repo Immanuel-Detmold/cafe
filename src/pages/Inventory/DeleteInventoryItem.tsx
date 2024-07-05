@@ -1,7 +1,10 @@
-import { queryClient } from '@/App'
-import { Order, useDeleteOrderMutation } from '@/data/useOrders'
+import {
+  Inventory,
+  useMarkInventoryItemAsDeletedMutation,
+} from '@/data/useInventory'
 import { TrashIcon } from '@heroicons/react/24/outline'
 import { Loader2Icon } from 'lucide-react'
+import { useNavigate } from 'react-router-dom'
 
 import {
   AlertDialog,
@@ -17,18 +20,22 @@ import {
 import { Button } from '@/components/ui/button'
 import { useToast } from '@/components/ui/use-toast'
 
-const DeleteOrder = ({ order }: { order: Order }) => {
-  const { mutate: deleteOrder, isPending } = useDeleteOrderMutation()
-
+const DeleteInventoryItem = ({ item }: { item: Inventory }) => {
+  const { mutate: markInventoryItemAsDeletedMutation, isPending } =
+    useMarkInventoryItemAsDeletedMutation()
   const { toast } = useToast()
-  const handleDeleteOrder = (id: number) => {
-    deleteOrder(id, {
+  const navigate = useNavigate()
+
+  const handleDelete = () => {
+    markInventoryItemAsDeletedMutation(item, {
       onSuccess: () => {
-        toast({ title: 'Bestellung gelöscht ✅', duration: 800 })
-        void queryClient.invalidateQueries({ queryKey: ['ordersAndItems'] })
+        toast({ title: 'Item marked as deleted! ✅' })
+        navigate('/admin/inventory')
       },
       onError: () => {
-        toast({ title: 'Fehler: Bestellung konnte nicht gelöscht werden!' })
+        toast({
+          title: 'Failed to mark the item as deleted! ❌',
+        })
       },
     })
   }
@@ -37,19 +44,25 @@ const DeleteOrder = ({ order }: { order: Order }) => {
     <AlertDialog>
       <AlertDialogTrigger asChild>
         <div className="">
-          <Button className="w-min bg-red-700" variant="destructive">
+          <Button
+            className="w-full bg-red-700"
+            variant="destructive"
+            tabIndex={-1}
+            disabled={isPending}
+          >
             {isPending ? (
-              <Loader2Icon className="h-4 w-4 animate-spin" />
+              <Loader2Icon className="h-8 w-8 animate-spin" />
             ) : (
-              <TrashIcon className="h-4 w-4" />
+              'Löschen'
             )}
+            <TrashIcon className="ml-1 h-5 w-5" />
           </Button>
         </div>
       </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>
-            Möchtest du die Bestellung wirklich löschen?
+            Möchtest du dieses Item wirklich löschen?
           </AlertDialogTitle>
           <AlertDialogDescription>
             Diese Aktion kann nicht rückgängig gemacht werden.
@@ -57,14 +70,12 @@ const DeleteOrder = ({ order }: { order: Order }) => {
         </AlertDialogHeader>
 
         <AlertDialogFooter>
-          <div className="">
+          <div className="block text-right">
             <AlertDialogCancel>Abbrechen</AlertDialogCancel>
 
             <AlertDialogAction
               className="ml-2 bg-red-700"
-              onClick={() => {
-                handleDeleteOrder(order.id)
-              }}
+              onClick={handleDelete}
             >
               Löschen
             </AlertDialogAction>
@@ -75,4 +86,4 @@ const DeleteOrder = ({ order }: { order: Order }) => {
   )
 }
 
-export default DeleteOrder
+export default DeleteInventoryItem

@@ -20,6 +20,7 @@ import { UserIcon } from '@heroicons/react/24/solid'
 import { Avatar, AvatarImage } from '@radix-ui/react-avatar'
 import { Label } from '@radix-ui/react-label'
 import { Separator } from '@radix-ui/react-select'
+import { Loader2Icon } from 'lucide-react'
 import { useEffect, useState } from 'react'
 
 import { Input } from '@/components/ui/input'
@@ -302,7 +303,7 @@ const Open = ({
                     >
                       {/* Set only clicked OrderItem to "..." (isPending) */}
                       {isPending && clickedItem === orderItem.id.toString() ? (
-                        '...'
+                        <Loader2Icon className="animate-spin" />
                       ) : (
                         <ShoppingBagIcon
                           className={`h-6 ${orderItem.finished ? 'text-emerald-600' : ''}`}

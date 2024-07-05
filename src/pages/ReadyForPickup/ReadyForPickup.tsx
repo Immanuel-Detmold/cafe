@@ -7,7 +7,7 @@ import {
 import { OrderStatus } from '@/data/useOrders'
 // import { supabase } from '@/services/supabase'
 import { ShoppingBagIcon } from '@heroicons/react/24/outline'
-import { UserRoundIcon } from 'lucide-react'
+import { Loader2Icon, UserRoundIcon } from 'lucide-react'
 import { useState } from 'react'
 
 import { Avatar, AvatarImage } from '@/components/ui/avatar'
@@ -124,9 +124,11 @@ const ReadyForPickup = () => {
                     handleStatusUpdate(order.id, 'finished')
                   }}
                 >
-                  {isPending && clickedButton === 'finished'
-                    ? 'Loading...'
-                    : 'Abgeholt'}
+                  {isPending && clickedButton === 'finished' ? (
+                    <Loader2Icon className="h-8 w-8 animate-spin" />
+                  ) : (
+                    'Abgeholt'
+                  )}
                 </Button>
                 <Button
                   className="m-1 w-40"
@@ -137,9 +139,11 @@ const ReadyForPickup = () => {
                     handleStatusUpdate(order.id, 'processing')
                   }}
                 >
-                  {isPending && clickedButton === 'processing'
-                    ? 'Loading...'
-                    : 'In Bearbeitung'}
+                  {isPending && clickedButton === 'processing' ? (
+                    <Loader2Icon className="h-8 w-8 animate-spin" />
+                  ) : (
+                    'In Bearbeitung'
+                  )}
                 </Button>
               </PopoverContent>
             </Popover>
