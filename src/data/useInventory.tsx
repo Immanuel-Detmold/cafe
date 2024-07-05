@@ -1,4 +1,5 @@
 import { queryClient } from '@/App.tsx'
+import { ConsumptionType } from '@/pages/AllProducts/CreateProduct/CreateProductV2.tsx'
 import { supabase } from '@/services/supabase'
 import { Database } from '@/services/supabase.types'
 import { useMutation, useQuery } from '@tanstack/react-query'
@@ -127,5 +128,44 @@ export const useSaveInventoryMutation = () => {
       })
       await queryClient.invalidateQueries({ queryKey: ['inventory'] })
     },
+  })
+}
+
+// Subtract or Add Quantity to Inventory Item
+export const useChangeInventoryItemQuantity = () => {
+  return useMutation({
+    mutationFn: async ({
+      consumption,
+      inventory,
+    }: {
+      consumption: ConsumptionType[]
+      inventory: Inventory[]
+    }) => {
+      // Loop through all consumption items
+      for (const item of consumption) {
+        for (const invItem of inventory) {
+          if (invItem.name === item.name) {
+            // Subtract quantity from inventory
+            const newQuantity = invItem.quantity - parseInt(item.quantity)
+            const { data, error } = await supabase
+              .from('Inventory')
+              .update({ quantity: newQuantity })
+              .eq('id', invItem.id)
+              .select()
+
+            if (error) {
+              throw error
+            }
+
+            await saveUserAction({
+              action: data,
+              short_description: `Subtract Quantity from Inventory: ${data[0]?.name}`,
+            })
+            await queryClient.invalidateQueries({ queryKey: ['inventory'] })
+          }
+        }
+      }
+    },
+    onSuccess: async () => {},
   })
 }

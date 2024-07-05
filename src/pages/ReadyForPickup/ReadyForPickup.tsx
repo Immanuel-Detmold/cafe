@@ -1,10 +1,17 @@
 // import { queryClient } from '@/App'
 import { imgPlaceHolder } from '@/data/data'
 import {
+  useChangeInventoryItemQuantity,
+  useInventory,
+} from '@/data/useInventory'
+import {
+  OrderItems,
   useChageOrderStatusMutationV2,
   useOrderAndItemsQuery,
 } from '@/data/useOrders'
 import { OrderStatus } from '@/data/useOrders'
+import { useProductsQuery } from '@/data/useProducts'
+import { getAllConsumptions } from '@/generalHelperFunctions.tsx/consumptionHelper'
 // import { supabase } from '@/services/supabase'
 import { ShoppingBagIcon } from '@heroicons/react/24/outline'
 import { Loader2Icon, UserRoundIcon } from 'lucide-react'
@@ -21,23 +28,42 @@ import {
 import { useToast } from '@/components/ui/use-toast'
 
 const ReadyForPickup = () => {
-  const { data: readyOrders } = useOrderAndItemsQuery(['ready'])
-  const { mutate: changeStatus, isPending } = useChageOrderStatusMutationV2()
   const [clickedButton, setClickedButton] = useState('finished')
 
+  // Mini Functions
   const { toast } = useToast()
 
-  const handleStatusUpdate = (orderId: number, status: OrderStatus) => {
+  // Data
+  const { data: readyOrders } = useOrderAndItemsQuery(['ready'])
+  const { data: productsData } = useProductsQuery({
+    searchTerm: '',
+    ascending: true,
+  })
+  const { data: inventory } = useInventory()
+
+  // Mutations
+  const { mutate: changeStatus, isPending } = useChageOrderStatusMutationV2()
+  const { mutate: changeInventory, isPending: isPendingInventory } =
+    useChangeInventoryItemQuantity()
+
+  const handleStatusUpdate = (
+    orderId: number,
+    status: OrderStatus,
+    orderItems: OrderItems[] | null,
+  ) => {
+    if (status === 'finished' && productsData && inventory && orderItems) {
+      const consumptions = getAllConsumptions(orderItems, productsData)
+      changeInventory({ consumption: consumptions, inventory })
+    }
+
     changeStatus(
       { newStatus: status, orderId: orderId },
       {
-        onSuccess: (data) => {
+        onSuccess: () => {
           if (status === 'finished') {
-            console.log('Updated Order Status', data)
             toast({ title: 'Bestellung Abgeschlossen ✅', duration: 650 })
           }
           if (status === 'processing') {
-            console.log('Updated Order Status', data)
             toast({
               title: 'Bestellung zurück in Bearbeitung ✅',
               duration: 650,
@@ -121,10 +147,11 @@ const ReadyForPickup = () => {
                   tabIndex={-1}
                   onClick={() => {
                     setClickedButton('finished')
-                    handleStatusUpdate(order.id, 'finished')
+                    handleStatusUpdate(order.id, 'finished', order.OrderItems)
                   }}
                 >
-                  {isPending && clickedButton === 'finished' ? (
+                  {(isPending || isPendingInventory) &&
+                  clickedButton === 'finished' ? (
                     <Loader2Icon className="h-8 w-8 animate-spin" />
                   ) : (
                     'Abgeholt'
@@ -136,7 +163,7 @@ const ReadyForPickup = () => {
                   tabIndex={-1}
                   onClick={() => {
                     setClickedButton('processing')
-                    handleStatusUpdate(order.id, 'processing')
+                    handleStatusUpdate(order.id, 'processing', order.OrderItems)
                   }}
                 >
                   {isPending && clickedButton === 'processing' ? (

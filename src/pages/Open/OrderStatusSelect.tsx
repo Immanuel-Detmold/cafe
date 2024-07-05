@@ -1,8 +1,12 @@
+import { Inventory, useChangeInventoryItemQuantity } from '@/data/useInventory'
 import {
   Order,
+  OrderItems,
   OrderStatus,
   useChageOrderStatusMutation,
 } from '@/data/useOrders'
+import { Product } from '@/data/useProducts'
+import { getAllConsumptions } from '@/generalHelperFunctions.tsx/consumptionHelper'
 import { Loader2Icon } from 'lucide-react'
 import { useEffect, useState } from 'react'
 
@@ -16,24 +20,48 @@ import {
 } from '@/components/ui/select'
 import { useToast } from '@/components/ui/use-toast'
 
-const OrderStatusPage = ({ order }: { order: Order }) => {
+const OrderStatusPage = ({
+  order,
+  productData,
+  inventory,
+  orderItems,
+}: {
+  order: Order
+  productData: Product[] | undefined
+  inventory: Inventory[] | undefined
+  orderItems: OrderItems[] | null
+}) => {
+  // States
   const [orderStatus, setOrderStatus] = useState<OrderStatus>(order.status)
-  // const [orderStatusName, setOrderStatusName] = useState<string>('')
 
+  // MiniFunctions
+  const { toast } = useToast()
+
+  // Mutations
   const { mutate: changeOrderStatus, isPending } = useChageOrderStatusMutation(
     order.id,
   )
+  const { mutate: changeInventory, isPending: isPendingInventory } =
+    useChangeInventoryItemQuantity()
 
+  // Use Effect
   useEffect(() => {
     setOrderStatus(order.status)
   }, [order])
 
-  const { toast } = useToast()
-
+  // Handle Status Change
   const handleStatusChange = (newStatus: OrderStatus) => {
-    // setOrderStatus(newStatus)
+    // Call Consumption
+    if (newStatus === 'finished' && inventory && productData && orderItems) {
+      const consumptions = getAllConsumptions(orderItems, productData)
+      changeInventory({ consumption: consumptions, inventory })
+    }
+
     changeOrderStatus(newStatus, {
       onSuccess: () => {
+        if (inventory) {
+          // changeInventory({consumption: order.consumption, inventory})
+        }
         // toast({ title: 'Status erfolgreich geändert ✅', duration: 500 })
       },
       onError: () => {
@@ -59,7 +87,7 @@ const OrderStatusPage = ({ order }: { order: Order }) => {
             {isPending ? <Loader2Icon className="animate-spin" /> : 'Warten'}
           </SelectItem>
           <SelectItem value="processing">
-            {isPending ? (
+            {isPending || isPendingInventory ? (
               <Loader2Icon className="animate-spin" />
             ) : (
               'In Bearbeitung'
@@ -73,7 +101,7 @@ const OrderStatusPage = ({ order }: { order: Order }) => {
             )}
           </SelectItem>
           <SelectItem value="finished">
-            {isPending ? (
+            {isPending || isPendingInventory ? (
               <Loader2Icon className="animate-spin" />
             ) : (
               'Abgeschlossen'
