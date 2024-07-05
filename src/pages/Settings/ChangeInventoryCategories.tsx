@@ -1,8 +1,8 @@
 import {
-  useAddCategory,
-  useDeleteCategory,
-  useProductCategories,
-} from '@/data/useProductCategories'
+  useAddInventoryCategory,
+  useDeleteInventoryCategory,
+  useInventoryCategories,
+} from '@/data/useInventoryCategories'
 import { Label } from '@radix-ui/react-label'
 import { ChevronDownIcon, PenIcon, SaveIcon, Trash2Icon } from 'lucide-react'
 import { useState } from 'react'
@@ -21,40 +21,40 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { useToast } from '@/components/ui/use-toast'
 
-const ChangeCategories = () => {
+const ChangeInventoryCategories = () => {
   const [open, setOpen] = useState(false)
   const [newCategory, setNewCategory] = useState('')
 
-  const { data } = useProductCategories()
+  const { data } = useInventoryCategories()
   const { toast } = useToast()
 
-  const { mutate: deleteCategory } = useDeleteCategory()
-  const { mutate: addCategory } = useAddCategory()
+  const { mutate: deleteInventoryCategory } = useDeleteInventoryCategory()
+  const { mutate: addInventoryCategory } = useAddInventoryCategory()
 
-  // Add new Category
-  const handleAddCategory = () => {
+  // Add new Inventory Category
+  const handleAddInventoryCategory = () => {
     if (!newCategory) return
-    addCategory(
+    addInventoryCategory(
       { category: newCategory },
       {
         onSuccess: () => {
           setNewCategory('')
-          toast({ title: 'Kategorie hinzugefügt ✅' })
+          toast({ title: 'Inventarkategorie hinzugefügt ✅' })
         },
         onError: () => {
-          toast({ title: 'Fehler beim hinzufügen der Kategorie ❌' })
+          toast({ title: 'Fehler beim Hinzufügen der Inventarkategorie ❌' })
         },
       },
     )
   }
 
-  const handleDeleteCategory = (id: number) => {
-    deleteCategory(id, {
+  const handleDeleteInventoryCategory = (id: number) => {
+    deleteInventoryCategory(id, {
       onSuccess: () => {
-        toast({ title: 'Kategorie gelöscht ✅' })
+        toast({ title: 'Inventarkategorie gelöscht ✅' })
       },
       onError: () => {
-        toast({ title: 'Fehler beim löschen der Kategorie ❌' })
+        toast({ title: 'Fehler beim Löschen der Inventarkategorie ❌' })
       },
     })
   }
@@ -71,7 +71,7 @@ const ChangeCategories = () => {
             <div className="flex items-center">
               <PenIcon />
               <Label className="ml-1 cursor-pointer">
-                Produktkategorien ändern
+                Inventarkategorien ändern
               </Label>
             </div>
             <ChevronDownIcon className="ml-1" />
@@ -82,7 +82,7 @@ const ChangeCategories = () => {
           <>
             {data &&
               data.map((category: { id: number; category: string }) => (
-                <div className="category-item" key={category.id}>
+                <div className="" key={category.id}>
                   <div className="mt-2 flex justify-between rounded-lg border p-2">
                     <Label>{category.category}</Label>
 
@@ -93,14 +93,14 @@ const ChangeCategories = () => {
                       <AlertDialogContent>
                         <AlertDialogHeader>
                           <AlertDialogTitle>
-                            Kategorie löschen?
+                            Inventarkategorie löschen?
                           </AlertDialogTitle>
                         </AlertDialogHeader>
                         <AlertDialogFooter>
                           <AlertDialogCancel>Abbrechen</AlertDialogCancel>
                           <AlertDialogAction
                             onClick={() => {
-                              handleDeleteCategory(category.id)
+                              handleDeleteInventoryCategory(category.id)
                             }}
                           >
                             Bestätigen
@@ -112,10 +112,10 @@ const ChangeCategories = () => {
                 </div>
               ))}
 
-            {/* New Category */}
+            {/* New Inventory Category */}
             <Input
               className="mt-2"
-              placeholder="Neue Kategorie"
+              placeholder="Neue Inventarkategorie"
               value={newCategory}
               onChange={(e) => {
                 setNewCategory(e.target.value)
@@ -125,7 +125,7 @@ const ChangeCategories = () => {
               <SaveIcon />
               <Label
                 className="ml-1 cursor-pointer"
-                onClick={handleAddCategory}
+                onClick={handleAddInventoryCategory}
               >
                 Speichern
               </Label>
@@ -137,4 +137,4 @@ const ChangeCategories = () => {
   )
 }
 
-export default ChangeCategories
+export default ChangeInventoryCategories

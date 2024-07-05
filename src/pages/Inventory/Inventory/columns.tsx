@@ -81,7 +81,7 @@ const Columns = () => {
         <Button
           variant={'ghost'}
           onClick={() => {
-            navigate(`/admin/inventory/${row.id}`)
+            navigate(`/admin/inventory/${row.original.id}`)
           }}
         >
           Editieren
