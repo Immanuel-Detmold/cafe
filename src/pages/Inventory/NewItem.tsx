@@ -92,7 +92,7 @@ const NewItem = () => {
         {
           onSuccess: () => {
             // console.log(data)
-            toast({ title: 'Item aktualisiert ✅' })
+            toast({ title: 'Item aktualisiert ✅', duration: 1000 })
             resetForm()
             navigate('/admin/inventory')
           },
@@ -116,7 +116,7 @@ const NewItem = () => {
       },
       {
         onSuccess: () => {
-          toast({ title: 'Item hinzugefügt ✅' })
+          toast({ title: 'Item hinzugefügt ✅', duration: 1000 })
           resetForm()
           navigate('/admin/inventory')
         },

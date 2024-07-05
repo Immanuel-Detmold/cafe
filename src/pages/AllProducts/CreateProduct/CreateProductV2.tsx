@@ -30,6 +30,7 @@ import { useToast } from '@/components/ui/use-toast'
 
 import { ProductDetails } from '../../../components/ProductOptions'
 import DeleteProduct from '../DeleteProduct'
+import Consumption from './Consumption'
 import DisplayImages from './DisplayImages'
 import FileUpload from './FileUpload'
 import { removeEmptyValues } from './helperFunction'
@@ -41,6 +42,11 @@ const initialProductDetails: ProductDetails = {
 
 interface FileMap {
   [key: string]: File
+}
+
+export type ConsumptionType = {
+  name: string
+  quantity: string
 }
 
 const CreateProductV2 = () => {
@@ -55,6 +61,7 @@ const CreateProductV2 = () => {
   const [productDetails, setProductDetails] = useState<ProductDetails>(
     initialProductDetails,
   )
+  const [consumption, setConsumption] = useState<ConsumptionType[]>([])
   const [missing_fields, setMissingFields] = useState<boolean>(false)
 
   // Images
@@ -89,6 +96,9 @@ const CreateProductV2 = () => {
     }
 
     const { FilteredProductDetails } = removeEmptyValues(productDetails)
+    const FilteredConsumption = consumption.filter(
+      (item) => item.name !== '' && item.quantity !== '',
+    )
 
     const newProduct = {
       name: name,
@@ -96,6 +106,7 @@ const CreateProductV2 = () => {
       category: category,
       method: method,
       product_details: FilteredProductDetails,
+      consumption: FilteredConsumption,
     }
 
     // New Product
@@ -186,7 +197,7 @@ const CreateProductV2 = () => {
   useEffect(() => {
     if (productId) {
       if (productData.data) {
-        const { name, price, category, method, product_details } =
+        const { name, price, category, method, product_details, consumption } =
           productData.data
         setName(name)
         setPrice(centsToEuro(price))
@@ -196,6 +207,9 @@ const CreateProductV2 = () => {
         }
         if (product_details) {
           setProductDetails(product_details as ProductDetails)
+        }
+        if (consumption) {
+          setConsumption(consumption as ConsumptionType[])
         }
       }
     }
@@ -279,6 +293,11 @@ const CreateProductV2 = () => {
                 setMethod(e.target.value)
               }}
             ></Textarea>
+
+            <Consumption
+              consumption={consumption}
+              setConsumption={setConsumption}
+            />
           </div>
 
           {/* Product Options */}

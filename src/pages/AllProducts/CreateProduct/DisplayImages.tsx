@@ -2,7 +2,7 @@ import { Product, useUpdateProductMutationV2 } from '@/data/useProducts'
 import { getImagePath } from '@/generalHelperFunctions.tsx/supabase'
 import { supabase } from '@/services/supabase'
 import { AspectRatio } from '@radix-ui/react-aspect-ratio'
-import { Trash2 } from 'lucide-react'
+import { Trash } from 'lucide-react'
 import { useEffect, useState } from 'react'
 
 import {
@@ -79,7 +79,7 @@ const DisplayImages = ({ productData }: { productData: Product }) => {
                             asChild
                             className="absolute bottom-2 right-2 h-10 w-10 cursor-pointer rounded-md bg-secondary p-1"
                           >
-                            <Trash2 className="" />
+                            <Trash className="" />
                           </AlertDialogTrigger>
                           <AlertDialogContent>
                             <AlertDialogHeader>

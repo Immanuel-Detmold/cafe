@@ -1,10 +1,12 @@
 import { imgPlaceHolder } from '@/data/data'
+import { useInventory } from '@/data/useInventory'
 import {
   OrderItems,
   OrderStatus,
   useOrdersAndItemsQueryV2,
   useUpdateOrderItemStatusMutation,
 } from '@/data/useOrders'
+import { useProductsQuery } from '@/data/useProducts'
 import { centsToEuro } from '@/generalHelperFunctions.tsx/currencyHelperFunction'
 import {
   getEndOfDayToday,
@@ -56,6 +58,7 @@ const Open = ({
     endDate = getEndOfDayToday().endOfDayString
   }
 
+  // Data
   const { data: openOrders, error } = useOrdersAndItemsQueryV2({
     statusList: statusList,
     searchTerm: searchTerm,
@@ -64,7 +67,12 @@ const Open = ({
     startDate: startDate,
     endDate: endDate,
   })
+  const { data: inventory } = useInventory()
 
+  const { data: productsData } = useProductsQuery({
+    searchTerm: '',
+    ascending: true,
+  })
   // If Filter Checkbox is checked or unchecked
   const handleCheckboxChange = (
     type: string,
@@ -345,7 +353,12 @@ const Open = ({
                   <EditOrder orderId={order.id} />
                   <div className="flex w-full justify-end">
                     <DeleteOrder order={order} />
-                    <OrderStatusPage order={order} />
+                    <OrderStatusPage
+                      order={order}
+                      productData={productsData}
+                      inventory={inventory}
+                      orderItems={order.OrderItems}
+                    />
                   </div>
                 </div>
               </div>

@@ -222,7 +222,7 @@ export type Database = {
       Products: {
         Row: {
           category: string
-          consumption: string[] | null
+          consumption: Json[] | null
           created_at: string
           deleted: boolean | null
           id: number
@@ -236,7 +236,7 @@ export type Database = {
         }
         Insert: {
           category: string
-          consumption?: string[] | null
+          consumption?: Json[] | null
           created_at?: string
           deleted?: boolean | null
           id?: number
@@ -250,7 +250,7 @@ export type Database = {
         }
         Update: {
           category?: string
-          consumption?: string[] | null
+          consumption?: Json[] | null
           created_at?: string
           deleted?: boolean | null
           id?: number
