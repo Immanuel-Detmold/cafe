@@ -20,7 +20,8 @@ export const useInventory = () =>
       const { data, error } = await supabase
         .from('Inventory')
         .select()
-        .order('created_at', { ascending: false })
+        .eq('deleted', false)
+        .order('name', { ascending: true })
 
       if (error) {
         throw error
@@ -83,12 +84,12 @@ export const useUpdateInventoryMutation = () => {
   })
 }
 // Delete single Item
-export const useDeleteInventoryItemMutation = () => {
+export const useMarkInventoryItemAsDeletedMutation = () => {
   return useMutation({
     mutationFn: async (item: Inventory) => {
       const { data, error } = await supabase
         .from('Inventory')
-        .delete()
+        .update({ deleted: true })
         .eq('id', item.id)
         .select()
       if (error) {
@@ -99,7 +100,7 @@ export const useDeleteInventoryItemMutation = () => {
     onSuccess: async (data) => {
       await saveUserAction({
         action: data,
-        short_description: `Delete Inventory Item: ${data[0]?.name}`,
+        short_description: `Marked Inventory Item as Deleted: ${data[0]?.name}`,
       })
       await queryClient.invalidateQueries({ queryKey: ['inventory'] })
     },

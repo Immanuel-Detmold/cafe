@@ -1,4 +1,7 @@
-import { Inventory, useDeleteInventoryItemMutation } from '@/data/useInventory'
+import {
+  Inventory,
+  useMarkInventoryItemAsDeletedMutation,
+} from '@/data/useInventory'
 import { TrashIcon } from '@heroicons/react/24/outline'
 import { Loader2Icon } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
@@ -18,20 +21,20 @@ import { Button } from '@/components/ui/button'
 import { useToast } from '@/components/ui/use-toast'
 
 const DeleteInventoryItem = ({ item }: { item: Inventory }) => {
-  const { mutate: deleteInventoryItemMutation, isPending } =
-    useDeleteInventoryItemMutation()
+  const { mutate: markInventoryItemAsDeletedMutation, isPending } =
+    useMarkInventoryItemAsDeletedMutation()
   const { toast } = useToast()
   const navigate = useNavigate()
 
   const handleDelete = () => {
-    deleteInventoryItemMutation(item, {
+    markInventoryItemAsDeletedMutation(item, {
       onSuccess: () => {
-        toast({ title: 'Item erfolgreich gelöscht! ✅' })
+        toast({ title: 'Item marked as deleted! ✅' })
         navigate('/admin/inventory')
       },
       onError: () => {
         toast({
-          title: 'Item konnte nicht gelöscht werden! ❌',
+          title: 'Failed to mark the item as deleted! ❌',
         })
       },
     })

@@ -213,8 +213,8 @@ const NewItem = () => {
                     <SelectLabel>Einheiten</SelectLabel>
                     <SelectItem value="kg">Kilogramm</SelectItem>
                     <SelectItem value="g">Gramm</SelectItem>
-                    <SelectItem value="pcs">Stücke</SelectItem>
-                    <SelectItem value="l">Liter</SelectItem>
+                    <SelectItem value="Stk.">Stücke</SelectItem>
+                    <SelectItem value="L">Liter</SelectItem>
                   </SelectGroup>
                 </SelectContent>
               </Select>

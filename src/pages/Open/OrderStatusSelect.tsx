@@ -3,6 +3,7 @@ import {
   OrderStatus,
   useChageOrderStatusMutation,
 } from '@/data/useOrders'
+import { Loader2Icon } from 'lucide-react'
 import { useEffect, useState } from 'react'
 
 import {
@@ -55,16 +56,28 @@ const OrderStatusPage = ({ order }: { order: Order }) => {
       <SelectContent>
         <SelectGroup>
           <SelectItem value="waiting">
-            {isPending ? 'Loading...' : 'Warten'}
+            {isPending ? <Loader2Icon className="animate-spin" /> : 'Warten'}
           </SelectItem>
           <SelectItem value="processing">
-            {isPending ? 'Loading...' : 'In Bearbeitung'}
+            {isPending ? (
+              <Loader2Icon className="animate-spin" />
+            ) : (
+              'In Bearbeitung'
+            )}
           </SelectItem>
           <SelectItem value="ready">
-            {isPending ? 'Loading...' : 'Abholbereit'}
+            {isPending ? (
+              <Loader2Icon className="animate-spin" />
+            ) : (
+              'Abholbereit'
+            )}
           </SelectItem>
           <SelectItem value="finished">
-            {isPending ? 'Loading...' : 'Abgeschlossen'}
+            {isPending ? (
+              <Loader2Icon className="animate-spin" />
+            ) : (
+              'Abgeschlossen'
+            )}
           </SelectItem>
         </SelectGroup>
       </SelectContent>

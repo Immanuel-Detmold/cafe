@@ -1,6 +1,7 @@
 import { queryClient } from '@/App'
 import { Order, useDeleteOrderMutation } from '@/data/useOrders'
 import { TrashIcon } from '@heroicons/react/24/outline'
+import { Loader2Icon } from 'lucide-react'
 
 import {
   AlertDialog,
@@ -37,7 +38,11 @@ const DeleteOrder = ({ order }: { order: Order }) => {
       <AlertDialogTrigger asChild>
         <div className="">
           <Button className="w-min bg-red-700" variant="destructive">
-            {isPending ? <p>...</p> : <TrashIcon className="h-4 w-4" />}
+            {isPending ? (
+              <Loader2Icon className="h-4 w-4 animate-spin" />
+            ) : (
+              <TrashIcon className="h-4 w-4" />
+            )}
           </Button>
         </div>
       </AlertDialogTrigger>
