@@ -5,12 +5,17 @@ import {
 } from '@/data/useInventory'
 import { useInventoryCategories } from '@/data/useInventoryCategories'
 import { Label } from '@radix-ui/react-label'
-import { ChevronLeftIcon, Loader2Icon, SaveIcon } from 'lucide-react'
+import { ChevronLeftIcon, InfoIcon, Loader2Icon, SaveIcon } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover'
 import {
   Select,
   SelectContent,
@@ -33,6 +38,7 @@ const NewItem = () => {
   const [comment, setComment] = useState('')
   const [unit, setUnit] = useState('')
   const [isSelectOpen, setIsSelectOpen] = useState(false)
+  const [warning, setWarning] = useState<string>('')
   const [missingFields, setMissingFields] = useState<boolean>(false)
 
   // Functions
@@ -54,6 +60,11 @@ const NewItem = () => {
       setCategory(inventoryItem?.category)
       setQuantity(inventoryItem?.quantity.toString())
       setUnit(inventoryItem?.unit)
+      setWarning(
+        inventoryItem?.warning?.toString()
+          ? inventoryItem?.warning?.toString()
+          : '',
+      )
       if (inventoryItem?.comment !== null) {
         setComment(inventoryItem?.comment)
       }
@@ -86,9 +97,10 @@ const NewItem = () => {
         quantity: parseInt(quantity),
         unit,
         comment,
+        warning: warning ? parseInt(warning) : null,
       }
       updateItem.mutate(
-        { id: itemId, inventoryItem: newInventoryItem },
+        { id: parseInt(itemId), inventoryItem: newInventoryItem },
         {
           onSuccess: () => {
             // console.log(data)
@@ -113,6 +125,7 @@ const NewItem = () => {
         quantity: parseInt(quantity),
         unit,
         comment,
+        warning: warning ? parseInt(warning) : null,
       },
       {
         onSuccess: () => {
@@ -215,10 +228,37 @@ const NewItem = () => {
                     <SelectItem value="g">Gramm</SelectItem>
                     <SelectItem value="Stk.">Stücke</SelectItem>
                     <SelectItem value="L">Liter</SelectItem>
+                    <SelectItem value="ml">Milliliter</SelectItem>
                   </SelectGroup>
                 </SelectContent>
               </Select>
             </div>
+          </div>
+
+          {/* Warning */}
+          <div className="mt-2 flex items-center">
+            <Input
+              id="warning"
+              value={warning}
+              type="text"
+              onChange={(e) => {
+                // Allow only digits
+                const validValue = e.target.value.replace(/[^0-9]/g, '')
+                setWarning(validValue)
+              }}
+              className=""
+              placeholder="Warnung (optional)"
+            />
+
+            <Popover>
+              <PopoverTrigger>
+                <InfoIcon className="ml-2 cursor-pointer" />
+              </PopoverTrigger>
+              <PopoverContent>
+                Bei Unterschreitung dieser Menge wird eine Warnung ausgegeben
+                angezeigt.
+              </PopoverContent>
+            </Popover>
           </div>
 
           <Label htmlFor="comment" className="mt-4 font-bold">
@@ -229,7 +269,7 @@ const NewItem = () => {
             value={comment}
             onChange={(e) => setComment(e.target.value)}
             className="mt-1"
-            placeholder="Zusätzlicher Kommentar"
+            placeholder="Zusätzlicher Kommentar (optional)"
           ></Textarea>
         </div>
 
