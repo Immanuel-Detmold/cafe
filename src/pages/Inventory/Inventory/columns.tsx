@@ -7,6 +7,8 @@ import { useNavigate } from 'react-router-dom'
 
 import { Button } from '@/components/ui/button'
 
+import Calculator from './Calculator'
+
 // export type Payment = {
 //   id: string
 //   amount: number
@@ -59,20 +61,20 @@ const Columns = () => {
           </Button>
         )
       },
-    },
-    {
-      accessorKey: 'unit',
-      header: ({ column }) => {
-        return (
-          <Button
-            variant="ghost"
-            onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+      cell: ({ row }) => (
+        <div className="flex items-center">
+          <div
+            className={`flex items-center ${row.original.warning !== null && row.original.quantity < row.original.warning ? 'font-bold text-red-500' : ''}`}
           >
-            Einheit
-            <ArrowUpDown className="ml-2 h-4 w-4" />
-          </Button>
-        )
-      },
+            {row.original.quantity} {row.original.unit}
+          </div>
+          <Calculator
+            quantity={row.original.quantity}
+            unit={row.original.unit}
+            id={row.original.id}
+          />
+        </div>
+      ),
     },
     {
       accessorKey: 'category',

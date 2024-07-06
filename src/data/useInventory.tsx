@@ -63,7 +63,7 @@ export const useUpdateInventoryMutation = () => {
       id,
     }: {
       inventoryItem: UpdateInventory
-      id: string
+      id: number
     }) => {
       const { data, error } = await supabase
         .from('Inventory')
