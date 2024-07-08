@@ -1,7 +1,9 @@
 import { useOrderAndItemsQuery } from '@/data/useOrders'
+import { useProductCategories } from '@/data/useProductCategories'
 import { Product, useProductsQuery } from '@/data/useProducts'
 import { Label } from '@radix-ui/react-label'
 import { ListFilterIcon } from 'lucide-react'
+import { useEffect, useState } from 'react'
 
 import {
   Accordion,
@@ -34,18 +36,23 @@ const Filters = ({
   selectedCategories,
   selectedProducts,
 }: FilterProps) => {
+  // States
+  const [showCategories, setShowCategories] = useState<string[]>([])
+
+  // Data
   // Categories and Products of open/waiting orders
   const { data: openOrders } = useOrderAndItemsQuery(['waiting', 'processing'])
-  const { currentCategories, currentProducts } =
-    getCategoriesAndProducts(openOrders)
-
+  const { data: categories } = useProductCategories()
   const { data: products } = useProductsQuery({
     searchTerm: '',
     ascending: true,
   })
-  const combinedCategories = Array.from(
-    new Set([...currentCategories, ...selectedCategories]),
-  )
+
+  // Functions
+  const { currentProducts } = getCategoriesAndProducts(openOrders)
+  // const combinedCategories = Array.from(
+  //   new Set([...currentCategories, ...selectedCategories]),
+  // )
 
   // Get Combined Products currentProducts and selectedProducts
   // selectedProducts is in format ["123", "23", ...]
@@ -68,9 +75,14 @@ const Filters = ({
     currentProducts,
     selectedProducts,
   )
-  // const combinedProducts = Array.from(new Set([...currentProducts, ...selectedProducts]))
 
-  // console.log(currentProducts)
+  useEffect(() => {
+    // Transform Categories into List of Strings ["Category 1", "Category 2", ...]
+    const showCategories =
+      categories?.map((category) => category.category) || []
+    setShowCategories(showCategories)
+  }, [categories])
+
   return (
     <div>
       <Popover>
@@ -95,8 +107,8 @@ const Filters = ({
               </AccordionTrigger>
 
               <AccordionContent>
-                {combinedCategories &&
-                  combinedCategories.map((category) => (
+                {showCategories &&
+                  showCategories.map((category) => (
                     <div
                       key={category}
                       className="mt-2 flex items-center space-x-1"

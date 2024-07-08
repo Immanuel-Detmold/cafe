@@ -8,7 +8,6 @@ import {
   SelectContent,
   SelectGroup,
   SelectItem,
-  SelectLabel,
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
@@ -27,7 +26,7 @@ const Consumption = ({ consumption, setConsumption }: ConsumptionProp) => {
     <>
       <Label className="mt-4 w-full font-bold">Verbrauch</Label>
       <PlusCircleIcon
-        className="mt-2 cursor-pointer"
+        className="ml-2 mt-1 cursor-pointer"
         onClick={() => {
           setConsumption((prev) => [...prev, { name: '', quantity: '' }])
         }}
@@ -47,16 +46,15 @@ const Consumption = ({ consumption, setConsumption }: ConsumptionProp) => {
             }}
             value={item.name}
           >
-            <SelectTrigger className="ml-2 w-36 rounded-md p-2">
-              <SelectValue placeholder="Einheit" />
+            <SelectTrigger className="ml-2 w-40 rounded-md p-2">
+              <SelectValue placeholder="Item" />
             </SelectTrigger>
-            <SelectContent>
+            <SelectContent className="w-56">
               <SelectGroup>
-                <SelectLabel>Item</SelectLabel>
                 {inventory &&
                   inventory.map((item) => (
                     <SelectItem key={item.id} value={item.name}>
-                      {item.name}
+                      {item.name} (in {item.unit})
                     </SelectItem>
                   ))}
               </SelectGroup>
@@ -74,11 +72,11 @@ const Consumption = ({ consumption, setConsumption }: ConsumptionProp) => {
               }
               setConsumption(newConsumption)
             }}
-            className="ml-2 w-1/2"
+            className="ml-2 w-full"
             placeholder="Menge"
           />
           <TrashIcon
-            className="ml-2 cursor-pointer"
+            className="ml-2 h-8 w-8 cursor-pointer"
             onClick={() => {
               setConsumption((prev) => prev.filter((_, i) => i !== index))
             }}
