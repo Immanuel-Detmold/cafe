@@ -49,11 +49,10 @@ const Filters = ({
   })
 
   // Functions
-  const { currentCategories, currentProducts } =
-    getCategoriesAndProducts(openOrders)
-  const combinedCategories = Array.from(
-    new Set([...currentCategories, ...selectedCategories]),
-  )
+  const { currentProducts } = getCategoriesAndProducts(openOrders)
+  // const combinedCategories = Array.from(
+  //   new Set([...currentCategories, ...selectedCategories]),
+  // )
 
   // Get Combined Products currentProducts and selectedProducts
   // selectedProducts is in format ["123", "23", ...]
