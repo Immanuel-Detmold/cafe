@@ -1,8 +1,9 @@
+import { queryClient } from '@/App'
 import { Product, useUpdateProductMutationV2 } from '@/data/useProducts'
 import { getImagePath } from '@/generalHelperFunctions.tsx/supabase'
 import { supabase } from '@/services/supabase'
 import { AspectRatio } from '@radix-ui/react-aspect-ratio'
-import { Trash } from 'lucide-react'
+import { DownloadIcon, Trash } from 'lucide-react'
 import { useEffect, useState } from 'react'
 
 import {
@@ -27,24 +28,33 @@ import {
 import { useToast } from '@/components/ui/use-toast'
 
 const DisplayImages = ({ productData }: { productData: Product }) => {
-  const updateImages = useUpdateProductMutationV2()
-  const { toast } = useToast()
-  const [images, setImages] = useState(productData.images)
+  // States
+  const [images, setImages] = useState<string[]>()
+  console.log(images)
 
+  // Mini Functions
+  const { toast } = useToast()
+
+  // Mutations
+  const updateImages = useUpdateProductMutationV2()
+
+  // Functions
   const handleDelete = async (imgUrl: string) => {
-    const newImages = productData.images?.filter((img) => img !== imgUrl)
+    // First change the image array in the database
+    console.log('Deleting: ', imgUrl)
+    const newImages = images?.filter((img) => img !== imgUrl)
     updateImages.mutate({
       updatedProduct: { images: newImages },
       product_id: productData.id,
     })
 
-    //
+    // Remove image from storage
     const toDeleteUrl = getImagePath(imgUrl)
-
     const { data, error } = await supabase.storage
       .from('ProductImages')
       .remove([toDeleteUrl])
 
+    await queryClient.invalidateQueries({ queryKey: ['products'] })
     if (data) {
       if (newImages) setImages(newImages)
       toast({ title: 'Bild erfolgreich gelöscht!✅' })
@@ -54,9 +64,27 @@ const DisplayImages = ({ productData }: { productData: Product }) => {
     }
   }
 
+  // Download Image
+  const downloadImage = (url: string) => {
+    // const subPath = url.split('ProductImages/')[1]
+    const subPath = url.split('ProductImages/')[1]
+    const { data } = supabase.storage
+      .from('ProductImages')
+      .getPublicUrl(subPath ? subPath : '', {
+        download: true,
+      })
+
+    const aTag = document.createElement('a')
+    aTag.href = data.publicUrl
+    aTag.setAttribute('download', 'img.png')
+    document.body.appendChild(aTag)
+    aTag.click()
+    aTag.remove()
+  }
+
   useEffect(() => {
-    setImages(productData.images)
-  }, [productData.images])
+    if (productData.images) setImages(productData.images)
+  }, [productData])
 
   return (
     <>
@@ -74,10 +102,18 @@ const DisplayImages = ({ productData }: { productData: Product }) => {
                           alt={'Product'}
                           className="mx-auto aspect-square rounded-md object-cover"
                         />
+                        <DownloadIcon
+                          onClick={() => {
+                            downloadImage(imgUrl)
+                          }}
+                          className="absolute bottom-2 left-2 h-8 w-8 cursor-pointer rounded-md bg-secondary p-1"
+                        >
+                          Test
+                        </DownloadIcon>
                         <AlertDialog>
                           <AlertDialogTrigger
                             asChild
-                            className="absolute bottom-2 right-2 h-10 w-10 cursor-pointer rounded-md bg-secondary p-1"
+                            className="absolute bottom-2 right-2 h-8 w-8 cursor-pointer rounded-md bg-secondary p-1"
                           >
                             <Trash className="" />
                           </AlertDialogTrigger>

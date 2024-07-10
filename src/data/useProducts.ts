@@ -207,7 +207,7 @@ export const useUpdateProductMutationV2 = () =>
     },
     onSuccess: async (data) => {
       // After the mutation succeeds, invalidate the useProductsQuery
-      await queryClient.invalidateQueries({ queryKey: ['products'] })
+      await queryClient.invalidateQueries({ queryKey: ['products', 'product'] })
 
       await saveUserAction({
         action: data,

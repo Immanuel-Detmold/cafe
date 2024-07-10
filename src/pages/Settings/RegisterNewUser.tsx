@@ -39,6 +39,8 @@ const RegisterNewUser = () => {
       // Handle successful registration
       if (data) {
         setEmail('')
+        setPassword('')
+        setUserRole('user')
         setError('')
         toast({ title: 'Nutzer wurde angelegt ✅' })
       }
@@ -103,6 +105,10 @@ const RegisterNewUser = () => {
             <div className="flex items-center space-x-2">
               <RadioGroupItem value="user" id="user" />
               <Label htmlFor="user">Normaler Benutzer</Label>
+            </div>
+            <div className="flex items-center space-x-2">
+              <RadioGroupItem value="manager" id="manager" />
+              <Label htmlFor="manager">Manager</Label>
             </div>
             <div className="flex items-center space-x-2">
               <RadioGroupItem value="admin" id="admin" />

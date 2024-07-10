@@ -20,8 +20,8 @@ const SettingsPage = () => {
 
   useEffect(() => {
     const role = user?.user_metadata?.role as string
-    if (role === 'admin') {
-      setUserRole('admin')
+    if (role) {
+      setUserRole(role)
     }
   }, [user])
 

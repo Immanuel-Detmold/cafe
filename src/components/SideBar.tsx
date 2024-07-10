@@ -14,7 +14,7 @@ import {
   User2Icon,
   WarehouseIcon,
 } from 'lucide-react'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { NavLink, useNavigate } from 'react-router-dom'
 
 import {
@@ -26,9 +26,22 @@ import {
 } from '@/components/ui/sheet'
 
 const SideBar = () => {
+  // States
   const [sheetOpen, setSheetOpen] = useState(false)
+  const [userRole, setUserRole] = useState('user')
+
+  // Mini Functions
   const navigate = useNavigate()
   const { user } = useUser()
+
+  // Use Effect
+  useEffect(() => {
+    const role = user?.user_metadata?.role as string
+    if (role) {
+      setUserRole(role)
+    }
+  }, [user])
+
   return (
     <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
       <SheetTrigger>
@@ -73,20 +86,22 @@ const SideBar = () => {
           </NavLink>
 
           {/* Statistic */}
-          <NavLink
-            to="/admin/statistic"
-            className={({ isActive }) =>
-              isActive ? 'rounded-md bg-secondary p-2' : 'p-2'
-            }
-            onClick={() => {
-              setSheetOpen(false)
-            }}
-          >
-            <div className="flex cursor-pointer">
-              <LineChartIcon />
-              <Label className="ml-1 cursor-pointer">Statistik</Label>
-            </div>
-          </NavLink>
+          {['admin', 'manager'].includes(userRole) && (
+            <NavLink
+              to="/admin/statistic"
+              className={({ isActive }) =>
+                isActive ? 'rounded-md bg-secondary p-2' : 'p-2'
+              }
+              onClick={() => {
+                setSheetOpen(false)
+              }}
+            >
+              <div className="flex cursor-pointer">
+                <LineChartIcon />
+                <Label className="ml-1 cursor-pointer">Statistik</Label>
+              </div>
+            </NavLink>
+          )}
 
           {/* Cafe Cards */}
           <NavLink

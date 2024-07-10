@@ -33,12 +33,13 @@ export const getStartOfDayToday = () => {
   const hoursInToday = date.getHours()
 
   const temp = new Date(Number(date) - hoursInToday * 60 * 60 * 1000)
+
   temp.setMinutes(0)
   temp.setSeconds(0)
 
   const finalDateString = temp.toISOString().split('.')[0]
 
-  return { finalDate: temp, finalDateString }
+  return { finalDate: temp, finalDateString, finalDateObject: temp }
 }
 
 export const getEndOfDayToday = () => {
@@ -50,21 +51,18 @@ export const getEndOfDayToday = () => {
   return { endOfDay, endOfDayString }
 }
 
-export const getCurrentMonth = () => {
-  const currentDate =
-    getStartOfDayToday().finalDateString ?? '2000-01-01T00:00:00'
-  //   temp = 2021-09-01
-  const temp = currentDate.split('T')[0] || '2000-01-01'
-  const currentMonth =
-    temp.split('-')[0] +
-    '-' +
-    temp.split('-')[1] +
-    '-' +
-    '01' +
-    ' ' +
-    currentDate.split('T')[1]
+// Returns Date and Time of current month
+export const getCurrentMonthStartDate = () => {
+  const date = new Date()
+  date.setDate(1)
+  date.setUTCHours(0)
+  date.setUTCMinutes(0)
+  date.setUTCSeconds(0)
+  date.setUTCMilliseconds(0)
+  const timeZoneOffset = date.getTimezoneOffset() / 60
+  date.setHours(date.getHours() + timeZoneOffset)
 
-  const month_index = parseInt(temp.split('-')[1] ?? '') || 1
+  const month_index = date.getMonth() + 1
 
   //   German months
   const months = [
@@ -83,8 +81,8 @@ export const getCurrentMonth = () => {
     'Dezember',
   ]
   const monthName = months[month_index] || 'Januar'
-
-  return { monthDataFormat: currentMonth, monthName }
+  // console.log("Current Month", currentMonth)
+  return { monthDataFormat: date.toISOString().split('.')[0], monthName }
 }
 
 export const getThisYear = () => {

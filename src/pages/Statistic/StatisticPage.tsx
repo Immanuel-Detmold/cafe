@@ -1,9 +1,10 @@
 import { useCafeCards } from '@/data/useCafeCard'
 import { useOrdersAndItemsQueryV2 } from '@/data/useOrders'
+import { useUser } from '@/data/useUser'
 import { centsToEuro } from '@/generalHelperFunctions.tsx/currencyHelperFunction'
 import {
   formatDate,
-  getCurrentMonth,
+  getCurrentMonthStartDate,
   getEndOfDay,
   getStartOfDay,
   getThisYear,
@@ -30,12 +31,18 @@ import {
 } from './helperFunctions'
 
 const StatisticPage = () => {
-  const { monthDataFormat, monthName } = getCurrentMonth()
-  const { yearDataFormat, year } = getThisYear()
+  // States
+  const [userRole, setUserRole] = useState('user')
+  console.log(userRole)
   const [showAllOrders, setShorAllOrders] = useState(false)
-
   const [selectedDate, setSelectedDate] = useState('')
 
+  // Mini Functions
+  const { monthDataFormat, monthName } = getCurrentMonthStartDate()
+  const { yearDataFormat, year } = getThisYear()
+  const { user } = useUser()
+
+  // Data
   const { data: ordersMonth, isLoading: l1 } = useOrdersAndItemsQueryV2({
     statusList: ['finished'],
     searchTerm: '',
@@ -131,80 +138,91 @@ const StatisticPage = () => {
     return getSumOrdersPayMethod(filteredData, 'cafe_card') + '€'
   }, [filteredData])
 
+  // UseEffect
   useEffect(() => {
     if (distinctOrders.length > 0 && distinctOrders !== undefined) {
       setSelectedDate(distinctOrders[0] || '')
     }
   }, [distinctOrders])
 
+  useEffect(() => {
+    const role = user?.user_metadata?.role as string
+    if (role) {
+      setUserRole(role)
+    }
+  }, [user])
+
   return (
     <>
-      <div className="h-2"></div>
       {l1 && l2 && l3 && l4 && l5 && (
         <Label className="mt-2 font-bold">Daten werden geladen...</Label>
       )}
       <div className="flex flex-col items-center">
-        {/* First row, sum this month and this year */}
-        <div className="mt-2 grid w-full grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-4">
-          {/* Current month */}
-          <div className="grid grid-cols-1 gap-1 rounded-lg border p-2">
-            <Label className="text-base">Dieser Monat ({monthName})</Label>
-            <Label className="text-2xl font-bold">
-              {ordersMonth ? sumMonth.toString() + '€' : '...'}
-            </Label>
-            <Label className="text-muted-foreground">Umsatz</Label>
-          </div>
-
-          {/* Current year */}
-          <div className="grid grid-cols-1 gap-1 rounded-lg border p-2">
-            <Label className="text-base">Dieses Jahr ({year})</Label>
-            <Label className="text-2xl font-bold">
-              {ordersYear ? sumYear.toString() + '€' : '...'}
-            </Label>
-            <Label className="text-muted-foreground">Umsatz</Label>
-          </div>
-
-          {/* Money not used and still on cards */}
-          <div className="grid grid-cols-1 gap-1 rounded-lg border p-2">
-            <Label className="text-base">Übriges Guthaben auf Karten</Label>
-            <Label className="text-2xl font-bold">
-              {cafeCardsAllTime
-                ? centsToEuro(
-                    sumCafeCards - sumYearCafeCardsPayments,
-                  ).toString() + '€'
-                : '...'}
-            </Label>
-            <Label className="text-muted-foreground">Summe</Label>
-          </div>
-
-          {/* Summe Cafe Cards */}
-          <div className="grid grid-cols-1 gap-1 rounded-lg border p-2">
-            <Label className="text-base">Summe Café Karten</Label>
-            <Label className="text-2xl font-bold">
-              {cafeCardsAllTime
-                ? centsToEuro(sumCafeCards).toString() + '€'
-                : '...'}
-            </Label>
-            <Label className="text-muted-foreground">
-              {cafeCardsAllTime ? (
-                <Label className="text-muted-foreground">
-                  Summe (10€ x {tenCardCount} | 5€ x {fiveCardCount})
+        {userRole === 'admin' && (
+          <>
+            {/* First row, sum this month and this year */}
+            <div className="mt-2 grid w-full grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-4">
+              {/* Current month */}
+              <div className="grid grid-cols-1 gap-1 rounded-lg border p-2">
+                <Label className="text-base">Dieser Monat ({monthName})</Label>
+                <Label className="text-2xl font-bold">
+                  {ordersMonth ? sumMonth.toString() + '€' : '...'}
                 </Label>
-              ) : null}
-            </Label>
-          </div>
-        </div>
+                <Label className="text-muted-foreground">Umsatz</Label>
+              </div>
 
-        {/* Select Date to filter */}
-        <div className="col-span-2 mt-2 w-full">
-          {
-            <DatePicker
-              distinctDates={distinctOrders}
-              selectedDate={selectedDate || ''}
-              setSelectedDate={setSelectedDate}
-            />
-          }
-        </div>
+              {/* Current year */}
+              <div className="grid grid-cols-1 gap-1 rounded-lg border p-2">
+                <Label className="text-base">Dieses Jahr ({year})</Label>
+                <Label className="text-2xl font-bold">
+                  {ordersYear ? sumYear.toString() + '€' : '...'}
+                </Label>
+                <Label className="text-muted-foreground">Umsatz</Label>
+              </div>
+
+              {/* Money not used and still on cards */}
+              <div className="grid grid-cols-1 gap-1 rounded-lg border p-2">
+                <Label className="text-base">Übriges Guthaben auf Karten</Label>
+                <Label className="text-2xl font-bold">
+                  {cafeCardsAllTime
+                    ? centsToEuro(
+                        sumCafeCards - sumYearCafeCardsPayments,
+                      ).toString() + '€'
+                    : '...'}
+                </Label>
+                <Label className="text-muted-foreground">Summe</Label>
+              </div>
+
+              {/* Summe Cafe Cards */}
+              <div className="grid grid-cols-1 gap-1 rounded-lg border p-2">
+                <Label className="text-base">Summe Café Karten</Label>
+                <Label className="text-2xl font-bold">
+                  {cafeCardsAllTime
+                    ? centsToEuro(sumCafeCards).toString() + '€'
+                    : '...'}
+                </Label>
+                <Label className="text-muted-foreground">
+                  {cafeCardsAllTime ? (
+                    <Label className="text-muted-foreground">
+                      Summe (10€ x {tenCardCount} | 5€ x {fiveCardCount})
+                    </Label>
+                  ) : null}
+                </Label>
+              </div>
+            </div>
+
+            {/* Select Date to filter */}
+            <div className="col-span-2 mt-2 w-full">
+              {
+                <DatePicker
+                  distinctDates={distinctOrders}
+                  selectedDate={selectedDate || ''}
+                  setSelectedDate={setSelectedDate}
+                />
+              }
+            </div>
+          </>
+        )}
 
         {selectedDate && filteredData && (
           <div className="w-full">
@@ -282,7 +300,7 @@ const StatisticPage = () => {
           <OrderTable filteredData={filteredData} />
         )}
 
-        {filteredData && selectedDate && (
+        {filteredData && selectedDate && userRole === 'admin' && (
           <div className="my-4 mr-auto flex items-center space-x-2">
             <Switch
               id="load-orders"
@@ -297,7 +315,7 @@ const StatisticPage = () => {
           </div>
         )}
       </div>
-      {showAllOrders && selectedDate && (
+      {showAllOrders && selectedDate && userRole === 'admin' && (
         <Open
           startDate={getStartOfDay(selectedDate).finalDateString}
           endDate={getEndOfDay(selectedDate).endOfDayString}
