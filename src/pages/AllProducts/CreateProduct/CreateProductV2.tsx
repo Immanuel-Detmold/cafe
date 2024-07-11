@@ -6,6 +6,7 @@ import {
   useUpdateProductMutationV2,
   useUploadProductImagesMutation,
 } from '@/data/useProducts'
+import { useUser } from '@/data/useUser'
 import {
   EuroToCents,
   centsToEuro,
@@ -61,6 +62,12 @@ const CreateProductV2 = () => {
   const [productDetails, setProductDetails] = useState<ProductDetails>(
     initialProductDetails,
   )
+  const [shortDescription, setShortDescription] = useState<string>('')
+
+  // User State
+  const [userRole, setUserRole] = useState('user')
+  const { user } = useUser()
+
   const [consumption, setConsumption] = useState<ConsumptionType[]>([])
   const [missing_fields, setMissingFields] = useState<boolean>(false)
 
@@ -142,6 +149,15 @@ const CreateProductV2 = () => {
       setMissingFields(false)
     }
 
+    // if userRole is user, then stop code execution
+    if (userRole === 'user') {
+      toast({
+        title:
+          'Nur Admins und Manager können Produkte anlegen oder bearbeiten!❌',
+      })
+      return
+    }
+
     const { FilteredProductDetails } = removeEmptyValues(productDetails)
     const FilteredConsumption = consumption.filter(
       (item) => item.name !== '' && item.quantity !== '',
@@ -154,6 +170,7 @@ const CreateProductV2 = () => {
       method: method,
       product_details: FilteredProductDetails,
       consumption: FilteredConsumption,
+      short_description: shortDescription,
     }
 
     // New Product
@@ -246,11 +263,19 @@ const CreateProductV2 = () => {
   // Get Product Images and Data for Edit Mode
   const productData = useProductQuery({ id: productId ? productId : undefined })
 
+  // Use Effect
   useEffect(() => {
     if (productId) {
       if (productData.data) {
-        const { name, price, category, method, product_details, consumption } =
-          productData.data
+        const {
+          name,
+          price,
+          category,
+          method,
+          product_details,
+          consumption,
+          short_description,
+        } = productData.data
         setName(name)
         setPrice(centsToEuro(price))
         setCategory(category)
@@ -263,9 +288,19 @@ const CreateProductV2 = () => {
         if (consumption) {
           setConsumption(consumption as ConsumptionType[])
         }
+        if (short_description) {
+          setShortDescription(short_description)
+        }
       }
     }
-  }, [productId, productData.data, productData])
+  }, [productId, productData.data])
+
+  useEffect(() => {
+    const role = user?.user_metadata?.role as string
+    if (role) {
+      setUserRole(role)
+    }
+  }, [user])
 
   return (
     <>
@@ -334,7 +369,6 @@ const CreateProductV2 = () => {
             </div>
 
             {/* Method */}
-
             <Label className="mt-4 w-full font-bold">Zubereitung</Label>
             <Textarea
               tabIndex={-1}
@@ -343,6 +377,18 @@ const CreateProductV2 = () => {
               value={method}
               onChange={(e) => {
                 setMethod(e.target.value)
+              }}
+            ></Textarea>
+
+            {/* Shortdescription */}
+            <Label className="mt-4 w-full font-bold">Kurzbeschreibung</Label>
+            <Textarea
+              tabIndex={-1}
+              className="mt-1 w-full"
+              placeholder="Produktbeschreibung (optional)"
+              value={shortDescription}
+              onChange={(e) => {
+                setShortDescription(e.target.value)
               }}
             ></Textarea>
 

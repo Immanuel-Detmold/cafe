@@ -15,8 +15,8 @@ import ResetOrderNumber from './ResetOrderNumber'
 
 const SettingsPage = () => {
   const [userRole, setUserRole] = useState('user')
-  const navigate = useNavigate()
   const { user } = useUser()
+  const navigate = useNavigate()
 
   useEffect(() => {
     const role = user?.user_metadata?.role as string

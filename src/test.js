@@ -1,13 +1,7 @@
-function getFirstDayOfCurrentMonthISOString() {
-  const now = new Date()
-  const year = now.getUTCFullYear()
-  const month = now.getUTCMonth()
+const userRole = 'admin'
 
-  // Erstellt ein Datum für den ersten Tag des aktuellen Monats im UTC-Format
-  const firstDayOfMonth = new Date(Date.UTC(year, month, 1))
-  return firstDayOfMonth.toISOString()
+if (userRole === 'user') {
+  console.log('You are not authorized to access this page')
+} else {
+  console.log('Welcome to the dashboard')
 }
-
-// Beispielaufruf
-const isoString = getFirstDayOfCurrentMonthISOString()
-console.log(isoString) // Gibt das ISO-String-Format des ersten Tages des aktuellen Monats in UTC zurück
