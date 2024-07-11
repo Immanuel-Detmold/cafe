@@ -1,7 +1,7 @@
 import { queryClient } from '@/App'
 import { Product, useDeleteProductMutation } from '@/data/useProducts'
 import { TrashIcon } from '@heroicons/react/24/outline'
-import { Loader, Loader2Icon } from 'lucide-react'
+import { Loader2Icon } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 
 import {
