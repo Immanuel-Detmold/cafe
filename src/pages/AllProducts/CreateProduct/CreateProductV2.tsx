@@ -66,7 +66,6 @@ const CreateProductV2 = () => {
 
   // Images
   const [files, setFiles] = useState<FileMap>({})
-  const [compressedFiles, setCompressedFiles] = useState<FileMap>({})
 
   const upload_images = useUploadProductImagesMutation()
 
@@ -100,29 +99,21 @@ const CreateProductV2 = () => {
   }
 
   // Compressing all files
-  useEffect(() => {
-    const compressAllFiles = async () => {
-      const compressedFilesMap: FileMap = {}
-      for (const key in files) {
-        const fileArray = files[key]
-        console.log(fileArray)
-        if (fileArray) {
-          try {
-            const compressedFilesArray = await compressImage(fileArray)
-            compressedFilesMap[key] = compressedFilesArray
-            console.log(compressedFilesMap)
-          } catch (error) {
-            toast({ title: 'Fehler beim Komprimieren der Bilder!❌' })
-          }
+  const compressAllFiles = async () => {
+    const compressedFilesMap: FileMap = {}
+    for (const key in files) {
+      const fileArray = files[key]
+      if (fileArray) {
+        try {
+          const compressedFilesArray = await compressImage(fileArray)
+          compressedFilesMap[key] = compressedFilesArray
+        } catch (error) {
+          toast({ title: 'Fehler beim Komprimieren der Bilder!❌' })
         }
       }
-      setCompressedFiles(compressedFilesMap)
     }
-
-    if (Object.keys(files).length > 0) {
-      void compressAllFiles()
-    }
-  }, [files, toast])
+    return compressedFilesMap
+  }
 
   // Create Product
   const { mutate: createProduct, isPending: isPendingAddProduct } =
@@ -168,12 +159,12 @@ const CreateProductV2 = () => {
     // New Product
     if (!productId) {
       createProduct(newProduct, {
-        onSuccess: (product) => {
-          if (Object.keys(compressedFiles).length > 0) {
+        onSuccess: async (product) => {
+          if (Object.keys(files).length > 0) {
             toast({
               title: 'Bilder werden hochgeladen...',
             })
-            handleAddImages(product)
+            await handleAddImages(product)
           } else {
             navigate('/admin/all-products')
             toast({
@@ -192,13 +183,13 @@ const CreateProductV2 = () => {
           product_id: parseInt(productId),
         },
         {
-          onSuccess: () => {
-            if (Object.keys(compressedFiles).length > 0) {
+          onSuccess: async () => {
+            if (Object.keys(files).length > 0) {
               toast({
                 title: 'Bilder werden hochgeladen...',
               })
 
-              handleAddImages()
+              await handleAddImages()
             } else {
               toast({
                 title: 'Produkt wurde aktualisiert!✅',
@@ -212,11 +203,15 @@ const CreateProductV2 = () => {
     }
   }
 
-  const handleAddImages = (product?: Product) => {
-    const allFiles = Object.values(compressedFiles)
-
+  const handleAddImages = async (product?: Product) => {
+    // const allFiles = Object.values(files)
+    // Compress images
+    const allCompressedFiles = Object.values(await compressAllFiles())
     // If product is not new
-    const uploadProp = { files: allFiles, product: productData.data }
+    const uploadProp = {
+      files: allCompressedFiles,
+      product: productData.data,
+    }
     // If product is new
     if (product) {
       uploadProp.product = product
@@ -225,7 +220,6 @@ const CreateProductV2 = () => {
     upload_images.mutate(uploadProp, {
       onSuccess: () => {
         setFiles({})
-        setCompressedFiles({})
 
         navigate('/admin/all-products')
         toast({
@@ -271,7 +265,7 @@ const CreateProductV2 = () => {
         }
       }
     }
-  }, [productId, productData.data])
+  }, [productId, productData.data, productData])
 
   return (
     <>
