@@ -1,6 +1,7 @@
 import { queryClient } from '@/App'
 import { Product, useDeleteProductMutation } from '@/data/useProducts'
 import { TrashIcon } from '@heroicons/react/24/outline'
+import { Loader2Icon } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 
 import {
@@ -52,7 +53,7 @@ const DeleteProduct = ({ product }: { product: Product }) => {
             tabIndex={-1}
             disabled={isPending}
           >
-            {isPending ? 'Loading...' : 'Löschen'}
+            {isPending ? <Loader2Icon className="animate-spin" /> : 'Löschen'}
             <TrashIcon className="ml-1 h-5 w-5" />
           </Button>
         </div>
