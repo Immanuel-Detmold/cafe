@@ -1,8 +1,9 @@
+import { queryClient } from '@/App'
 import { Product, useUpdateProductMutationV2 } from '@/data/useProducts'
 import { getImagePath } from '@/generalHelperFunctions.tsx/supabase'
 import { supabase } from '@/services/supabase'
 import { AspectRatio } from '@radix-ui/react-aspect-ratio'
-import { Trash } from 'lucide-react'
+import { DownloadIcon, Trash } from 'lucide-react'
 import { useEffect, useState } from 'react'
 
 import {
@@ -27,99 +28,136 @@ import {
 import { useToast } from '@/components/ui/use-toast'
 
 const DisplayImages = ({ productData }: { productData: Product }) => {
-  const updateImages = useUpdateProductMutationV2()
-  const { toast } = useToast()
-  const [images, setImages] = useState(productData.images)
+  // States
+  const [images, setImages] = useState<string[]>()
 
+  // Mini Functions
+  const { toast } = useToast()
+
+  // Mutations
+  const updateImages = useUpdateProductMutationV2()
+
+  // Functions
   const handleDelete = async (imgUrl: string) => {
-    const newImages = productData.images?.filter((img) => img !== imgUrl)
+    // First change the image array in the database
+    const newImages = images?.filter((img) => img !== imgUrl)
     updateImages.mutate({
       updatedProduct: { images: newImages },
       product_id: productData.id,
     })
 
-    //
+    // Remove image from storage
     const toDeleteUrl = getImagePath(imgUrl)
-
     const { data, error } = await supabase.storage
       .from('ProductImages')
       .remove([toDeleteUrl])
 
     if (data) {
-      if (newImages) setImages(newImages)
-      toast({ title: 'Bild erfolgreich gelöscht!✅' })
+      setImages(newImages)
+      if (productData.images && newImages) productData.images = newImages
+
+      await queryClient.invalidateQueries({ queryKey: ['products', 'product'] })
+      toast({ title: 'Bild erfolgreich gelöscht!✅', duration: 2000 })
     }
     if (error) {
       toast({ title: 'Bild konnte nicht gelöscht werden!❌' })
     }
   }
 
+  // Download Image
+  const downloadImage = (url: string) => {
+    // const subPath = url.split('ProductImages/')[1]
+    const subPath = url.split('ProductImages/')[1]
+    const { data } = supabase.storage
+      .from('ProductImages')
+      .getPublicUrl(subPath ? subPath : '', {
+        download: true,
+      })
+
+    const aTag = document.createElement('a')
+    aTag.href = data.publicUrl
+    aTag.setAttribute('download', 'img.png')
+    document.body.appendChild(aTag)
+    aTag.click()
+    aTag.remove()
+  }
+
   useEffect(() => {
-    setImages(productData.images)
+    if (productData.images) setImages(productData.images)
   }, [productData.images])
 
   return (
     <>
       <div className="flex justify-center">
-        <Carousel className="w-full max-w-xs">
-          <CarouselContent>
-            {images?.map((imgUrl, index) => (
-              <CarouselItem key={index}>
-                <div className="p-1">
-                  <Card>
-                    <CardContent className="relative flex aspect-square items-center justify-center p-6">
-                      <AspectRatio ratio={1 / 1}>
-                        <img
-                          src={imgUrl}
-                          alt={'Product'}
-                          className="mx-auto aspect-square rounded-md object-cover"
-                        />
-                        <AlertDialog>
-                          <AlertDialogTrigger
-                            asChild
-                            className="absolute bottom-2 right-2 h-10 w-10 cursor-pointer rounded-md bg-secondary p-1"
+        {productData.images && productData.images?.length > 0 && (
+          <Carousel className="w-full max-w-xs">
+            <CarouselContent>
+              {images?.map((imgUrl, index) => (
+                <CarouselItem key={index}>
+                  <div className="p-1">
+                    <Card>
+                      <CardContent className="relative flex aspect-square items-center justify-center p-6">
+                        <AspectRatio ratio={1 / 1}>
+                          <img
+                            src={imgUrl}
+                            alt={'Product'}
+                            className="mx-auto aspect-square rounded-md object-cover"
+                          />
+                          <DownloadIcon
+                            onClick={() => {
+                              downloadImage(imgUrl)
+                            }}
+                            className="absolute bottom-2 left-2 h-8 w-8 cursor-pointer rounded-md bg-secondary p-1"
                           >
-                            <Trash className="" />
-                          </AlertDialogTrigger>
-                          <AlertDialogContent>
-                            <AlertDialogHeader>
-                              <AlertDialogTitle>
-                                Möchtest du das Bild wirklich löschen?
-                              </AlertDialogTitle>
-                              <AlertDialogDescription>
-                                Diese Aktion kann nicht rückgängig gemacht
-                                werden.
-                              </AlertDialogDescription>
-                            </AlertDialogHeader>
+                            Test
+                          </DownloadIcon>
+                          <AlertDialog>
+                            <AlertDialogTrigger
+                              asChild
+                              className="absolute bottom-2 right-2 h-8 w-8 cursor-pointer rounded-md bg-secondary p-1"
+                            >
+                              <Trash className="" />
+                            </AlertDialogTrigger>
+                            <AlertDialogContent>
+                              <AlertDialogHeader>
+                                <AlertDialogTitle>
+                                  Möchtest du das Bild wirklich löschen?
+                                </AlertDialogTitle>
+                                <AlertDialogDescription>
+                                  Diese Aktion kann nicht rückgängig gemacht
+                                  werden.
+                                </AlertDialogDescription>
+                              </AlertDialogHeader>
 
-                            <AlertDialogFooter>
-                              <div className="block text-right">
-                                <AlertDialogCancel tabIndex={-1}>
-                                  Abbrechen
-                                </AlertDialogCancel>
+                              <AlertDialogFooter>
+                                <div className="block text-right">
+                                  <AlertDialogCancel tabIndex={-1}>
+                                    Abbrechen
+                                  </AlertDialogCancel>
 
-                                <AlertDialogAction
-                                  className="ml-2 bg-red-700"
-                                  onClick={async () => {
-                                    await handleDelete(imgUrl)
-                                  }}
-                                >
-                                  Löschen
-                                </AlertDialogAction>
-                              </div>
-                            </AlertDialogFooter>
-                          </AlertDialogContent>
-                        </AlertDialog>
-                      </AspectRatio>
-                    </CardContent>
-                  </Card>
-                </div>
-              </CarouselItem>
-            ))}
-          </CarouselContent>
-          <CarouselPrevious />
-          <CarouselNext />
-        </Carousel>
+                                  <AlertDialogAction
+                                    className="ml-2 bg-red-700"
+                                    onClick={async () => {
+                                      await handleDelete(imgUrl)
+                                    }}
+                                  >
+                                    Löschen
+                                  </AlertDialogAction>
+                                </div>
+                              </AlertDialogFooter>
+                            </AlertDialogContent>
+                          </AlertDialog>
+                        </AspectRatio>
+                      </CardContent>
+                    </Card>
+                  </div>
+                </CarouselItem>
+              ))}
+            </CarouselContent>
+            <CarouselPrevious />
+            <CarouselNext />
+          </Carousel>
+        )}
       </div>
     </>
   )

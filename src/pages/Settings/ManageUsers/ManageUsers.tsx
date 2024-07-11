@@ -6,6 +6,7 @@ import {
   ChevronRightIcon,
   User2Icon,
   UserRoundCogIcon,
+  UserRoundSearchIcon,
 } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
@@ -44,7 +45,6 @@ const ManageUsers = () => {
 
     void fetchUsers()
   }, [])
-  console.log(typeof users)
   return (
     <>
       <div className="flex flex-col items-center">
@@ -61,7 +61,9 @@ const ManageUsers = () => {
                 >
                   <div className="flex w-full min-w-80 justify-between">
                     <div className="flex items-center">
-                      {user.user_metadata.role === 'admin' ? (
+                      {user.user_metadata.role === 'manager' ? (
+                        <UserRoundSearchIcon /> // Replace with the actual icon component for managers
+                      ) : user.user_metadata.role === 'admin' ? (
                         <UserRoundCogIcon />
                       ) : (
                         <User2Icon />

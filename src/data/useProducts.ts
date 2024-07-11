@@ -49,7 +49,6 @@ export const useProductQuery = ({ id }: { id: string | undefined }) =>
       if (id === undefined) {
         return null
       }
-
       const { data, error } = await supabase
         .from('Products')
         .select()
@@ -61,7 +60,6 @@ export const useProductQuery = ({ id }: { id: string | undefined }) =>
       }
       return data
     },
-    enabled: !!id,
   })
 
 // Makes soft delete -> set deleted to true
@@ -121,7 +119,7 @@ export const useDeleteProductMutation = () =>
     },
     onSuccess: async (data) => {
       // After the mutation succeeds, invalidate the useProductsQuery
-      await queryClient.invalidateQueries({ queryKey: ['products'] })
+      await queryClient.invalidateQueries({ queryKey: ['products', 'product'] })
 
       await saveUserAction({
         action: data,
@@ -207,7 +205,9 @@ export const useUpdateProductMutationV2 = () =>
     },
     onSuccess: async (data) => {
       // After the mutation succeeds, invalidate the useProductsQuery
-      await queryClient.invalidateQueries({ queryKey: ['products'] })
+      await queryClient.invalidateQueries({
+        queryKey: ['products', 'product', data[0]?.id],
+      })
 
       await saveUserAction({
         action: data,

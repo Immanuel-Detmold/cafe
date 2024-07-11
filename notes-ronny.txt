@@ -3,7 +3,7 @@ To do:
 - navbar for PC
 - Bar Chart - Tortendiagram
 - create/edit product. Dateigröße besser anzeigen
--edge functions for manage users
+- edge functions for manage users
 
 Later:
 - Was ist mit Bezahlung? In der App möglich machen?

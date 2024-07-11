@@ -10,6 +10,8 @@ import { Input } from '@/components/ui/input'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { useToast } from '@/components/ui/use-toast'
 
+import DeleteUser from './DeleteUser'
+
 const UserInfo = () => {
   const { userId } = useParams()
   const [user, setUser] = useState<User>()
@@ -100,6 +102,10 @@ const UserInfo = () => {
               <Label htmlFor="user">Normaler Benutzer</Label>
             </div>
             <div className="flex items-center space-x-2">
+              <RadioGroupItem value="manager" id="manager" />
+              <Label htmlFor="manager">Manager</Label>
+            </div>
+            <div className="flex items-center space-x-2">
               <RadioGroupItem value="admin" id="admin" />
               <Label htmlFor="admin">Admin</Label>
             </div>
@@ -116,6 +122,7 @@ const UserInfo = () => {
           >
             <ChevronLeftIcon />
           </Button>
+          <DeleteUser userId={user.id} />
           <Button className="ml-2" onClick={handleSave}>
             Speichern
           </Button>
