@@ -427,11 +427,11 @@ const NewOrder = () => {
       </div>
 
       {/* Category and Product */}
-      <div className="mt-2">
+      <div className="">
         {groupedProducts_filtered &&
           Object.entries(groupedProducts_filtered).map(
             ([category, products]) => (
-              <div key={category} className="">
+              <div key={category} className="mt-4">
                 <h2 className="w-full font-bold">{category}</h2>
                 {/* Iterate over each product in the current category */}
                 <ProductsInCategory
