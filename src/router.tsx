@@ -12,6 +12,7 @@ import CafeCards from './pages/CafeCards/CafeCardsPage'
 import ClosedOrdersToday from './pages/ClosedOrdersToday'
 import Inventory from './pages/Inventory/Inventory/Inventory'
 import NewItem from './pages/Inventory/NewItem'
+import MenuCard from './pages/MenuCard/MenuCard'
 import NewOrder from './pages/NewOrder/NewOrder'
 import Open from './pages/Open/Open'
 import ReadyForPickup from './pages/ReadyForPickup/ReadyForPickup'
@@ -45,6 +46,10 @@ export const router = createBrowserRouter(
     {
       path: 'orders-pdf',
       element: <OrdersPDF />,
+    },
+    {
+      path: 'menu',
+      element: <MenuCard />,
     },
 
     {

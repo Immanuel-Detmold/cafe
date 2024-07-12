@@ -45,7 +45,13 @@ const AllProducts = () => {
       {products && (
         <div className="mt-2 grid grid-cols-3 gap-3 sm:gap-4 md:grid-cols-4 lg:grid-cols-6">
           {products.map((product) => (
-            <div key={product.id} className="max-w-60">
+            <div
+              key={product.id}
+              className="max-w-60 cursor-pointer"
+              onClick={() => {
+                navigate('/admin/all-products/' + product.id)
+              }}
+            >
               <ProductCard product={product} />
             </div>
           ))}
