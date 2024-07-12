@@ -152,22 +152,6 @@ const SideBar = () => {
             </div>
           </NavLink>
 
-          {/* Login */}
-          <NavLink
-            to="/"
-            className={({ isActive }) =>
-              isActive ? 'rounded-md bg-secondary p-2' : 'p-2'
-            }
-            onClick={() => {
-              setSheetOpen(false)
-            }}
-          >
-            <div className="flex cursor-pointer">
-              <LogInIcon />
-              <Label className="ml-1 cursor-pointer">Login</Label>
-            </div>
-          </NavLink>
-
           {/* Menu Card */}
           <NavLink
             to="/menu"
@@ -181,6 +165,22 @@ const SideBar = () => {
             <div className="flex cursor-pointer">
               <Utensils />
               <Label className="ml-1 cursor-pointer">Menükarte</Label>
+            </div>
+          </NavLink>
+
+          {/* Login */}
+          <NavLink
+            to="/"
+            className={({ isActive }) =>
+              isActive ? 'rounded-md bg-secondary p-2' : 'p-2'
+            }
+            onClick={() => {
+              setSheetOpen(false)
+            }}
+          >
+            <div className="flex cursor-pointer">
+              <LogInIcon />
+              <Label className="ml-1 cursor-pointer">Login</Label>
             </div>
           </NavLink>
         </SheetHeader>
