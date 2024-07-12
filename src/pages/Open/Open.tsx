@@ -17,7 +17,7 @@ import { ClipboardDocumentListIcon } from '@heroicons/react/24/outline'
 import {
   ChatBubbleBottomCenterTextIcon,
   ShoppingBagIcon,
-} from '@heroicons/react/24/outline'
+} from '@heroicons/react/24/solid'
 import { UserIcon } from '@heroicons/react/24/solid'
 import { Avatar, AvatarImage } from '@radix-ui/react-avatar'
 import { Label } from '@radix-ui/react-label'
