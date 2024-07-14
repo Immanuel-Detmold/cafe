@@ -190,6 +190,12 @@ const CreateProductV2 = () => {
             })
           }
         },
+        onError: () => {
+          toast({
+            title: 'Fehler beim Anlegen des Produkts!❌',
+            duration: 2000,
+          })
+        },
       })
 
       // Edit Product

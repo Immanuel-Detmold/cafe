@@ -3,6 +3,8 @@ To do:
 - navbar for PC
 - Bar Chart - Tortendiagram
 - edge functions for manage users
+- navbar android, sidebar im quer modus anpassen
+
 
 Later:
 - Was ist mit Bezahlung? In der App möglich machen?
