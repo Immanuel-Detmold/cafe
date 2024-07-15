@@ -18,6 +18,7 @@ import Open from './pages/Open/Open'
 import ReadyForPickup from './pages/ReadyForPickup/ReadyForPickup'
 import ManageUsers from './pages/Settings/ManageUsers/ManageUsers'
 import UserInfo from './pages/Settings/ManageUsers/UserInfo'
+import NetworkPage from './pages/Settings/NetworkPage/NetworkPage'
 import SettingsPage from './pages/Settings/SettingsPage'
 import UserActions from './pages/Settings/UserActions/UserActions'
 import OrdersPDF from './pages/Statistic/GeneratePDF/OrdersPDF'
@@ -89,6 +90,10 @@ export const router = createBrowserRouter(
         {
           path: 'settings/user-actions',
           element: <UserActions />,
+        },
+        {
+          path: 'settings/network',
+          element: <NetworkPage />,
         },
         {
           path: 'login',

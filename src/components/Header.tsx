@@ -22,6 +22,7 @@ const Header = () => {
     '/admin/create-product': 'Produkt erstellen',
     '/admin/inventory': 'Inventar',
     '/admin/inventory/new-item': 'Neues Item',
+    '/admin/settings/network': 'Netzwerk',
   }
   const [normalScreen, setNormalScreen] = useState(true)
 
