@@ -3,6 +3,7 @@ import { logout } from '@/services/supabase'
 import { Bars3Icon } from '@heroicons/react/24/outline'
 import { Label } from '@radix-ui/react-label'
 import {
+  ActivityIcon,
   BookCheckIcon,
   CoffeeIcon,
   CreditCardIcon,
@@ -152,6 +153,22 @@ const SideBar = () => {
             </div>
           </NavLink>
 
+          {/* Audio */}
+          <NavLink
+            to="/admin/audio"
+            className={({ isActive }) =>
+              isActive ? 'rounded-md bg-secondary p-2' : 'p-2'
+            }
+            onClick={() => {
+              setSheetOpen(false)
+            }}
+          >
+            <div className="flex cursor-pointer">
+              <ActivityIcon />
+              <Label className="ml-1 cursor-pointer">Audio</Label>
+            </div>
+          </NavLink>
+
           {/* Menu Card */}
           <NavLink
             to="/menu"
@@ -184,6 +201,7 @@ const SideBar = () => {
             </div>
           </NavLink>
         </SheetHeader>
+
         {/* Footer */}
         <div className="absolute bottom-4">
           {/* Settings */}

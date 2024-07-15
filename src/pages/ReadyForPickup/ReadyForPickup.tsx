@@ -1,5 +1,6 @@
 // import { queryClient } from '@/App'
 import { imgPlaceHolder } from '@/data/data'
+import { useAppData } from '@/data/useAppData'
 import {
   useChangeInventoryItemQuantity,
   useInventory,
@@ -11,11 +12,13 @@ import {
 } from '@/data/useOrders'
 import { OrderStatus } from '@/data/useOrders'
 import { useProductsQuery } from '@/data/useProducts'
+import { useUser } from '@/data/useUser'
 import { getAllConsumptions } from '@/generalHelperFunctions.tsx/consumptionHelper'
+import { Json } from '@/services/supabase.types'
 // import { supabase } from '@/services/supabase'
 import { ShoppingBagIcon } from '@heroicons/react/24/outline'
-import { Loader2Icon, UserRoundIcon } from 'lucide-react'
-import { useState } from 'react'
+import { Loader2Icon, PlayCircleIcon, UserRoundIcon } from 'lucide-react'
+import { useEffect, useState } from 'react'
 
 import { Avatar, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
@@ -28,7 +31,15 @@ import {
 import { useToast } from '@/components/ui/use-toast'
 
 const ReadyForPickup = () => {
+  // States
   const [clickedButton, setClickedButton] = useState('finished')
+
+  // States for audio
+  const [isLoading, setIsLoading] = useState(false)
+  const { access_token } = useUser()
+  const [ip, setIp] = useState('')
+  const [port, setPort] = useState('')
+  const [voice, setVoice] = useState('nova')
 
   // Mini Functions
   const { toast } = useToast()
@@ -40,6 +51,7 @@ const ReadyForPickup = () => {
     ascending: true,
   })
   const { data: inventory } = useInventory()
+  const { data: appData } = useAppData()
 
   // Mutations
   const { mutate: changeStatus, isPending } = useChageOrderStatusMutationV2()
@@ -77,6 +89,54 @@ const ReadyForPickup = () => {
       },
     )
   }
+
+  // Send Audio
+  const handleSendText = async (order_number: string) => {
+    const inputValue =
+      'Die Bestellnummer ' + order_number + ' kann abgeholt werden!'
+    setIsLoading(true) // Start loading
+    const requestURL = `http://${ip}:${port}/text-to-speech`
+    try {
+      const response = await fetch(requestURL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${access_token}`,
+        },
+        body: JSON.stringify({ text: inputValue, voice: voice }),
+      })
+
+      if (response.ok) {
+        const data = (await response.json()) as Json
+        toast({ title: (data as { message: string }).message, duration: 2000 })
+        setIsLoading(false)
+      } else {
+        toast({ title: 'Connection failed ❌', duration: 2000 })
+      }
+      setIsLoading(false)
+    } catch (error) {
+      toast({ title: 'Connection failed ❌', duration: 2000 })
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  // Use Effect
+  useEffect(() => {
+    const serverIpData = appData?.find((item) => item.key === 'server_ip')
+    const serverPortData = appData?.find((item) => item.key === 'server_port')
+    const defaultVoice = appData?.find((item) => item.key === 'voice')
+
+    if (serverIpData) {
+      setIp(serverIpData.value)
+    }
+    if (serverPortData) {
+      setPort(serverPortData.value)
+    }
+    if (defaultVoice) {
+      setVoice(defaultVoice.value)
+    }
+  }, [appData])
 
   return (
     <>
@@ -170,6 +230,24 @@ const ReadyForPickup = () => {
                     <Loader2Icon className="h-8 w-8 animate-spin" />
                   ) : (
                     'In Bearbeitung'
+                  )}
+                </Button>
+
+                <Button
+                  className="m-1 w-40"
+                  variant={'default'}
+                  tabIndex={-1}
+                  onClick={async () => {
+                    await handleSendText(order.order_number)
+                  }}
+                >
+                  {isLoading ? (
+                    <Loader2Icon className="h-7 w-7 animate-spin" />
+                  ) : (
+                    <>
+                      <PlayCircleIcon />
+                      <Label className="ml-1 cursor-pointer">Play</Label>
+                    </>
                   )}
                 </Button>
               </PopoverContent>

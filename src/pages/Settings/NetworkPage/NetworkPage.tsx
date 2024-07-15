@@ -108,16 +108,18 @@ const NetworkPage = () => {
               className="mt-1"
               placeholder="Enter Port"
             />
-            <Button onClick={updateNetwork} className="mt-4">
-              Update Network
-            </Button>
-            <Button onClick={testConnection} className="mt-4">
-              {isLoading ? (
-                <Loader2Icon className="animate-spin" />
-              ) : (
-                'Test Connection'
-              )}
-            </Button>
+            <div className="flex justify-evenly">
+              <Button onClick={updateNetwork} className="mt-4">
+                Update Network
+              </Button>
+              <Button onClick={testConnection} className="mt-4">
+                {isLoading ? (
+                  <Loader2Icon className="animate-spin" />
+                ) : (
+                  'Test Connection'
+                )}
+              </Button>
+            </div>
           </div>
         </div>
       </div>

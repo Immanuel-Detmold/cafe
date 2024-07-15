@@ -4,6 +4,7 @@ import TestComponent from './TestComponent'
 import { Navigation } from './components/Navigation'
 import AllProducts from './pages/AllProducts/AllProducts'
 import CreateProductV2 from './pages/AllProducts/CreateProduct/CreateProductV2'
+import AudioPage from './pages/AudioPage/AudioPage'
 import ForgotPassword from './pages/Authentication/ForgotPassword'
 import LoginPw from './pages/Authentication/LoginPw'
 import { Me } from './pages/Authentication/Me'
@@ -78,6 +79,10 @@ export const router = createBrowserRouter(
         {
           path: 'settings',
           element: <SettingsPage />,
+        },
+        {
+          path: 'audio',
+          element: <AudioPage />,
         },
         {
           path: 'settings/manage-users',
