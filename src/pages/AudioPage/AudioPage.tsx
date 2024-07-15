@@ -5,7 +5,7 @@ import { Label } from '@radix-ui/react-label'
 import { InfoIcon, Loader2Icon, PlayCircleIcon } from 'lucide-react'
 import { useEffect, useState } from 'react'
 
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
+import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import {
