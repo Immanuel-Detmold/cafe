@@ -2,9 +2,18 @@ To do:
 - language
 - navbar for PC
 - Bar Chart - Tortendiagram
-- create/edit product. Dateigröße besser anzeigen
 - edge functions for manage users
+- navbar android, sidebar im quer modus anpassen
+
 
 Later:
 - Was ist mit Bezahlung? In der App möglich machen?
 - Drucken
+
+
+Berechtigungen:
+Statistik einsehen kann Manager und Admin
+Gesamte Statistik (Datum Auswählen, Gesamt Jahr/Monat) kann nur Admin
+Admin & Manager können Proukte hinzufügen oder editieren
+
+Settings: Manager können nutzer anlegen

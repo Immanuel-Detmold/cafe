@@ -2,25 +2,18 @@ import { imgPlaceHolder } from '@/data/data'
 import { type Product } from '@/data/useProducts'
 import { centsToEuro } from '@/generalHelperFunctions.tsx/currencyHelperFunction'
 import { Label } from '@radix-ui/react-label'
-import { useNavigate } from 'react-router-dom'
 
 import { Card } from '@/components/ui/card'
 
 import { AspectRatio } from './ui/aspect-ratio'
 
 const Product = ({ product }: { product: Product }) => {
-  const navigate = useNavigate()
   const imgUrl =
     product.images && product.images.length > 0
       ? product.images[0]
       : imgPlaceHolder
   return (
-    <div
-      className="h-full cursor-pointer"
-      onClick={() => {
-        navigate('/admin/all-products/' + product.id)
-      }}
-    >
+    <div className="h-full">
       <Card className="h-full overflow-clip p-1">
         {/* Under Picture */}
         <div className="relative flex h-full flex-col p-1 sm:p-2">

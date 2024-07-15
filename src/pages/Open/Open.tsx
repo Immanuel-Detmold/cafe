@@ -17,7 +17,7 @@ import { ClipboardDocumentListIcon } from '@heroicons/react/24/outline'
 import {
   ChatBubbleBottomCenterTextIcon,
   ShoppingBagIcon,
-} from '@heroicons/react/24/outline'
+} from '@heroicons/react/24/solid'
 import { UserIcon } from '@heroicons/react/24/solid'
 import { Avatar, AvatarImage } from '@radix-ui/react-avatar'
 import { Label } from '@radix-ui/react-label'
@@ -314,7 +314,7 @@ const Open = ({
                         <Loader2Icon className="animate-spin" />
                       ) : (
                         <ShoppingBagIcon
-                          className={`h-6 ${orderItem.finished ? 'text-emerald-600' : ''}`}
+                          className={`h-6 ${order.status === 'processing' && orderItem.finished !== true ? 'text-amber-600' : orderItem.finished ? 'text-emerald-600' : ''}`}
                           onClick={() => handleOrderItemStatus(orderItem)}
                         />
                       )}

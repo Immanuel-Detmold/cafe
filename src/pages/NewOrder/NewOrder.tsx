@@ -166,16 +166,6 @@ const NewOrder = () => {
     }
   }, [products])
 
-  // Grouped Products by Category
-  // const groupedProducts = products?.reduce((groupMap, product) => {
-  //   const key = product.category || 'Other'
-  //   const group = groupMap[key] ?? []
-  //   return {
-  //     ...groupMap,
-  //     [key]: [...group, product],
-  //   }
-  // }, {} as GroupedProducts)
-
   // Grouped Products by Category (for search term and filter)
   const groupedProducts_filtered = products_filtered?.reduce(
     (groupMap, product) => {
@@ -302,7 +292,7 @@ const NewOrder = () => {
 
           const order_id = order[0]?.id
           if (order_id) {
-            handleSaveOrderItems(order_id)
+            handleSaveOrderItems(order_id, orderNumber)
           }
         },
         onError: () => {
@@ -337,7 +327,7 @@ const NewOrder = () => {
     sessionStorage.setItem('paymentMethod', 'cash')
   }
 
-  const handleSaveOrderItems = (order_id: number) => {
+  const handleSaveOrderItems = (order_id: number, orderNumber: string) => {
     // Map to get Product name and Price, because OrderItems only have product_id and price could change
     const orderItems = dataOrderItems.map((item) => {
       return {
@@ -357,8 +347,8 @@ const NewOrder = () => {
     saveOrderItems(orderItems, {
       onSuccess: () => {
         toast({
-          title: 'Bestellung wurde gespeichert! ✅',
-          duration: 500,
+          title: 'Bestellnummer: ' + orderNumber + '! ✅',
+          duration: 2000,
         })
       },
       onError: () => {
@@ -437,11 +427,11 @@ const NewOrder = () => {
       </div>
 
       {/* Category and Product */}
-      <div className="mt-2">
+      <div className="">
         {groupedProducts_filtered &&
           Object.entries(groupedProducts_filtered).map(
             ([category, products]) => (
-              <div key={category} className="">
+              <div key={category} className="mt-4">
                 <h2 className="w-full font-bold">{category}</h2>
                 {/* Iterate over each product in the current category */}
                 <ProductsInCategory

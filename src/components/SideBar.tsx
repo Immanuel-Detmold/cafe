@@ -12,6 +12,7 @@ import {
   MonitorUpIcon,
   SettingsIcon,
   User2Icon,
+  Utensils,
   WarehouseIcon,
 } from 'lucide-react'
 import { useEffect, useState } from 'react'
@@ -148,6 +149,22 @@ const SideBar = () => {
             <div className="flex cursor-pointer">
               <WarehouseIcon />
               <Label className="ml-1 cursor-pointer">Inventar</Label>
+            </div>
+          </NavLink>
+
+          {/* Menu Card */}
+          <NavLink
+            to="/menu"
+            className={({ isActive }) =>
+              isActive ? 'rounded-md bg-secondary p-2' : 'p-2'
+            }
+            onClick={() => {
+              setSheetOpen(false)
+            }}
+          >
+            <div className="flex cursor-pointer">
+              <Utensils />
+              <Label className="ml-1 cursor-pointer">Menükarte</Label>
             </div>
           </NavLink>
 
