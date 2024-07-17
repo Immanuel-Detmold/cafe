@@ -32,7 +32,7 @@ const InProcessPage = () => {
           {/* Numbers */}
           <div className="max-h-[770px] overflow-hidden">
             {openOrders &&
-              openOrders.map((order, index) => (
+              [...openOrders].reverse().map((order, index) => (
                 <div key={order.id} className="relative h-[96px]">
                   {/* Order Number & Diamond */}
                   <div
