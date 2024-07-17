@@ -4,6 +4,7 @@ import TestComponent from './TestComponent'
 import { Navigation } from './components/Navigation'
 import AllProducts from './pages/AllProducts/AllProducts'
 import CreateProductV2 from './pages/AllProducts/CreateProduct/CreateProductV2'
+import AudioPage from './pages/AudioPage/AudioPage'
 import ForgotPassword from './pages/Authentication/ForgotPassword'
 import LoginPw from './pages/Authentication/LoginPw'
 import { Me } from './pages/Authentication/Me'
@@ -18,6 +19,7 @@ import Open from './pages/Open/Open'
 import ReadyForPickup from './pages/ReadyForPickup/ReadyForPickup'
 import ManageUsers from './pages/Settings/ManageUsers/ManageUsers'
 import UserInfo from './pages/Settings/ManageUsers/UserInfo'
+import NetworkPage from './pages/Settings/NetworkPage/NetworkPage'
 import SettingsPage from './pages/Settings/SettingsPage'
 import UserActions from './pages/Settings/UserActions/UserActions'
 import OrdersPDF from './pages/Statistic/GeneratePDF/OrdersPDF'
@@ -79,6 +81,10 @@ export const router = createBrowserRouter(
           element: <SettingsPage />,
         },
         {
+          path: 'audio',
+          element: <AudioPage />,
+        },
+        {
           path: 'settings/manage-users',
           element: <ManageUsers />,
         },
@@ -89,6 +95,10 @@ export const router = createBrowserRouter(
         {
           path: 'settings/user-actions',
           element: <UserActions />,
+        },
+        {
+          path: 'settings/network',
+          element: <NetworkPage />,
         },
         {
           path: 'login',

@@ -1,6 +1,11 @@
 import { useUser } from '@/data/useUser'
 import { Label } from '@radix-ui/react-label'
-import { ChevronRightIcon, HistoryIcon, UserRoundIcon } from 'lucide-react'
+import {
+  ChevronRightIcon,
+  HistoryIcon,
+  NetworkIcon,
+  UserRoundIcon,
+} from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
@@ -68,6 +73,21 @@ const SettingsPage = () => {
               <ChevronRightIcon className="" />
             </Button>
           )}
+
+          {/* Network */}
+
+          <Button
+            className="flex justify-between"
+            onClick={() => {
+              navigate('/admin/settings/network')
+            }}
+          >
+            <div className="flex items-center">
+              <NetworkIcon />{' '}
+              <Label className="ml-1 cursor-pointer">Netzwerk</Label>
+            </div>
+            <ChevronRightIcon className="" />
+          </Button>
         </div>
       </div>
     </>

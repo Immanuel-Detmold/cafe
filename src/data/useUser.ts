@@ -23,5 +23,9 @@ export const useUser = () => {
     subscribeToAuthChanges,
     () => session,
   )
-  return { user: sessionData?.user, session: sessionData }
+  return {
+    user: sessionData?.user,
+    session: sessionData,
+    access_token: sessionData?.access_token,
+  }
 }

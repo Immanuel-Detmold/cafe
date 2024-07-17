@@ -22,15 +22,13 @@ const LoginPw = () => {
 
   const onSubmit: SubmitHandler<FormFields> = async (data) => {
     try {
-      const { data: authData, error: authError } = await loginWithPW({
+      const { error: authError } = await loginWithPW({
         email: data.email,
         password: data.password,
       })
       if (authError) {
-        console.error('Auth Error: ', authError)
         setError('root', { message: 'Email oder Passwort ist falsch.' })
       } else {
-        console.log('Auth Data: ', authData)
         navigate('/admin/new-order')
       }
     } catch (error) {
