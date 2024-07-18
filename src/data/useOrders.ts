@@ -246,7 +246,7 @@ export const useOrdersAndItemsQueryV2 = ({
       }
 
       const formatedData = sortDataOrderItems(data)
-      return formatedData
+      return formatedData.reverse()
     },
   })
 
