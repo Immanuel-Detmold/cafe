@@ -20,6 +20,7 @@ import ReadyForPickup from './pages/ReadyForPickup/ReadyForPickup'
 import ManageUsers from './pages/Settings/ManageUsers/ManageUsers'
 import UserInfo from './pages/Settings/ManageUsers/UserInfo'
 import NetworkPage from './pages/Settings/NetworkPage/NetworkPage'
+import PrinterPage from './pages/Settings/PrinterPage/PrinterPage'
 import SettingsPage from './pages/Settings/SettingsPage'
 import UserActions from './pages/Settings/UserActions/UserActions'
 import OrdersPDF from './pages/Statistic/GeneratePDF/OrdersPDF'
@@ -99,6 +100,10 @@ export const router = createBrowserRouter(
         {
           path: 'settings/network',
           element: <NetworkPage />,
+        },
+        {
+          path: 'settings/printer',
+          element: <PrinterPage />,
         },
         {
           path: 'login',

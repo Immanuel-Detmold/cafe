@@ -75,7 +75,20 @@ const SettingsPage = () => {
           )}
 
           {/* Network */}
+          <Button
+            className="flex justify-between"
+            onClick={() => {
+              navigate('/admin/settings/network')
+            }}
+          >
+            <div className="flex items-center">
+              <NetworkIcon />{' '}
+              <Label className="ml-1 cursor-pointer">Netzwerk</Label>
+            </div>
+            <ChevronRightIcon className="" />
+          </Button>
 
+          {/* Network */}
           <Button
             className="flex justify-between"
             onClick={() => {
