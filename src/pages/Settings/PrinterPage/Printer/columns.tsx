@@ -89,7 +89,7 @@ const Columns = () => {
       },
       cell: ({ row }) => (
         // join category array and print with white spaces in between
-        <span>{(row.original.categories as string[]).join(', ')}</span>
+        <span>{row.original.categories.join(', ')}</span>
       ),
     },
   ]
