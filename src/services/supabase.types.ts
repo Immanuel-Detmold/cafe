@@ -204,6 +204,33 @@ export type Database = {
         }
         Relationships: []
       }
+      Printers: {
+        Row: {
+          categories: string[]
+          created_at: string
+          id: number
+          ip: string
+          name: string
+          port: string
+        }
+        Insert: {
+          categories: string[]
+          created_at?: string
+          id?: number
+          ip: string
+          name: string
+          port: string
+        }
+        Update: {
+          categories?: string[]
+          created_at?: string
+          id?: number
+          ip?: string
+          name?: string
+          port?: string
+        }
+        Relationships: []
+      }
       ProductCategories: {
         Row: {
           category: string

@@ -20,7 +20,8 @@ import ReadyForPickup from './pages/ReadyForPickup/ReadyForPickup'
 import ManageUsers from './pages/Settings/ManageUsers/ManageUsers'
 import UserInfo from './pages/Settings/ManageUsers/UserInfo'
 import NetworkPage from './pages/Settings/NetworkPage/NetworkPage'
-import PrinterPage from './pages/Settings/PrinterPage/PrinterPage'
+import NewPrinter from './pages/Settings/PrinterPage/NewPrinter'
+import PrinterPage from './pages/Settings/PrinterPage/Printer/PrinterPage'
 import SettingsPage from './pages/Settings/SettingsPage'
 import UserActions from './pages/Settings/UserActions/UserActions'
 import OrdersPDF from './pages/Statistic/GeneratePDF/OrdersPDF'
@@ -104,6 +105,14 @@ export const router = createBrowserRouter(
         {
           path: 'settings/printer',
           element: <PrinterPage />,
+        },
+        {
+          path: 'settings/printer/new-printer',
+          element: <NewPrinter />,
+        },
+        {
+          path: 'settings/printer/new-printer/:printerId',
+          element: <NewPrinter />,
         },
         {
           path: 'login',

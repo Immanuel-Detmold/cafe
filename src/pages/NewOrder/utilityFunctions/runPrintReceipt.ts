@@ -1,3 +1,4 @@
+import { Printer } from '@/data/usePrinter'
 import { Json } from '@/services/supabase.types'
 
 type OrderItem = {
@@ -12,6 +13,7 @@ type OrderItem = {
 
 type printProps = {
   access_token: string
+  printers: Printer[] | undefined
   payment_method: string
   ip: string
   port: string
@@ -36,9 +38,11 @@ export const runPrintReceipt = async (props: printProps) => {
     if (response.ok) {
       ;(await response.json()) as Json
       console.log('Server Reached')
-      return 'Server Reached'
+      return 'Server reached'
+    } else {
+      throw 'Keine Verbindung zum Server (Drucker/Audio)'
     }
   } catch (error) {
-    return 'Could not connect to the server'
+    throw 'Keine Verbindung zum Server (Drucker/Audio)'
   }
 }

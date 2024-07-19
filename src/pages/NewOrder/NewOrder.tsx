@@ -6,6 +6,7 @@ import {
   useSaveOrderMutation,
   useSingleOrder,
 } from '@/data/useOrders'
+import { usePrintersQuery } from '@/data/usePrinter'
 import { useProductsQuery } from '@/data/useProducts'
 import { Product } from '@/data/useProducts'
 import { useUser } from '@/data/useUser'
@@ -66,26 +67,26 @@ const NewOrder = () => {
 
   // For Edit Order --- Get OrderId from URL
   const [orderIdEdit, setOrderIdEdit] = useState<string>()
-  const { orderId } = useParams()
-  useEffect(() => {
-    orderId && setOrderIdEdit(orderId)
-  }, [orderId])
   // -------------------------------------
 
+  // Hooks
+  const { orderId } = useParams()
   const { toast } = useToast()
 
+  // Data & Mutate
   const { data: appData } = useAppData()
   const { mutate: updateAppData } = useUpdateAppData()
   const { data: products, error } = useProductsQuery({
     searchTerm: '',
     ascending: true,
   })
-
   const { data: products_filtered } = useProductsQuery({
     searchTerm: searchTerm,
     ascending: true,
     categories: selectedCategories,
   })
+
+  const { data: printers } = usePrintersQuery()
 
   if (error) {
     toast({ title: 'Fehler beim Laden der Produkte! ❌' })
@@ -177,6 +178,10 @@ const NewOrder = () => {
     }
   }, [products])
 
+  useEffect(() => {
+    orderId && setOrderIdEdit(orderId)
+  }, [orderId])
+
   // Grouped Products by Category (for search term and filter)
   const groupedProducts_filtered = products_filtered?.reduce(
     (groupMap, product) => {
@@ -260,7 +265,7 @@ const NewOrder = () => {
   const { mutate: saveOrderItems, isPending: loadingOrderItems } =
     useSaveOrderItemsMutation()
 
-  const handleSumitOrder = async () => {
+  const handleSumitOrder = () => {
     // Save Order to Database
 
     let orderPrice: number = 0
@@ -294,7 +299,8 @@ const NewOrder = () => {
     })
 
     setLoadingPrint(true)
-    await runPrintReceipt({
+    runPrintReceipt({
+      printers: printers,
       payment_method: paymentMethod,
       ip: ip,
       port: port,
@@ -304,8 +310,16 @@ const NewOrder = () => {
       orderNumber,
       orderItems: orderItems,
     })
-    setLoadingPrint(false)
-
+      .then(() => {
+        setLoadingPrint(false)
+      })
+      .catch(() => {
+        setLoadingPrint(false)
+        toast({
+          title: 'Keine Verbindung zum Server (Drucker/Audio)',
+          duration: 2000,
+        })
+      })
     // Create Order Object
     const orderData = {
       customer_name: orderName,
