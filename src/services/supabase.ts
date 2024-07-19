@@ -20,8 +20,8 @@ supabase
       event: '*',
       schema: 'public',
     },
-    (payload) => {
-      console.log('Realtime Payload: ', payload)
+    () => {
+      // console.log('Realtime Payload: ', payload)
       void queryClient.invalidateQueries({ queryKey: ['ordersAndItems'] })
       void queryClient.invalidateQueries({ queryKey: ['appData'] })
     },

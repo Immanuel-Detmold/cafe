@@ -4,6 +4,7 @@ import {
   ChevronRightIcon,
   HistoryIcon,
   NetworkIcon,
+  PrinterIcon,
   UserRoundIcon,
 } from 'lucide-react'
 import { useEffect, useState } from 'react'
@@ -75,19 +76,36 @@ const SettingsPage = () => {
           )}
 
           {/* Network */}
+          {['admin', 'manager'].includes(userRole) && (
+            <Button
+              className="flex justify-between"
+              onClick={() => {
+                navigate('/admin/settings/network')
+              }}
+            >
+              <div className="flex items-center">
+                <NetworkIcon />{' '}
+                <Label className="ml-1 cursor-pointer">Netzwerk</Label>
+              </div>
+              <ChevronRightIcon className="" />
+            </Button>
+          )}
 
-          <Button
-            className="flex justify-between"
-            onClick={() => {
-              navigate('/admin/settings/network')
-            }}
-          >
-            <div className="flex items-center">
-              <NetworkIcon />{' '}
-              <Label className="ml-1 cursor-pointer">Netzwerk</Label>
-            </div>
-            <ChevronRightIcon className="" />
-          </Button>
+          {/* Printer */}
+          {['admin', 'manager'].includes(userRole) && (
+            <Button
+              className="flex justify-between"
+              onClick={() => {
+                navigate('/admin/settings/printer')
+              }}
+            >
+              <div className="flex items-center">
+                <PrinterIcon />{' '}
+                <Label className="ml-1 cursor-pointer">Drucker</Label>
+              </div>
+              <ChevronRightIcon className="" />
+            </Button>
+          )}
         </div>
       </div>
     </>

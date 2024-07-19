@@ -365,7 +365,6 @@ export const useSingleOrder = ({ orderId }: { orderId: string | undefined }) =>
       if (error) {
         throw error
       }
-      console.log(data)
       return data
     },
   })

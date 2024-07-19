@@ -23,6 +23,7 @@ const Header = () => {
     '/admin/inventory': 'Inventar',
     '/admin/inventory/new-item': 'Neues Item',
     '/admin/settings/network': 'Netzwerk',
+    '/admin/settings/printer': 'Drucker',
   }
   const [normalScreen, setNormalScreen] = useState(true)
 

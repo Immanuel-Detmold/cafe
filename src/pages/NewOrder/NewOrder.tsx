@@ -6,12 +6,15 @@ import {
   useSaveOrderMutation,
   useSingleOrder,
 } from '@/data/useOrders'
+import { usePrintersQuery } from '@/data/usePrinter'
 import { useProductsQuery } from '@/data/useProducts'
 import { Product } from '@/data/useProducts'
+import { useUser } from '@/data/useUser'
 import {
   EuroToCents,
   centsToEuro,
 } from '@/generalHelperFunctions.tsx/currencyHelperFunction'
+import { currentDateAndTime } from '@/generalHelperFunctions.tsx/dateHelperFunctions'
 import { ArrowPathIcon } from '@heroicons/react/24/outline'
 import { Label } from '@radix-ui/react-label'
 import { Loader2Icon, ShoppingCart } from 'lucide-react'
@@ -34,6 +37,7 @@ import {
   getProductIds,
   getUniqueCategories,
 } from './utilityFunctions/handleOrder'
+import { runPrintReceipt } from './utilityFunctions/runPrintReceipt'
 
 type GroupedProducts = Record<string, Product[]>
 
@@ -49,6 +53,13 @@ const NewOrder = () => {
   const [orderName, setOrderName] = useState<string>('')
   const [tableNumber, setTableNumber] = useState<string>('')
   const [orderNumber, setOrderNumber] = useState<string>('1')
+  const [printReceipt, setPrintReceipt] = useState<boolean>(true)
+
+  // Print States
+  const { access_token } = useUser()
+  const [ip, setIp] = useState('')
+  const [port, setPort] = useState('')
+  const [loadingPrint, setLoadingPrint] = useState(false)
 
   // Add filter to NewOrder Page
   const [searchTerm, setSearchTerm] = useState('')
@@ -56,26 +67,26 @@ const NewOrder = () => {
 
   // For Edit Order --- Get OrderId from URL
   const [orderIdEdit, setOrderIdEdit] = useState<string>()
-  const { orderId } = useParams()
-  useEffect(() => {
-    orderId && setOrderIdEdit(orderId)
-  }, [orderId])
   // -------------------------------------
 
+  // Hooks
+  const { orderId } = useParams()
   const { toast } = useToast()
 
+  // Data & Mutate
   const { data: appData } = useAppData()
   const { mutate: updateAppData } = useUpdateAppData()
   const { data: products, error } = useProductsQuery({
     searchTerm: '',
     ascending: true,
   })
-
   const { data: products_filtered } = useProductsQuery({
     searchTerm: searchTerm,
     ascending: true,
     categories: selectedCategories,
   })
+
+  const { data: printers } = usePrintersQuery()
 
   if (error) {
     toast({ title: 'Fehler beim Laden der Produkte! ❌' })
@@ -85,6 +96,8 @@ const NewOrder = () => {
   const { data: editData } = useSingleOrder({
     orderId: orderId,
   })
+
+  // Load Data if Edit Order
   useEffect(() => {
     if (editData) {
       editData.comment && setOrderComment(editData.comment)
@@ -119,10 +132,9 @@ const NewOrder = () => {
       setOrderNumber(GetOrderNumber(appData))
     }
   }, [editData, products, orderIdEdit, appData])
-  // -----------
 
+  // Update Order Price
   useEffect(() => {
-    // Update Order Price
     setSumOrderPrice(
       calcOrderPrice({
         dataOrderItems: dataOrderItems,
@@ -165,6 +177,10 @@ const NewOrder = () => {
       setSelectedCategories(JSON.parse(sessionSelectedCategories) as string[])
     }
   }, [products])
+
+  useEffect(() => {
+    orderId && setOrderIdEdit(orderId)
+  }, [orderId])
 
   // Grouped Products by Category (for search term and filter)
   const groupedProducts_filtered = products_filtered?.reduce(
@@ -262,49 +278,90 @@ const NewOrder = () => {
     const uniqueCategories = getUniqueCategories(dataOrderItems, products || [])
     const uniqueProducts = getProductIds(dataOrderItems)
 
-    saveOrder(
-      {
-        customer_name: orderName,
-        comment: orderComment,
-        payment_method: paymentMethod,
-        price: orderPrice,
-        status: 'waiting',
-        categories: uniqueCategories,
-        product_ids: uniqueProducts,
-        table_number: tableNumber,
-        order_number: orderNumber,
-        // id: orderIdEdit ? parseInt(orderIdEdit) : undefined,
-      },
-      {
-        onSuccess: (order) => {
-          // If editOrder is true, then delete it before adding new Order
-          if (orderIdEdit) {
-            deleteOrder(parseInt(orderIdEdit))
-          }
+    const orderItems = dataOrderItems.map((item) => {
+      return {
+        comment: item.comment,
+        order_id: 'unkown',
+        product_id: item.product_id,
+        product_name:
+          products?.find((product) => product.id === item.product_id)?.name ||
+          'unkown',
+        product_price:
+          centsToEuro(
+            products?.find((product) => product.id === item.product_id)
+              ?.price || 0,
+          ) || '0',
+        quantity: item.quantity,
+        category:
+          products?.find((product) => product.id === item.product_id)
+            ?.category || 'unkown',
+      }
+    })
 
-          // Increase Order Number if not edited
-          if (!orderIdEdit) {
-            updateAppData({
-              key: 'order_number',
-              value: orderNumber,
-            })
-          }
+    setLoadingPrint(true)
+    runPrintReceipt({
+      printers: printers,
+      payment_method: paymentMethod,
+      ip: ip,
+      port: port,
+      access_token: access_token ?? '',
+      sumPriceOrder: centsToEuro(orderPrice),
+      time: currentDateAndTime(),
+      orderNumber,
+      orderItems: orderItems,
+    })
+      .then(() => {
+        setLoadingPrint(false)
+      })
+      .catch(() => {
+        setLoadingPrint(false)
+        toast({
+          title: 'Keine Verbindung zum Server (Drucker/Audio)',
+          duration: 2000,
+        })
+      })
+    // Create Order Object
+    const orderData = {
+      customer_name: orderName,
+      comment: orderComment,
+      payment_method: paymentMethod,
+      price: orderPrice,
+      status: 'waiting' as const,
+      categories: uniqueCategories,
+      product_ids: uniqueProducts,
+      table_number: tableNumber,
+      order_number: orderNumber,
+    }
 
-          const order_id = order[0]?.id
-          if (order_id) {
-            handleSaveOrderItems(order_id, orderNumber)
-          }
-        },
-        onError: () => {
-          // To DO! If Order Saved, but Failed to save OrderItmes, then Delete Order
-          // const { mutate: deleteOrder } = useDeleteOrderMutation()
-          // deleteOrder()
-          toast({
-            title: 'Bestellung konnte nicht gespeichert werden! ❌',
+    saveOrder(orderData, {
+      onSuccess: (order) => {
+        // If editOrder is true, then delete it before adding new Order
+        if (orderIdEdit) {
+          deleteOrder(parseInt(orderIdEdit))
+        }
+
+        // Increase Order Number if not edited
+        if (!orderIdEdit) {
+          updateAppData({
+            key: 'order_number',
+            value: orderNumber,
           })
-        },
+        }
+
+        const order_id = order[0]?.id
+        if (order_id) {
+          handleSaveOrderItems(order_id, orderNumber)
+        }
       },
-    )
+      onError: () => {
+        // To DO! If Order Saved, but Failed to save OrderItmes, then Delete Order
+        // const { mutate: deleteOrder } = useDeleteOrderMutation()
+        // deleteOrder()
+        toast({
+          title: 'Bestellung konnte nicht gespeichert werden! ❌',
+        })
+      },
+    })
 
     handleResetOrder()
   }
@@ -408,6 +465,26 @@ const NewOrder = () => {
       }
     }
   }
+
+  // Load AppData for IP and Port
+  useEffect(() => {
+    const serverIpData = appData?.find((item) => item.key === 'server_ip')
+    const serverPortData = appData?.find((item) => item.key === 'server_port')
+    const print_on = appData?.find((item) => item.key === 'print_mode')
+    if (serverIpData) {
+      setIp(serverIpData.value)
+    }
+    if (serverPortData) {
+      setPort(serverPortData.value)
+    }
+    if (print_on) {
+      if (print_on.value === 'true') {
+        setPrintReceipt(true)
+      } else {
+        setPrintReceipt(false)
+      }
+    }
+  }, [appData])
 
   return (
     <div className="select-none">
@@ -518,8 +595,21 @@ const NewOrder = () => {
           />
         </div>
 
-        {/* Custom Price */}
+        {/* Printing Receipt */}
+        <div className="mt-4 flex items-center space-x-2">
+          <Switch
+            id="print-receipt"
+            checked={printReceipt}
+            onCheckedChange={() => {
+              setPrintReceipt(!printReceipt)
+            }}
+          />
+          <Label htmlFor="airplane-mode" className="font-bold">
+            Kassenbon drucken
+          </Label>
+        </div>
 
+        {/* Custom Price */}
         <div className="mt-2 flex items-center space-x-2">
           <Switch
             id="airplane-mode"
@@ -554,13 +644,14 @@ const NewOrder = () => {
           </div>
         )}
 
+        {/* Send & Reset Button */}
         <div className="flex justify-between">
           <Button
             className="mb-4 mt-2 w-min bg-amber-600"
             disabled={dataOrderItems.length === 0}
             onClick={handleSumitOrder}
           >
-            {loadingOrder || loadingOrderItems ? (
+            {loadingOrder || loadingOrderItems || loadingPrint ? (
               <Loader2Icon className="h-8 w-8 animate-spin" />
             ) : (
               'Absenden'

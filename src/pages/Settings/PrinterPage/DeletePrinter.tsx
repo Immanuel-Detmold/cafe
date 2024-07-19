@@ -1,5 +1,4 @@
-import { queryClient } from '@/App'
-import { Product, useDeleteProductMutation } from '@/data/useProducts'
+import { useDeletePrinterMutation } from '@/data/usePrinter'
 import { TrashIcon } from '@heroicons/react/24/outline'
 import { Loader2Icon } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
@@ -18,27 +17,23 @@ import {
 import { Button } from '@/components/ui/button'
 import { useToast } from '@/components/ui/use-toast'
 
-const DeleteProduct = ({ product }: { product: Product }) => {
-  const { mutate: deleteProductMutation, isPending } =
-    useDeleteProductMutation()
+const DeletePrinter = ({ printerId }: { printerId: string }) => {
+  const { mutate: markPrinterAsDeletedMutation, isPending } =
+    useDeletePrinterMutation()
   const { toast } = useToast()
   const navigate = useNavigate()
 
   const handleDelete = () => {
-    deleteProductMutation(product, {
+    markPrinterAsDeletedMutation(printerId, {
       onSuccess: () => {
-        void queryClient.invalidateQueries({
-          queryKey: ['products'],
-        })
-        toast({ title: 'Produkt erfolgreich gelöscht! ✅' })
-        navigate('/admin/all-products')
+        toast({ title: 'Drucker gelöscht! ✅', duration: 2000 })
+        navigate('/admin/settings/printer')
       },
-      onError: (error) => {
+      onError: () => {
         toast({
-          title: 'Produkt konnte nicht gelöscht werden! ❌',
-          description: 'Produkt befindet sich womöglich in einer Bestellung.',
+          title: 'Drucker konnte nicht gelöscht werden! ❌',
+          duration: 2000,
         })
-        console.error('Failed to delete product:', error)
       },
     })
   }
@@ -53,15 +48,19 @@ const DeleteProduct = ({ product }: { product: Product }) => {
             tabIndex={-1}
             disabled={isPending}
           >
-            <TrashIcon className="mr-1 h-6 w-6" />
-            {isPending ? <Loader2Icon className="animate-spin" /> : 'Löschen'}
+            <TrashIcon className="ml-r h-6 w-6" />
+            {isPending ? (
+              <Loader2Icon className="h-8 w-8 animate-spin" />
+            ) : (
+              'Löschen'
+            )}
           </Button>
         </div>
       </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>
-            Möchtest du das Produkt wirklich löschen?
+            Möchtest du den Drucker wirklich löschen?
           </AlertDialogTitle>
           <AlertDialogDescription>
             Diese Aktion kann nicht rückgängig gemacht werden.
@@ -85,4 +84,4 @@ const DeleteProduct = ({ product }: { product: Product }) => {
   )
 }
 
-export default DeleteProduct
+export default DeletePrinter
