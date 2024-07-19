@@ -5,7 +5,7 @@ import {
 } from '@/data/usePrinter'
 import { useProductCategories } from '@/data/useProductCategories'
 import { Label } from '@radix-ui/react-label'
-import { ChevronLeftIcon, InfoIcon } from 'lucide-react'
+import { ChevronLeftIcon, InfoIcon, SaveIcon } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 
@@ -192,7 +192,8 @@ const NewPrinter = () => {
           <div className="flex justify-end">
             {printerId && <DeletePrinter printerId={printerId} />}
             <Button onClick={handleSavePrinter} className="ml-2">
-              Drucker speichern
+              <SaveIcon className="mr-1 cursor-pointer" />
+              Speichern
             </Button>
           </div>
         </div>

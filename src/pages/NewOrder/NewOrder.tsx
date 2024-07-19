@@ -470,11 +470,19 @@ const NewOrder = () => {
   useEffect(() => {
     const serverIpData = appData?.find((item) => item.key === 'server_ip')
     const serverPortData = appData?.find((item) => item.key === 'server_port')
+    const print_on = appData?.find((item) => item.key === 'print_mode')
     if (serverIpData) {
       setIp(serverIpData.value)
     }
     if (serverPortData) {
       setPort(serverPortData.value)
+    }
+    if (print_on) {
+      if (print_on.value === 'true') {
+        setPrintReceipt(true)
+      } else {
+        setPrintReceipt(false)
+      }
     }
   }, [appData])
 

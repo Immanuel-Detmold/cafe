@@ -43,9 +43,9 @@ export default function UserActions() {
         />
       )}
 
-      <div className="flex items-center">
+      <div className="flex items-center justify-between">
         <Button
-          className="ml-auto"
+          className=""
           onClick={() => {
             navigate('/admin/new-order')
           }}

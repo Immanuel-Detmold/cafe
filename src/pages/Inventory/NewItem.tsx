@@ -301,12 +301,12 @@ const NewItem = () => {
             className="ml-2"
           >
             <div className="flex items-center">
+              <SaveIcon className="mr-1" />
               {mutationInventory.isPending ? (
                 <Loader2Icon className="h-8 w-8 animate-spin" />
               ) : (
                 'Speichern'
               )}{' '}
-              <SaveIcon className="ml-1" />
             </div>
           </Button>
         </div>

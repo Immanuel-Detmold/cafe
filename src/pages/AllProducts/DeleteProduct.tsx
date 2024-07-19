@@ -53,8 +53,8 @@ const DeleteProduct = ({ product }: { product: Product }) => {
             tabIndex={-1}
             disabled={isPending}
           >
+            <TrashIcon className="mr-1 h-6 w-6" />
             {isPending ? <Loader2Icon className="animate-spin" /> : 'Löschen'}
-            <TrashIcon className="ml-1 h-5 w-5" />
           </Button>
         </div>
       </AlertDialogTrigger>
