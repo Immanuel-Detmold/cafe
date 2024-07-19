@@ -88,7 +88,7 @@ const NetworkPage = () => {
         <div className="w-full max-w-xl">
           <div className="mt-2 flex flex-col">
             <label htmlFor="ip" className="font-bold">
-              IP Address
+              Server IP Adresse
             </label>
             <Input
               id="ip"
@@ -99,7 +99,7 @@ const NetworkPage = () => {
             />
 
             <label htmlFor="port" className="mt-4 font-bold">
-              Port
+              Server Port
             </label>
             <Input
               id="port"
@@ -110,13 +110,13 @@ const NetworkPage = () => {
             />
             <div className="flex justify-evenly">
               <Button onClick={updateNetwork} className="mt-4">
-                Update Network
+                Aktualisieren
               </Button>
               <Button onClick={testConnection} className="mt-4">
                 {isLoading ? (
                   <Loader2Icon className="animate-spin" />
                 ) : (
-                  'Test Connection'
+                  'Verbindungstest'
                 )}
               </Button>
             </div>
