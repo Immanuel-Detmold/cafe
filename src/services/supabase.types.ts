@@ -204,6 +204,33 @@ export type Database = {
         }
         Relationships: []
       }
+      Printers: {
+        Row: {
+          categories: string[]
+          created_at: string
+          id: number
+          ip: string
+          name: string
+          port: string
+        }
+        Insert: {
+          categories: string[]
+          created_at?: string
+          id?: number
+          ip: string
+          name: string
+          port: string
+        }
+        Update: {
+          categories?: string[]
+          created_at?: string
+          id?: number
+          ip?: string
+          name?: string
+          port?: string
+        }
+        Relationships: []
+      }
       ProductCategories: {
         Row: {
           category: string
@@ -228,6 +255,7 @@ export type Database = {
           consumption: Json[] | null
           created_at: string
           deleted: boolean | null
+          description: string | null
           id: number
           image: string | null
           images: string[] | null
@@ -243,6 +271,7 @@ export type Database = {
           consumption?: Json[] | null
           created_at?: string
           deleted?: boolean | null
+          description?: string | null
           id?: number
           image?: string | null
           images?: string[] | null
@@ -258,6 +287,7 @@ export type Database = {
           consumption?: Json[] | null
           created_at?: string
           deleted?: boolean | null
+          description?: string | null
           id?: number
           image?: string | null
           images?: string[] | null

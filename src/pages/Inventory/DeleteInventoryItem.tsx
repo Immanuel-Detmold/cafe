@@ -50,12 +50,12 @@ const DeleteInventoryItem = ({ item }: { item: Inventory }) => {
             tabIndex={-1}
             disabled={isPending}
           >
+            <TrashIcon className="mr-1 h-6 w-6" />
             {isPending ? (
               <Loader2Icon className="h-8 w-8 animate-spin" />
             ) : (
               'Löschen'
             )}
-            <TrashIcon className="ml-1 h-5 w-5" />
           </Button>
         </div>
       </AlertDialogTrigger>

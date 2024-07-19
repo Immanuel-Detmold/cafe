@@ -62,6 +62,7 @@ const CreateProductV2 = () => {
   const [productDetails, setProductDetails] = useState<ProductDetails>(
     initialProductDetails,
   )
+  const [description, setDescription] = useState<string>('')
   const [shortDescription, setShortDescription] = useState<string>('')
 
   // User State
@@ -171,6 +172,7 @@ const CreateProductV2 = () => {
       product_details: FilteredProductDetails,
       consumption: FilteredConsumption,
       short_description: shortDescription,
+      description: description,
     }
 
     // New Product
@@ -281,6 +283,7 @@ const CreateProductV2 = () => {
           product_details,
           consumption,
           short_description,
+          description,
         } = productData.data
         setName(name)
         setPrice(centsToEuro(price))
@@ -296,6 +299,9 @@ const CreateProductV2 = () => {
         }
         if (short_description) {
           setShortDescription(short_description)
+        }
+        if (description) {
+          setDescription(description)
         }
       }
     }
@@ -391,10 +397,22 @@ const CreateProductV2 = () => {
             <Textarea
               tabIndex={-1}
               className="mt-1 w-full"
-              placeholder="Produktbeschreibung (optional)"
+              placeholder="Kurze Produktbeschreibung (optional)"
               value={shortDescription}
               onChange={(e) => {
                 setShortDescription(e.target.value)
+              }}
+            ></Textarea>
+
+            {/* Description */}
+            <Label className="mt-4 w-full font-bold">Produktbeschreibung</Label>
+            <Textarea
+              tabIndex={-1}
+              className="mt-1 w-full"
+              placeholder="Produktbeschreibung (optional)"
+              value={description}
+              onChange={(e) => {
+                setDescription(e.target.value)
               }}
             ></Textarea>
 
@@ -441,7 +459,8 @@ const CreateProductV2 = () => {
                   'Loading...'
                 ) : (
                   <div className="flex items-center justify-center">
-                    Speichern <SaveIcon className="ml-1" />
+                    <SaveIcon className="mr-1" />
+                    Speichern
                   </div>
                 )}
               </Button>

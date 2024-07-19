@@ -1,8 +1,9 @@
 import { useAppData, useUpdateAppData } from '@/data/useAppData'
 import { useUser } from '@/data/useUser'
 import { Json } from '@/services/supabase.types'
-import { Loader2Icon } from 'lucide-react'
+import { ChevronLeftIcon, Loader2Icon } from 'lucide-react'
 import { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -17,6 +18,7 @@ const NetworkPage = () => {
 
   // Mini Functions
   const { toast } = useToast()
+  const navigate = useNavigate()
 
   // Data
   const { data: appData } = useAppData()
@@ -97,7 +99,6 @@ const NetworkPage = () => {
               className="mt-1"
               placeholder="Enter IP Address"
             />
-
             <label htmlFor="port" className="mt-4 font-bold">
               Server Port
             </label>
@@ -108,17 +109,27 @@ const NetworkPage = () => {
               className="mt-1"
               placeholder="Enter Port"
             />
-            <div className="flex justify-evenly">
-              <Button onClick={updateNetwork} className="mt-4">
-                Aktualisieren
+            <div className="flex">
+              <Button
+                className="mt-4"
+                onClick={() => {
+                  navigate('/admin/settings')
+                }}
+              >
+                <ChevronLeftIcon className="cursor-pointer" />
               </Button>
-              <Button onClick={testConnection} className="mt-4">
-                {isLoading ? (
-                  <Loader2Icon className="animate-spin" />
-                ) : (
-                  'Verbindungstest'
-                )}
-              </Button>
+              <div className="flex w-full flex-wrap justify-evenly">
+                <Button onClick={updateNetwork} className="mt-4">
+                  Aktualisiere Netzwerk
+                </Button>
+                <Button onClick={testConnection} className="mt-4">
+                  {isLoading ? (
+                    <Loader2Icon className="animate-spin" />
+                  ) : (
+                    'Verbindungstest'
+                  )}
+                </Button>
+              </div>
             </div>
           </div>
         </div>
