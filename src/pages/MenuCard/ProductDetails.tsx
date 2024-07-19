@@ -53,7 +53,7 @@ const ProductDetails = ({ product }: { product: Product }) => {
           {product.name}
         </h1>
         <p className="cinzel-decorative-regular mt-2 w-full text-left text-sm text-gray-500">
-          {product.short_description}
+          {product.description}
         </p>
         <p className="cinzel-decorative-regular w-full text-left text-sm text-gray-500">
           {centsToEuro(product.price)} €
