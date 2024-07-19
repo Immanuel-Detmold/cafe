@@ -66,15 +66,15 @@ const MenuCard = () => {
 
                         {/* Text Block */}
                         <div className="ml-2 mt-1 w-full">
-                          <div className="flex w-full justify-between">
+                          <div className="relative flex w-full justify-between">
                             <h3 className="cinzel-decorative-regular text-left text-lg">
                               {product.name}
                             </h3>
-                            <p className="cinzel-decorative-regular mr-2 text-left text-sm text-gray-500">
+                            <p className="cinzel-decorative-regular mr-2 min-w-fit text-left text-sm text-gray-500">
                               {centsToEuro(product.price)} €
                             </p>
                           </div>
-                          <p className="merriweather-regular mt-1 text-left text-sm text-gray-500">
+                          <p className="merriweather-regular mt-1 text-left text-sm text-gray-500 ">
                             {product.short_description}
                           </p>
                         </div>
