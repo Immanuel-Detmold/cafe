@@ -215,7 +215,7 @@ const StatisticPage = () => {
             <div className="col-span-2 mt-2 w-full">
               {
                 <DatePicker
-                  distinctDates={distinctOrders}
+                  distinctDates={distinctOrders.reverse()}
                   selectedDate={selectedDate || ''}
                   setSelectedDate={setSelectedDate}
                 />

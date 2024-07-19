@@ -50,13 +50,13 @@ const MenuCard = () => {
             {/* Products */}
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
               {products.map((product) => (
-                <div key={product.id} className="rounded-md border shadow-md">
+                <div key={product.id} className="">
                   <Dialog>
                     <DialogTrigger className="w-full rounded-lg">
                       {/* Single card */}
-                      <div className="flex min-h-20">
+                      <div className="flex min-h-20 rounded-md border">
                         {/* Image block */}
-                        <div className="flex min-h-20 min-w-20 items-center">
+                        <div className="flex min-h-20 min-w-20">
                           <img
                             className="mx-auto aspect-square h-full max-h-20 rounded-l-md object-cover"
                             src={product.images?.[0] ?? imgPlaceHolder}
@@ -65,15 +65,17 @@ const MenuCard = () => {
                         </div>
 
                         {/* Text Block */}
-                        <div className="ml-2 mt-1">
-                          <h3 className="cinzel-decorative-regular text-left text-lg">
-                            {product.name}
-                          </h3>
-                          <p className="cinzel-decorative-regular text-left text-sm text-gray-500">
+                        <div className="ml-2 mt-1 w-full">
+                          <div className="flex w-full justify-between">
+                            <h3 className="cinzel-decorative-regular text-left text-lg">
+                              {product.name}
+                            </h3>
+                            <p className="cinzel-decorative-regular mr-2 text-left text-sm text-gray-500">
+                              {centsToEuro(product.price)} €
+                            </p>
+                          </div>
+                          <p className="merriweather-regular mt-1 text-left text-sm text-gray-500">
                             {product.short_description}
-                          </p>
-                          <p className="cinzel-decorative-regular text-left text-sm text-gray-500">
-                            {centsToEuro(product.price)} €
                           </p>
                         </div>
                       </div>

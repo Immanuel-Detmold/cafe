@@ -52,7 +52,7 @@ const ProductDetails = ({ product }: { product: Product }) => {
         <h1 className="cinzel-decorative-regular mt-2 w-full text-2xl">
           {product.name}
         </h1>
-        <p className="cinzel-decorative-regular mt-2 w-full text-left text-sm text-gray-500">
+        <p className="merriweather-regular mb-1 mt-2 w-full text-left text-sm text-gray-500">
           {product.description}
         </p>
         <p className="cinzel-decorative-regular w-full text-left text-sm text-gray-500">

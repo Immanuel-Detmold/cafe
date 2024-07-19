@@ -298,28 +298,34 @@ const NewOrder = () => {
       }
     })
 
-    setLoadingPrint(true)
-    runPrintReceipt({
-      printers: printers,
-      payment_method: paymentMethod,
-      ip: ip,
-      port: port,
-      access_token: access_token ?? '',
-      sumPriceOrder: centsToEuro(orderPrice),
-      time: currentDateAndTime(),
-      orderNumber,
-      orderItems: orderItems,
-    })
-      .then(() => {
-        setLoadingPrint(false)
-      })
-      .catch(() => {
-        setLoadingPrint(false)
-        toast({
-          title: 'Keine Verbindung zum Server (Drucker/Audio)',
-          duration: 2000,
+    // Print only if Switch is ON
+    {
+      printReceipt && setLoadingPrint(true)
+    }
+    {
+      printReceipt &&
+        runPrintReceipt({
+          printers: printers,
+          payment_method: paymentMethod,
+          ip: ip,
+          port: port,
+          access_token: access_token ?? '',
+          sumPriceOrder: centsToEuro(orderPrice),
+          time: currentDateAndTime(),
+          orderNumber,
+          orderItems: orderItems,
         })
-      })
+          .then(() => {
+            setLoadingPrint(false)
+          })
+          .catch(() => {
+            setLoadingPrint(false)
+            toast({
+              title: 'Keine Verbindung zum Server (Drucker/Audio)',
+              duration: 2000,
+            })
+          })
+    }
     // Create Order Object
     const orderData = {
       customer_name: orderName,
