@@ -12,7 +12,7 @@ import {
   centsToEuro,
 } from '@/generalHelperFunctions.tsx/currencyHelperFunction'
 import { Label } from '@radix-ui/react-label'
-import { ChevronLeftIcon, SaveIcon } from 'lucide-react'
+import { ChevronLeftIcon, Loader2Icon, SaveIcon } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 
@@ -456,7 +456,7 @@ const CreateProductV2 = () => {
                 {upload_images.isPending ||
                 isPendingAddProduct ||
                 updateProduct.isPending ? (
-                  'Loading...'
+                  <Loader2Icon className="animate-spin" />
                 ) : (
                   <div className="flex items-center justify-center">
                     <SaveIcon className="mr-1" />
