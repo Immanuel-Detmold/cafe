@@ -442,7 +442,9 @@ const CreateProductV2 = () => {
             </Button>
 
             <div className="flex">
-              {productData.data && <DeleteProduct product={productData.data} />}
+              {productData.data && userRole !== 'user' && (
+                <DeleteProduct product={productData.data} />
+              )}
 
               <Button
                 disabled={
