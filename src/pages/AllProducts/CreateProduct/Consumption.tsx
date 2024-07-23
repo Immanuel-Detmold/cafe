@@ -49,7 +49,7 @@ const Consumption = ({ consumption, setConsumption }: ConsumptionProp) => {
             <SelectTrigger className="ml-2 w-full rounded-md p-2">
               <SelectValue placeholder="Item" />
             </SelectTrigger>
-            <SelectContent className="w-56">
+            <SelectContent className="w-72">
               <SelectGroup>
                 {inventory &&
                   inventory.map((item) => (
