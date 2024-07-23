@@ -251,6 +251,7 @@ export type Database = {
       }
       Products: {
         Row: {
+          advertisement: boolean
           category: string
           consumption: Json[] | null
           created_at: string
@@ -267,6 +268,7 @@ export type Database = {
           user_id: string | null
         }
         Insert: {
+          advertisement?: boolean
           category: string
           consumption?: Json[] | null
           created_at?: string
@@ -283,6 +285,7 @@ export type Database = {
           user_id?: string | null
         }
         Update: {
+          advertisement?: boolean
           category?: string
           consumption?: Json[] | null
           created_at?: string

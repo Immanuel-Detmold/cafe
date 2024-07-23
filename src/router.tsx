@@ -17,6 +17,7 @@ import MenuCard from './pages/MenuCard/MenuCard'
 import NewOrder from './pages/NewOrder/NewOrder'
 import Open from './pages/Open/Open'
 import ReadyForPickup from './pages/ReadyForPickup/ReadyForPickup'
+import AdvertismentSettings from './pages/Settings/AdvertismentSettings'
 import ManageUsers from './pages/Settings/ManageUsers/ManageUsers'
 import UserInfo from './pages/Settings/ManageUsers/UserInfo'
 import NetworkPage from './pages/Settings/NetworkPage/NetworkPage'
@@ -113,6 +114,10 @@ export const router = createBrowserRouter(
         {
           path: 'settings/printer/new-printer/:printerId',
           element: <NewPrinter />,
+        },
+        {
+          path: 'settings/advertisement',
+          element: <AdvertismentSettings />,
         },
         {
           path: 'login',
