@@ -316,7 +316,7 @@ const CreateProductV2 = () => {
 
   return (
     <>
-      <div className="mt-2 flex flex-col items-center">
+      <div className="mt-2 flex flex-col items-center overflow-x-hidden">
         <div className="w-full max-w-xl">
           {productData.data?.images && productData.data.images.length > 0 && (
             <DisplayImages productData={productData.data} />

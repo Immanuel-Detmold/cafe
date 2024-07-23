@@ -7,6 +7,7 @@ import {
   BookCheckIcon,
   CoffeeIcon,
   CreditCardIcon,
+  HelpingHand,
   LineChartIcon,
   LogInIcon,
   LogOutIcon,
@@ -52,6 +53,22 @@ const SideBar = () => {
       <SheetContent side={'left'}>
         <SheetHeader className="relative text-left">
           <SheetTitle>Info</SheetTitle>
+
+          {/* Service */}
+          <NavLink
+            to="/admin/new-order"
+            className={({ isActive }) =>
+              isActive ? 'rounded-md bg-secondary p-2' : 'p-2'
+            }
+            onClick={() => {
+              setSheetOpen(false)
+            }}
+          >
+            <div className="flex cursor-pointer">
+              <HelpingHand />
+              <Label className="ml-1 cursor-pointer">Service</Label>
+            </div>
+          </NavLink>
 
           {/*  All Products */}
           <NavLink
