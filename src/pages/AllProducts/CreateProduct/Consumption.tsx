@@ -46,7 +46,7 @@ const Consumption = ({ consumption, setConsumption }: ConsumptionProp) => {
             }}
             value={item.name}
           >
-            <SelectTrigger className="ml-2 w-40 rounded-md p-2">
+            <SelectTrigger className="ml-2 w-full rounded-md p-2">
               <SelectValue placeholder="Item" />
             </SelectTrigger>
             <SelectContent className="w-56">
@@ -60,6 +60,7 @@ const Consumption = ({ consumption, setConsumption }: ConsumptionProp) => {
               </SelectGroup>
             </SelectContent>
           </Select>
+          {/* Quantity */}
           <Input
             tabIndex={-1}
             value={item.quantity.toString()}
@@ -72,7 +73,7 @@ const Consumption = ({ consumption, setConsumption }: ConsumptionProp) => {
               }
               setConsumption(newConsumption)
             }}
-            className="ml-2 w-full"
+            className="ml-2 max-w-20"
             placeholder="Menge"
           />
           <TrashIcon
