@@ -3,6 +3,7 @@ import { imgPlaceHolder } from '@/data/data'
 import { useAppData } from '@/data/useAppData'
 import { Product, useProductsQuery } from '@/data/useProducts'
 import { supabase } from '@/services/supabase'
+import { AspectRatio } from '@radix-ui/react-aspect-ratio'
 import { useEffect, useState } from 'react'
 
 const AdvertismentPage = () => {
@@ -21,6 +22,25 @@ const AdvertismentPage = () => {
     showProduct && showProduct.images && showProduct.images.length > 0
       ? showProduct.images[0]
       : imgPlaceHolder
+
+  // Functions
+  const getFontSize = (name: string) => {
+    // Split string with spaces and get length of longest word
+    const longestWord = name
+      .split(' ')
+      .reduce((a, b) => (a.length > b.length ? a : b))
+
+    if (longestWord.length < 8) {
+      return '7.5rem'
+    } else if (longestWord.length < 10) {
+      return '7rem'
+    } else if (longestWord.length < 12) {
+      return '6.5rem'
+    } else if (longestWord.length < 14) {
+      return '6rem'
+    }
+    return '4rem' // Default font size
+  }
 
   // RealTime changes
   supabase
@@ -68,7 +88,7 @@ const AdvertismentPage = () => {
 
   return (
     <>
-      <div className="advertismentBackground min-h-screen">
+      <div className="advertismentBackground min-h-screen overflow-clip">
         {showProduct && (
           <div className="flex min-h-screen items-center">
             {/* Image */}
@@ -76,7 +96,7 @@ const AdvertismentPage = () => {
               <img
                 src={imgUrl}
                 alt={showProduct.name}
-                className="mx-auto aspect-square rounded-3xl border-4 border-gray-400 object-cover shadow-2xl drop-shadow-2xl"
+                className="mx-auto aspect-square max-h-screen rounded-3xl border-4 border-gray-400 object-cover shadow-2xl drop-shadow-2xl"
               />
             </div>
 
@@ -86,7 +106,10 @@ const AdvertismentPage = () => {
             </div> */}
 
             <div className="flex w-1/2 flex-col px-12">
-              <h1 className="cinzel-decorative-bold text-center text-[110px] text-white drop-shadow-lg">
+              <h1
+                style={{ fontSize: getFontSize(showProduct.name) }}
+                className="cinzel-decorative-bold text-cente text-white drop-shadow-lg"
+              >
                 {showProduct.name}
               </h1>
               <h3 className="merriweather-regular mt-28 text-left text-[30px] text-gray-400 drop-shadow-lg">
