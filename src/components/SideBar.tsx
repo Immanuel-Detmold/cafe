@@ -34,7 +34,7 @@ import {
 
 const SideBar = () => {
   // States
-  const [sheetOpen, setSheetOpen] = useState(true)
+  const [sheetOpen, setSheetOpen] = useState(false)
   const [userRole, setUserRole] = useState('user')
 
   // Hooks
