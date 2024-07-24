@@ -2,6 +2,7 @@ import { createBrowserRouter, redirect } from 'react-router-dom'
 
 import TestComponent from './TestComponent'
 import { Navigation } from './components/Navigation'
+import AdvertismentPage from './pages/AdvertismentPage'
 import AllProducts from './pages/AllProducts/AllProducts'
 import CreateProductV2 from './pages/AllProducts/CreateProduct/CreateProductV2'
 import AudioPage from './pages/AudioPage/AudioPage'
@@ -17,6 +18,7 @@ import MenuCard from './pages/MenuCard/MenuCard'
 import NewOrder from './pages/NewOrder/NewOrder'
 import Open from './pages/Open/Open'
 import ReadyForPickup from './pages/ReadyForPickup/ReadyForPickup'
+import AdvertismentSettings from './pages/Settings/AdvertismentSettings'
 import ManageUsers from './pages/Settings/ManageUsers/ManageUsers'
 import UserInfo from './pages/Settings/ManageUsers/UserInfo'
 import NetworkPage from './pages/Settings/NetworkPage/NetworkPage'
@@ -55,7 +57,10 @@ export const router = createBrowserRouter(
       path: 'menu',
       element: <MenuCard />,
     },
-
+    {
+      path: 'advertisement',
+      element: <AdvertismentPage />,
+    },
     {
       path: 'admin',
       element: <Navigation />,
@@ -113,6 +118,10 @@ export const router = createBrowserRouter(
         {
           path: 'settings/printer/new-printer/:printerId',
           element: <NewPrinter />,
+        },
+        {
+          path: 'settings/advertisement',
+          element: <AdvertismentSettings />,
         },
         {
           path: 'login',

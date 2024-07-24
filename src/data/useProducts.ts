@@ -12,13 +12,15 @@ export const useProductsQuery = ({
   searchTerm,
   ascending,
   categories,
+  advertisement,
 }: {
   searchTerm: string
   ascending: boolean
   categories?: string[]
+  advertisement?: boolean
 }) => {
   return useQuery({
-    queryKey: ['products', searchTerm, ascending, categories],
+    queryKey: ['products', searchTerm, ascending, categories, advertisement],
     queryFn: async () => {
       let query = supabase
         .from('Products')
@@ -29,6 +31,10 @@ export const useProductsQuery = ({
 
       if (categories && categories.length > 0) {
         query = query.in('category', categories)
+      }
+
+      if (advertisement !== undefined) {
+        query = query.eq('advertisement', true)
       }
 
       const { data, error } = await query

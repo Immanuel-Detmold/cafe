@@ -24,7 +24,6 @@ import {
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { Input } from '@/components/ui/input'
 import {
   Table,
   TableBody,
@@ -77,9 +76,7 @@ export function DataTable<TData, TValue>({
   return (
     <div>
       {/* Filter Label and Visibility*/}
-      <div className="flex items-center justify-between">
-        <Label className="font-bold">Filter</Label>
-
+      <div className="flex items-center justify-end">
         {/* Right Side */}
         <div className="flex">
           {/* Columns Visibility*/}
@@ -124,25 +121,6 @@ export function DataTable<TData, TValue>({
       </div>
       <div className="mb-4 mt-2 flex">
         <div className="grid w-full grid-cols-1 gap-2 md:grid-cols-2">
-          {/* Filters */}
-          <Input
-            placeholder="Filter Name..."
-            value={(table.getColumn('name')?.getFilterValue() as string) ?? ''}
-            onChange={(event) =>
-              table.getColumn('name')?.setFilterValue(event.target.value)
-            }
-            className=""
-          />
-          <Input
-            placeholder="Filter Kategorie..."
-            value={
-              (table.getColumn('category')?.getFilterValue() as string) ?? ''
-            }
-            onChange={(event) =>
-              table.getColumn('category')?.setFilterValue(event.target.value)
-            }
-            className=""
-          />
           {/* Filter Date */}
           {/* <DatePicker
             distinctDates={dataDates}
