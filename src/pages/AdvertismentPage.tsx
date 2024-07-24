@@ -3,7 +3,6 @@ import { imgPlaceHolder } from '@/data/data'
 import { useAppData } from '@/data/useAppData'
 import { Product, useProductsQuery } from '@/data/useProducts'
 import { supabase } from '@/services/supabase'
-import { AspectRatio } from '@radix-ui/react-aspect-ratio'
 import { useEffect, useState } from 'react'
 
 const AdvertismentPage = () => {
