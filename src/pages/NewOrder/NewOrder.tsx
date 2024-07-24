@@ -19,7 +19,7 @@ import { ArrowPathIcon } from '@heroicons/react/24/outline'
 import { Label } from '@radix-ui/react-label'
 import { Loader2Icon, ShoppingCart } from 'lucide-react'
 import { useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -72,6 +72,8 @@ const NewOrder = () => {
   // Hooks
   const { orderId } = useParams()
   const { toast } = useToast()
+  const navigate = useNavigate()
+  const { user } = useUser()
 
   // Data & Mutate
   const { data: appData } = useAppData()
@@ -132,6 +134,17 @@ const NewOrder = () => {
       setOrderNumber(GetOrderNumber(appData))
     }
   }, [editData, products, orderIdEdit, appData])
+
+  // Redirect to login if not user
+  useEffect(() => {
+    if (!user) {
+      const timer = setTimeout(() => {
+        navigate('/admin/login')
+      }, 500) // 5000 milliseconds = 5 seconds
+
+      return () => clearTimeout(timer) // Cleanup the timer if the component unmounts or user changes
+    }
+  }, [user, navigate])
 
   // Update Order Price
   useEffect(() => {

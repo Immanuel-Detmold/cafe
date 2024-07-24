@@ -69,6 +69,11 @@ export function DataTable<TData, TValue>({
     onColumnFiltersChange: setColumnFilters,
     getFilteredRowModel: getFilteredRowModel(),
     onColumnVisibilityChange: setColumnVisibility,
+    initialState: {
+      pagination: {
+        pageSize: 25, //custom default page size
+      },
+    },
   })
 
   React.useEffect(() => {}, [table])

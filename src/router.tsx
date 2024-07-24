@@ -2,6 +2,7 @@ import { createBrowserRouter, redirect } from 'react-router-dom'
 
 import TestComponent from './TestComponent'
 import { Navigation } from './components/Navigation'
+import AdvertismentPage from './pages/AdvertismentPage'
 import AllProducts from './pages/AllProducts/AllProducts'
 import CreateProductV2 from './pages/AllProducts/CreateProduct/CreateProductV2'
 import AudioPage from './pages/AudioPage/AudioPage'
@@ -56,7 +57,10 @@ export const router = createBrowserRouter(
       path: 'menu',
       element: <MenuCard />,
     },
-
+    {
+      path: 'advertisement',
+      element: <AdvertismentPage />,
+    },
     {
       path: 'admin',
       element: <Navigation />,

@@ -31,6 +31,15 @@ body {
   max-width: 600px;
 }
 
+.advertismentBackground {
+  background: rgb(0, 0, 0);
+  background: linear-gradient(
+    90deg,
+    rgba(0, 0, 0, 1) 25%,
+    rgba(18, 18, 18, 1) 73%
+  );
+}
+
 @layer base {
   :root {
     --background: 0 0% 100%;

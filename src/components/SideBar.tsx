@@ -20,6 +20,12 @@ import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from '@/components/ui/accordion'
+import {
   Sheet,
   SheetContent,
   SheetTitle,
@@ -28,7 +34,7 @@ import {
 
 const SideBar = () => {
   // States
-  const [sheetOpen, setSheetOpen] = useState(true)
+  const [sheetOpen, setSheetOpen] = useState(false)
   const [userRole, setUserRole] = useState('user')
 
   // Hooks
@@ -107,30 +113,6 @@ const SideBar = () => {
               </div>
             )}
 
-            {/* Cafe Cards */}
-            <div
-              className={`flex cursor-pointer p-2 ${location.pathname.includes('/admin/cafe-cards') ? 'bg-secondary' : ''} rounded-md`}
-              onClick={() => {
-                navigate('/admin/cafe-cards')
-                setSheetOpen(false)
-              }}
-            >
-              <CreditCardIcon className="mr-1" />
-              <h3>Cafe Karten</h3>
-            </div>
-
-            {/* Screen */}
-            <div
-              className={`flex cursor-pointer p-2 ${location.pathname.includes('/screen') ? 'bg-secondary' : ''} rounded-md`}
-              onClick={() => {
-                navigate('/screen')
-                setSheetOpen(false)
-              }}
-            >
-              <MonitorUpIcon className="mr-1" />
-              <h3>Screen</h3>
-            </div>
-
             {/* Inventar */}
             <div
               className={`flex cursor-pointer p-2 ${location.pathname.includes('/admin/inventory') ? 'bg-secondary' : ''} rounded-md`}
@@ -141,30 +123,6 @@ const SideBar = () => {
             >
               <WarehouseIcon className="mr-1" />
               <h3>Inventar</h3>
-            </div>
-
-            {/* Audio */}
-            <div
-              className={`flex cursor-pointer p-2 ${location.pathname.includes('/admin/audio') ? 'bg-secondary' : ''} rounded-md`}
-              onClick={() => {
-                navigate('/admin/audio')
-                setSheetOpen(false)
-              }}
-            >
-              <ActivityIcon className="mr-1" />
-              <h3>Audio</h3>
-            </div>
-
-            {/* Menu Card */}
-            <div
-              className={`flex cursor-pointer p-2 ${location.pathname.includes('/menu') ? 'bg-secondary' : ''} rounded-md`}
-              onClick={() => {
-                navigate('/menu')
-                setSheetOpen(false)
-              }}
-            >
-              <Utensils className="mr-1" />
-              <h3>Menükarte</h3>
             </div>
 
             {/* Login */}
@@ -178,10 +136,83 @@ const SideBar = () => {
               <LogInIcon className="mr-1" />
               <h3>Login</h3>
             </div>
+
+            <Accordion
+              type="single"
+              collapsible
+              className="ml-3 overflow-x-hidden"
+            >
+              <AccordionItem value="item-1">
+                <AccordionTrigger>Weitere Funktionien</AccordionTrigger>
+                <AccordionContent>
+                  <div className="flex w-full flex-col space-y-2">
+                    {/* Screen */}
+                    <div
+                      className={`flex cursor-pointer p-2 ${location.pathname.includes('/screen') ? 'bg-secondary' : ''} rounded-md`}
+                      onClick={() => {
+                        navigate('/screen')
+                        setSheetOpen(false)
+                      }}
+                    >
+                      <MonitorUpIcon className="mr-1" />
+                      <h3>Abholbereit</h3>
+                    </div>
+
+                    {/* Advertisment Page */}
+                    <div
+                      className={`flex cursor-pointer p-2 ${location.pathname.includes('/admin/cafe-cards') ? 'bg-secondary' : ''} rounded-md`}
+                      onClick={() => {
+                        navigate('/advertisement')
+                        setSheetOpen(false)
+                      }}
+                    >
+                      <MonitorUpIcon className="mr-1" />
+                      <h3>Werbenzeige</h3>
+                    </div>
+
+                    {/* Menu Card */}
+                    <div
+                      className={`flex cursor-pointer p-2 ${location.pathname.includes('/menu') ? 'bg-secondary' : ''} rounded-md`}
+                      onClick={() => {
+                        navigate('/menu')
+                        setSheetOpen(false)
+                      }}
+                    >
+                      <Utensils className="mr-1" />
+                      <h3>Menükarte</h3>
+                    </div>
+
+                    {/* Audio */}
+                    <div
+                      className={`flex cursor-pointer p-2 ${location.pathname.includes('/admin/audio') ? 'bg-secondary' : ''} rounded-md`}
+                      onClick={() => {
+                        navigate('/admin/audio')
+                        setSheetOpen(false)
+                      }}
+                    >
+                      <ActivityIcon className="mr-1" />
+                      <h3>Audio</h3>
+                    </div>
+
+                    {/* Cafe Cards */}
+                    <div
+                      className={`flex cursor-pointer p-2 ${location.pathname.includes('/admin/cafe-cards') ? 'bg-secondary' : ''} rounded-md`}
+                      onClick={() => {
+                        navigate('/admin/cafe-cards')
+                        setSheetOpen(false)
+                      }}
+                    >
+                      <CreditCardIcon className="mr-1" />
+                      <h3>Cafe Karten</h3>
+                    </div>
+                  </div>
+                </AccordionContent>
+              </AccordionItem>
+            </Accordion>
           </div>
 
           {/* Footer */}
-          <div className="absolute bottom-2 flex w-full flex-col space-y-2 bg-background">
+          <div className="absolute bottom-0 flex w-full flex-col space-y-1 bg-background">
             <div className="h-1 w-full rounded-xl bg-secondary"></div>
             {/* Settings */}
             <div
@@ -199,9 +230,7 @@ const SideBar = () => {
             <div
               className={`flex cursor-pointer p-2 ${location.pathname.includes('/admin/login') ? 'bg-secondary' : ''} rounded-md`}
               onClick={() => {
-                logout().catch((error) => {
-                  console.error('Logout failed', error)
-                })
+                logout().catch(() => {})
                 navigate('/admin/login')
                 setSheetOpen(false)
               }}

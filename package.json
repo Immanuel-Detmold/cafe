@@ -55,6 +55,7 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-hook-form": "^7.49.2",
+    "react-responsive": "^10.0.0",
     "react-router-dom": "^6.21.1",
     "react-svg-loader": "^3.0.0",
     "tailwind-merge": "^2.2.0",

@@ -49,7 +49,7 @@ const ManageUsers = () => {
     <>
       <div className="flex flex-col items-center">
         <div className="flex flex-col">
-          <Label className="text-2xl font-bold">Benutzerliste</Label>
+          <Label className="mt-2 text-xl font-bold">Benutzerliste</Label>
           {users &&
             users.map((user) => (
               <div key={user.id} className="flex flex-col">
