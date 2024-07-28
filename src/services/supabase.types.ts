@@ -12,6 +12,7 @@ export type Database = {
       AppData: {
         Row: {
           created_at: string
+          description: string | null
           id: number
           key: string
           last_edit: string
@@ -19,6 +20,7 @@ export type Database = {
         }
         Insert: {
           created_at?: string
+          description?: string | null
           id?: number
           key: string
           last_edit?: string
@@ -26,6 +28,7 @@ export type Database = {
         }
         Update: {
           created_at?: string
+          description?: string | null
           id?: number
           key?: string
           last_edit?: string

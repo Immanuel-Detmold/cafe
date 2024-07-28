@@ -38,8 +38,9 @@ const SettingsPage = () => {
         <div className="mt-2 grid w-full place-content-center gap-2">
           <DesignPage />
           <PasswordChange />
-          {userRole === 'admin' ||
-            (userRole === 'manager' && <RegisterNewUser />)}
+          {userRole === 'admin' || userRole === 'manager' ? (
+            <RegisterNewUser />
+          ) : null}
           {userRole === 'admin' && <ChangeCategories />}
           {userRole === 'admin' && <ChangeInventoryCategories />}
           {userRole === 'admin' && <ResetOrderNumber />}
