@@ -8,7 +8,7 @@ import { useEffect, useState } from 'react'
 const AdvertismentPage = () => {
   // States
   const [showProduct, setShowProduct] = useState<Product>()
-  const [timer, setTimer] = useState<string>('1')
+  const [timer, setTimer] = useState<string>('15')
 
   // Data
   const { data: products } = useProductsQuery({
