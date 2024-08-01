@@ -1,7 +1,6 @@
 import { supabase } from '@/services/supabase'
 import { Label } from '@radix-ui/react-label'
-import { User } from '@supabase/supabase-js'
-import { ChevronLeftIcon } from 'lucide-react'
+import { ChevronLeftIcon, Loader2Icon } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 
@@ -12,58 +11,85 @@ import { useToast } from '@/components/ui/use-toast'
 
 import DeleteUser from './DeleteUser'
 
+type reqUser = {
+  id: string
+  email: string
+  raw_user_meta_data?: {
+    name?: string
+    role?: string
+  }
+}
+
 const UserInfo = () => {
   const { userId } = useParams()
-  const [user, setUser] = useState<User>()
+  const [user, setUser] = useState<reqUser | null>(null)
   const [error, setError] = useState<string>()
   const [name, setName] = useState<string>('')
   const [userRole, setUserRole] = useState('user')
   const { toast } = useToast()
 
   const navigate = useNavigate()
-
-  console.log(user?.user_metadata.role)
+  // Load Users
   useEffect(() => {
-    const fetchUser = async () => {
-      if (userId === undefined) return null
-      const { data, error } = await supabase.auth.admin.getUserById(userId)
-      if (error) throw error
-
-      setUser(data.user)
-      if (data.user.user_metadata.name) {
-        setName((data.user.user_metadata.name as string) || '')
+    const fetchUsers = async () => {
+      const { data, error } = await supabase.rpc('get_auth_users')
+      if (data && userId) {
+        const users = data as reqUser[]
+        const singleUser = users.find((user) => user.id === userId)
+        if (singleUser) {
+          setUser(singleUser)
+          setName((singleUser?.raw_user_meta_data?.name as string) || '')
+          setUserRole(
+            (singleUser?.raw_user_meta_data?.role as string) || 'user',
+          )
+        }
       }
-      if (data.user.user_metadata.role) {
-        setUserRole((data.user.user_metadata.role as string) || 'user')
+      if (error) {
+        toast({ title: 'Fehler beim Laden des Benutzers ❌', duration: 2000 })
       }
     }
 
-    void fetchUser()
-  }, [userId])
+    void fetchUsers()
+  }, [
+    userId,
+    toast,
+    user?.raw_user_meta_data?.name,
+    user?.raw_user_meta_data?.role,
+  ])
 
   if (!user) {
-    return <div className="mt-2">Loading...</div>
+    return (
+      <div className="mt-2 flex">
+        <Loader2Icon className="animate-spin" />
+      </div>
+    )
   }
 
   const handleSave = async () => {
-    if (!user) return
-    const { data, error } = await supabase.auth.admin.updateUserById(user.id, {
-      user_metadata: {
-        name: name,
-        role: userRole,
-      },
+    // Test ID:
+    // aa0069e4-8f4b-4445-8a83-a3c1e51e8f84
+
+    const { error, status } = await supabase.rpc('update_single_user', {
+      user_id: user.id,
+      name: name,
+      user_role: userRole,
     })
 
-    if (error) {
-      setError(error.message)
-    }
-    if (data) {
+    if (status === 204) {
       toast({
         title: 'Benutzer wurde gespeichert ✅',
         description: 'Benutzer muss sich erneut einloggen.',
+        duration: 5000,
       })
-      setError('')
       navigate('/admin/settings/manage-users')
+    }
+    if (error) {
+      setError(error.message)
+      toast({
+        title: 'Fehler beim Speichern des Benutzers ❌',
+        description: error.message,
+        duration: 2000,
+      })
     }
   }
 

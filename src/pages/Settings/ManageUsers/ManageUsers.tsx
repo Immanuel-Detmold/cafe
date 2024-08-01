@@ -1,6 +1,5 @@
 import { supabase } from '@/services/supabase'
 import { Label } from '@radix-ui/react-label'
-import { User } from '@supabase/supabase-js'
 import {
   ChevronLeftIcon,
   ChevronRightIcon,
@@ -12,24 +11,34 @@ import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 import { Button } from '@/components/ui/button'
+import { useToast } from '@/components/ui/use-toast'
+
+type supabaseUser = {
+  id: string
+  email: string
+  raw_user_meta_data?: {
+    name?: string
+    role?: string
+  }
+}
 
 const ManageUsers = () => {
-  const [users, setUsers] = useState<User[]>([]) // Provide an initial value for the users state variable
-  const navigate = useNavigate()
+  // States
+  const [users, setUsers] = useState<supabaseUser[]>([]) // Provide an initial value for the users state variable
 
+  // Hooks
+  const navigate = useNavigate()
+  const { toast } = useToast()
+
+  // Load Users
   useEffect(() => {
     const fetchUsers = async () => {
-      const {
-        data: { users },
-      } = await supabase.auth.admin.listUsers()
-      if (users) {
-        // users.forEach((user) => {
-        //   console.log(user)
-        // }
-        // )
+      const { data, error } = await supabase.rpc('get_auth_users')
+      if (data) {
+        const users = data as supabaseUser[]
         const sorted = users.sort((a, b) => {
-          const roleA = (a.user_metadata?.role as string) || ''
-          const roleB = (b.user_metadata?.role as string) || ''
+          const roleA = (a.raw_user_meta_data?.role as string) || ''
+          const roleB = (b.raw_user_meta_data?.role as string) || ''
 
           if (roleA < roleB) {
             return 1
@@ -41,10 +50,14 @@ const ManageUsers = () => {
         })
         setUsers(sorted)
       }
+      if (error) {
+        toast({ title: 'Fehler beim Laden der Benutzer ❌', duration: 2000 })
+      }
     }
 
     void fetchUsers()
-  }, [])
+  }, [toast])
+
   return (
     <>
       <div className="flex flex-col items-center">
@@ -61,15 +74,15 @@ const ManageUsers = () => {
                 >
                   <div className="flex w-full min-w-80 justify-between">
                     <div className="flex items-center">
-                      {user.user_metadata.role === 'manager' ? (
+                      {user.raw_user_meta_data?.role === 'manager' ? (
                         <UserRoundSearchIcon /> // Replace with the actual icon component for managers
-                      ) : user.user_metadata.role === 'admin' ? (
+                      ) : user.raw_user_meta_data?.role === 'admin' ? (
                         <UserRoundCogIcon />
                       ) : (
                         <User2Icon />
                       )}
                       <Label className="ml-1 cursor-pointer">
-                        {user.user_metadata?.name} ({user.email})
+                        {user.raw_user_meta_data?.name} ({user.email})
                       </Label>
                     </div>
                     <ChevronRightIcon className="ml-1" />

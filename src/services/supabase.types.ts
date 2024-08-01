@@ -329,16 +329,25 @@ export type Database = {
       }
       Test: {
         Row: {
+          age: number | null
           created_at: string
           id: number
+          info: Json | null
+          name: string | null
         }
         Insert: {
+          age?: number | null
           created_at?: string
           id?: number
+          info?: Json | null
+          name?: string | null
         }
         Update: {
+          age?: number | null
           created_at?: string
           id?: number
+          info?: Json | null
+          name?: string | null
         }
         Relationships: []
       }
@@ -377,7 +386,54 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      "Get Users": {
+        Args: {
+          role: string
+          name: string
+        }
+        Returns: undefined
+      }
+      get_auth_users: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          id: string
+          email: string
+          raw_user_meta_data: Json
+        }[]
+      }
+      update_single_user: {
+        Args: {
+          user_id: string
+          name: string
+          user_role: string
+        }
+        Returns: undefined
+      }
+      update_user:
+        | {
+            Args: {
+              user_id: number
+              name: string
+              user_role: string
+            }
+            Returns: undefined
+          }
+        | {
+            Args: {
+              user_id: string
+              name: string
+              user_role: string
+            }
+            Returns: undefined
+          }
+        | {
+            Args: {
+              user_id: string
+              name: string
+              user_role: string
+            }
+            Returns: undefined
+          }
     }
     Enums: {
       order_status: "waiting" | "processing" | "ready" | "finished"
