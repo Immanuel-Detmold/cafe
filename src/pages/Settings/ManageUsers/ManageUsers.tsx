@@ -58,6 +58,10 @@ const ManageUsers = () => {
     void fetchUsers()
   }, [toast])
 
+  const truncateEmail = (email: string) => {
+    return email.length > 20 ? email.substring(0, 20) + '...' : email
+  }
+
   return (
     <>
       <div className="flex flex-col items-center">
@@ -67,12 +71,13 @@ const ManageUsers = () => {
             users.map((user) => (
               <div key={user.id} className="flex flex-col">
                 <Button
-                  className="mt-2"
+                  className="mt-2 text-wrap"
                   onClick={() => {
                     navigate(`/admin/settings/manage-users/${user.id}`)
                   }}
                 >
-                  <div className="flex w-full min-w-80 justify-between">
+                  <div className="flex w-full max-w-96 justify-between">
+                    {/* User Icon and Label (Left side)*/}
                     <div className="flex items-center">
                       {user.raw_user_meta_data?.role === 'manager' ? (
                         <UserRoundSearchIcon /> // Replace with the actual icon component for managers
@@ -81,10 +86,13 @@ const ManageUsers = () => {
                       ) : (
                         <User2Icon />
                       )}
-                      <Label className="ml-1 cursor-pointer">
-                        {user.raw_user_meta_data?.name} ({user.email})
+
+                      <Label className="ml-1 cursor-pointer ">
+                        {user.raw_user_meta_data?.name} (
+                        {truncateEmail(user.email)})
                       </Label>
                     </div>
+                    {/* Chevron Icon */}
                     <ChevronRightIcon className="ml-1" />
                   </div>
                 </Button>
