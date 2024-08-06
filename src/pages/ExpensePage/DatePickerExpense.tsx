@@ -2,7 +2,6 @@
 
 import { cn } from '@/lib/utils'
 import { addDays, format } from 'date-fns'
-import { de } from 'date-fns/locale'
 import { Calendar as CalendarIcon } from 'lucide-react'
 import * as React from 'react'
 
