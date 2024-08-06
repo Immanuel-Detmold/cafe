@@ -1,6 +1,6 @@
 import { imgPlaceHolder } from '@/data/data'
 import { Product, useProductsQuery } from '@/data/useProducts'
-import { centsToEuro } from '@/generalHelperFunctions.tsx/currencyHelperFunction'
+import { centsToEuro } from '@/generalHelperFunctions/currencyHelperFunction'
 
 import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog'
 import { useToast } from '@/components/ui/use-toast'

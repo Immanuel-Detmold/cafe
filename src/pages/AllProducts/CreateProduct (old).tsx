@@ -1,6 +1,6 @@
 import { useProductCategories } from '@/data/useProductCategories'
 import { useCreateProductMutation } from '@/data/useProducts'
-import { EuroToCents } from '@/generalHelperFunctions.tsx/currencyHelperFunction'
+import { EuroToCents } from '@/generalHelperFunctions/currencyHelperFunction'
 import { supabase } from '@/services/supabase'
 import { useState } from 'react'
 // import { useNavigate } from 'react-router-dom'

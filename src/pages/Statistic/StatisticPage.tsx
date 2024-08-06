@@ -1,17 +1,17 @@
 import { useCafeCards } from '@/data/useCafeCard'
 import { useOrdersAndItemsQueryV2 } from '@/data/useOrders'
 import { useUser } from '@/data/useUser'
-import { centsToEuro } from '@/generalHelperFunctions.tsx/currencyHelperFunction'
+import { centsToEuro } from '@/generalHelperFunctions/currencyHelperFunction'
 import {
   formatDate,
   getCurrentMonthStartDate,
   getEndOfDay,
   getStartOfDay,
   getThisYear,
-} from '@/generalHelperFunctions.tsx/dateHelperFunctions'
+} from '@/generalHelperFunctions/dateHelperFunctions'
 import { Label } from '@radix-ui/react-label'
 import { PDFDownloadLink } from '@react-pdf/renderer'
-import { FileTextIcon } from 'lucide-react'
+import { FileTextIcon, Loader2Icon } from 'lucide-react'
 import { useEffect, useMemo, useState } from 'react'
 
 import { Button } from '@/components/ui/button'
@@ -33,7 +33,6 @@ import {
 const StatisticPage = () => {
   // States
   const [userRole, setUserRole] = useState('user')
-  console.log(userRole)
   const [showAllOrders, setShorAllOrders] = useState(false)
   const [selectedDate, setSelectedDate] = useState('')
 
@@ -161,7 +160,10 @@ const StatisticPage = () => {
   return (
     <>
       {l1 && l2 && l3 && l4 && l5 && (
-        <Label className="mt-2 font-bold">Daten werden geladen...</Label>
+        <Label className="mt-2 flex font-bold">
+          <Loader2Icon className="animate-spin" />{' '}
+          <span className="ml-1">Daten werden geladen...</span>
+        </Label>
       )}
       <div className="flex flex-col items-center">
         {userRole === 'admin' && (

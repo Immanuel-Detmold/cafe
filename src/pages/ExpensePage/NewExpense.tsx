@@ -3,9 +3,12 @@ import {
   useExpenseQuery,
   useUpdateExpenseMutation,
 } from '@/data/useExpense'
-import { EuroToCents } from '@/generalHelperFunctions.tsx/currencyHelperFunction'
-import { formatDateToISO } from '@/generalHelperFunctions.tsx/dateHelperFunctions'
-import { onPriceChange } from '@/generalHelperFunctions.tsx/inputHelper'
+import {
+  EuroToCents,
+  centsToEuro,
+} from '@/generalHelperFunctions/currencyHelperFunction'
+import { formatDateToISO } from '@/generalHelperFunctions/dateHelperFunctions'
+import { onPriceChange } from '@/generalHelperFunctions/inputHelper'
 import { Label } from '@radix-ui/react-label'
 import { ChevronLeftIcon, SaveIcon } from 'lucide-react'
 import { useEffect, useState } from 'react'
@@ -86,7 +89,7 @@ const NewExpense = () => {
     if (expenseId) {
       const data = expenseData.data
       if (data) {
-        setPrice(data.price.toString())
+        setPrice(centsToEuro(data.price))
         setComment(data.comment?.toString() || '')
         setPurchaseDate(new Date(data.purchase_date))
       }

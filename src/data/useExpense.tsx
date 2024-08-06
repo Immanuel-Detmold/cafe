@@ -8,14 +8,29 @@ export type InsertExpense = Database['public']['Tables']['Expense']['Insert']
 export type UpdateExpense = Database['public']['Tables']['Expense']['Update']
 
 // Get all expenses
-export const useExpensesQuery = () => {
-  return useQuery({
-    queryKey: ['expenses'],
+export const useExpensesQuery = ({
+  startDate,
+  endDate,
+}: {
+  startDate?: string
+  endDate?: string
+}) =>
+  useQuery({
+    queryKey: ['expenses', startDate, endDate],
     queryFn: async () => {
-      const { data, error } = await supabase
+      let query = supabase
         .from('Expense')
         .select()
         .order('purchase_date', { ascending: false })
+
+      if (startDate !== '' && startDate !== undefined) {
+        query = query.gte('purchase_date', startDate)
+      }
+      if (endDate !== '' && endDate !== undefined) {
+        query = query.lte('purchase_date', endDate)
+      }
+
+      const { data, error } = await query
 
       if (error) {
         throw error
@@ -23,7 +38,6 @@ export const useExpensesQuery = () => {
       return data
     },
   })
-}
 
 // Get a single expense
 export const useExpenseQuery = ({ id }: { id: string }) => {

@@ -14,7 +14,8 @@
     "prepare": "husky install",
     "preview": "vite preview",
     "serve": "vite --port 3000 --host",
-    "start": "npm run dev"
+    "start": "npm run dev",
+    "test": "vitest"
   },
   "lint-staged": {
     "*": "prettier --write --ignore-unknown"
@@ -89,6 +90,7 @@
     "supabase": "^1.131.4",
     "tailwindcss": "^3.4.0",
     "typescript": "^5.2.2",
-    "vite": "^5.0.8"
+    "vite": "^5.0.8",
+    "vitest": "^2.0.5"
   }
 }

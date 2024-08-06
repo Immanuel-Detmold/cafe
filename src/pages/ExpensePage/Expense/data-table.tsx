@@ -129,7 +129,7 @@ export function DataTable<TData, TValue>({
           /> */}
         </div>
       </div>
-      <Label className="font-bold">Drucker</Label>
+      <Label className="font-bold">Gesamtausgaben (Alle Zeit)</Label>
       <div className="mt-2 rounded-md border">
         <Table>
           <TableHeader>

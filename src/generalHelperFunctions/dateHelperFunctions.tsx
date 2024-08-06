@@ -115,7 +115,6 @@ export const getCurrentMonthStartDate = () => {
     'Dezember',
   ]
   const monthName = months[month_index] || 'Januar'
-  // console.log("Current Month", currentMonth)
   return { monthDataFormat: date.toISOString().split('.')[0], monthName }
 }
 
@@ -134,6 +133,29 @@ export const getThisYear = () => {
     ' ' +
     currentDate.split('T')[1]
   return { yearDataFormat: currentYear, year: temp.split('-')[0] ?? '2000' }
+}
+
+export const getStartOfYear = (date: Date) => {
+  const startOfYear = new Date(date)
+  startOfYear.setMonth(0)
+  startOfYear.setDate(1)
+  startOfYear.setHours(0)
+  startOfYear.setMinutes(0)
+  startOfYear.setSeconds(0)
+  startOfYear.setMilliseconds(0)
+  return startOfYear
+}
+
+// Returns the end of the year from input Date
+export const getEndOfYear = (date: Date) => {
+  const endOfYear = new Date(date)
+  endOfYear.setMonth(11)
+  endOfYear.setDate(31)
+  endOfYear.setHours(23)
+  endOfYear.setMinutes(59)
+  endOfYear.setSeconds(59)
+  endOfYear.setMilliseconds(999)
+  return endOfYear
 }
 
 // Format 2024-04-17T05:58:16.36199+00:00 -> 17.04.2024
@@ -188,4 +210,11 @@ export const checkSameDay = (inputDate: string) => {
   } else {
     return false
   }
+}
+
+// 2024-12-31T22:59:59.100Z -> 2024-12-31 22:59:59.022Z
+export const convertToSupabaseDate = (date: Date): string => {
+  return (
+    date.toISOString().split('T')[0] + ' ' + date.toISOString().split('T')[1]
+  )
 }

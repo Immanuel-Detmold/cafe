@@ -2,7 +2,7 @@ import { useOrdersAndItemsQueryV2 } from '@/data/useOrders'
 import {
   getEndOfDayToday,
   getStartOfDayToday,
-} from '@/generalHelperFunctions.tsx/dateHelperFunctions'
+} from '@/generalHelperFunctions/dateHelperFunctions'
 import { ClockIcon, DiamondIcon } from 'lucide-react'
 
 import { Label } from '@/components/ui/label'

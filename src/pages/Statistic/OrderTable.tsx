@@ -1,5 +1,5 @@
 import { OrdersAndItems } from '@/data/useOrders'
-import { centsToEuro } from '@/generalHelperFunctions.tsx/currencyHelperFunction'
+import { centsToEuro } from '@/generalHelperFunctions/currencyHelperFunction'
 
 import {
   Table,

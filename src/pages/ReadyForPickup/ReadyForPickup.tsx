@@ -13,7 +13,7 @@ import {
 import { OrderStatus } from '@/data/useOrders'
 import { useProductsQuery } from '@/data/useProducts'
 import { useUser } from '@/data/useUser'
-import { getAllConsumptions } from '@/generalHelperFunctions.tsx/consumptionHelper'
+import { getAllConsumptions } from '@/generalHelperFunctions/consumptionHelper'
 import { Json } from '@/services/supabase.types'
 // import { supabase } from '@/services/supabase'
 import { ShoppingBagIcon } from '@heroicons/react/24/outline'

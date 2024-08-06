@@ -1,6 +1,6 @@
 import { queryClient } from '@/App'
 import { useCreateCafeCard } from '@/data/useCafeCard'
-import { EuroToCents } from '@/generalHelperFunctions.tsx/currencyHelperFunction'
+import { EuroToCents } from '@/generalHelperFunctions/currencyHelperFunction'
 import { ShoppingCart } from 'lucide-react'
 
 import {

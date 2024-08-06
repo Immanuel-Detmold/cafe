@@ -42,7 +42,7 @@ export function DatePickerWithPresets({
         >
           <CalendarIcon className="mr-2 h-4 w-4" />
           {purchaseDate ? (
-            format(purchaseDate, 'PPP')
+            format(purchaseDate, 'dd.MM.yyyy')
           ) : (
             <span>Wähle ein Datum aus</span>
           )}

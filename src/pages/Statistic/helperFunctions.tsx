@@ -1,12 +1,29 @@
 import { CafeCard } from '@/data/useCafeCard'
+import { Expense } from '@/data/useExpense'
 import { OrderItems, OrdersAndItems } from '@/data/useOrders'
 import { UserActionsType } from '@/data/useUserActions.tsx'
-import { centsToEuro } from '@/generalHelperFunctions.tsx/currencyHelperFunction'
+import { centsToEuro } from '@/generalHelperFunctions/currencyHelperFunction'
 
 // Get Sum Price of Orders
 export const getSumOrders = (dataOrders: OrdersAndItems) => {
   const sum = dataOrders.reduce((total, order) => total + order.price, 0)
   return centsToEuro(sum)
+}
+
+// !!! CHECK IF CORRECT
+export const getSumOrdersV2 = (
+  dataOrders: OrdersAndItems,
+  startDate: Date,
+  endDate: Date,
+) => {
+  const sum = dataOrders.reduce((total, order) => {
+    const orderDate = new Date(order.created_at)
+    if (orderDate >= startDate && orderDate <= endDate) {
+      return total + order.price
+    }
+    return total
+  }, 0)
+  return sum
 }
 
 // Get Sum of Cafe Cards
@@ -41,17 +58,34 @@ export const getSumCafeCardsGrouped = (dataCards: CafeCard[]) => {
 }
 
 // Get Distinct Dates
-export const getDistinctDates = (dataOrders: OrdersAndItems) => {
+export const getDistinctDates = <T extends { created_at: string }>(
+  data: T[],
+) => {
   const distinctDates: string[] = []
-  dataOrders.forEach((order) => {
+  data.forEach((item) => {
     // Add Local Date to the List
-    const date = convertUTCToLocalTime(order.created_at)
+    const date = convertUTCToLocalTime(item.created_at)
     if (!distinctDates.includes(date)) {
       distinctDates.push(date)
     }
   })
-
+  console.log(distinctDates)
   return distinctDates
+}
+
+export const getDistinctYears = <T extends { created_at: string }>(
+  data: T[],
+) => {
+  const distinctYears: string[] = []
+  data.forEach((item) => {
+    const date = convertUTCToYear(item.created_at)
+    const year = date.split('-')[0] as string
+    if (!distinctYears.includes(year)) {
+      distinctYears.push(year)
+    }
+  })
+
+  return distinctYears
 }
 
 // Get Distinct Dates UserActions
@@ -92,6 +126,17 @@ export const convertUTCToLocalTime = (inputDate: string) => {
   )
 
   return finalDate.toLocaleDateString('en-CA')
+}
+
+// 2024-06-25 15:49:24.767868+00 -> 2024
+export const convertUTCToYear = (inputDate: string) => {
+  inputDate = inputDate?.split('.')[0] || ''
+  const dateUTC = new Date(inputDate)
+  const finalDate = new Date(
+    dateUTC.getTime() - dateUTC.getTimezoneOffset() * 60 * 1000,
+  )
+
+  return finalDate.getFullYear().toString()
 }
 
 // Return sum of payment method
@@ -149,4 +194,21 @@ export const transformOrdersToProductGroups = (dataOrders: OrdersAndItems) => {
   const sum = productData.reduce((total, product) => total + product.sum, 0)
 
   return { productData, sum }
+}
+
+// !!! CHECK IF CORRECT Sum Expenses
+export const getSumExpenses = (
+  dataExpenses: Expense[],
+  startDate: Date,
+  endDate: Date,
+) => {
+  const sum = dataExpenses.reduce((total, expense) => {
+    const expenseDate = new Date(expense.purchase_date)
+    if (expenseDate >= startDate && expenseDate <= endDate) {
+      return total + expense.price
+    }
+    return total
+  }, 0)
+
+  return sum
 }

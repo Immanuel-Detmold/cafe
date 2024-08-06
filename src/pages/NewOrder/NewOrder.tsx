@@ -13,8 +13,8 @@ import { useUser } from '@/data/useUser'
 import {
   EuroToCents,
   centsToEuro,
-} from '@/generalHelperFunctions.tsx/currencyHelperFunction'
-import { currentDateAndTime } from '@/generalHelperFunctions.tsx/dateHelperFunctions'
+} from '@/generalHelperFunctions/currencyHelperFunction'
+import { currentDateAndTime } from '@/generalHelperFunctions/dateHelperFunctions'
 import { ArrowPathIcon } from '@heroicons/react/24/outline'
 import { Label } from '@radix-ui/react-label'
 import { Loader2Icon, ShoppingCart } from 'lucide-react'

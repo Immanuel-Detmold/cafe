@@ -1,7 +1,7 @@
 import { queryClient } from '@/App'
 import { useCafeCards, useDeleteCafeCard } from '@/data/useCafeCard'
-import { centsToEuro } from '@/generalHelperFunctions.tsx/currencyHelperFunction'
-import { formatDateToDateAndTime } from '@/generalHelperFunctions.tsx/dateHelperFunctions'
+import { centsToEuro } from '@/generalHelperFunctions/currencyHelperFunction'
+import { formatDateToDateAndTime } from '@/generalHelperFunctions/dateHelperFunctions'
 import { TrashIcon } from '@heroicons/react/24/outline'
 import { Label } from '@radix-ui/react-label'
 

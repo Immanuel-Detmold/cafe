@@ -1,6 +1,6 @@
 import { queryClient } from '@/App'
 import { Product, useUpdateProductMutationV2 } from '@/data/useProducts'
-import { getImagePath } from '@/generalHelperFunctions.tsx/supabase'
+import { getImagePath } from '@/generalHelperFunctions/supabase'
 import { supabase } from '@/services/supabase'
 import { AspectRatio } from '@radix-ui/react-aspect-ratio'
 import { DownloadIcon, Trash } from 'lucide-react'

@@ -4,7 +4,7 @@ import { useUpdateProductMutation } from '@/data/useProducts'
 import {
   EuroToCents,
   centsToEuro,
-} from '@/generalHelperFunctions.tsx/currencyHelperFunction'
+} from '@/generalHelperFunctions/currencyHelperFunction'
 import { supabase } from '@/services/supabase'
 import { EditIcon } from 'lucide-react'
 import { useState } from 'react'

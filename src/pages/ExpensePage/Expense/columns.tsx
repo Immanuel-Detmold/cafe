@@ -1,8 +1,8 @@
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
 import { Expense } from '@/data/useExpense'
-import { centsToEuro } from '@/generalHelperFunctions.tsx/currencyHelperFunction'
-import { formatDateToLocalDate } from '@/generalHelperFunctions.tsx/dateHelperFunctions'
+import { centsToEuro } from '@/generalHelperFunctions/currencyHelperFunction'
+import { formatDateToLocalDate } from '@/generalHelperFunctions/dateHelperFunctions'
 import { ColumnDef } from '@tanstack/react-table'
 import { ArrowUpDown, Edit2Icon } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'

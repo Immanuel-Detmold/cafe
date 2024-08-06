@@ -10,7 +10,7 @@ import { useUser } from '@/data/useUser'
 import {
   EuroToCents,
   centsToEuro,
-} from '@/generalHelperFunctions.tsx/currencyHelperFunction'
+} from '@/generalHelperFunctions/currencyHelperFunction'
 import { Label } from '@radix-ui/react-label'
 import { ChevronLeftIcon, Loader2Icon, SaveIcon } from 'lucide-react'
 import { useEffect, useState } from 'react'

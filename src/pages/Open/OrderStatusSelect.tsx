@@ -6,7 +6,7 @@ import {
   useChageOrderStatusMutation,
 } from '@/data/useOrders'
 import { Product } from '@/data/useProducts'
-import { getAllConsumptions } from '@/generalHelperFunctions.tsx/consumptionHelper'
+import { getAllConsumptions } from '@/generalHelperFunctions/consumptionHelper'
 import { Loader2Icon } from 'lucide-react'
 import { useEffect, useState } from 'react'
 

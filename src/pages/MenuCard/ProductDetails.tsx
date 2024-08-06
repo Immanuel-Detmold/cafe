@@ -1,5 +1,5 @@
 import { Product } from '@/data/useProducts'
-import { centsToEuro } from '@/generalHelperFunctions.tsx/currencyHelperFunction'
+import { centsToEuro } from '@/generalHelperFunctions/currencyHelperFunction'
 
 import { AspectRatio } from '@/components/ui/aspect-ratio'
 import { Card, CardContent } from '@/components/ui/card'

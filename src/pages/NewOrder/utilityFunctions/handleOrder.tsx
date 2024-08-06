@@ -1,7 +1,7 @@
 import { AppData } from '@/data/useAppData'
 import { OrderItem } from '@/data/useOrders'
 import { Product } from '@/data/useProducts'
-import { checkSameDay } from '@/generalHelperFunctions.tsx/dateHelperFunctions'
+import { checkSameDay } from '@/generalHelperFunctions/dateHelperFunctions'
 
 type propUpdatePrice = {
   dataOrderItems: OrderItem[]

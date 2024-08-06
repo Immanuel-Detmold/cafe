@@ -1,5 +1,5 @@
 import { queryClient } from '@/App'
-import { getStartOfDayToday } from '@/generalHelperFunctions.tsx/dateHelperFunctions'
+import { getStartOfDayToday } from '@/generalHelperFunctions/dateHelperFunctions.tsx'
 import { supabase } from '@/services/supabase'
 import { Database } from '@/services/supabase.types'
 import { useMutation, useQuery } from '@tanstack/react-query'

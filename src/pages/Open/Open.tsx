@@ -7,12 +7,12 @@ import {
   useUpdateOrderItemStatusMutation,
 } from '@/data/useOrders'
 import { useProductsQuery } from '@/data/useProducts'
-import { centsToEuro } from '@/generalHelperFunctions.tsx/currencyHelperFunction'
+import { centsToEuro } from '@/generalHelperFunctions/currencyHelperFunction'
 import {
   getEndOfDayToday,
   getStartOfDayToday,
-} from '@/generalHelperFunctions.tsx/dateHelperFunctions'
-import { formatDateToTime } from '@/generalHelperFunctions.tsx/dateHelperFunctions'
+} from '@/generalHelperFunctions/dateHelperFunctions'
+import { formatDateToTime } from '@/generalHelperFunctions/dateHelperFunctions'
 import { ClipboardDocumentListIcon } from '@heroicons/react/24/outline'
 import {
   ChatBubbleBottomCenterTextIcon,

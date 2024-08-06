@@ -1,7 +1,7 @@
 import { imgPlaceHolder } from '@/data/data'
 import { OrderItem } from '@/data/useOrders'
 import { Product } from '@/data/useProducts'
-import { centsToEuro } from '@/generalHelperFunctions.tsx/currencyHelperFunction'
+import { centsToEuro } from '@/generalHelperFunctions/currencyHelperFunction'
 import { TrashIcon } from '@heroicons/react/24/outline'
 
 import { Avatar, AvatarImage } from '@/components/ui/avatar'

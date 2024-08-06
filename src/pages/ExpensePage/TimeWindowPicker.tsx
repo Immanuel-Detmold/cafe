@@ -17,17 +17,17 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover'
 
-type DatePickerProps = {
+type TimeWindowPickerProps = {
   distinctDates: string[]
   selectedDate: string
   setSelectedDate: React.Dispatch<React.SetStateAction<string>>
 }
 
-export default function DatePicker({
+export default function TimeWindowPicker({
   distinctDates,
   selectedDate,
   setSelectedDate,
-}: DatePickerProps) {
+}: TimeWindowPickerProps) {
   const [open, setOpen] = React.useState(false)
 
   return (

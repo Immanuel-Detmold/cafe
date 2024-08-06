@@ -1,6 +1,6 @@
 import { imgPlaceHolder } from '@/data/data'
 import { type Product } from '@/data/useProducts'
-import { centsToEuro } from '@/generalHelperFunctions.tsx/currencyHelperFunction'
+import { centsToEuro } from '@/generalHelperFunctions/currencyHelperFunction'
 import { Label } from '@radix-ui/react-label'
 
 import { Card } from '@/components/ui/card'
