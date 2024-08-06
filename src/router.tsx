@@ -12,6 +12,8 @@ import { Me } from './pages/Authentication/Me'
 import UpdatePassword from './pages/Authentication/UpdatePassword'
 import CafeCards from './pages/CafeCards/CafeCardsPage'
 import ClosedOrdersToday from './pages/ClosedOrdersToday'
+import ExpensePage from './pages/ExpensePage/Expense/ExpensePage'
+import NewExpense from './pages/ExpensePage/NewExpense'
 import Inventory from './pages/Inventory/Inventory/Inventory'
 import NewItem from './pages/Inventory/NewItem'
 import MenuCard from './pages/MenuCard/MenuCard'
@@ -166,6 +168,18 @@ export const router = createBrowserRouter(
         {
           path: 'statistic',
           element: <StatisticPage />,
+        },
+        {
+          path: 'expense',
+          element: <ExpensePage />,
+        },
+        {
+          path: 'new-expense',
+          element: <NewExpense />,
+        },
+        {
+          path: 'new-expense/:expenseId',
+          element: <NewExpense />,
         },
         {
           path: 'test',

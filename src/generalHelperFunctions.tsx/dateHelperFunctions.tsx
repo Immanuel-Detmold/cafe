@@ -28,6 +28,28 @@ export const formatDateToDateAndTime = (timestamp: string): string => {
   return time.toString()
 }
 
+// 2024-08-06 -> 06.08.2024
+export const formatDateToLocalDate = (timestamp: string): string => {
+  const date = new Date(timestamp)
+
+  const day = date.toLocaleString('en', { day: '2-digit' })
+  const month = date.toLocaleString('en', { month: '2-digit' })
+  const year = date.getFullYear()
+
+  const formattedDate = `${day}.${month}.${year}`
+  return formattedDate
+}
+
+// Convert 2024-08-01T22:00:00.000Z to 2024-08-01
+// Convert Date object to YYYY-MM-DD for SUPABASE
+export const formatDateToISO = (date: Date): string => {
+  const year = date.getFullYear()
+  const month = String(date.getMonth() + 1).padStart(2, '0') // Months are zero-indexed
+  const day = String(date.getDate()).padStart(2, '0')
+
+  return `${year}-${month}-${day}`
+}
+
 // Return current date and time in the format 20.04.2024 - 07:06
 export function currentDateAndTime() {
   const date = new Date()

@@ -5,6 +5,7 @@ import {
   ActivityIcon,
   BookCheckIcon,
   CoffeeIcon,
+  CoinsIcon,
   CreditCardIcon,
   HelpingHand,
   LineChartIcon,
@@ -110,6 +111,20 @@ const SideBar = () => {
               >
                 <LineChartIcon className="mr-1" />
                 <h3>Statistik</h3>
+              </div>
+            )}
+
+            {/* Expense */}
+            {['admin', 'manager'].includes(userRole) && (
+              <div
+                className={`flex cursor-pointer p-2 ${location.pathname.includes('/admin/expense') ? 'bg-secondary' : ''} rounded-md`}
+                onClick={() => {
+                  navigate('/admin/expense')
+                  setSheetOpen(false)
+                }}
+              >
+                <CoinsIcon className="mr-1" />
+                <h3>Ausgaben</h3>
               </div>
             )}
 

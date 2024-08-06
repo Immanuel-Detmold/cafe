@@ -125,6 +125,12 @@ body {
   font-style: normal;
 }
 
+.merriweather-bold {
+  font-family: 'Merriweather', serif;
+  font-weight: 700;
+  font-style: normal;
+}
+
 #scrollbar2::-webkit-scrollbar {
   width: 8px;
   margin-top: 20px;

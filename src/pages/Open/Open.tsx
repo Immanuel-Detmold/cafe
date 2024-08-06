@@ -42,10 +42,12 @@ const Open = ({
   statusList,
   startDate,
   endDate,
+  currentUrlPage,
 }: {
   statusList?: OrderStatus[]
   startDate?: string
   endDate?: string
+  currentUrlPage?: string
 }) => {
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedCategories, setSelectedCategories] = useState<string[]>([])
@@ -349,18 +351,21 @@ const Open = ({
                   )}
                   {order.comment && '' + order.comment}
                 </Label>
-                <div className="mt-2 flex justify-between">
-                  <EditOrder orderId={order.id} />
-                  <div className="flex w-full justify-end">
-                    <DeleteOrder order={order} />
-                    <OrderStatusPage
-                      order={order}
-                      productData={productsData}
-                      inventory={inventory}
-                      orderItems={order.OrderItems}
-                    />
+                {currentUrlPage !== 'statistic' && (
+                  <div className="mt-2 flex justify-between">
+                    <EditOrder orderId={order.id} />
+                    <div className="flex w-full justify-end">
+                      <DeleteOrder order={order} />
+
+                      <OrderStatusPage
+                        order={order}
+                        productData={productsData}
+                        inventory={inventory}
+                        orderItems={order.OrderItems}
+                      />
+                    </div>
                   </div>
-                </div>
+                )}
               </div>
             </div>
           ))}

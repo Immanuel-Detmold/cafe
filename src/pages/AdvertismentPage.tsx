@@ -87,9 +87,25 @@ const AdvertismentPage = () => {
 
   return (
     <>
-      <div className="advertismentBackground min-h-screen overflow-clip">
+      <div className="advertismentBackground relative min-h-screen overflow-clip">
+        {/* Logo Absolute */}
         {showProduct && (
-          <div className="flex min-h-screen items-center">
+          <div className="relative flex min-h-screen items-center">
+            {/* Price Absoulte*/}
+            {showProduct.description ? (
+              <h3 className="merriweather-bold absolute bottom-24 right-20 text-[40px] text-gray-400 drop-shadow-lg">
+                2,00€
+              </h3>
+            ) : (
+              ''
+            )}
+            <img
+              src="src\components\ui\icons\svg_immanuel_cafe.svg"
+              alt={'Immanuel Cafe Logo'}
+              className="absolute right-0 top-0 aspect-square w-[270px] object-cover drop-shadow-lg"
+            />
+
+            {/* src\components\ui\icons\svg_immanuel_cafe.svg */}
             {/* Image */}
             <div className="w-1/2">
               <img
@@ -107,13 +123,20 @@ const AdvertismentPage = () => {
             <div className="flex w-1/2 flex-col px-12">
               <h1
                 style={{ fontSize: getFontSize(showProduct.name) }}
-                className="cinzel-decorative-bold text-cente text-white drop-shadow-lg"
+                className={`cinzel-decorative-bold text-cente text-white drop-shadow-lg ${showProduct.description ? 'text-center' : 'text-center'}`}
               >
                 {showProduct.name}
               </h1>
-              <h3 className="merriweather-regular mt-28 text-left text-[30px] text-gray-400 drop-shadow-lg">
+              <h3 className="merriweather-regular mt-4 text-left text-[30px] text-gray-400 drop-shadow-lg">
                 {showProduct.description}
               </h3>
+              {showProduct.description ? (
+                ''
+              ) : (
+                <h3 className="merriweather-bold text-center text-[40px] text-gray-400 drop-shadow-lg">
+                  2,00€
+                </h3>
+              )}
             </div>
           </div>
         )}

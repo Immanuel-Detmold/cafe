@@ -138,6 +138,12 @@ const StatisticPage = () => {
     return getSumOrdersPayMethod(filteredData, 'cafe_card') + '€'
   }, [filteredData])
 
+  // Sum total vouchers
+  const sumTotalVouchers = useMemo(() => {
+    if (!filteredData) return '...'
+    return getSumOrdersPayMethod(filteredData, 'voucher') + '€'
+  }, [filteredData])
+
   // UseEffect
   useEffect(() => {
     if (distinctOrders.length > 0 && distinctOrders !== undefined) {
@@ -262,6 +268,13 @@ const StatisticPage = () => {
                 <Label className="text-2xl font-bold">{sumTotalPayPal}</Label>
                 <Label className="text-muted-foreground">Umsatz</Label>
               </div>
+
+              {/* Sum vouchers */}
+              <div className="grid grid-cols-1 gap-1 rounded-lg border p-2">
+                <Label className="text-base">Gutscheine</Label>
+                <Label className="text-2xl font-bold">{sumTotalVouchers}</Label>
+                <Label className="text-muted-foreground">Umsatz</Label>
+              </div>
             </div>
           </div>
         )}
@@ -276,6 +289,7 @@ const StatisticPage = () => {
                 sumTotalCash={sumTotalCash}
                 sumTotalPayPal={sumTotalPayPal}
                 sumTotalCafeCard={sumTotalCafeCard}
+                sumTotalVouchers={sumTotalVouchers}
               />
             }
             fileName="orders.pdf"
@@ -319,6 +333,7 @@ const StatisticPage = () => {
         <Open
           startDate={getStartOfDay(selectedDate).finalDateString}
           endDate={getEndOfDay(selectedDate).endOfDayString}
+          currentUrlPage={'statistic'}
         ></Open>
       )}
     </>

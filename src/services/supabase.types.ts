@@ -57,6 +57,30 @@ export type Database = {
         }
         Relationships: []
       }
+      Expense: {
+        Row: {
+          comment: string | null
+          created_at: string
+          id: number
+          price: number
+          purchase_date: string
+        }
+        Insert: {
+          comment?: string | null
+          created_at?: string
+          id?: number
+          price: number
+          purchase_date?: string
+        }
+        Update: {
+          comment?: string | null
+          created_at?: string
+          id?: number
+          price?: number
+          purchase_date?: string
+        }
+        Relationships: []
+      }
       Inventory: {
         Row: {
           category: string
@@ -409,31 +433,6 @@ export type Database = {
         }
         Returns: undefined
       }
-      update_user:
-        | {
-            Args: {
-              user_id: number
-              name: string
-              user_role: string
-            }
-            Returns: undefined
-          }
-        | {
-            Args: {
-              user_id: string
-              name: string
-              user_role: string
-            }
-            Returns: undefined
-          }
-        | {
-            Args: {
-              user_id: string
-              name: string
-              user_role: string
-            }
-            Returns: undefined
-          }
     }
     Enums: {
       order_status: "waiting" | "processing" | "ready" | "finished"

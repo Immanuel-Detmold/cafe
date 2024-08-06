@@ -92,6 +92,7 @@ const OrdersPDF = ({
   sumTotalCash,
   sumTotalPayPal,
   sumTotalCafeCard,
+  sumTotalVouchers,
 }: {
   filteredData?: OrdersAndItems
   selectedDate?: string
@@ -99,6 +100,7 @@ const OrdersPDF = ({
   sumTotalCash?: string
   sumTotalPayPal?: string
   sumTotalCafeCard?: string
+  sumTotalVouchers?: string
 }) => {
   const totalOrderCount = filteredData ? filteredData.length : 0
 
@@ -149,6 +151,14 @@ const OrdersPDF = ({
             </View>
             <View style={styles.tableCol}>
               <Text style={styles.tableCell}>{sumTotalPayPal}</Text>
+            </View>
+          </View>
+          <View style={styles.tableRow}>
+            <View style={styles.tableColHeader}>
+              <Text style={styles.tableCellHeader}>Umsatz Gutscheine</Text>
+            </View>
+            <View style={styles.tableCol}>
+              <Text style={styles.tableCell}>{sumTotalVouchers}</Text>
             </View>
           </View>
         </View>
