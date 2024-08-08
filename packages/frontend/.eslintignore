@@ -1,2 +1,3 @@
 src/services/supabase.types.ts
 test/
+src/components/ui/**/*

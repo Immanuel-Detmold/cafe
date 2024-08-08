@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 // import { convertUTCToYear } from '@/pages/Statistic/helperFunctions'
 import {
   convertUTCToYear,
