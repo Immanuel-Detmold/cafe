@@ -56,7 +56,7 @@ export default function DatePicker({
               <CommandItem
                 key={order}
                 value={order}
-                onSelect={(currentValue) => {
+                onSelect={(currentValue: string) => {
                   setSelectedDate(
                     currentValue === selectedDate ? '' : currentValue,
                   )

@@ -3,13 +3,7 @@ import {
   getEndOfYear,
   getStartOfYear,
 } from '@/generalHelperFunctions/dateHelperFunctions'
-import {
-  getDistinctDates,
-  getDistinctMonths,
-  getDistinctYears,
-} from '@/pages/Statistic/helperFunctions'
 import { ChevronLeftIcon } from 'lucide-react'
-import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 import { Button } from '@/components/ui/button'
@@ -21,19 +15,18 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 
-import TimeWindowPicker from '../TimeWindowPicker'
 import ExpenseStatistics from './ExpenseStatistics'
 import Columns from './columns'
 import { DataTable } from './data-table'
 
-type selectedDateProp = {
-  startDate: ''
-  endDate: ''
-}
+// type selectedDateProp = {
+//   startDate: ''
+//   endDate: ''
+// }
 
 export default function UserActions() {
   // State
-  const [selectedDate, setSelectedDate] = useState<selectedDateProp>()
+  // const [selectedDate, setSelectedDate] = useState<selectedDateProp>()
 
   // Mini Functions
   const startOfYear = getStartOfYear(new Date())
@@ -49,9 +42,9 @@ export default function UserActions() {
   // More Data
 
   // Get distinct dates
-  const distinctYears = !expenses ? [] : getDistinctYears(expenses)
-  const distinctMonths = !expenses ? [] : getDistinctMonths(expenses)
-  const distinctDates = !expenses ? [] : getDistinctDates(expenses)
+  // const distinctYears = !expenses ? [] : getDistinctYears(expenses)
+  // const distinctMonths = !expenses ? [] : getDistinctMonths(expenses)
+  // const distinctDates = !expenses ? [] : getDistinctDates(expenses)
 
   return (
     <div className="container mx-auto py-10">
@@ -67,11 +60,11 @@ export default function UserActions() {
             <SelectItem value="week">Woche</SelectItem>
           </SelectContent>
         </Select>
-        <TimeWindowPicker
+        {/* <TimeWindowPicker
           selectedDate={selectedDate}
           setSelectedDate={setSelectedDate}
           distinctDates={distinctDates}
-        />
+        /> */}
       </div>
       {/* Statistics */}
       {expenses && (
