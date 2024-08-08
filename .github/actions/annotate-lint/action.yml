@@ -5,7 +5,7 @@ runs:
   using: 'composite'
   steps:
     - name: Create Lint Report
-      run: npm run lint:report
+      run: pnpm run lint:report
       shell: bash
     - name: Annotate Linting Results
       uses: ataylorme/eslint-annotate-action@v2

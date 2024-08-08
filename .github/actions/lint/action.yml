@@ -5,8 +5,8 @@ runs:
   using: 'composite'
   steps:
     - name: Lint
-      run: npm run lint
+      run: pnpm run lint
       shell: bash
     - name: Check Formatting
-      run: npm run lint:prettier
+      run: pnpm run lint:prettier
       shell: bash

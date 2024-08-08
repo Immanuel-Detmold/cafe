@@ -5,5 +5,5 @@ runs:
   using: 'composite'
   steps:
     - name: Build
-      run: npm run build
+      run: pnpm run build
       shell: bash
