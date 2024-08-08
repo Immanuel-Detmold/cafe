@@ -175,9 +175,13 @@ const OrdersPDF = ({
             textAlign: 'center',
             color: 'grey',
           }}
-          render={({ pageNumber, totalPages }) =>
-            `${pageNumber} / ${totalPages}`
-          }
+          render={({
+            pageNumber,
+            totalPages,
+          }: {
+            pageNumber: string
+            totalPages: string
+          }) => `${pageNumber} / ${totalPages}`}
           fixed
         />
       </Page>
