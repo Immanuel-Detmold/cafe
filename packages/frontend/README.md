@@ -3,17 +3,17 @@
 ## Setup
 
 ```bash
-npm ci
+pnpm i
 ```
 
 ## Develop
 
 ```bash
-npm run dev
+pnpm run dev
 ```
 
 ## Build
 
 ```bash
-npm run build
+pnpm run build
 ```

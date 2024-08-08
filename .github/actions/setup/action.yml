@@ -1,14 +1,17 @@
 name: 'Setup'
-description: 'Sets up Node.js and installs dependencies'
+description: 'Sets up Node.js, pnpm and installs dependencies'
 
 runs:
   using: 'composite'
   steps:
+    - name: Enable Corepack
+      run: corepack enable
+      shell: bash
     - name: Setup Node
       uses: actions/setup-node@v4
       with:
         node-version-file: '.nvmrc'
-        cache: 'npm'
+        cache: 'pnpm'
     - name: Install Dependencies
-      run: npm ci
+      run: pnpm i --frozen-lockfile
       shell: bash
