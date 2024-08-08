@@ -10,4 +10,5 @@
   "find-it-faster.general.additionalSearchLocations": [
     
   ],
+  "typescript.tsdk": "node_modules/typescript/lib",
 }

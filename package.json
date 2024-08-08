@@ -23,7 +23,7 @@
     "prettier": "3.2.1",
     "prettier-plugin-packagejson": "^2.4.9",
     "prettier-plugin-tailwindcss": "^0.5.11",
-    "typescript": "^5.2.2"
+    "typescript": "^5.5.4"
   },
   "packageManager": "pnpm@9.7.0+sha256.b35018fbfa8f583668b2649e407922a721355cd81f61beeb4ac1d4258e585559"
 }

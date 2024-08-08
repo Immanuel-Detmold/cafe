@@ -1,6 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import { OrdersAndItems } from '@/data/useOrders'
 import {
   Document,
@@ -175,13 +172,9 @@ const OrdersPDF = ({
             textAlign: 'center',
             color: 'grey',
           }}
-          render={({
-            pageNumber,
-            totalPages,
-          }: {
-            pageNumber: string
-            totalPages: string
-          }) => `${pageNumber} / ${totalPages}`}
+          render={({ pageNumber, totalPages }) =>
+            `${pageNumber} / ${totalPages}`
+          }
           fixed
         />
       </Page>
