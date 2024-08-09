@@ -18,7 +18,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { useToast } from '@/components/ui/use-toast'
 
-import { DatePickerWithPresets } from './DatePickerExpense'
+import { DatePickerWithPresets } from './DatePickerWithPresets'
 import DeleteExpense from './DeleteExpense'
 
 const NewExpense = () => {
@@ -36,7 +36,7 @@ const NewExpense = () => {
   const { mutate: editExpense } = useUpdateExpenseMutation(
     expenseId ? parseInt(expenseId) : 0,
   )
-  const expenseData = useExpenseQuery({ id: expenseId ? expenseId : '' })
+  const expenseData = useExpenseQuery({ id: expenseId ?? expenseId })
 
   // Functions
   const handleSaveExpense = () => {
@@ -86,7 +86,7 @@ const NewExpense = () => {
 
   // Use Effect, if edit mode, Load expense data
   useEffect(() => {
-    if (expenseId) {
+    if (expenseId !== undefined && expenseData.data !== undefined) {
       const data = expenseData.data
       if (data) {
         setPrice(centsToEuro(data.price))

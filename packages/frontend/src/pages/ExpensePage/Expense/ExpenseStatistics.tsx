@@ -1,11 +1,7 @@
 import { useExpensesQuery } from '@/data/useExpense'
 import { useOrdersAndItemsQueryV2 } from '@/data/useOrders'
 import { centsToEuro } from '@/generalHelperFunctions/currencyHelperFunction'
-import {
-  convertToSupabaseDate,
-  getEndOfYear,
-  getStartOfYear,
-} from '@/generalHelperFunctions/dateHelperFunctions'
+import { convertToSupabaseDate } from '@/generalHelperFunctions/dateHelperFunctions'
 import {
   getSumExpenses,
   getSumOrdersV2,
@@ -17,21 +13,12 @@ import { Label } from '@/components/ui/label'
 type expenseProps = {
   startDate: Date
   endDate: Date
-  timeWindow: string
 }
 
-const ExpenseStatistics = ({
-  startDate,
-  endDate,
-  timeWindow,
-}: expenseProps) => {
+const ExpenseStatistics = ({ startDate, endDate }: expenseProps) => {
   // Initialize
-  let StartDate = new Date()
-  let EndDate = new Date()
-  if (timeWindow === 'year') {
-    StartDate = getStartOfYear(startDate)
-    EndDate = getEndOfYear(endDate)
-  }
+  const StartDate = startDate
+  const EndDate = endDate
 
   // Request data
   const { data: ordersYear, isLoading: l2 } = useOrdersAndItemsQueryV2({
@@ -40,11 +27,16 @@ const ExpenseStatistics = ({
     categories: [],
     products: [],
     startDate: convertToSupabaseDate(StartDate),
+    endDate: convertToSupabaseDate(EndDate),
   })
-  const { data: expenses } = useExpensesQuery({
+
+  const { data: expenses, isLoading: l1 } = useExpensesQuery({
     startDate: convertToSupabaseDate(StartDate),
     endDate: convertToSupabaseDate(EndDate),
   })
+  console.log(expenses)
+  console.log(convertToSupabaseDate(StartDate))
+  console.log(convertToSupabaseDate(EndDate))
 
   // Preprocess data
   // Sum turnover this year
@@ -66,8 +58,8 @@ const ExpenseStatistics = ({
   return (
     <>
       {/* Statistic */}
-      {l2 && (
-        <Label className="mt-2 flex items-center font-bold">
+      {(l2 || l1) && (
+        <Label className="mt-4 flex items-center font-bold">
           <Loader2Icon className="animate-spin" />{' '}
           <span className="ml-1">Daten werden geladen...</span>
         </Label>

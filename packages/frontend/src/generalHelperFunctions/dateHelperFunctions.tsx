@@ -123,6 +123,7 @@ export const getThisYear = () => {
   return { yearDataFormat: currentYear, year: temp.split('-')[0] ?? '2000' }
 }
 
+// Returns the start of the year from input Date
 export const getStartOfYear = (date: Date) => {
   const startOfYear = new Date(date)
   startOfYear.setMonth(0)

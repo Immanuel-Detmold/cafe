@@ -79,7 +79,7 @@ export const getDistinctYears = <T extends { created_at: string }>(
 ) => {
   const distinctYears: string[] = []
   data.forEach((item) => {
-    const year = convertUTCToYear(item.created_at)
+    const year = new Date(item.created_at).getFullYear().toString()
     if (!distinctYears.includes(year)) {
       distinctYears.push(year)
     }

@@ -40,10 +40,13 @@ export const useExpensesQuery = ({
   })
 
 // Get a single expense
-export const useExpenseQuery = ({ id }: { id: string }) => {
+export const useExpenseQuery = ({ id }: { id?: string }) => {
   return useQuery({
     queryKey: ['expense', id],
     queryFn: async () => {
+      if (!id) {
+        return null
+      }
       const { data, error } = await supabase
         .from('Expense')
         .select()

@@ -81,7 +81,7 @@ export const exampleOrderData = [
           deleted: false,
           user_id: null,
           category: 'Kaffee',
-          created_at: '2024-03-14T12:23:29.804302+00:00',
+          created_at: '2025-03-14T12:23:29.804302+00:00',
           consumption: [],
           description:
             'Ein kleiner, starker Kaffee, der schnell zubereitet wird und intensiv im Geschmack ist, perfekt für einen schnellen Koffeinschub.',
@@ -104,7 +104,7 @@ export const exampleOrderData = [
   },
   {
     id: 697,
-    created_at: '2024-06-23T10:34:33.196481+00:00',
+    created_at: '2025-06-23T10:34:33.196481+00:00',
     customer_name: '',
     price: 300,
     status: 'finished',
@@ -172,7 +172,7 @@ export const exampleOrderData = [
   },
   {
     id: 698,
-    created_at: '2024-06-23T10:36:21.799096+00:00',
+    created_at: '2026-06-23T10:36:21.799096+00:00',
     customer_name: '',
     price: 900,
     status: 'finished',
