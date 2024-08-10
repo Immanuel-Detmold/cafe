@@ -91,14 +91,12 @@ export const getEndOfDayToday = () => {
 export const getCurrentMonthStartDate = () => {
   const date = new Date()
   date.setDate(1)
-  date.setUTCHours(0)
-  date.setUTCMinutes(0)
-  date.setUTCSeconds(0)
-  date.setUTCMilliseconds(0)
-  const timeZoneOffset = date.getTimezoneOffset() / 60
-  date.setHours(date.getHours() + timeZoneOffset)
+  date.setHours(0)
+  date.setMinutes(0)
+  date.setSeconds(0)
+  date.setMilliseconds(0)
 
-  const month_index = date.getMonth() + 1
+  const month_index = date.getMonth()
 
   //   German months
   const months = MONTHS

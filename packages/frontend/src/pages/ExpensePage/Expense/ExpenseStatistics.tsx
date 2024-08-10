@@ -8,7 +8,10 @@ import {
 } from '@/pages/Statistic/helperFunctions'
 import { Loader2Icon } from 'lucide-react'
 
+import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
+
+import { LineChartComponent } from './LineChart'
 
 type expenseProps = {
   startDate: Date
@@ -30,13 +33,10 @@ const ExpenseStatistics = ({ startDate, endDate }: expenseProps) => {
     endDate: convertToSupabaseDate(EndDate),
   })
 
-  const { data: expenses, isLoading: l1 } = useExpensesQuery({
+  const { data: expensesYear, isLoading: l1 } = useExpensesQuery({
     startDate: convertToSupabaseDate(StartDate),
     endDate: convertToSupabaseDate(EndDate),
   })
-  console.log(expenses)
-  console.log(convertToSupabaseDate(StartDate))
-  console.log(convertToSupabaseDate(EndDate))
 
   // Preprocess data
   // Sum turnover this year
@@ -45,9 +45,9 @@ const ExpenseStatistics = ({ startDate, endDate }: expenseProps) => {
     : getSumOrdersV2(ordersYear, StartDate, EndDate)
 
   // Sum expenses
-  const sumExpenses = !expenses
+  const sumExpenses = !expensesYear
     ? '...'
-    : getSumExpenses(expenses, StartDate, EndDate)
+    : getSumExpenses(expensesYear, StartDate, EndDate)
 
   // Profit
   let profit = 0
@@ -101,6 +101,12 @@ const ExpenseStatistics = ({ startDate, endDate }: expenseProps) => {
           <Label className="text-muted-foreground">Gewinn</Label>
         </div>
       </div>
+      {expensesYear && ordersYear && (
+        <LineChartComponent
+          expensesYear={expensesYear}
+          ordersYear={ordersYear}
+        />
+      )}
     </>
   )
 }

@@ -38,3 +38,5 @@ export const MONTHS = [
   'November',
   'Dezember',
 ]
+
+export const language = 'de'

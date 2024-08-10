@@ -147,6 +147,10 @@ export type OrdersAndItems = NonNullable<
   ReturnType<typeof useOrderAndItemsQuery>['data']
 >
 
+export type OrdersAndItemsV2 = NonNullable<
+  ReturnType<typeof useOrdersAndItemsQueryV2>['data']
+>
+
 // Get Order and Items in Order
 // Functions for Table Oders
 export const useOrderAndItemsQuery = (status: OrderStatus[]) =>

@@ -1,7 +1,13 @@
-const array = [1, 2, 3, 4, 5]
+export const getCurrentMonthStartDate = () => {
+  const date = new Date()
+  date.setDate(1)
+  date.setHours(0)
+  date.setMinutes(0)
+  date.setSeconds(0)
+  date.setMilliseconds(0)
 
-console.log(array[0])
+  const month_index = date.getMonth()
+  console.log(month_index)
+}
 
-const month = new Date().toLocaleString('default', {})
-const date = new Date('2022')
-console.log(date)
+getCurrentMonthStartDate()

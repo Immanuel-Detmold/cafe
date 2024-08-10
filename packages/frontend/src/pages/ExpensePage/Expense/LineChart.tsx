@@ -1,13 +1,17 @@
 'use client'
 
-import { TrendingUp } from 'lucide-react'
+import { Expense } from '@/data/useExpense'
+import { OrdersAndItems } from '@/data/useOrders'
+import {
+  combineData,
+  groupPriceByMonth,
+} from '@/generalHelperFunctions/statisticHelper'
 import { CartesianGrid, Line, LineChart, XAxis } from 'recharts'
 
 import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
@@ -18,32 +22,33 @@ import {
   ChartTooltipContent,
 } from '@/components/ui/chart'
 
-const chartData = [
-  { month: 'January', desktop: 186, mobile: 80 },
-  { month: 'February', desktop: 305, mobile: 200 },
-  { month: 'March', desktop: 237, mobile: 120 },
-  { month: 'April', desktop: 73, mobile: 190 },
-  { month: 'May', desktop: 209, mobile: 130 },
-  { month: 'June', desktop: 214, mobile: 140 },
-]
+// const chartData2 =
 
 const chartConfig: ChartConfig = {
-  desktop: {
-    label: 'Desktop',
+  priceA: {
+    label: 'Ausgaben',
     color: 'hsl(var(--chart-1))',
   },
-  mobile: {
-    label: 'Mobile',
+  priceB: {
+    label: 'Umsatz',
     color: 'hsl(var(--chart-2))',
   },
 }
 
-export function Component() {
+export function LineChartComponent({
+  expensesYear,
+  ordersYear,
+}: {
+  expensesYear: Expense[]
+  ordersYear: OrdersAndItems
+}) {
+  const chartData = groupPriceByMonth(combineData(expensesYear, ordersYear))
+
   return (
-    <Card>
+    <Card className="mb-2 mt-2">
       <CardHeader>
-        <CardTitle>Line Chart - Multiple</CardTitle>
-        <CardDescription>January - June 2024</CardDescription>
+        <CardTitle>Monatliche Ausgaben</CardTitle>
+        <CardDescription>2024</CardDescription>
       </CardHeader>
       <CardContent>
         <ChartContainer config={chartConfig}>
@@ -61,27 +66,28 @@ export function Component() {
               tickLine={false}
               axisLine={false}
               tickMargin={8}
+              // eslint-disable-next-line @typescript-eslint/no-unsafe-return
               tickFormatter={(value) => value.slice(0, 3)}
             />
             <ChartTooltip cursor={false} content={<ChartTooltipContent />} />
             <Line
-              dataKey="desktop"
+              dataKey="priceA"
               type="monotone"
-              stroke="var(--color-desktop)"
+              stroke="var(--color-priceA)"
               strokeWidth={2}
-              dot={false}
+              dot={true}
             />
             <Line
-              dataKey="mobile"
+              dataKey="priceB"
               type="monotone"
-              stroke="var(--color-mobile)"
+              stroke="var(--color-priceB)"
               strokeWidth={2}
               dot={false}
             />
           </LineChart>
         </ChartContainer>
       </CardContent>
-      <CardFooter>
+      {/* <CardFooter>
         <div className="flex w-full items-start gap-2 text-sm">
           <div className="grid gap-2">
             <div className="flex items-center gap-2 font-medium leading-none">
@@ -92,7 +98,7 @@ export function Component() {
             </div>
           </div>
         </div>
-      </CardFooter>
+      </CardFooter> */}
     </Card>
   )
 }
