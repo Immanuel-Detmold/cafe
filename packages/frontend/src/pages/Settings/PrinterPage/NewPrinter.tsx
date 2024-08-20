@@ -5,17 +5,13 @@ import {
 } from '@/data/usePrinter'
 import { useProductCategories } from '@/data/useProductCategories'
 import { Label } from '@radix-ui/react-label'
-import { ChevronLeftIcon, InfoIcon, SaveIcon } from 'lucide-react'
+import { ChevronLeftIcon, SaveIcon } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 
+import InfoIconPopover from '@/components/InfoIconPopover'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover'
 import { Switch } from '@/components/ui/switch'
 import { useToast } from '@/components/ui/use-toast'
 
@@ -150,15 +146,7 @@ const NewPrinter = () => {
             <Label htmlFor="category" className="font-bold">
               Kategorie
             </Label>
-            <Popover>
-              <PopoverTrigger>
-                <InfoIcon className="ml-2 cursor-pointer" />
-              </PopoverTrigger>
-              <PopoverContent>
-                Bon wird gedruckt, wenn in der Bestellung die Kategorie
-                enthalten ist.
-              </PopoverContent>
-            </Popover>
+            <InfoIconPopover text="Bon wird gedruckt, wenn in der Bestellung die Kategorie enthalten ist." />
           </div>
           {categoriesData &&
             categoriesData.map((cat) => (

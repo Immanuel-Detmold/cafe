@@ -81,11 +81,13 @@ const NewOrder = () => {
   const { data: products, error } = useProductsQuery({
     searchTerm: '',
     ascending: true,
+    only_advertisement_screen: false,
   })
   const { data: products_filtered } = useProductsQuery({
     searchTerm: searchTerm,
     ascending: true,
     categories: selectedCategories,
+    only_advertisement_screen: false,
   })
 
   const { data: printers } = usePrintersQuery()

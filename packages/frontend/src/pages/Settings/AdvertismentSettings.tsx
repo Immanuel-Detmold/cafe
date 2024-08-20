@@ -57,7 +57,7 @@ const AdvertismentSettings = () => {
 
             <div className="flex items-center">
               <label htmlFor="timer" className="whitespace-nowrap font-bold">
-                Werbetimer (in Sekdunden)
+                Werbetimer (in Sekunden)
               </label>
               <Popover>
                 <PopoverTrigger>

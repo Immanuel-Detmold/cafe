@@ -2,19 +2,33 @@ import { queryClient } from '@/App'
 import { imgPlaceHolder } from '@/data/data'
 import { useAppData } from '@/data/useAppData'
 import { Product, useProductsQuery } from '@/data/useProducts'
+import { centsToEuro } from '@/generalHelperFunctions/currencyHelperFunction'
 import { supabase } from '@/services/supabase'
 import { useEffect, useState } from 'react'
+
+import { getFontSize, mixArrays } from './helpAdvertisement'
 
 const AdvertismentPage = () => {
   // States
   const [showProduct, setShowProduct] = useState<Product>()
   const [timer, setTimer] = useState<string>('15')
+  // This data contains products and slogans
+  const [showData, setShowData] = useState<Product[]>()
 
   // Data
+  // Only Products
   const { data: products } = useProductsQuery({
     searchTerm: '',
     ascending: true,
     advertisement: true,
+    only_advertisement_screen: false,
+  })
+  // Only Slogans (product that is used as a slogans)
+  const { data: slogans } = useProductsQuery({
+    searchTerm: '',
+    ascending: true,
+    advertisement: true,
+    only_advertisement_screen: true,
   })
   const { data: appData } = useAppData()
   const imgUrl =
@@ -23,23 +37,6 @@ const AdvertismentPage = () => {
       : imgPlaceHolder
 
   // Functions
-  const getFontSize = (name: string) => {
-    // Split string with spaces and get length of longest word
-    const longestWord = name
-      .split(' ')
-      .reduce((a, b) => (a.length > b.length ? a : b))
-
-    if (longestWord.length < 8) {
-      return '7.5rem'
-    } else if (longestWord.length < 10) {
-      return '7rem'
-    } else if (longestWord.length < 12) {
-      return '6.5rem'
-    } else if (longestWord.length < 14) {
-      return '6rem'
-    }
-    return '4rem' // Default font size
-  }
 
   // RealTime changes
   supabase
@@ -55,23 +52,33 @@ const AdvertismentPage = () => {
     )
     .subscribe()
 
+  // Switch showProduct every second
   // Use Effect
   useEffect(() => {
-    if (products && products.length > 0) {
+    if (showData && showData.length > 0) {
       let currentIndex = 0
-      setShowProduct(products[currentIndex])
+      setShowProduct(showData[currentIndex])
 
       const interval = setInterval(
         () => {
-          currentIndex = (currentIndex + 1) % products.length
-          setShowProduct(products[currentIndex])
+          currentIndex = (currentIndex + 1) % showData.length
+          setShowProduct(showData[currentIndex])
         },
         parseInt(timer + '000'),
       )
 
       return () => clearInterval(interval) // Cleanup interval on component unmount
     }
-  }, [products, timer])
+  }, [showData, timer])
+
+  // Mix data and slogans equally
+  useEffect(() => {
+    if (products && slogans && products.length > 0 && slogans.length > 0) {
+      setShowData(mixArrays(products, slogans))
+    } else if (products && products.length > 0) {
+      setShowData(products)
+    }
+  }, [slogans, products, timer])
 
   // Use Effect
   useEffect(() => {
@@ -94,7 +101,9 @@ const AdvertismentPage = () => {
             {/* Price Absoulte*/}
             {showProduct.description ? (
               <h3 className="merriweather-bold absolute bottom-24 right-20 text-[40px] text-gray-400 drop-shadow-lg">
-                2,00€
+                {showProduct.price && showProduct.price !== 0
+                  ? centsToEuro(showProduct.price) + ' €'
+                  : ''}
               </h3>
             ) : (
               ''

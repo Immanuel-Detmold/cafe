@@ -5,7 +5,9 @@ import { UserActionsType } from '@/data/useUserActions.tsx'
 import { centsToEuro } from '@/generalHelperFunctions/currencyHelperFunction'
 
 // Get Sum Price of Orders
-export const getSumOrders = (dataOrders: OrdersAndItems) => {
+export const getSumPriceData = <T extends { price: number }>(
+  dataOrders: T[],
+) => {
   const sum = dataOrders.reduce((total, order) => total + order.price, 0)
   return centsToEuro(sum)
 }
@@ -74,16 +76,24 @@ export const getDistinctDates = <T extends { created_at: string }>(
 }
 
 // Returns Distinct Years -> ['2024', '2025', '2026']
-export const getDistinctYears = <T extends { created_at: string }>(
+export const getDistinctYears = <
+  T extends { created_at: string; purchase_date?: string },
+>(
   data: T[],
-) => {
+): string[] => {
   const distinctYears: string[] = []
+
   data.forEach((item) => {
-    const year = new Date(item.created_at).getFullYear().toString()
+    // Use purchase_date if it exists, otherwise fall back to created_at
+    const year = new Date(item.purchase_date || item.created_at)
+      .getFullYear()
+      .toString()
+
     if (!distinctYears.includes(year)) {
       distinctYears.push(year)
     }
   })
+
   return distinctYears
 }
 

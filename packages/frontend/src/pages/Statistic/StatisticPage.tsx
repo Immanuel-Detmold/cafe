@@ -1,12 +1,16 @@
 import { useCafeCards } from '@/data/useCafeCard'
+import { useExpensesQuery } from '@/data/useExpense'
 import { useOrdersAndItemsQueryV2 } from '@/data/useOrders'
 import { useUser } from '@/data/useUser'
 import { centsToEuro } from '@/generalHelperFunctions/currencyHelperFunction'
 import {
+  convertToSupabaseDate,
   formatDate,
   getCurrentMonthStartDate,
   getEndOfDay,
+  getEndOfYear,
   getStartOfDay,
+  getStartOfYear,
   getThisYear,
 } from '@/generalHelperFunctions/dateHelperFunctions'
 import { Label } from '@radix-ui/react-label'
@@ -23,8 +27,8 @@ import {
   getSumCafeCards,
   getSumCafeCardsGrouped,
   getSumCafeCardsOrders,
-  getSumOrders,
   getSumOrdersPayMethod,
+  getSumPriceData,
 } from './helperFunctions'
 
 const StatisticPage = () => {
@@ -55,6 +59,11 @@ const StatisticPage = () => {
     startDate: yearDataFormat,
   })
 
+  const { data: expensesYear, isLoading: l6 } = useExpensesQuery({
+    startDate: convertToSupabaseDate(getStartOfYear(new Date(year))),
+    endDate: convertToSupabaseDate(getEndOfYear(new Date(year))),
+  })
+
   // Gets all Cafe Cards from this year
   const { data: cafeCardsAllTime, isLoading: l3 } = useCafeCards({})
 
@@ -77,14 +86,20 @@ const StatisticPage = () => {
   // Sum This Month
   const sumMonth = useMemo(() => {
     if (!ordersMonth) return '...'
-    return getSumOrders(ordersMonth)
+    return getSumPriceData(ordersMonth)
   }, [ordersMonth])
 
   // Sum This Year
   const sumYear = useMemo(() => {
     if (!ordersYear) return '...'
-    return getSumOrders(ordersYear)
+    return getSumPriceData(ordersYear)
   }, [ordersYear])
+
+  // Sum expense this year
+  const sumYearExpenses = useMemo(() => {
+    if (!expensesYear) return '...'
+    return getSumPriceData(expensesYear)
+  }, [expensesYear])
 
   // Sum Cafe Cards
   const sumCafeCards = useMemo(() => {
@@ -156,7 +171,7 @@ const StatisticPage = () => {
 
   return (
     <>
-      {l1 && l2 && l3 && l4 && l5 && (
+      {l1 && l2 && l3 && l4 && l5 && l6 && (
         <Label className="mt-2 flex font-bold">
           <Loader2Icon className="animate-spin" />{' '}
           <span className="ml-1">Daten werden geladen...</span>
@@ -176,13 +191,22 @@ const StatisticPage = () => {
                 <Label className="text-muted-foreground">Umsatz</Label>
               </div>
 
-              {/* Current year */}
+              {/* Turnover current year */}
               <div className="grid grid-cols-1 gap-1 rounded-lg border p-2">
                 <Label className="text-base">Dieses Jahr ({year})</Label>
                 <Label className="text-2xl font-bold">
                   {ordersYear ? sumYear.toString() + '€' : '...'}
                 </Label>
                 <Label className="text-muted-foreground">Umsatz</Label>
+              </div>
+
+              {/* Expense current year */}
+              <div className="grid grid-cols-1 gap-1 rounded-lg border p-2">
+                <Label className="text-base">Dieses Jahr ({year})</Label>
+                <Label className="text-2xl font-bold">
+                  {expensesYear ? sumYearExpenses.toString() + '€' : '...'}
+                </Label>
+                <Label className="text-muted-foreground">Ausgaben</Label>
               </div>
 
               {/* Money not used and still on cards */}

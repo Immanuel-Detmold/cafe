@@ -1,7 +1,7 @@
 'use client'
 
 import { cn } from '@/lib/utils'
-import { addDays, format } from 'date-fns'
+import { addDays } from 'date-fns'
 import { Calendar as CalendarIcon } from 'lucide-react'
 import * as React from 'react'
 
@@ -42,7 +42,7 @@ export function DatePickerWithPresets({
         >
           <CalendarIcon className="mr-2 h-4 w-4" />
           {purchaseDate ? (
-            format(purchaseDate, 'PPP')
+            purchaseDate.toLocaleDateString()
           ) : (
             <span>Wähle ein Datum aus</span>
           )}

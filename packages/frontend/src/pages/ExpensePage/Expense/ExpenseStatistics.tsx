@@ -6,8 +6,14 @@ import {
   getSumExpenses,
   getSumOrdersV2,
 } from '@/pages/Statistic/helperFunctions'
-import { Loader2Icon } from 'lucide-react'
+import { ChevronsUpDown, Loader2Icon } from 'lucide-react'
 
+import { Button } from '@/components/ui/button'
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from '@/components/ui/collapsible'
 import { Label } from '@/components/ui/label'
 
 import { LineChartComponent } from './LineChart'
@@ -67,9 +73,7 @@ const ExpenseStatistics = ({ startDate, endDate }: expenseProps) => {
       <div className="mt-2 grid w-full grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-4">
         {/* Current year  turnover*/}
         <div className="grid grid-cols-1 gap-1 rounded-lg border p-2">
-          <Label className="text-base">
-            Dieses Jahr ({StartDate.getFullYear()})
-          </Label>
+          <Label className="text-base">{StartDate.getFullYear()}</Label>
           <Label className="text-2xl font-bold">
             {turnover !== '...'
               ? centsToEuro(turnover).toString() + '€'
@@ -80,9 +84,7 @@ const ExpenseStatistics = ({ startDate, endDate }: expenseProps) => {
 
         {/* Current year  expense*/}
         <div className="grid grid-cols-1 gap-1 rounded-lg border p-2">
-          <Label className="text-base">
-            Dieses Jahr ({StartDate.getFullYear()})
-          </Label>
+          <Label className="text-base">{StartDate.getFullYear()}</Label>
           <Label className="text-2xl font-bold">
             {sumExpenses !== '...' ? centsToEuro(sumExpenses) + '€' : '...'}
           </Label>
@@ -91,21 +93,31 @@ const ExpenseStatistics = ({ startDate, endDate }: expenseProps) => {
 
         {/* Current year  profit*/}
         <div className="grid grid-cols-1 gap-1 rounded-lg border p-2">
-          <Label className="text-base">
-            Dieses Jahr ({StartDate.getFullYear()})
-          </Label>
+          <Label className="text-base">{StartDate.getFullYear()}</Label>
           <Label className="text-2xl font-bold">
             {profit !== 0 ? centsToEuro(profit) + '€' : '...'}
           </Label>
           <Label className="text-muted-foreground">Gewinn</Label>
         </div>
       </div>
-      {expensesYear && ordersYear && (
-        <LineChartComponent
-          expensesYear={expensesYear}
-          ordersYear={ordersYear}
-        />
-      )}
+      <Collapsible className="p-2">
+        <CollapsibleTrigger>
+          <div className="flex items-center">
+            <p>Liniendiagramm anzeigen</p>
+            <Button variant="ghost" size="sm" className="w-9 p-0">
+              <ChevronsUpDown className="h-4 w-4" />
+            </Button>
+          </div>
+        </CollapsibleTrigger>
+        <CollapsibleContent>
+          {expensesYear && ordersYear && (
+            <LineChartComponent
+              expensesYear={expensesYear}
+              ordersYear={ordersYear}
+            />
+          )}
+        </CollapsibleContent>
+      </Collapsible>
     </>
   )
 }

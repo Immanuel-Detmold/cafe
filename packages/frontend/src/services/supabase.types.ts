@@ -289,6 +289,7 @@ export type Database = {
           images: string[] | null
           method: string | null
           name: string
+          only_advertisement_screen: boolean
           price: number
           product_details: Json | null
           short_description: string | null
@@ -306,6 +307,7 @@ export type Database = {
           images?: string[] | null
           method?: string | null
           name: string
+          only_advertisement_screen?: boolean
           price: number
           product_details?: Json | null
           short_description?: string | null
@@ -323,6 +325,7 @@ export type Database = {
           images?: string[] | null
           method?: string | null
           name?: string
+          only_advertisement_screen?: boolean
           price?: number
           product_details?: Json | null
           short_description?: string | null

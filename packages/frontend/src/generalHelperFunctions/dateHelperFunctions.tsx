@@ -104,6 +104,7 @@ export const getCurrentMonthStartDate = () => {
   return { monthDataFormat: date.toISOString().split('.')[0], monthName }
 }
 
+// Returns
 export const getThisYear = () => {
   const currentDate =
     getStartOfDayToday().finalDateString ?? '2000-01-01T00:00:00'

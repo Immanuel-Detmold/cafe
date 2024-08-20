@@ -16,6 +16,7 @@ import { ChevronLeftIcon, Loader2Icon, SaveIcon } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 
+import InfoIconPopover from '@/components/InfoIconPopover'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -26,6 +27,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
+import { Switch } from '@/components/ui/switch'
 import { Textarea } from '@/components/ui/textarea'
 import { useToast } from '@/components/ui/use-toast'
 
@@ -64,6 +66,7 @@ const CreateProductV2 = () => {
   )
   const [description, setDescription] = useState<string>('')
   const [shortDescription, setShortDescription] = useState<string>('')
+  const [showOnlyOnAdvertisement, setShowOnlyOnAdvertisement] = useState(false)
 
   // User State
   const [userRole, setUserRole] = useState('user')
@@ -138,18 +141,18 @@ const CreateProductV2 = () => {
 
   // Add Product
   const handleAddProduct = () => {
-    if (
-      name == '' ||
-      category == '' ||
-      price == '' ||
-      EuroToCents(price) == 0
-    ) {
+    if (name == '' || category == '') {
       setMissingFields(true)
-      toast({ title: 'Bitte fülle alle Felder aus!' })
+      toast({ title: 'Bitte gib Name und Kategorie an.' })
+
+      return
     } else {
       setMissingFields(false)
     }
 
+    if (price === '') {
+      setPrice('0')
+    }
     // if userRole is user, then stop code execution
     if (userRole === 'user') {
       toast({
@@ -173,6 +176,7 @@ const CreateProductV2 = () => {
       consumption: FilteredConsumption,
       short_description: shortDescription,
       description: description,
+      only_advertisement_screen: showOnlyOnAdvertisement,
     }
 
     // New Product
@@ -284,6 +288,7 @@ const CreateProductV2 = () => {
           consumption,
           short_description,
           description,
+          only_advertisement_screen,
         } = productData.data
         setName(name)
         setPrice(centsToEuro(price))
@@ -302,6 +307,9 @@ const CreateProductV2 = () => {
         }
         if (description) {
           setDescription(description)
+        }
+        if (only_advertisement_screen) {
+          setShowOnlyOnAdvertisement(only_advertisement_screen)
         }
       }
     }
@@ -381,7 +389,10 @@ const CreateProductV2 = () => {
             </div>
 
             {/* Method */}
-            <Label className="mt-4 w-full font-bold">Zubereitung</Label>
+            <div className="mt-4 flex items-center">
+              <Label className="font-bold">Zubereitung</Label>
+              <InfoIconPopover text="In den offenen Bestllungen kann auf das Produkt geklickt werden und die Zubereitung gelesen werden." />
+            </div>
             <Textarea
               tabIndex={-1}
               className="mt-1 w-full"
@@ -393,7 +404,10 @@ const CreateProductV2 = () => {
             ></Textarea>
 
             {/* Shortdescription */}
-            <Label className="mt-4 w-full font-bold">Kurzbeschreibung</Label>
+            <div className="mt-4 flex items-center">
+              <Label className="font-bold">Kurzbeschreibung</Label>
+              <InfoIconPopover text="Wird auf der Menükarte angezeigt." />
+            </div>
             <Textarea
               tabIndex={-1}
               className="mt-1 w-full"
@@ -405,7 +419,10 @@ const CreateProductV2 = () => {
             ></Textarea>
 
             {/* Description */}
-            <Label className="mt-4 w-full font-bold">Produktbeschreibung</Label>
+            <div className="mt-4 flex items-center">
+              <Label className="font-bold">Produktbeschreibung</Label>
+              <InfoIconPopover text="Wird im Werbebildschirm und auf der Menükarte in den Propduktdetails angezeigt." />
+            </div>
             <Textarea
               tabIndex={-1}
               className="mt-1 w-full"
@@ -416,6 +433,22 @@ const CreateProductV2 = () => {
               }}
             ></Textarea>
 
+            {/* Switch Show Product/Slogan only on advertisement screen */}
+            <div className="mt-4 flex items-center">
+              <Switch
+                id="advertisement"
+                checked={showOnlyOnAdvertisement}
+                onCheckedChange={(e) => {
+                  setShowOnlyOnAdvertisement(e)
+                }}
+              />
+              <label htmlFor="advertisement" className="ml-2">
+                Nur in der Werbung anzeigen
+              </label>
+              <InfoIconPopover text="Das Produkt wird nur in der Werbung angezeigt.\nDas Produkt wird nicht in der Bestellungsaufnahme angezeigt.\nTipp: Es kann für Slogans im Werbebildschirm verwendet werden." />
+            </div>
+
+            {/* Add consumptions to Product */}
             <Consumption
               consumption={consumption}
               setConsumption={setConsumption}

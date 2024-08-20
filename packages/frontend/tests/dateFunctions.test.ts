@@ -49,8 +49,8 @@ describe('getGroupedMonthsPrice', () => {
       { price: 50, created_at: '2023-07-20' },
     ]
     const dataB = [
-      { price: 300, created_at: '2023-06-25' },
-      { price: 25, created_at: '2023-08-10' },
+      { price: 300, purchase_date: '2023-06-25' },
+      { price: 25, purchase_date: '2023-08-10' },
     ]
     const result = [
       { month: 'Januar', desktop: 0, mobile: 0 },

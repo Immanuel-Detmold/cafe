@@ -1,15 +1,11 @@
 import { useAppData, useUpdateAppData } from '@/data/useAppData'
 import { usePrintersQuery } from '@/data/usePrinter'
-import { ChevronLeftIcon, InfoIcon } from 'lucide-react'
+import { ChevronLeftIcon } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
+import InfoIconPopover from '@/components/InfoIconPopover'
 import { Button } from '@/components/ui/button'
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover'
 import { Switch } from '@/components/ui/switch'
 
 import Columns from './columns'
@@ -67,15 +63,7 @@ export default function UserActions() {
           <label htmlFor={'printOn'} className="ml-2">
             Drucken
           </label>
-          <Popover>
-            <PopoverTrigger>
-              <InfoIcon className="ml-2 cursor-pointer" />
-            </PopoverTrigger>
-            <PopoverContent>
-              Aktiviert oder deaktiviert die Standardeinstellung für das Drucken
-              bei Bestellungsaufnahme.
-            </PopoverContent>
-          </Popover>
+          <InfoIconPopover text="Aktiviert oder deaktiviert die Standardeinstellung für das Drucken bei Bestellungsaufnahme." />
         </div>
       </div>
     </div>

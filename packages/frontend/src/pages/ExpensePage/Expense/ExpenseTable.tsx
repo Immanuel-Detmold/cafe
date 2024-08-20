@@ -12,7 +12,6 @@ import { useNavigate } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 
 import PickYear from '../PickYear'
-import { exampleOrderData } from '../exampleOrderData'
 import ExpenseStatistics from './ExpenseStatistics'
 import Columns from './columns'
 import { DataTable } from './data-table'
@@ -36,10 +35,13 @@ export default function UserActions() {
   const { data: expenses } = useExpensesQuery({})
   const { data: orders } = useOrdersAndItemsQueryV2({})
   const columns = Columns()
-
-  const test_data = exampleOrderData
+  console.log('epense', expenses)
   // More Data
-  const distinctYears = !orders ? [] : getDistinctYears(test_data)
+  const distinctYears = !orders ? [] : getDistinctYears(orders)
+  const distinctExpensesYears = !expenses ? [] : getDistinctYears(expenses)
+  const distinctYearsAll = [
+    ...new Set([...distinctYears, ...distinctExpensesYears]),
+  ]
   // const distinctMonths = !expenses ? [] : getDistinctMonths(expenses)
   // const distinctDates = !expenses ? [] : getDistinctDates(expenses)
 
@@ -50,7 +52,7 @@ export default function UserActions() {
         <PickYear
           selectedYear={selectedYear}
           setSelectedYear={setSelectedYear}
-          distinctYears={distinctYears}
+          distinctYears={distinctYearsAll}
         />
       </div>
       {/* Statistics */}

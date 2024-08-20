@@ -26,12 +26,12 @@ import {
 
 const chartConfig: ChartConfig = {
   priceA: {
-    label: 'Ausgaben',
-    color: 'hsl(var(--chart-1))',
-  },
-  priceB: {
     label: 'Umsatz',
     color: 'hsl(var(--chart-2))',
+  },
+  priceB: {
+    label: 'Ausgaben',
+    color: 'hsl(var(--chart-1))',
   },
 }
 
@@ -42,7 +42,7 @@ export function LineChartComponent({
   expensesYear: Expense[]
   ordersYear: OrdersAndItems
 }) {
-  const chartData = groupPriceByMonth(combineData(expensesYear, ordersYear))
+  const chartData = groupPriceByMonth(combineData(ordersYear, expensesYear))
 
   return (
     <Card className="mb-2 mt-2">
