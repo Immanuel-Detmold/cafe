@@ -42,7 +42,7 @@ describe('getDistinctMonth', () => {
 })
 
 describe('getGroupedMonthsPrice', () => {
-  it('returns {"August": 430, "Juli": 11, "Juni": 2222}', () => {
+  it('returns {"August": 430, "Juli": 11, "Juni": 2222 }', () => {
     console.log('START')
     const dataA = [
       { price: 100, created_at: '2023-06-15' },
