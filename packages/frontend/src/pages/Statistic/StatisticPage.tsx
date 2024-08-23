@@ -14,13 +14,16 @@ import {
   getThisYear,
 } from '@/generalHelperFunctions/dateHelperFunctions'
 import { Label } from '@radix-ui/react-label'
-import { Loader2Icon } from 'lucide-react'
+import { PDFDownloadLink } from '@react-pdf/renderer'
+import { FileTextIcon, Loader2Icon } from 'lucide-react'
 import { useEffect, useMemo, useState } from 'react'
 
+import { Button } from '@/components/ui/button'
 import { Switch } from '@/components/ui/switch'
 
 import Open from '../Open/Open'
 import DatePicker from './DatePicker'
+import OrdersPDF from './GeneratePDF/OrdersPDF'
 import OrderTable from './OrderTable'
 import {
   getDistinctDates,
@@ -302,7 +305,7 @@ const StatisticPage = () => {
           </div>
         )}
 
-        {/* {filteredData && selectedDate && (
+        {filteredData && selectedDate && (
           <PDFDownloadLink
             document={
               <OrdersPDF
@@ -330,7 +333,7 @@ const StatisticPage = () => {
               )
             }
           </PDFDownloadLink>
-        )} */}
+        )}
 
         {/* Table */}
         {filteredData && selectedDate && (
