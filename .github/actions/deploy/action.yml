@@ -5,7 +5,7 @@ runs:
   using: 'composite'
   steps:
     - name: Create 404 Page
-      run: cp packages/frontend/dist/index.html dist/404.html
+      run: cp packages/frontend/dist/index.html packages/frontend/dist/404.html
       shell: bash
     - name: Deploy
       uses: JamesIves/github-pages-deploy-action@v4
