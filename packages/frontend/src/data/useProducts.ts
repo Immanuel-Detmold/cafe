@@ -14,12 +14,14 @@ export const useProductsQuery = ({
   categories,
   advertisement,
   only_advertisement_screen,
+  paused,
 }: {
   searchTerm: string
   ascending: boolean
   categories?: string[]
   advertisement?: boolean
   only_advertisement_screen?: boolean
+  paused?: boolean
 }) => {
   return useQuery({
     queryKey: [
@@ -29,6 +31,7 @@ export const useProductsQuery = ({
       categories,
       advertisement,
       only_advertisement_screen,
+      paused,
     ],
     queryFn: async () => {
       let query = supabase
@@ -48,6 +51,10 @@ export const useProductsQuery = ({
 
       if (only_advertisement_screen !== undefined) {
         query = query.eq('only_advertisement_screen', only_advertisement_screen)
+      }
+
+      if (paused !== undefined) {
+        query = query.eq('paused', paused)
       }
 
       const { data, error } = await query

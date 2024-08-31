@@ -68,6 +68,7 @@ const CreateProductV2 = () => {
   const [shortDescription, setShortDescription] = useState<string>('')
   const [showOnlyOnAdvertisement, setShowOnlyOnAdvertisement] = useState(false)
   const [showConsumption, setShowConsumption] = useState(false)
+  const [paused, setPaused] = useState(false)
 
   // User State
   const [userRole, setUserRole] = useState('user')
@@ -179,6 +180,7 @@ const CreateProductV2 = () => {
       description: description,
       only_advertisement_screen: showOnlyOnAdvertisement,
       show_consumption: showConsumption,
+      paused: paused,
     }
 
     // New Product
@@ -292,11 +294,13 @@ const CreateProductV2 = () => {
           description,
           only_advertisement_screen,
           show_consumption,
+          paused,
         } = productData.data
         setName(name)
         setPrice(centsToEuro(price))
         setCategory(category)
         setShowConsumption(show_consumption)
+        setPaused(paused)
         if (method) {
           setMethod(method)
         }
@@ -437,6 +441,21 @@ const CreateProductV2 = () => {
               }}
             ></Textarea>
 
+            {/* Pause product */}
+            <div className="mt-4 flex items-center">
+              <Switch
+                id="pause-product"
+                checked={paused}
+                onCheckedChange={(e) => {
+                  setPaused(e)
+                }}
+              />
+              <label htmlFor="pause-product" className="ml-2">
+                Produkt pausieren
+              </label>
+              <InfoIconPopover text="Das Produkt wird bei Aktivierung nicht mehr in der Bestellungsaufnahme und Menükarte angezeigt." />
+            </div>
+
             {/* Switch Show Product/Slogan only on advertisement screen */}
             <div className="mt-4 flex items-center">
               <Switch
@@ -449,7 +468,7 @@ const CreateProductV2 = () => {
               <label htmlFor="advertisement" className="ml-2">
                 Nur in der Werbung anzeigen
               </label>
-              <InfoIconPopover text="Das Produkt wird nur in der Werbung angezeigt.\nDas Produkt wird nicht in der Bestellungsaufnahme angezeigt.\nTipp: Es kann für Slogans im Werbebildschirm verwendet werden." />
+              <InfoIconPopover text="Das Produkt wird nur in der Werbung angezeigt.\nDas Produkt wird nicht in der Bestellungsaufnahme und Menükarte angezeigt.\nTipp: Es kann für Slogans im Werbebildschirm verwendet werden." />
             </div>
 
             {/* Switch Show Product/Slogan only on advertisement screen */}
@@ -462,9 +481,9 @@ const CreateProductV2 = () => {
                 }}
               />
               <label htmlFor="show-consumption" className="ml-2">
-                Verbrauch/Inventar bei Bestellung anzeigen
+                Inventar vom Produkt bei Bestellung anzeigen
               </label>
-              <InfoIconPopover text="Kann verwendet werden, um bei der Bestellung anzuzeigen, wie viel von dem Produkt noch im Inventar ist." />
+              <InfoIconPopover text="Kann verwendet werden, um bei der Bestellungsaufnahme anzuzeigen, wie viel von dem Produkt noch im Inventar ist." />
             </div>
 
             {/* Add consumptions to Product */}

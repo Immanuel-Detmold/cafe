@@ -17,6 +17,8 @@ const MenuCard = () => {
   const { data: products, error } = useProductsQuery({
     searchTerm: '',
     ascending: true,
+    only_advertisement_screen: false,
+    paused: false,
   })
 
   const groupedProducts = products?.reduce((groupMap, product) => {

@@ -290,6 +290,7 @@ export type Database = {
           method: string | null
           name: string
           only_advertisement_screen: boolean
+          paused: boolean
           price: number
           product_details: Json | null
           short_description: string | null
@@ -309,6 +310,7 @@ export type Database = {
           method?: string | null
           name: string
           only_advertisement_screen?: boolean
+          paused?: boolean
           price: number
           product_details?: Json | null
           short_description?: string | null
@@ -328,6 +330,7 @@ export type Database = {
           method?: string | null
           name?: string
           only_advertisement_screen?: boolean
+          paused?: boolean
           price?: number
           product_details?: Json | null
           short_description?: string | null
