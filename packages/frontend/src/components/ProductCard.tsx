@@ -34,8 +34,10 @@ const Product = ({ product }: { product: Product }) => {
             Preis: {centsToEuro(product.price)} €
           </Label>
 
-          <div className="absolute bottom-0 right-0">
-            {/* <EditProduct product={product} /> */}
+          <div className="absolute bottom-0 right-1">
+            <p className={product.paused ? 'text-amber-600' : 'text-green-500'}>
+              {product.paused ? 'Pausiert' : 'Aktiv'}
+            </p>
           </div>
         </div>
         {/* <CardContent className="p-3 pt-0 text-sm md:p-6 md:pt-0 md:text-md">
