@@ -293,6 +293,7 @@ export type Database = {
           price: number
           product_details: Json | null
           short_description: string | null
+          show_consumption: boolean
           user_id: string | null
         }
         Insert: {
@@ -311,6 +312,7 @@ export type Database = {
           price: number
           product_details?: Json | null
           short_description?: string | null
+          show_consumption?: boolean
           user_id?: string | null
         }
         Update: {
@@ -329,6 +331,7 @@ export type Database = {
           price?: number
           product_details?: Json | null
           short_description?: string | null
+          show_consumption?: boolean
           user_id?: string | null
         }
         Relationships: []

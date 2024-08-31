@@ -1,4 +1,5 @@
 import { useAppData, useUpdateAppData } from '@/data/useAppData'
+import { useInventory } from '@/data/useInventory'
 import {
   OrderItem,
   useDeleteOrderMutation,
@@ -77,6 +78,7 @@ const NewOrder = () => {
 
   // Data & Mutate
   const { data: appData } = useAppData()
+  const { data: inventoryData } = useInventory()
   const { mutate: updateAppData } = useUpdateAppData()
   const { data: products, error } = useProductsQuery({
     searchTerm: '',
@@ -537,6 +539,7 @@ const NewOrder = () => {
                   dataOrderItems={dataOrderItems}
                   handleAddOrder={handleAddOrder}
                   handleDeleteOrderItem={handleDeleteOrderItem}
+                  InventoryData={inventoryData}
                 />
               </div>
             ),

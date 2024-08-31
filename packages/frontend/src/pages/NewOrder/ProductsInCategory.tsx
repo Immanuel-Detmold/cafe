@@ -1,4 +1,5 @@
 import { imgPlaceHolder } from '@/data/data'
+import { Inventory } from '@/data/useInventory'
 import { OrderItem } from '@/data/useOrders'
 import { Product } from '@/data/useProducts'
 import { centsToEuro } from '@/generalHelperFunctions/currencyHelperFunction'
@@ -19,6 +20,8 @@ import {
 } from '@/components/ui/popover'
 import { Textarea } from '@/components/ui/textarea'
 
+import { getInventoryCount } from './utilityFunctions/getInventoryCount'
+
 type propsProductInCategory = {
   products: Product[]
   dataOrderItems: OrderItem[]
@@ -28,6 +31,7 @@ type propsProductInCategory = {
     productComment: string,
   ) => void
   handleDeleteOrderItem: (product_id: number) => void
+  InventoryData: Inventory[] | undefined
 }
 
 const ProductsInCategory = (props: propsProductInCategory) => {
@@ -123,6 +127,21 @@ const ProductsInCategory = (props: propsProductInCategory) => {
                       />
                     </div>
                   </div>
+                </div>
+
+                {/* Show How much is in Inventory */}
+                <div>
+                  {product.show_consumption &&
+                    props.InventoryData &&
+                    getInventoryCount(product, props.InventoryData).map(
+                      (item) => (
+                        <div key={item.name}>
+                          <p>
+                            {item.name}: {item.quantity} {item.unit}
+                          </p>
+                        </div>
+                      ),
+                    )}
                 </div>
                 <Textarea
                   ref={inputRef}

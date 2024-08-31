@@ -67,6 +67,7 @@ const CreateProductV2 = () => {
   const [description, setDescription] = useState<string>('')
   const [shortDescription, setShortDescription] = useState<string>('')
   const [showOnlyOnAdvertisement, setShowOnlyOnAdvertisement] = useState(false)
+  const [showConsumption, setShowConsumption] = useState(false)
 
   // User State
   const [userRole, setUserRole] = useState('user')
@@ -177,6 +178,7 @@ const CreateProductV2 = () => {
       short_description: shortDescription,
       description: description,
       only_advertisement_screen: showOnlyOnAdvertisement,
+      show_consumption: showConsumption,
     }
 
     // New Product
@@ -289,10 +291,12 @@ const CreateProductV2 = () => {
           short_description,
           description,
           only_advertisement_screen,
+          show_consumption,
         } = productData.data
         setName(name)
         setPrice(centsToEuro(price))
         setCategory(category)
+        setShowConsumption(show_consumption)
         if (method) {
           setMethod(method)
         }
@@ -446,6 +450,21 @@ const CreateProductV2 = () => {
                 Nur in der Werbung anzeigen
               </label>
               <InfoIconPopover text="Das Produkt wird nur in der Werbung angezeigt.\nDas Produkt wird nicht in der Bestellungsaufnahme angezeigt.\nTipp: Es kann für Slogans im Werbebildschirm verwendet werden." />
+            </div>
+
+            {/* Switch Show Product/Slogan only on advertisement screen */}
+            <div className="mt-4 flex items-center">
+              <Switch
+                id="show-consumption"
+                checked={showConsumption}
+                onCheckedChange={(e) => {
+                  setShowConsumption(e)
+                }}
+              />
+              <label htmlFor="show-consumption" className="ml-2">
+                Verbrauch/Inventar bei Bestellung anzeigen
+              </label>
+              <InfoIconPopover text="Kann verwendet werden, um bei der Bestellung anzuzeigen, wie viel von dem Produkt noch im Inventar ist." />
             </div>
 
             {/* Add consumptions to Product */}
