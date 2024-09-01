@@ -143,7 +143,7 @@ const AdvertismentPage = () => {
                 ''
               ) : (
                 <h3 className="merriweather-bold text-center text-[40px] text-gray-400 drop-shadow-lg">
-                  2,00€
+                  {centsToEuro(showProduct.price)}€
                 </h3>
               )}
             </div>
