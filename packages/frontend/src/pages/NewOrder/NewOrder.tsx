@@ -1,3 +1,4 @@
+import { queryClient } from '@/App'
 import { useAppData, useUpdateAppData } from '@/data/useAppData'
 import { useInventory } from '@/data/useInventory'
 import {
@@ -16,6 +17,7 @@ import {
   centsToEuro,
 } from '@/generalHelperFunctions/currencyHelperFunction'
 import { currentDateAndTime } from '@/generalHelperFunctions/dateHelperFunctions'
+import { supabase } from '@/services/supabase'
 import { ArrowPathIcon } from '@heroicons/react/24/outline'
 import { Label } from '@radix-ui/react-label'
 import { Loader2Icon, ShoppingCart } from 'lucide-react'
@@ -99,6 +101,18 @@ const NewOrder = () => {
   if (error) {
     toast({ title: 'Fehler beim Laden der Produkte! ❌' })
   }
+
+  // Realtime for Inventory changes
+  supabase
+    .channel('inventory-db-changes')
+    .on(
+      'postgres_changes',
+      { event: '*', schema: 'public', table: 'Inventory' },
+      () => {
+        void queryClient.invalidateQueries({ queryKey: ['inventory'] })
+      },
+    )
+    .subscribe()
 
   // Load Order from Database if Edit Order ---
   const { data: editData } = useSingleOrder({
