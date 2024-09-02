@@ -1,6 +1,7 @@
 import { useInventory } from '@/data/useInventory'
 import { Label } from '@radix-ui/react-label'
-import { PlusCircleIcon, TrashIcon } from 'lucide-react'
+import { Edit2Icon, PlusCircleIcon, TrashIcon } from 'lucide-react'
+import { useNavigate } from 'react-router-dom'
 
 import { Input } from '@/components/ui/input'
 import {
@@ -13,6 +14,7 @@ import {
 } from '@/components/ui/select'
 
 import { ConsumptionType } from './CreateProductV2'
+import { getInventoryId } from './helperFunction'
 
 type ConsumptionProp = {
   consumption: ConsumptionType[]
@@ -20,6 +22,9 @@ type ConsumptionProp = {
 }
 
 const Consumption = ({ consumption, setConsumption }: ConsumptionProp) => {
+  // Hooks
+  const navigate = useNavigate()
+
   // Data
   const { data: inventory } = useInventory()
   return (
@@ -76,6 +81,17 @@ const Consumption = ({ consumption, setConsumption }: ConsumptionProp) => {
             className="ml-2 max-w-20"
             placeholder="Menge"
           />
+          {/* {inventory && (<p>{getInventoryId(inventory, item.name)}</p>)} */}
+          {inventory && (
+            <Edit2Icon
+              className="ml-2 h-8 w-8 cursor-pointer"
+              onClick={() => {
+                navigate(
+                  '/admin/inventory/' + getInventoryId(inventory, item.name),
+                )
+              }}
+            />
+          )}
           <TrashIcon
             className="ml-2 h-8 w-8 cursor-pointer"
             onClick={() => {

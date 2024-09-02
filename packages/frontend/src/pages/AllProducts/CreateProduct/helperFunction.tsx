@@ -1,3 +1,5 @@
+import { Inventory } from '@/data/useInventory'
+
 import { ProductDetails } from '../../../components/ProductOptions'
 
 export const removeEmptyValues = (ProductDetails: ProductDetails) => {
@@ -20,4 +22,9 @@ export const formatFileSize = (size: number) => {
   } else {
     return size + 'b'
   }
+}
+
+// Get inventory id by name
+export const getInventoryId = (inventory: Inventory[], name: string) => {
+  return inventory.find((i) => i.name === name)?.id
 }
