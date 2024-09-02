@@ -111,7 +111,7 @@ const Filters = ({
                   showCategories.map((category) => (
                     <div
                       key={category}
-                      className="mt-2 flex items-center space-x-1"
+                      className="mt-4 flex items-center space-x-1 2xl:mt-2"
                     >
                       <Checkbox
                         id={category}
@@ -134,7 +134,7 @@ const Filters = ({
                   combinedProducts.map((product) => (
                     <div
                       key={product.id.toString()}
-                      className="mt-2 flex items-center space-x-1"
+                      className="mt-4 flex items-center space-x-1 2xl:mt-2"
                     >
                       <Checkbox
                         id={product.id.toString()}

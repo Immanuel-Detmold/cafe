@@ -57,7 +57,7 @@ const Filters = ({ handleCheckboxChange, selectedCategories }: FilterProps) => {
                   categories.map((category) => (
                     <div
                       key={category.category}
-                      className="mt-2 flex items-center space-x-1"
+                      className="mt-4 flex items-center space-x-1 2xl:mt-2"
                     >
                       <Checkbox
                         id={category.category}
