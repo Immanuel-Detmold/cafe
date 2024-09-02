@@ -7,11 +7,24 @@ import ProductCard from '@/components/ProductCard'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 
+import { GroupedProducts } from '../NewOrder/NewOrder'
+
 const AllProducts = () => {
   const [searchTerm, setSearchTerm] = useState('')
   const [ascending, setAscending] = useState(true)
   const { data: products, error } = useProductsQuery({ searchTerm, ascending })
   const navigate = useNavigate()
+
+  // Grouped Products by Category (for search term and filter)
+  const groupedProducts_filtered = products?.reduce((groupMap, product) => {
+    const key = product.category || 'Other'
+    const group = groupMap[key] ?? []
+    return {
+      ...groupMap,
+      [key]: [...group, product],
+    }
+  }, {} as GroupedProducts)
+
   return (
     <>
       {error && <div>{JSON.stringify(error)}</div>}

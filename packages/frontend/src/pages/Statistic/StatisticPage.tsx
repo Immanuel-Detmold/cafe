@@ -1,3 +1,4 @@
+import { MONTHS } from '@/data/data'
 import { useCafeCards } from '@/data/useCafeCard'
 import { useExpensesQuery } from '@/data/useExpense'
 import { useOrdersAndItemsQueryV2 } from '@/data/useOrders'
@@ -8,8 +9,10 @@ import {
   formatDate,
   getCurrentMonthStartDate,
   getEndOfDay,
+  getEndOfMonth,
   getEndOfYear,
   getStartOfDay,
+  getStartOfMonth,
   getStartOfYear,
   getThisYear,
 } from '@/generalHelperFunctions/dateHelperFunctions'
@@ -41,9 +44,10 @@ const StatisticPage = () => {
   const [selectedDate, setSelectedDate] = useState('')
 
   // Mini Functions
-  const { monthDataFormat, monthName } = getCurrentMonthStartDate()
+  const { monthDataFormat } = getCurrentMonthStartDate()
   const { yearDataFormat, year } = getThisYear()
   const { user } = useUser()
+  const thisMonth = MONTHS[new Date().getMonth()]
 
   // Data
   const { data: ordersMonth, isLoading: l1 } = useOrdersAndItemsQueryV2({
@@ -65,6 +69,11 @@ const StatisticPage = () => {
   const { data: expensesYear, isLoading: l6 } = useExpensesQuery({
     startDate: convertToSupabaseDate(getStartOfYear(new Date(year))),
     endDate: convertToSupabaseDate(getEndOfYear(new Date(year))),
+  })
+
+  const { data: expensesThisMonth, isLoading: l7 } = useExpensesQuery({
+    startDate: convertToSupabaseDate(getStartOfMonth(new Date(year))),
+    endDate: convertToSupabaseDate(getEndOfMonth(new Date(year))),
   })
 
   // Gets all Cafe Cards from this year
@@ -103,6 +112,12 @@ const StatisticPage = () => {
     if (!expensesYear) return '...'
     return getSumPriceData(expensesYear)
   }, [expensesYear])
+
+  // Sum expense this month
+  const sumThisMonthExpense = useMemo(() => {
+    if (!expensesThisMonth) return '...'
+    return getSumPriceData(expensesThisMonth)
+  }, [expensesThisMonth])
 
   // Sum Cafe Cards
   const sumCafeCards = useMemo(() => {
@@ -174,7 +189,7 @@ const StatisticPage = () => {
 
   return (
     <>
-      {l1 && l2 && l3 && l4 && l5 && l6 && (
+      {l1 && l2 && l3 && l4 && l5 && l6 && l7 && (
         <Label className="mt-2 flex font-bold">
           <Loader2Icon className="animate-spin" />{' '}
           <span className="ml-1">Daten werden geladen...</span>
@@ -187,7 +202,7 @@ const StatisticPage = () => {
             <div className="mt-2 grid w-full grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-4">
               {/* Current month */}
               <div className="grid grid-cols-1 gap-1 rounded-lg border p-2">
-                <Label className="text-base">Dieser Monat ({monthName})</Label>
+                <Label className="text-base">Dieser Monat ({thisMonth})</Label>
                 <Label className="text-2xl font-bold">
                   {ordersMonth ? sumMonth.toString() + '€' : '...'}
                 </Label>
@@ -208,6 +223,17 @@ const StatisticPage = () => {
                 <Label className="text-base">Dieses Jahr ({year})</Label>
                 <Label className="text-2xl font-bold">
                   {expensesYear ? sumYearExpenses.toString() + '€' : '...'}
+                </Label>
+                <Label className="text-muted-foreground">Ausgaben</Label>
+              </div>
+
+              {/* Expense current month */}
+              <div className="grid grid-cols-1 gap-1 rounded-lg border p-2">
+                <Label className="text-base">Dieser Monat ({thisMonth})</Label>
+                <Label className="text-2xl font-bold">
+                  {expensesThisMonth
+                    ? sumThisMonthExpense.toString() + '€'
+                    : '...'}
                 </Label>
                 <Label className="text-muted-foreground">Ausgaben</Label>
               </div>
@@ -319,7 +345,7 @@ const StatisticPage = () => {
               />
             }
             fileName="orders.pdf"
-            className="w-30 ml-auto"
+            className="w-30 ml-auto mt-2"
           >
             {({ loading }) =>
               loading ? (

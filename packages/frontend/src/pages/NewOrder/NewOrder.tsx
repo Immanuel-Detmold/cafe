@@ -42,7 +42,7 @@ import {
 } from './utilityFunctions/handleOrder'
 import { runPrintReceipt } from './utilityFunctions/runPrintReceipt'
 
-type GroupedProducts = Record<string, Product[]>
+export type GroupedProducts = Record<string, Product[]>
 
 const NewOrder = () => {
   const [dataOrderItems, setDataOrderItems] = useState<OrderItem[]>([])

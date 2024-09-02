@@ -40,9 +40,10 @@ const RegisterNewUser = () => {
       if (data) {
         setEmail('')
         setPassword('')
+        setName('')
         setUserRole('user')
         setError('')
-        toast({ title: 'Nutzer wurde angelegt ✅' })
+        toast({ title: 'Nutzer wurde angelegt ✅', duration: 2000 })
       }
     }
   }

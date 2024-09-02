@@ -419,6 +419,12 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      delete_user: {
+        Args: {
+          user_id: string
+        }
+        Returns: undefined
+      }
       'Get Users': {
         Args: {
           role: string

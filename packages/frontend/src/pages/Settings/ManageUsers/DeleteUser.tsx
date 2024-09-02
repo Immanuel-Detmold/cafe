@@ -1,3 +1,4 @@
+import { queryClient } from '@/App'
 import { supabase } from '@/services/supabase'
 import { TrashIcon } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
@@ -23,17 +24,18 @@ const DeleteUser = ({ userId }: { userId: string }) => {
   const navigate = useNavigate()
 
   const handleDeleteUser = async (userId: string) => {
-    try {
-      const { data, error } = await supabase.auth.admin.deleteUser(userId)
-      if (error) throw error
-      if (data) {
-        navigate('/admin/settings/manage-users')
-      }
-      toast({ title: 'User deleted successfully ✅', duration: 2000 })
-      // Invalidate queries related to the users if needed
-      // queryClient.invalidateQueries({ queryKey: ['users'] })
-    } catch (error) {
-      toast({ title: `Error: ${(error as Error).message}` })
+    const { error } = await supabase.rpc('delete_user', {
+      user_id: userId,
+    })
+
+    // Invalidate queries related to the users if needed
+    if (error) {
+      console.log(error)
+      toast({ title: `Fehler: ${error.message}` })
+    } else {
+      toast({ title: 'Nutzer wurde gelöscht ✅', duration: 2000 })
+      await queryClient.invalidateQueries({ queryKey: ['users'] })
+      navigate('/admin/settings/manage-users')
     }
   }
 

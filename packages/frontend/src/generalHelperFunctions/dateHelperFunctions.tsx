@@ -146,6 +146,27 @@ export const getEndOfYear = (date: Date) => {
   return endOfYear
 }
 
+export const getStartOfMonth = (date: Date) => {
+  const startOfMonth = new Date(date)
+  startOfMonth.setDate(1)
+  startOfMonth.setHours(0)
+  startOfMonth.setMinutes(0)
+  startOfMonth.setSeconds(0)
+  startOfMonth.setMilliseconds(0)
+  return startOfMonth
+}
+
+export const getEndOfMonth = (date: Date) => {
+  const endOfMonth = new Date(date)
+  endOfMonth.setMonth(endOfMonth.getMonth() + 1)
+  endOfMonth.setDate(0)
+  endOfMonth.setHours(23)
+  endOfMonth.setMinutes(59)
+  endOfMonth.setSeconds(59)
+  endOfMonth.setMilliseconds(999)
+  return endOfMonth
+}
+
 // Format 2024-04-17T05:58:16.36199+00:00 -> 17.04.2024
 export const formatDate = (date: string) => {
   const dateObject = new Date(date)
