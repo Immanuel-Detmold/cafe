@@ -17,7 +17,7 @@ export const useProductsQuery = ({
   paused,
 }: {
   searchTerm: string
-  ascending: boolean
+  ascending?: boolean
   categories?: string[]
   advertisement?: boolean
   only_advertisement_screen?: boolean

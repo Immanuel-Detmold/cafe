@@ -75,6 +75,7 @@ const Open = ({
     searchTerm: '',
     ascending: true,
   })
+
   // If Filter Checkbox is checked or unchecked
   const handleCheckboxChange = (
     type: string,
