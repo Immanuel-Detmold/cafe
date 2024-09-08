@@ -109,7 +109,7 @@ const AdvertismentSettings = () => {
               products.map((product) => (
                 <div
                   key={product.id}
-                  className="ml-2 mt-2 flex items-center"
+                  className="my-2 ml-2 mt-2 flex items-center 2xl:my-1"
                   onClick={() => {
                     setClickedId(product.id)
                   }}

@@ -235,6 +235,8 @@ export const useUpdateProductMutationV2 = () =>
         queryKey: ['products', 'product', data[0]?.id],
       })
 
+      await queryClient.refetchQueries({ queryKey: ['products'] })
+
       await saveUserAction({
         action: data,
         short_description: `Edit Product: ${data[0]?.name}`,

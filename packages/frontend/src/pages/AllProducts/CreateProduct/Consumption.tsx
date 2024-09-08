@@ -40,31 +40,29 @@ const Consumption = ({ consumption, setConsumption }: ConsumptionProp) => {
       {consumption.map((item, index) => (
         <div key={index} className="mt-2 flex items-center">
           {/* Item Name */}
-          <Select
-            onValueChange={(value) => {
+          <select
+            id="itemSelect"
+            className="border-border bg-background text-foreground ml-2 w-full rounded-md border p-2"
+            onChange={(e) => {
               const newConsumption = [...consumption]
               const c = newConsumption[index]
               if (c) {
-                c.name = value
+                c.name = e.target.value
               }
               setConsumption(newConsumption)
             }}
             value={item.name}
           >
-            <SelectTrigger className="ml-2 w-full rounded-md p-2">
-              <SelectValue placeholder="Item" />
-            </SelectTrigger>
-            <SelectContent className="w-72">
-              <SelectGroup>
-                {inventory &&
-                  inventory.map((item) => (
-                    <SelectItem key={item.id} value={item.name}>
-                      {item.name} (in {item.unit})
-                    </SelectItem>
-                  ))}
-              </SelectGroup>
-            </SelectContent>
-          </Select>
+            <option value="" disabled>
+              Item
+            </option>
+            {inventory &&
+              inventory.map((item) => (
+                <option key={item.id} value={item.name}>
+                  {item.name} (in {item.unit})
+                </option>
+              ))}
+          </select>
           {/* Quantity */}
           <Input
             tabIndex={-1}

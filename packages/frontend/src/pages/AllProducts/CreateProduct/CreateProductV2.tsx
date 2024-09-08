@@ -11,6 +11,7 @@ import {
   EuroToCents,
   centsToEuro,
 } from '@/generalHelperFunctions/currencyHelperFunction'
+import { supabase } from '@/services/supabase'
 import { Label } from '@radix-ui/react-label'
 import { ChevronLeftIcon, Loader2Icon, SaveIcon } from 'lucide-react'
 import { useEffect, useState } from 'react'
@@ -20,13 +21,6 @@ import InfoIconPopover from '@/components/InfoIconPopover'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
 import { Switch } from '@/components/ui/switch'
 import { Textarea } from '@/components/ui/textarea'
 import { useToast } from '@/components/ui/use-toast'
@@ -67,6 +61,7 @@ const CreateProductV2 = () => {
   const [description, setDescription] = useState<string>('')
   const [shortDescription, setShortDescription] = useState<string>('')
   const [showOnlyOnAdvertisement, setShowOnlyOnAdvertisement] = useState(false)
+  const [showAdervertisement, setShowAdvertisement] = useState(false)
   const [showConsumption, setShowConsumption] = useState(false)
   const [paused, setPaused] = useState(false)
 
@@ -181,6 +176,7 @@ const CreateProductV2 = () => {
       only_advertisement_screen: showOnlyOnAdvertisement,
       show_consumption: showConsumption,
       paused: paused,
+      advertisement: showAdervertisement,
     }
 
     // New Product
@@ -193,11 +189,11 @@ const CreateProductV2 = () => {
             })
             await handleAddImages(product)
           } else {
-            navigate('/admin/all-products')
             toast({
               title: 'Produkt wurde angelegt!✅',
               duration: 2000,
             })
+            navigate('/admin/all-products')
           }
         },
         onError: () => {
@@ -281,47 +277,61 @@ const CreateProductV2 = () => {
 
   // Use Effect
   useEffect(() => {
-    if (productId) {
-      if (productData.data) {
-        const {
-          name,
-          price,
-          category,
-          method,
-          product_details,
-          consumption,
-          short_description,
-          description,
-          only_advertisement_screen,
-          show_consumption,
-          paused,
-        } = productData.data
-        setName(name)
-        setPrice(centsToEuro(price))
-        setCategory(category)
-        setShowConsumption(show_consumption)
-        setPaused(paused)
-        if (method) {
-          setMethod(method)
-        }
-        if (product_details) {
-          setProductDetails(product_details as ProductDetails)
-        }
-        if (consumption) {
-          setConsumption(consumption as ConsumptionType[])
-        }
-        if (short_description) {
-          setShortDescription(short_description)
-        }
-        if (description) {
-          setDescription(description)
-        }
-        if (only_advertisement_screen) {
-          setShowOnlyOnAdvertisement(only_advertisement_screen)
+    const fetchProductData = async () => {
+      if (productId) {
+        const { data, error } = await supabase
+          .from('Products')
+          .select()
+          .eq('id', parseInt(productId))
+          .single()
+
+        if (data) {
+          const {
+            name,
+            price,
+            category,
+            method,
+            product_details,
+            consumption,
+            short_description,
+            description,
+            only_advertisement_screen,
+            show_consumption,
+            paused,
+            advertisement,
+          } = data
+          setName(name)
+          setPrice(centsToEuro(price))
+          setCategory(category)
+          setShowConsumption(show_consumption)
+          setPaused(paused)
+          setShowAdvertisement(advertisement)
+          if (method) {
+            setMethod(method)
+          }
+          if (product_details) {
+            setProductDetails(product_details as ProductDetails)
+          }
+          if (consumption) {
+            setConsumption(consumption as ConsumptionType[])
+          }
+          if (short_description) {
+            setShortDescription(short_description)
+          }
+          if (description) {
+            setDescription(description)
+          }
+          if (only_advertisement_screen) {
+            setShowOnlyOnAdvertisement(only_advertisement_screen)
+          }
+        } else if (error) {
+          console.error('Error fetching product data:', error)
         }
       }
     }
-  }, [productId, productData.data])
+
+    void fetchProductData()
+  }, [productId])
 
   useEffect(() => {
     const role = user?.user_metadata?.role as string
@@ -333,7 +343,7 @@ const CreateProductV2 = () => {
   return (
     <>
       <div className="mt-2 flex flex-col items-center overflow-x-hidden">
-        <div className="w-full max-w-xl">
+        <div className="w-full max-w-xl p-1">
           {productData.data?.images && productData.data.images.length > 0 && (
             <DisplayImages productData={productData.data} />
           )}
@@ -375,25 +385,23 @@ const CreateProductV2 = () => {
             Kategorie
           </Label> */}
             <div className="mt-4">
-              <Select
-                onValueChange={(value) => {
-                  setCategory(value)
-                }}
+              <select
+                id="categorySelect"
+                className="border-border bg-background text-foreground select w-full rounded-md border p-2"
+                onChange={(e) => setCategory(e.target.value)}
                 defaultValue={category}
                 value={category}
               >
-                <SelectTrigger className="w-fill" tabIndex={-1}>
-                  <SelectValue placeholder="Wähle Kategorie" />
-                </SelectTrigger>
-                <SelectContent>
-                  {categoryData?.map((category) => (
-                    <SelectItem key={category.id} value={category.category}>
-                      {category.category}
-                    </SelectItem>
-                  ))}
-                  <SelectItem value="Sonstiges">Sonstiges</SelectItem>
-                </SelectContent>
-              </Select>
+                <option value="" disabled>
+                  Wähle Kategorie
+                </option>
+                {categoryData?.map((category) => (
+                  <option key={category.id} value={category.category}>
+                    {category.category}
+                  </option>
+                ))}
+                <option value="Sonstiges">Sonstiges</option>
+              </select>
             </div>
 
             {/* Method */}
@@ -459,14 +467,29 @@ const CreateProductV2 = () => {
             {/* Switch Show Product/Slogan only on advertisement screen */}
             <div className="mt-4 flex items-center">
               <Switch
-                id="advertisement"
+                id="show-advertisement"
+                checked={showAdervertisement}
+                onCheckedChange={(e) => {
+                  setShowAdvertisement(e)
+                }}
+              />
+              <label htmlFor="show-advertisement" className="ml-2">
+                In der Werbung anzeigen
+              </label>
+              <InfoIconPopover text="Das Produkt wird in der Werbung angezeigt." />
+            </div>
+
+            {/* Switch Show Product/Slogan only on advertisement screen */}
+            <div className="mt-4 flex items-center">
+              <Switch
+                id="only-on-advertisement"
                 checked={showOnlyOnAdvertisement}
                 onCheckedChange={(e) => {
                   setShowOnlyOnAdvertisement(e)
                 }}
               />
-              <label htmlFor="advertisement" className="ml-2">
-                Nur in der Werbung anzeigen
+              <label htmlFor="only-on-advertisement" className="ml-2">
+                <span className="font-bold">Nur</span> in der Werbung anzeigen
               </label>
               <InfoIconPopover text="Das Produkt wird nur in der Werbung angezeigt.\nDas Produkt wird nicht in der Bestellungsaufnahme und Menükarte angezeigt.\nTipp: Es kann für Slogans im Werbebildschirm verwendet werden." />
             </div>
