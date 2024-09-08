@@ -4,14 +4,6 @@ import { Edit2Icon, PlusCircleIcon, TrashIcon } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 
 import { Input } from '@/components/ui/input'
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
 
 import { ConsumptionType } from './CreateProductV2'
 import { getInventoryId } from './helperFunction'
