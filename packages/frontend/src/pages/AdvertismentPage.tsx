@@ -6,6 +6,8 @@ import { centsToEuro } from '@/generalHelperFunctions/currencyHelperFunction'
 import { supabase } from '@/services/supabase'
 import { useEffect, useState } from 'react'
 
+import cafeLogo from '@/components/ui/icons/svg_immanuel_cafe.svg'
+
 import { getFontSize, mixArrays } from './helpAdvertisement'
 
 const AdvertismentPage = () => {
@@ -109,7 +111,7 @@ const AdvertismentPage = () => {
               ''
             )}
             <img
-              src="src\components\ui\icons\svg_immanuel_cafe.svg"
+              src={cafeLogo}
               alt={'Immanuel Cafe Logo'}
               className="absolute right-0 top-0 aspect-square w-[270px] object-cover drop-shadow-lg"
             />

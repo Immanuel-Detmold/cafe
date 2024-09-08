@@ -392,12 +392,13 @@ const NewOrder = () => {
           handleSaveOrderItems(order_id, orderNumber)
         }
       },
-      onError: () => {
+      onError: (error) => {
         // To DO! If Order Saved, but Failed to save OrderItmes, then Delete Order
         // const { mutate: deleteOrder } = useDeleteOrderMutation()
         // deleteOrder()
         toast({
           title: 'Bestellung konnte nicht gespeichert werden! ❌',
+          description: error.message,
         })
       },
     })

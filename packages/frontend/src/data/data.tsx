@@ -22,6 +22,7 @@ export const TitleMap = {
   '/admin/audio': 'Audio',
   '/admin/settings/manage-users': 'Benutzer verwalten',
   '/admin/settings/advertisement': 'Werbung verwalten',
+  '/admin/expense': 'Ausgaben',
 }
 
 export const MONTHS = [
