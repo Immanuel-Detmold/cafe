@@ -9,6 +9,7 @@ import {
   useSingleOrder,
 } from '@/data/useOrders'
 import { usePrintersQuery } from '@/data/usePrinter'
+import { useProductCategories } from '@/data/useProductCategories'
 import { useProductsQuery } from '@/data/useProducts'
 import { Product } from '@/data/useProducts'
 import { useUser } from '@/data/useUser'
@@ -34,6 +35,7 @@ import { useToast } from '@/components/ui/use-toast'
 import Filters from './Filters'
 import OrderDetailsPage from './OrderDetailsPage'
 import ProductsInCategory from './ProductsInCategory'
+import { groupProductsToCategories } from './utilityFunctions/groupProductsToCategories'
 import {
   GetOrderNumber,
   calcOrderPrice,
@@ -42,7 +44,9 @@ import {
 } from './utilityFunctions/handleOrder'
 import { runPrintReceipt } from './utilityFunctions/runPrintReceipt'
 
-export type GroupedProducts = Record<string, Product[]>
+export type GroupedProducts = {
+  [key: string]: Product[]
+}
 
 const NewOrder = () => {
   const [dataOrderItems, setDataOrderItems] = useState<OrderItem[]>([])
@@ -95,7 +99,7 @@ const NewOrder = () => {
     only_advertisement_screen: false,
     paused: false,
   })
-
+  const { data: dataCategories } = useProductCategories()
   const { data: printers } = usePrintersQuery()
 
   if (error) {
@@ -215,18 +219,14 @@ const NewOrder = () => {
     orderId && setOrderIdEdit(orderId)
   }, [orderId])
 
-  // Grouped Products by Category (for search term and filter)
-  const groupedProducts_filtered = products_filtered?.reduce(
-    (groupMap, product) => {
-      const key = product.category || 'Other'
-      const group = groupMap[key] ?? []
-      return {
-        ...groupMap,
-        [key]: [...group, product],
-      }
-    },
-    {} as GroupedProducts,
-  )
+  // Initialize a new object to group the products by category
+  let groupedProducts_filtered = undefined
+  if (dataCategories && products_filtered) {
+    groupedProducts_filtered = groupProductsToCategories(
+      dataCategories,
+      products_filtered,
+    )
+  }
 
   // Const handleAddOrder. Only Local, no database
   const handleAddOrder = (

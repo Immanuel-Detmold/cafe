@@ -25,7 +25,7 @@ const ChangeCategories = () => {
   const [open, setOpen] = useState(false)
   const [newCategory, setNewCategory] = useState('')
 
-  const { data } = useProductCategories()
+  const { data } = useProductCategories(false)
   const { toast } = useToast()
 
   const { mutate: deleteCategory } = useDeleteCategory()

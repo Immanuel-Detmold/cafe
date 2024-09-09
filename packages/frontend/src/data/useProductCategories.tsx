@@ -8,7 +8,9 @@ import { saveUserAction } from './useUserActions.tsx'
 export type InsertProductCategories =
   Database['public']['Tables']['ProductCategories']['Insert']
 
-export const useProductCategories = () => {
+export type Category = Database['public']['Tables']['ProductCategories']['Row']
+
+export const useProductCategories = (hideNumber = true) => {
   return useQuery({
     queryKey: ['categories'],
     queryFn: async () => {
@@ -20,6 +22,18 @@ export const useProductCategories = () => {
       if (error) {
         throw error
       }
+
+      if (data) {
+        return hideNumber
+          ? data.map((categoryObject) => ({
+              ...categoryObject,
+              category: categoryObject.category.startsWith('1-')
+                ? categoryObject.category.replace('1-', '')
+                : categoryObject.category,
+            }))
+          : data
+      }
+
       return data
     },
   })
