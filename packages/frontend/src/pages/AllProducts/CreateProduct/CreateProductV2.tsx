@@ -133,6 +133,8 @@ const CreateProductV2 = () => {
   // Categories
   const { data: categoryData } = useProductCategories()
 
+  console.log('categoryData', categoryData)
+
   // Edit Product
   const { productId } = useParams<{ productId: string }>()
 

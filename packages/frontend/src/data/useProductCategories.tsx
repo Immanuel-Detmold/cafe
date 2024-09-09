@@ -27,9 +27,8 @@ export const useProductCategories = (hideNumber = true) => {
         return hideNumber
           ? data.map((categoryObject) => ({
               ...categoryObject,
-              category: categoryObject.category.startsWith('1-')
-                ? categoryObject.category.replace('1-', '')
-                : categoryObject.category,
+              // Replace any leading number and dash (e.g., "1-", "2-", "10-", etc.)
+              category: categoryObject.category.replace(/^\d+-/, ''),
             }))
           : data
       }
@@ -80,7 +79,9 @@ export const useAddCategory = () =>
       return data
     },
     onSuccess: async (data) => {
-      await queryClient.invalidateQueries({ queryKey: ['categories'] })
+      await queryClient.invalidateQueries({
+        queryKey: ['categories'],
+      })
 
       await saveUserAction({
         action: data,
