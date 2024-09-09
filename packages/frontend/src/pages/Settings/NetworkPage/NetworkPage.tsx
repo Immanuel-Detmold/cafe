@@ -61,7 +61,7 @@ const NetworkPage = () => {
 
   const testConnection = async () => {
     setIsLoading(true) // Start loading
-    const requestURL = `http://${ip}:${port}/test-connection`
+    const requestURL = `${ip}/test-connection`
 
     try {
       const response = await fetch(requestURL, {
@@ -100,7 +100,7 @@ const NetworkPage = () => {
               placeholder="Enter IP Address"
             />
             <label htmlFor="port" className="mt-4 font-bold">
-              Server Port
+              Server Port (wird nicht gebraucht)
             </label>
             <Input
               id="port"

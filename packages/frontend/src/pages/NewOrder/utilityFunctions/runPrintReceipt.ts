@@ -24,7 +24,7 @@ type printProps = {
 }
 
 export const runPrintReceipt = async (props: printProps) => {
-  const requestURL = `http://${props.ip}:${props.port}/print-receipt`
+  const requestURL = `${props.ip}/print-receipt`
   try {
     const response = await fetch(requestURL, {
       method: 'POST',

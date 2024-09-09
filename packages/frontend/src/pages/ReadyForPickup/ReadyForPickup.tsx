@@ -40,7 +40,7 @@ const ReadyForPickup = () => {
   const [isLoading, setIsLoading] = useState(false)
   const { access_token } = useUser()
   const [ip, setIp] = useState('')
-  const [port, setPort] = useState('')
+  // const [port, setPort] = useState('')
   const [voice, setVoice] = useState('nova')
 
   // Mini Functions
@@ -96,7 +96,7 @@ const ReadyForPickup = () => {
     const inputValue =
       'Die Bestellnummer ' + order_number + ' kann abgeholt werden!'
     setIsLoading(true) // Start loading
-    const requestURL = `http://${ip}:${port}/text-to-speech`
+    const requestURL = `${ip}/text-to-speech`
     try {
       const response = await fetch(requestURL, {
         method: 'POST',
@@ -125,15 +125,12 @@ const ReadyForPickup = () => {
   // Use Effect
   useEffect(() => {
     const serverIpData = appData?.find((item) => item.key === 'server_ip')
-    const serverPortData = appData?.find((item) => item.key === 'server_port')
     const defaultVoice = appData?.find((item) => item.key === 'voice')
 
     if (serverIpData) {
       setIp(serverIpData.value)
     }
-    if (serverPortData) {
-      setPort(serverPortData.value)
-    }
+
     if (defaultVoice) {
       setVoice(defaultVoice.value)
     }

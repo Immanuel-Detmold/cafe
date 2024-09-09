@@ -24,7 +24,6 @@ const AudioPage = () => {
   const [isLoading, setIsLoading] = useState(false)
   const { access_token } = useUser()
   const [ip, setIp] = useState('')
-  const [port, setPort] = useState('')
 
   const [isSelectOpen, setIsSelectOpen] = useState(false)
   const [voice, setVoice] = useState('nova')
@@ -46,7 +45,7 @@ const AudioPage = () => {
       return
     }
     setIsLoading(true) // Start loading
-    const requestURL = `http://${ip}:${port}/text-to-speech`
+    const requestURL = `${ip}/text-to-speech`
     try {
       const response = await fetch(requestURL, {
         method: 'POST',
@@ -80,15 +79,13 @@ const AudioPage = () => {
   // UseEffects
   useEffect(() => {
     const serverIpData = appData?.find((item) => item.key === 'server_ip')
-    const serverPortData = appData?.find((item) => item.key === 'server_port')
+    // const serverPortData = appData?.find((item) => item.key === 'server_port')
     const defaultVoice = appData?.find((item) => item.key === 'voice')
 
     if (serverIpData) {
       setIp(serverIpData.value)
     }
-    if (serverPortData) {
-      setPort(serverPortData.value)
-    }
+
     if (defaultVoice) {
       setVoice(defaultVoice.value)
     }
