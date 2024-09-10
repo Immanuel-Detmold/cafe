@@ -389,7 +389,6 @@ const CreateProductV2 = () => {
                 id="categorySelect"
                 className="border-border bg-background text-foreground select w-full rounded-md border p-2"
                 onChange={(e) => setCategory(e.target.value)}
-                defaultValue={category}
                 value={category}
               >
                 <option value="" disabled>
