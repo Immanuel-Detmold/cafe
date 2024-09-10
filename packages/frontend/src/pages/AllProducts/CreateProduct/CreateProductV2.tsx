@@ -133,8 +133,6 @@ const CreateProductV2 = () => {
   // Categories
   const { data: categoryData } = useProductCategories()
 
-  console.log('categoryData', categoryData)
-
   // Edit Product
   const { productId } = useParams<{ productId: string }>()
 
@@ -402,7 +400,6 @@ const CreateProductV2 = () => {
                     {category.category}
                   </option>
                 ))}
-                <option value="Sonstiges">Sonstiges</option>
               </select>
             </div>
 

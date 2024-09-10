@@ -99,16 +99,20 @@ const NetworkPage = () => {
               className="mt-1"
               placeholder="Enter IP Address"
             />
-            <label htmlFor="port" className="mt-4 font-bold">
-              Server Port (wird nicht gebraucht)
-            </label>
-            <Input
-              id="port"
-              value={port}
-              onChange={(e) => setPort(e.target.value)}
-              className="mt-1"
-              placeholder="Enter Port"
-            />
+            {false && (
+              <>
+                <label htmlFor="port" className="mt-4 font-bold">
+                  Server Port (wird nicht gebraucht)
+                </label>
+                <Input
+                  id="port"
+                  value={port}
+                  onChange={(e) => setPort(e.target.value)}
+                  className="mt-1"
+                  placeholder="Enter Port"
+                />
+              </>
+            )}
             <div className="flex">
               <Button
                 className="mt-4"

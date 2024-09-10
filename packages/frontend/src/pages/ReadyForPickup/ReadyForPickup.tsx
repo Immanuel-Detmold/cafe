@@ -242,7 +242,7 @@ const ReadyForPickup = () => {
                       )}
                     </Button>
 
-                    {false && (
+                    {true && (
                       <Button
                         className="m-1 w-40"
                         variant={'default'}
