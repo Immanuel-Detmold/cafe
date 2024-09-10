@@ -27,7 +27,6 @@ const UpdatePassword = () => {
     setLoading(false)
 
     if (data.user != null) {
-      console.log('data', data)
       toast({ title: 'Password aktualisiert! ✅' })
       setError('')
       navigate('/admin/new-order')

@@ -103,7 +103,6 @@ const NewItem = () => {
         { id: parseInt(itemId), inventoryItem: newInventoryItem },
         {
           onSuccess: () => {
-            // console.log(data)
             toast({ title: 'Item aktualisiert ✅', duration: 1000 })
             resetForm()
             navigate('/admin/inventory')

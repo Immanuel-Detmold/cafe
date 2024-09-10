@@ -80,8 +80,6 @@ const EditProduct = ({ product }: { product: Product }) => {
         method: method,
         image: img_uuid,
       })
-
-      console.log('Updating Product!')
       setSheetOpen(false)
       toast({
         title: 'Produkt aktualisiert!✅',

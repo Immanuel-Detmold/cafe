@@ -21,7 +21,6 @@ supabase
       schema: 'public',
     },
     () => {
-      // console.log('Realtime Payload: ', payload)
       void queryClient.invalidateQueries({ queryKey: ['ordersAndItems'] })
       void queryClient.invalidateQueries({ queryKey: ['appData'] })
     },

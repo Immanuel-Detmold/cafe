@@ -71,7 +71,6 @@ export const getDistinctDates = <T extends { created_at: string }>(
       distinctDates.push(date)
     }
   })
-  console.log(distinctDates)
   return distinctDates
 }
 

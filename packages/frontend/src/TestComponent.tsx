@@ -12,7 +12,6 @@ const TestComponent = () => {
     // Delete images one by one in folder
     if (filesData.data) {
       for (const file of filesData.data) {
-        console.log(file)
         const { error } = await supabase.storage
           .from('ProductImages')
           .remove([product_id + '/' + file.name])

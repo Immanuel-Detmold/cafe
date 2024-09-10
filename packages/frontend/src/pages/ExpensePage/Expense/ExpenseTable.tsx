@@ -35,7 +35,6 @@ export default function UserActions() {
   const { data: expenses } = useExpensesQuery({})
   const { data: orders } = useOrdersAndItemsQueryV2({})
   const columns = Columns()
-  console.log('epense', expenses)
   // More Data
   const distinctYears = !orders ? [] : getDistinctYears(orders)
   const distinctExpensesYears = !expenses ? [] : getDistinctYears(expenses)

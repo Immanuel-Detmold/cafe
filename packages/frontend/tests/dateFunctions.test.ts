@@ -17,9 +17,6 @@ import { expenseData } from './exampleExpenseData.ts'
 // const OrderData = orderData.slice(0, 10)
 // const Expense = expenseData
 
-// console.log(OrderData)
-// console.log(Expense)
-
 describe('convertUTCToYear', () => {
   it('converts 2024-07-23 06:36:46.412224+00 to 2024', () => {
     expect(convertUTCToYear('2024-07-23 06:36:46.412224+00')).toBe('2024')
@@ -43,7 +40,6 @@ describe('getDistinctMonth', () => {
 
 describe('getGroupedMonthsPrice', () => {
   it('returns {"August": 430, "Juli": 11, "Juni": 2222 }', () => {
-    console.log('START')
     const dataA = [
       { price: 100, created_at: '2023-06-15' },
       { price: 50, created_at: '2023-07-20' },

@@ -26,7 +26,6 @@ const CardHistory = () => {
   const handleDeleteCard = (id: number) => {
     deleteCard(id, {
       onSuccess: () => {
-        console.log('Success Deleting Card!')
         toast({ title: 'Karte gelöscht ✅', duration: 800 })
         void queryClient.invalidateQueries({ queryKey: ['cafeCards'] })
       },

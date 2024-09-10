@@ -5,7 +5,6 @@ export function mixArrays(products: Product[], slogans: Product[]): Product[] {
   const result: Product[] = []
   const productLength = products.length
   const sloganLength = slogans.length
-  console.log('Products: ', products)
   if (sloganLength === 0) {
     return products // No slogans to mix, return products as is.
   }

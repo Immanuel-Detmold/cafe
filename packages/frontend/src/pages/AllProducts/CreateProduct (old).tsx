@@ -81,8 +81,6 @@ const CreateProduct = () => {
       const imgUrl = supabase.storage
         .from('ProductImages')
         .getPublicUrl(i_uuidv4).data.publicUrl
-      console.log(data)
-      console.log('IMG3: ' + i_uuidv4)
       return imgUrl
     }
     return i_uuidv4
