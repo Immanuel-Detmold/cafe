@@ -76,7 +76,6 @@ module.exports = {
 
   plugins: [require('daisyui'), require('tailwindcss-animate')],
   daisyui: {
-    base: false,
+    base: false, // disable daisyui base styles
   },
-  // Disable default DaisyUI themes
 }
