@@ -73,5 +73,10 @@ module.exports = {
       },
     },
   },
-  plugins: [require('tailwindcss-animate'), require('daisyui')],
+
+  plugins: [require('daisyui'), require('tailwindcss-animate')],
+  daisyui: {
+    base: false,
+  },
+  // Disable default DaisyUI themes
 }
