@@ -201,7 +201,6 @@ const ReadyForPickup = () => {
                     </div>
                   </PopoverTrigger>
                   <PopoverContent className="flex w-80 flex-col items-center justify-center">
-                    <Label className="font-bold">Status Update</Label>
                     <Button
                       className="m-2 w-40 bg-emerald-800 hover:bg-emerald-900"
                       variant={'default'}
@@ -223,7 +222,7 @@ const ReadyForPickup = () => {
                       )}
                     </Button>
                     <Button
-                      className="m-1 w-40"
+                      className="m-2 w-40"
                       variant={'default'}
                       tabIndex={-1}
                       onClick={() => {
@@ -244,7 +243,7 @@ const ReadyForPickup = () => {
 
                     {true && (
                       <Button
-                        className="m-1 w-40"
+                        className="m-2 w-40"
                         variant={'default'}
                         tabIndex={-1}
                         onClick={async () => {
