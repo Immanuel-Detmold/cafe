@@ -1,13 +1,13 @@
 import { imgPlaceHolder } from '@/data/data'
-import { Product, useProductsQuery } from '@/data/useProducts'
+import { useProductCategories } from '@/data/useProductCategories'
+import { useProductsQuery } from '@/data/useProducts'
 import { centsToEuro } from '@/generalHelperFunctions/currencyHelperFunction'
 
 import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog'
 import { useToast } from '@/components/ui/use-toast'
 
+import { groupProductsToCategories } from '../NewOrder/utilityFunctions/groupProductsToCategories'
 import ProductDetails from './ProductDetails'
-
-type GroupedProducts = Record<string, Product[]>
 
 const MenuCard = () => {
   // Mini Functions
@@ -20,15 +20,13 @@ const MenuCard = () => {
     only_advertisement_screen: false,
     paused: false,
   })
+  const { data: dataCategories } = useProductCategories()
 
-  const groupedProducts = products?.reduce((groupMap, product) => {
-    const key = product.category || 'Other'
-    const group = groupMap[key] ?? []
-    return {
-      ...groupMap,
-      [key]: [...group, product],
-    }
-  }, {} as GroupedProducts)
+  let groupedProducts = undefined
+  if (dataCategories && products) {
+    groupedProducts = groupProductsToCategories(dataCategories, products)
+  }
+  console.log('groupedProducts', groupedProducts)
 
   if (error) {
     toast({ title: 'Fehler beim Laden der Produkte! ❌' })
