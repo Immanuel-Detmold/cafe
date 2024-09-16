@@ -176,7 +176,7 @@ const StatisticPage = () => {
   // UseEffect
   useEffect(() => {
     if (distinctDates.length > 0 && distinctDates !== undefined) {
-      setSelectedDate(distinctDates[distinctDates.length - 1] || '')
+      setSelectedDate(distinctDates[0] || '')
     }
   }, [distinctDates])
 
