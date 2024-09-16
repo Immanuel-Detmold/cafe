@@ -90,7 +90,7 @@ const StatisticPage = () => {
   })
 
   // Get distinct dates
-  const distinctOrders = useMemo(() => {
+  const distinctDates = useMemo(() => {
     if (!orders) return []
     return getDistinctDates(orders)
   }, [orders])
@@ -175,10 +175,10 @@ const StatisticPage = () => {
 
   // UseEffect
   useEffect(() => {
-    if (distinctOrders.length > 0 && distinctOrders !== undefined) {
-      setSelectedDate(distinctOrders[0] || '')
+    if (distinctDates.length > 0 && distinctDates !== undefined) {
+      setSelectedDate(distinctDates[distinctDates.length - 1] || '')
     }
-  }, [distinctOrders])
+  }, [distinctDates])
 
   useEffect(() => {
     const role = user?.user_metadata?.role as string
@@ -273,7 +273,7 @@ const StatisticPage = () => {
             <div className="col-span-2 mt-2 w-full">
               {
                 <DatePicker
-                  distinctDates={distinctOrders.reverse()}
+                  distinctDates={distinctDates.reverse()}
                   selectedDate={selectedDate || ''}
                   setSelectedDate={setSelectedDate}
                 />
