@@ -3,6 +3,17 @@ import { Label } from '@radix-ui/react-label'
 import { Edit2Icon, PlusCircleIcon, TrashIcon } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog'
 import { Input } from '@/components/ui/input'
 
 import { ConsumptionType } from './CreateProductV2'
@@ -74,7 +85,7 @@ const Consumption = ({ consumption, setConsumption }: ConsumptionProp) => {
           {/* {inventory && (<p>{getInventoryId(inventory, item.name)}</p>)} */}
           {inventory && (
             <Edit2Icon
-              className="ml-2 h-8 w-8 cursor-pointer"
+              className="ml-4 h-10 w-10 cursor-pointer"
               onClick={() => {
                 navigate(
                   '/admin/inventory/' + getInventoryId(inventory, item.name),
@@ -82,12 +93,41 @@ const Consumption = ({ consumption, setConsumption }: ConsumptionProp) => {
               }}
             />
           )}
-          <TrashIcon
-            className="ml-2 h-8 w-8 cursor-pointer"
-            onClick={() => {
-              setConsumption((prev) => prev.filter((_, i) => i !== index))
-            }}
-          />
+
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <div className="ml-4 flex h-6 w-6 cursor-pointer items-center justify-center">
+                <TrashIcon className="" />
+              </div>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>
+                  Möchtest du den Verbrauch wirklich löschen?
+                </AlertDialogTitle>
+                <AlertDialogDescription>
+                  Diese Aktion kann nicht rückgängig gemacht werden.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+
+              <AlertDialogFooter>
+                <div className="block text-right">
+                  <AlertDialogCancel>Abbrechen</AlertDialogCancel>
+
+                  <AlertDialogAction
+                    className="ml-2 bg-red-700"
+                    onClick={() => {
+                      setConsumption((prev) =>
+                        prev.filter((_, i) => i !== index),
+                      )
+                    }}
+                  >
+                    Löschen
+                  </AlertDialogAction>
+                </div>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         </div>
       ))}
     </>
