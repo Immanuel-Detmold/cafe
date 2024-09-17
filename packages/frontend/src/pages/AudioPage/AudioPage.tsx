@@ -157,13 +157,6 @@ const AudioPage = () => {
               Bestellungen verwendet.
             </AlertDescription>
           </Alert>
-
-          <Alert className="mt-4">
-            <InfoIcon className="h-4 w-4" />
-            <AlertDescription>
-              Pro Monat können ca. 28 Audioanfragen generiert werden.
-            </AlertDescription>
-          </Alert>
         </div>
       </div>
     </>
