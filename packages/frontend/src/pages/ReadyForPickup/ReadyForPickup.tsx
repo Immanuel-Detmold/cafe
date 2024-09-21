@@ -94,7 +94,7 @@ const ReadyForPickup = () => {
   // Send Audio
   const handleSendText = async (order_number: string) => {
     const inputValue =
-      'Die Bestellnummer ' + order_number + ' kann abgeholt werden!'
+      'Bestellnummer ' + order_number + ' ist abholbereit!'
     setIsLoading(true) // Start loading
     const requestURL = `${ip}/text-to-speech`
     try {
