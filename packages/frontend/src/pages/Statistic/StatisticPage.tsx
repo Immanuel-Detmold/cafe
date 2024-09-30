@@ -46,6 +46,7 @@ const StatisticPage = () => {
   // Mini Functions
   const { monthDataFormat } = getCurrentMonthStartDate()
   const { yearDataFormat, year } = getThisYear()
+
   const { user } = useUser()
   const thisMonth = MONTHS[new Date().getMonth()]
 
@@ -67,14 +68,16 @@ const StatisticPage = () => {
   })
 
   const { data: expensesYear, isLoading: l6 } = useExpensesQuery({
-    startDate: convertToSupabaseDate(getStartOfYear(new Date(year))),
-    endDate: convertToSupabaseDate(getEndOfYear(new Date(year))),
+    startDate: convertToSupabaseDate(getStartOfYear(new Date())),
+    endDate: convertToSupabaseDate(getEndOfYear(new Date())),
   })
 
   const { data: expensesThisMonth, isLoading: l7 } = useExpensesQuery({
-    startDate: convertToSupabaseDate(getStartOfMonth(new Date(year))),
-    endDate: convertToSupabaseDate(getEndOfMonth(new Date(year))),
+    startDate: convertToSupabaseDate(getStartOfMonth(new Date())),
+    endDate: convertToSupabaseDate(getEndOfMonth(new Date())),
   })
+
+  console.log(expensesThisMonth)
 
   // Gets all Cafe Cards from this year
   const { data: cafeCardsAllTime, isLoading: l3 } = useCafeCards({})
@@ -107,17 +110,17 @@ const StatisticPage = () => {
     return getSumPriceData(ordersYear)
   }, [ordersYear])
 
-  // Sum expense this year
-  const sumYearExpenses = useMemo(() => {
-    if (!expensesYear) return '...'
-    return getSumPriceData(expensesYear)
-  }, [expensesYear])
-
   // Sum expense this month
   const sumThisMonthExpense = useMemo(() => {
     if (!expensesThisMonth) return '...'
     return getSumPriceData(expensesThisMonth)
   }, [expensesThisMonth])
+
+  // Sum expense this year
+  const sumYearExpenses = useMemo(() => {
+    if (!expensesYear) return '...'
+    return getSumPriceData(expensesYear)
+  }, [expensesYear])
 
   // Sum Cafe Cards
   const sumCafeCards = useMemo(() => {
@@ -198,7 +201,7 @@ const StatisticPage = () => {
       <div className="flex flex-col items-center">
         {userRole === 'admin' && (
           <>
-            {/* First row, sum this month and this year */}
+            {/* Turnover current month*/}
             <div className="mt-2 grid w-full grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-4">
               {/* Current month */}
               <div className="grid grid-cols-1 gap-1 rounded-lg border p-2">
@@ -218,15 +221,6 @@ const StatisticPage = () => {
                 <Label className="text-muted-foreground">Umsatz</Label>
               </div>
 
-              {/* Expense current year */}
-              <div className="grid grid-cols-1 gap-1 rounded-lg border p-2">
-                <Label className="text-base">Dieses Jahr ({year})</Label>
-                <Label className="text-2xl font-bold">
-                  {expensesYear ? sumYearExpenses.toString() + '€' : '...'}
-                </Label>
-                <Label className="text-muted-foreground">Ausgaben</Label>
-              </div>
-
               {/* Expense current month */}
               <div className="grid grid-cols-1 gap-1 rounded-lg border p-2">
                 <Label className="text-base">Dieser Monat ({thisMonth})</Label>
@@ -234,6 +228,15 @@ const StatisticPage = () => {
                   {expensesThisMonth
                     ? sumThisMonthExpense.toString() + '€'
                     : '...'}
+                </Label>
+                <Label className="text-muted-foreground">Ausgaben</Label>
+              </div>
+
+              {/* Expense current year */}
+              <div className="grid grid-cols-1 gap-1 rounded-lg border p-2">
+                <Label className="text-base">Dieses Jahr ({year})</Label>
+                <Label className="text-2xl font-bold">
+                  {expensesYear ? sumYearExpenses.toString() + '€' : '...'}
                 </Label>
                 <Label className="text-muted-foreground">Ausgaben</Label>
               </div>
