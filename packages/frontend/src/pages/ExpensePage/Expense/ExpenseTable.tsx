@@ -41,8 +41,6 @@ export default function UserActions() {
   const distinctYearsAll = [
     ...new Set([...distinctYears, ...distinctExpensesYears]),
   ]
-  // const distinctMonths = !expenses ? [] : getDistinctMonths(expenses)
-  // const distinctDates = !expenses ? [] : getDistinctDates(expenses)
 
   return (
     <div className="container mx-auto py-10">

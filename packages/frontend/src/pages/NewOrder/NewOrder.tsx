@@ -370,6 +370,7 @@ const NewOrder = () => {
       product_ids: uniqueProducts,
       table_number: tableNumber,
       order_number: orderNumber,
+      custom_price: customPrice,
     }
 
     saveOrder(orderData, {

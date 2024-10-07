@@ -191,6 +191,7 @@ export type Database = {
           categories: string[]
           comment: string | null
           created_at: string
+          custom_price: boolean
           customer_name: string | null
           id: number
           order_number: string
@@ -205,6 +206,7 @@ export type Database = {
           categories: string[]
           comment?: string | null
           created_at?: string
+          custom_price?: boolean
           customer_name?: string | null
           id?: number
           order_number: string
@@ -219,6 +221,7 @@ export type Database = {
           categories?: string[]
           comment?: string | null
           created_at?: string
+          custom_price?: boolean
           customer_name?: string | null
           id?: number
           order_number?: string
@@ -422,13 +425,6 @@ export type Database = {
       delete_user: {
         Args: {
           user_id: string
-        }
-        Returns: undefined
-      }
-      'Get Users': {
-        Args: {
-          role: string
-          name: string
         }
         Returns: undefined
       }

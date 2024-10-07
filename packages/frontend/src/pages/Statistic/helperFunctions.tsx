@@ -71,7 +71,7 @@ export const getDistinctDates = <T extends { created_at: string }>(
       distinctDates.push(date)
     }
   })
-  return distinctDates
+  return distinctDates.reverse()
 }
 
 // Returns Distinct Years -> ['2024', '2025', '2026']
