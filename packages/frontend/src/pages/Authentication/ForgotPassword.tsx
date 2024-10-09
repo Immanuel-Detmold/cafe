@@ -28,7 +28,7 @@ const ForgotPassword = () => {
       setError('')
     }
     if (error) {
-      setError('Email nicht gefunden.')
+      setError(error.message)
     }
   }
 
