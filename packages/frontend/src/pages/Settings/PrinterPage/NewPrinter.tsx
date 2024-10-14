@@ -16,18 +16,19 @@ import { Switch } from '@/components/ui/switch'
 import { useToast } from '@/components/ui/use-toast'
 
 import DeletePrinter from './DeletePrinter'
+import PrintFor from './PrintFor'
 
 const NewPrinter = () => {
   const [name, setName] = useState('')
   const [ip, setIp] = useState('')
   const [port, setPort] = useState('')
   const [selectedCategories, setSelectedCategories] = useState<string[]>([])
+  const [printFor, setPrintFor] = useState<string[]>([])
 
   // Hooks
   const navigate = useNavigate()
   const { toast } = useToast()
   const { printerId } = useParams()
-
   // Data & Mutation
   const { data: categoriesData } = useProductCategories()
   const savePrinterMutation = useCreatePrinterMutation()
@@ -43,6 +44,16 @@ const NewPrinter = () => {
       setSelectedCategories((prev) => prev.filter((c) => c !== category))
     }
   }
+
+  // Print for customer or staff or both
+  const handlePrintForChange = (person_group: string, checked: boolean) => {
+    if (checked) {
+      setPrintFor((prev) => [...prev, person_group])
+    } else {
+      setPrintFor((prev) => prev.filter((c) => c !== person_group))
+    }
+  }
+
   // Functions
   const handleSavePrinter = () => {
     if (!name || !ip || !port || selectedCategories.length === 0) {
@@ -58,6 +69,7 @@ const NewPrinter = () => {
       ip,
       port,
       categories: selectedCategories,
+      print_for: printFor,
     }
 
     // Edit Printer
@@ -101,6 +113,7 @@ const NewPrinter = () => {
         setIp(data.ip)
         setPort(data.port)
         setSelectedCategories(data.categories)
+        setPrintFor(data.print_for)
       }
     }
   }, [printerId, printerData.data])
@@ -120,6 +133,7 @@ const NewPrinter = () => {
             placeholder="Name des Druckers"
           />
 
+          {/* IP-Adresse */}
           <Label htmlFor="ip" className="mt-4 font-bold">
             IP-Adresse
           </Label>
@@ -131,6 +145,7 @@ const NewPrinter = () => {
             placeholder="IP-Adresse des Druckers"
           />
 
+          {/* Port */}
           <Label htmlFor="port" className="mt-4 font-bold">
             Port
           </Label>
@@ -142,6 +157,13 @@ const NewPrinter = () => {
             placeholder="Port des Druckers (üblicherweise 9100)"
           />
 
+          {/* Print for customer or staff or both */}
+          <PrintFor
+            printFor={printFor}
+            handlePrintForChange={handlePrintForChange}
+          />
+
+          {/* Categories to print */}
           <div className="mb-2 mt-4 flex items-center">
             <Label htmlFor="category" className="font-bold">
               Kategorie

@@ -242,6 +242,7 @@ export type Database = {
           ip: string
           name: string
           port: string
+          print_for: string[]
         }
         Insert: {
           categories: string[]
@@ -250,6 +251,7 @@ export type Database = {
           ip: string
           name: string
           port: string
+          print_for?: string[]
         }
         Update: {
           categories?: string[]
@@ -258,6 +260,7 @@ export type Database = {
           ip?: string
           name?: string
           port?: string
+          print_for?: string[]
         }
         Relationships: []
       }
