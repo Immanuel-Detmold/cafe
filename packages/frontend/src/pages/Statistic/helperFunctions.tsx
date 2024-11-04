@@ -5,10 +5,15 @@ import { UserActionsType } from '@/data/useUserActions.tsx'
 import { centsToEuro } from '@/generalHelperFunctions/currencyHelperFunction'
 
 // Get Sum Price of Orders
-export const getSumPriceData = <T extends { price: number }>(
+// Also filter away orders with payment_method 'voucher'
+export const getSumPriceData = <
+  T extends { price: number; payment_method?: string },
+>(
   dataOrders: T[],
 ) => {
-  const sum = dataOrders.reduce((total, order) => total + order.price, 0)
+  const sum = dataOrders
+    .filter((order) => order.payment_method !== 'voucher')
+    .reduce((total, order) => total + order.price, 0)
   return centsToEuro(sum)
 }
 

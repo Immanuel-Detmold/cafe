@@ -40,7 +40,7 @@ import {
 const StatisticPage = () => {
   // States
   const [userRole, setUserRole] = useState('user')
-  const [showAllOrders, setShorAllOrders] = useState(false)
+  const [showAllOrders, setShowAllOrders] = useState(false)
   const [selectedDate, setSelectedDate] = useState('')
 
   // Mini Functions
@@ -49,7 +49,6 @@ const StatisticPage = () => {
 
   const { user } = useUser()
   const thisMonth = MONTHS[new Date().getMonth()]
-
   // Data
   const { data: ordersMonth, isLoading: l1 } = useOrdersAndItemsQueryV2({
     statusList: ['finished'],
@@ -146,10 +145,10 @@ const StatisticPage = () => {
     return filteredData.length
   }, [filteredData])
 
-  // Sum Total Turnover
+  // Sum Total Turnover for selected Date
   const sumTotalTurnover = useMemo(() => {
     if (!filteredData) return '...'
-    return getSumOrdersPayMethod(filteredData) + '€'
+    return getSumPriceData(filteredData) + '€'
   }, [filteredData])
 
   // Sum Total Cash
@@ -375,7 +374,7 @@ const StatisticPage = () => {
               id="load-orders"
               checked={showAllOrders}
               onCheckedChange={() => {
-                setShorAllOrders(!showAllOrders)
+                setShowAllOrders(!showAllOrders)
               }}
             />
             <Label htmlFor="load-orders">
