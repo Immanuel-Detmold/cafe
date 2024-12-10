@@ -625,6 +625,10 @@ const NewOrder = () => {
             <RadioGroupItem value="voucher" id="r4" />
             <Label htmlFor="r4">Gutschein</Label>
           </div>
+          <div className="flex items-center space-x-2">
+            <RadioGroupItem value="youth" id="r4" />
+            <Label htmlFor="r4">Jugend</Label>
+          </div>
         </RadioGroup>
 
         {/* Costs */}

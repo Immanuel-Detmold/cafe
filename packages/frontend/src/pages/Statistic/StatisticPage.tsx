@@ -175,6 +175,12 @@ const StatisticPage = () => {
     return getSumOrdersPayMethod(filteredData, 'voucher') + '€'
   }, [filteredData])
 
+  // Sum total youth
+  const sumTotalYouth = useMemo(() => {
+    if (!filteredData) return '...'
+    return getSumOrdersPayMethod(filteredData, 'youth') + '€'
+  }, [filteredData])
+
   // UseEffect
   useEffect(() => {
     if (distinctDates.length > 0 && distinctDates !== undefined) {
@@ -327,6 +333,13 @@ const StatisticPage = () => {
               <div className="grid grid-cols-1 gap-1 rounded-lg border p-2">
                 <Label className="text-base">Gutscheine</Label>
                 <Label className="text-2xl font-bold">{sumTotalVouchers}</Label>
+                <Label className="text-muted-foreground">Umsatz</Label>
+              </div>
+
+              {/* Sum youth */}
+              <div className="grid grid-cols-1 gap-1 rounded-lg border p-2">
+                <Label className="text-base">Jugend</Label>
+                <Label className="text-2xl font-bold">{sumTotalYouth}</Label>
                 <Label className="text-muted-foreground">Umsatz</Label>
               </div>
             </div>
