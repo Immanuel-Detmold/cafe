@@ -301,6 +301,7 @@ export type Database = {
           product_details: Json | null
           short_description: string | null
           show_consumption: boolean
+          stock: number | null
           user_id: string | null
         }
         Insert: {
@@ -321,6 +322,7 @@ export type Database = {
           product_details?: Json | null
           short_description?: string | null
           show_consumption?: boolean
+          stock?: number | null
           user_id?: string | null
         }
         Update: {
@@ -341,6 +343,7 @@ export type Database = {
           product_details?: Json | null
           short_description?: string | null
           show_consumption?: boolean
+          stock?: number | null
           user_id?: string | null
         }
         Relationships: []

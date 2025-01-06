@@ -32,7 +32,7 @@ const Consumption = ({ consumption, setConsumption }: ConsumptionProp) => {
   const { data: inventory } = useInventory()
   return (
     <>
-      <Label className="mt-4 w-full font-bold">Verbrauch</Label>
+      <Label className="mt-4 w-full font-bold">Verbrauch (Inventar)</Label>
       <PlusCircleIcon
         className="ml-2 mt-1 cursor-pointer"
         onClick={() => {

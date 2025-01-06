@@ -328,3 +328,36 @@ export const useUploadProductImagesMutation = () =>
       await queryClient.invalidateQueries({ queryKey: ['productImages'] })
     },
   })
+
+export const useUpdateProductStockMutation = () =>
+  useMutation({
+    mutationFn: async ({
+      product_id,
+      newStock,
+    }: {
+      product_id: number
+      newStock: number
+    }) => {
+      const { data, error } = await supabase
+        .from('Products')
+        .update({ stock: newStock })
+        .eq('id', product_id)
+        .select()
+
+      if (error) {
+        throw error
+      }
+
+      return data
+    },
+    onSuccess: async (data) => {
+      // After the mutation succeeds, invalidate the useProductsQuery
+      await queryClient.invalidateQueries({ queryKey: ['products'] })
+
+      await saveUserAction({
+        action: data,
+        short_description: `Updated Stock for Product: ${data[0]?.name}`,
+      })
+    },
+  })
+

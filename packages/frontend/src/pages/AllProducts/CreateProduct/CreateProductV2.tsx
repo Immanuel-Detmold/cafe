@@ -64,6 +64,7 @@ const CreateProductV2 = () => {
   const [showAdervertisement, setShowAdvertisement] = useState(false)
   const [showConsumption, setShowConsumption] = useState(false)
   const [paused, setPaused] = useState(false)
+  const [stock, setStock] = useState<string>('0')
 
   // User State
   const [userRole, setUserRole] = useState('user')
@@ -177,6 +178,7 @@ const CreateProductV2 = () => {
       show_consumption: showConsumption,
       paused: paused,
       advertisement: showAdervertisement,
+      stock: parseInt(stock),
     }
 
     // New Product
@@ -299,6 +301,7 @@ const CreateProductV2 = () => {
             show_consumption,
             paused,
             advertisement,
+            stock,
           } = data
           setName(name)
           setPrice(centsToEuro(price))
@@ -323,6 +326,9 @@ const CreateProductV2 = () => {
           }
           if (only_advertisement_screen) {
             setShowOnlyOnAdvertisement(only_advertisement_screen)
+          }
+          if (stock) {
+            setStock(stock.toString())
           }
         } else if (error) {
           console.error('Error fetching product data:', error)
@@ -505,6 +511,24 @@ const CreateProductV2 = () => {
                 Inventar vom Produkt bei Bestellung anzeigen
               </label>
               <InfoIconPopover text="Kann verwendet werden, um bei der Bestellungsaufnahme anzuzeigen, wie viel von dem Produkt noch im Inventar ist." />
+            </div>
+
+            {/* Stock */}
+            <div className="mt-4 flex items-center gap-2">
+              <Label htmlFor="stock" className="font-bold">
+                Vorrätig
+              </Label>
+              <Input
+                tabIndex={-1}
+                id="stock"
+                value={stock}
+                type="text"
+                onChange={(e) => {
+                  const value = e.target.value.replace(/[^0-9]/g, '')
+                  setStock(value)
+                }}
+                placeholder="0"
+              />
             </div>
 
             {/* Add consumptions to Product */}

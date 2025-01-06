@@ -4,6 +4,7 @@ import { useInventory } from '@/data/useInventory'
 import {
   OrderItem,
   useDeleteOrderMutation,
+  useOrdersAndItemsQueryV2,
   useSaveOrderItemsMutation,
   useSaveOrderMutation,
   useSingleOrder,
@@ -17,7 +18,11 @@ import {
   EuroToCents,
   centsToEuro,
 } from '@/generalHelperFunctions/currencyHelperFunction'
-import { currentDateAndTime } from '@/generalHelperFunctions/dateHelperFunctions'
+import {
+  currentDateAndTime,
+  getEndOfDayToday,
+  getStartOfDayToday,
+} from '@/generalHelperFunctions/dateHelperFunctions'
 import { supabase } from '@/services/supabase'
 import { ArrowPathIcon } from '@heroicons/react/24/outline'
 import { Label } from '@radix-ui/react-label'
@@ -102,6 +107,12 @@ const NewOrder = () => {
   const { data: dataCategories } = useProductCategories()
   const { data: printers } = usePrintersQuery()
 
+  const { data: openOrders } = useOrdersAndItemsQueryV2({
+    statusList: ['waiting', 'processing', 'ready'],
+    startDate: getStartOfDayToday().finalDateString,
+    endDate: getEndOfDayToday().endOfDayString,
+  })
+
   if (error) {
     toast({ title: 'Fehler beim Laden der Produkte! ❌' })
   }
@@ -114,6 +125,16 @@ const NewOrder = () => {
       { event: '*', schema: 'public', table: 'Inventory' },
       () => {
         void queryClient.invalidateQueries({ queryKey: ['inventory'] })
+      },
+    )
+    .subscribe()
+  supabase
+    .channel('products-db-changes')
+    .on(
+      'postgres_changes',
+      { event: '*', schema: 'public', table: 'Products' },
+      () => {
+        void queryClient.invalidateQueries({ queryKey: ['products'] })
       },
     )
     .subscribe()
@@ -558,6 +579,7 @@ const NewOrder = () => {
                   handleAddOrder={handleAddOrder}
                   handleDeleteOrderItem={handleDeleteOrderItem}
                   InventoryData={inventoryData}
+                  openOrders={openOrders ?? []}
                 />
               </div>
             ),

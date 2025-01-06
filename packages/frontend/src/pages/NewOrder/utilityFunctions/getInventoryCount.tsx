@@ -1,4 +1,5 @@
 import { Inventory } from '@/data/useInventory'
+import { OrdersAndItemsV2 } from '@/data/useOrders'
 import { Product } from '@/data/useProducts'
 
 export type pConsumption = {
@@ -34,4 +35,26 @@ export const getInventoryCount = (product: Product, Inventory: Inventory[]) => {
     })
   }
   return remainingInventoryItems
+}
+
+// Returns count of product that is currently in openOrders "waiting", "processing" or "ready"
+export const getOpenOrdersCount = (
+  product_id: number,
+  openOrders: OrdersAndItemsV2,
+) => {
+  let count = 0
+  openOrders.forEach((order) => {
+    if (
+      order.status === 'waiting' ||
+      order.status === 'processing' ||
+      order.status === 'ready'
+    ) {
+      order.OrderItems.forEach((item) => {
+        if (item.product_id === product_id) {
+          count += item.quantity
+        }
+      })
+    }
+  })
+  return count
 }

@@ -5,7 +5,7 @@ import {
   OrderStatus,
   useChageOrderStatusMutation,
 } from '@/data/useOrders'
-import { Product } from '@/data/useProducts'
+import { Product, useUpdateProductStockMutation } from '@/data/useProducts'
 import { getAllConsumptions } from '@/generalHelperFunctions/consumptionHelper'
 import { Loader2Icon } from 'lucide-react'
 import { useEffect, useState } from 'react'
@@ -44,6 +44,9 @@ const OrderStatusPage = ({
   const { mutate: changeInventory, isPending: isPendingInventory } =
     useChangeInventoryItemQuantity()
 
+  const { mutate: changeStock, isPending: isPendingStock } =
+    useUpdateProductStockMutation()
+
   // Use Effect
   useEffect(() => {
     setOrderStatus(order.status)
@@ -55,6 +58,19 @@ const OrderStatusPage = ({
     if (newStatus === 'finished' && inventory && productData && orderItems) {
       const consumptions = getAllConsumptions(orderItems, productData)
       changeInventory({ consumption: consumptions, inventory })
+
+      // Update Stock
+      productData.forEach((product) => {
+        const orderItem = orderItems.find(
+          (item) => item.product_id === product.id,
+        )
+        if (orderItem) {
+          if (product.stock !== null && orderItem.quantity !== null) {
+            const newStock = product.stock - orderItem.quantity
+            changeStock({ product_id: product.id, newStock })
+          }
+        }
+      })
     }
 
     changeOrderStatus(newStatus, {
@@ -87,7 +103,7 @@ const OrderStatusPage = ({
             {isPending ? <Loader2Icon className="animate-spin" /> : 'Warten'}
           </SelectItem>
           <SelectItem value="processing">
-            {isPending || isPendingInventory ? (
+            {isPending || isPendingInventory || isPendingStock ? (
               <Loader2Icon className="animate-spin" />
             ) : (
               'In Bearbeitung'
@@ -101,7 +117,7 @@ const OrderStatusPage = ({
             )}
           </SelectItem>
           <SelectItem value="finished">
-            {isPending || isPendingInventory ? (
+            {isPending || isPendingInventory || isPendingStock ? (
               <Loader2Icon className="animate-spin" />
             ) : (
               'Abgeschlossen'

@@ -1,6 +1,6 @@
 import { imgPlaceHolder } from '@/data/data'
 import { Inventory } from '@/data/useInventory'
-import { OrderItem } from '@/data/useOrders'
+import { OrderItem, OrdersAndItemsV2 } from '@/data/useOrders'
 import { Product } from '@/data/useProducts'
 import { centsToEuro } from '@/generalHelperFunctions/currencyHelperFunction'
 import { ShoppingCartIcon } from '@heroicons/react/24/outline'
@@ -9,6 +9,7 @@ import { PlusCircleIcon } from '@heroicons/react/24/outline'
 import { MinusCircleIcon } from '@heroicons/react/24/outline'
 import { Label } from '@radix-ui/react-label'
 import { PopoverClose } from '@radix-ui/react-popover'
+import { ClockIcon } from 'lucide-react'
 import { useRef, useState } from 'react'
 
 import { Avatar, AvatarImage } from '@/components/ui/avatar'
@@ -20,11 +21,15 @@ import {
 } from '@/components/ui/popover'
 import { Textarea } from '@/components/ui/textarea'
 
-import { getInventoryCount } from './utilityFunctions/getInventoryCount'
+import {
+  getInventoryCount,
+  getOpenOrdersCount,
+} from './utilityFunctions/getInventoryCount'
 
 type propsProductInCategory = {
   products: Product[]
   dataOrderItems: OrderItem[]
+  openOrders: OrdersAndItemsV2
   handleAddOrder: (
     product_id: number,
     quantity: number,
@@ -46,24 +51,6 @@ const ProductsInCategory = (props: propsProductInCategory) => {
           key={product.id}
           className="m-1 flex w-min items-center justify-between"
         >
-          {/* Minus and Plus Button */}
-          {/* <div className="flex select-none">
-            <MinusCircleIcon
-              onClick={() => {
-                if (quantity > 1) {
-                  setQuantity((prevQ) => prevQ - 1)
-                }
-              }}
-              className="h-8 w-8 cursor-pointer"
-            />
-            <PlusCircleIcon
-              onClick={() => {
-                setQuantity((prevQ) => prevQ + 1)
-              }}
-              className="h-8 w-8 cursor-pointer"
-            />
-          </div> */}
-
           <Popover>
             <PopoverTrigger asChild className="ml-2">
               <Button
@@ -103,12 +90,13 @@ const ProductsInCategory = (props: propsProductInCategory) => {
               <div className="flex flex-col gap-1">
                 <div className="flex w-full max-w-sm items-center justify-between">
                   <div className="flex w-full justify-between">
-                    <div>
+                    <div className="flex-1">
                       <Label className="font-bold">Anzahl:</Label>
                       <Label className="ml-1 select-none font-bold">
                         {quantity}
                       </Label>
                     </div>
+
                     <div className="flex select-none">
                       <MinusCircleIcon
                         onClick={() => {
@@ -127,6 +115,24 @@ const ProductsInCategory = (props: propsProductInCategory) => {
                     </div>
                   </div>
                 </div>
+
+                {product.stock && product.stock > 0 && (
+                  <div>
+                    <Label>Vorrätig:</Label>
+                    <Label className="ml-1 select-none">
+                      {product.stock} -{' '}
+                      {
+                        <span className="text-amber-500">
+                          {getOpenOrdersCount(product.id, props.openOrders)}
+                          <ClockIcon
+                            className="delay-90 ml-1 inline-block h-4 w-4 animate-pulse stroke-[1px]"
+                            size={60}
+                          />
+                        </span>
+                      }
+                    </Label>
+                  </div>
+                )}
 
                 {/* Show How much is in Inventory */}
                 <div>
