@@ -3,6 +3,7 @@ import { Label } from '@radix-ui/react-label'
 import { Edit2Icon, PlusCircleIcon, TrashIcon } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 
+import InfoIconPopover from '@/components/InfoIconPopover'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -32,7 +33,10 @@ const Consumption = ({ consumption, setConsumption }: ConsumptionProp) => {
   const { data: inventory } = useInventory()
   return (
     <>
-      <Label className="mt-4 w-full font-bold">Verbrauch (Inventar)</Label>
+      <Label className="mt-4 flex w-full items-center font-bold">
+        Verbrauch{' '}
+        <InfoIconPopover text="Nachdem eine Bestellung abgeschlossen ist, wird der Verbrauch vom Inventar abgezogen." />
+      </Label>
       <PlusCircleIcon
         className="ml-2 mt-1 cursor-pointer"
         onClick={() => {

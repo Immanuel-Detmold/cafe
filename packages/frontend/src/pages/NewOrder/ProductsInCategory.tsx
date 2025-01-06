@@ -117,10 +117,14 @@ const ProductsInCategory = (props: propsProductInCategory) => {
                 </div>
 
                 {product.stock && product.stock > 0 && (
-                  <div>
-                    <Label>Vorrätig:</Label>
+                  <div className="flex justify-between">
+                    <div>
+                      <Label>Vorrätig:</Label>
+                      <Label className="ml-1 select-none">
+                        {product.stock}
+                      </Label>
+                    </div>
                     <Label className="ml-1 select-none">
-                      {product.stock} -{' '}
                       {
                         <span className="text-amber-500">
                           {getOpenOrdersCount(product.id, props.openOrders)}

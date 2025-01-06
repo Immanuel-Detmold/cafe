@@ -529,6 +529,7 @@ const CreateProductV2 = () => {
                 }}
                 placeholder="0"
               />
+              <InfoIconPopover text="Kann alternativ zum Iventar verwendet werden." />
             </div>
 
             {/* Add consumptions to Product */}

@@ -34,9 +34,7 @@ const Product = ({ product }: { product: Product }) => {
           <Label className="mt-2 cursor-pointer text-sm font-bold md:text-lg">
             {product.name}
           </Label>
-          <Label className="mt-2 cursor-pointer text-xs md:text-lg">
-            {product.category}
-          </Label>
+
           <Label className="m-0 mt-2 cursor-pointer text-xs text-gray-700 md:text-lg">
             Preis: {centsToEuro(product.price)} €
           </Label>
