@@ -290,15 +290,16 @@ export type Database = {
           created_at: string
           deleted: boolean | null
           description: string | null
+          extras: Json[] | null
           id: number
           image: string | null
           images: string[] | null
           method: string | null
           name: string
           only_advertisement_screen: boolean
+          options: Json[] | null
           paused: boolean
           price: number
-          product_details: Json | null
           short_description: string | null
           show_consumption: boolean
           stock: number | null
@@ -311,15 +312,16 @@ export type Database = {
           created_at?: string
           deleted?: boolean | null
           description?: string | null
+          extras?: Json[] | null
           id?: number
           image?: string | null
           images?: string[] | null
           method?: string | null
           name: string
           only_advertisement_screen?: boolean
+          options?: Json[] | null
           paused?: boolean
           price: number
-          product_details?: Json | null
           short_description?: string | null
           show_consumption?: boolean
           stock?: number | null
@@ -332,15 +334,16 @@ export type Database = {
           created_at?: string
           deleted?: boolean | null
           description?: string | null
+          extras?: Json[] | null
           id?: number
           image?: string | null
           images?: string[] | null
           method?: string | null
           name?: string
           only_advertisement_screen?: boolean
+          options?: Json[] | null
           paused?: boolean
           price?: number
-          product_details?: Json | null
           short_description?: string | null
           show_consumption?: boolean
           stock?: number | null

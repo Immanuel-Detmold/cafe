@@ -11,6 +11,7 @@ import {
   EuroToCents,
   centsToEuro,
 } from '@/generalHelperFunctions/currencyHelperFunction'
+import { Variation } from '@/lib/customTypes'
 import { supabase } from '@/services/supabase'
 import { Label } from '@radix-ui/react-label'
 import { ChevronLeftIcon, Loader2Icon, SaveIcon } from 'lucide-react'
@@ -25,17 +26,11 @@ import { Switch } from '@/components/ui/switch'
 import { Textarea } from '@/components/ui/textarea'
 import { useToast } from '@/components/ui/use-toast'
 
-import { ProductDetails } from '../../../components/ProductOptions'
 import DeleteProduct from '../DeleteProduct'
 import Consumption from './Consumption'
 import DisplayImages from './DisplayImages'
 import FileUpload from './FileUpload'
-import { removeEmptyValues } from './helperFunction'
-
-const initialProductDetails: ProductDetails = {
-  options: [],
-  extras: [],
-}
+import { ProductVariations } from './ProductVariations'
 
 interface FileMap {
   [key: string]: File
@@ -55,9 +50,6 @@ const CreateProductV2 = () => {
   const [price, setPrice] = useState('')
   const [category, setCategory] = useState('')
   const [method, setMethod] = useState<string>('')
-  const [productDetails, setProductDetails] = useState<ProductDetails>(
-    initialProductDetails,
-  )
   const [description, setDescription] = useState<string>('')
   const [shortDescription, setShortDescription] = useState<string>('')
   const [showOnlyOnAdvertisement, setShowOnlyOnAdvertisement] = useState(false)
@@ -65,6 +57,8 @@ const CreateProductV2 = () => {
   const [showConsumption, setShowConsumption] = useState(false)
   const [paused, setPaused] = useState(false)
   const [stock, setStock] = useState<string>('0')
+  const [options, setOptions] = useState<Variation[]>([])
+  const [extras, setExtras] = useState<Variation[]>([])
 
   // User State
   const [userRole, setUserRole] = useState('user')
@@ -160,7 +154,15 @@ const CreateProductV2 = () => {
       return
     }
 
-    const { FilteredProductDetails } = removeEmptyValues(productDetails)
+    const cleanData = (data: Variation[]) => {
+      return data.filter(
+        (item) => item.name.trim() !== '' && item.price.trim() !== '',
+      )
+    }
+
+    const cleanedOptions = cleanData(options)
+    const cleanedExtras = cleanData(extras)
+
     const FilteredConsumption = consumption.filter(
       (item) => item.name !== '' && item.quantity !== '',
     )
@@ -170,7 +172,6 @@ const CreateProductV2 = () => {
       price: EuroToCents(price),
       category: category,
       method: method,
-      product_details: FilteredProductDetails,
       consumption: FilteredConsumption,
       short_description: shortDescription,
       description: description,
@@ -179,6 +180,8 @@ const CreateProductV2 = () => {
       paused: paused,
       advertisement: showAdervertisement,
       stock: parseInt(stock),
+      options: cleanedOptions,
+      extras: cleanedExtras,
     }
 
     // New Product
@@ -293,7 +296,8 @@ const CreateProductV2 = () => {
             price,
             category,
             method,
-            product_details,
+            options,
+            extras,
             consumption,
             short_description,
             description,
@@ -312,8 +316,11 @@ const CreateProductV2 = () => {
           if (method) {
             setMethod(method)
           }
-          if (product_details) {
-            setProductDetails(product_details as ProductDetails)
+          if (options) {
+            setOptions(options as Variation[])
+          }
+          if (extras) {
+            setExtras(extras as Variation[])
           }
           if (consumption) {
             setConsumption(consumption as ConsumptionType[])
@@ -540,10 +547,12 @@ const CreateProductV2 = () => {
           </div>
 
           {/* Product Options */}
-          {/* <ProductOptions
-            productDetails={productDetails}
-            setProductDetails={setProductDetails}
-          /> */}
+          <ProductVariations
+            options={options}
+            extras={extras}
+            onUpdateOptions={setOptions}
+            onUpdateExtras={setExtras}
+          />
 
           {/* Images */}
           <FileUpload files={files} setFiles={setFiles} />
