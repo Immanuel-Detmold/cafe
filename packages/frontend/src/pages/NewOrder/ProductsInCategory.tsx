@@ -116,46 +116,59 @@ const ProductsInCategory = (props: propsProductInCategory) => {
                   </div>
                 </div>
 
-                <div className="flex justify-between">
-                  {product.stock && product.stock > 0 ? (
-                    <>
-                      <div>
-                        <Label>Vorrätig:</Label>
-                        <Label className="ml-1 select-none">
-                          {product.stock}
-                        </Label>
-                      </div>
-                    </>
-                  ) : (
-                    <div></div>
-                  )}
-                  <Label className="ml-1 select-none">
-                    {
-                      <span className="text-amber-500">
-                        {getOpenOrdersCount(product.id, props.openOrders)}
-                        <ClockIcon
-                          className="delay-90 ml-1 inline-block h-4 w-4 animate-pulse stroke-[1px]"
-                          size={60}
-                        />
-                      </span>
-                    }
-                  </Label>
-                </div>
+                {product.stock && product.stock > 0 && (
+                  <div className="flex justify-between">
+                    <div>
+                      <Label>Vorrätig:</Label>
+                      <Label className="ml-1 select-none">
+                        {product.stock}
+                      </Label>
+                    </div>
+                    <Label className="ml-1 select-none">
+                      {
+                        <span className="text-amber-600">
+                          {getOpenOrdersCount(product.id, props.openOrders)}
+                          <ClockIcon
+                            className="delay-90 ml-1 inline-block h-4 w-4 animate-pulse stroke-[1px]"
+                            size={60}
+                          />
+                        </span>
+                      }
+                    </Label>
+                  </div>
+                )}
 
                 {/* Show How much is in Inventory */}
-                <div>
-                  {product.show_consumption &&
-                    props.InventoryData &&
-                    getInventoryCount(product, props.InventoryData).map(
-                      (item) => (
-                        <div key={item.name}>
-                          <p>
-                            {item.name}: {item.quantity} {item.unit}
-                          </p>
-                        </div>
-                      ),
-                    )}
+                <div className="flex justify-between">
+                  <div>
+                    {product.show_consumption &&
+                      props.InventoryData &&
+                      getInventoryCount(product, props.InventoryData).map(
+                        (item) => (
+                          <div key={item.name}>
+                            <p>
+                              {item.name}: {item.quantity} {item.unit}
+                            </p>
+                          </div>
+                        ),
+                      )}
+                  </div>
+                  {(!product.stock || product.stock <= 0) &&
+                  product.show_consumption ? (
+                    <Label className="ml-1 select-none">
+                      {
+                        <span className="text-amber-600">
+                          {getOpenOrdersCount(product.id, props.openOrders)}
+                          <ClockIcon
+                            className="delay-90 ml-1 inline-block h-4 w-4 animate-pulse stroke-[1px]"
+                            size={60}
+                          />
+                        </span>
+                      }
+                    </Label>
+                  ) : null}
                 </div>
+
                 <Textarea
                   ref={inputRef}
                   placeholder="Kommentar"
