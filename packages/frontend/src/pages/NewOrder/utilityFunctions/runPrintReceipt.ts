@@ -1,6 +1,18 @@
 import { Printer } from '@/data/usePrinter'
-import { OrderItemWithVariations } from '@/lib/customTypes'
+import { ProductExtra, Variation } from '@/lib/customTypes'
 import { Json } from '@/services/supabase.types'
+
+type OrderItem = {
+  comment: string
+  order_id: string
+  product_id: number
+  product_name: string
+  product_price: string
+  quantity: number
+  category: string
+  option: Variation | null
+  extras: ProductExtra[]
+}
 
 type printProps = {
   access_token: string
@@ -11,7 +23,7 @@ type printProps = {
   sumPriceOrder: string
   time: string
   orderNumber: string
-  orderItems: OrderItemWithVariations[]
+  orderItems: OrderItem[]
 }
 
 export const runPrintReceipt = async (props: printProps) => {

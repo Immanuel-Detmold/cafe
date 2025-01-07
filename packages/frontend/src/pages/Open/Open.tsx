@@ -354,7 +354,8 @@ const Open = ({
                 </Label>
                 {currentUrlPage !== 'statistic' && (
                   <div className="mt-2 flex justify-between">
-                    <EditOrder orderId={order.id} />
+                    {/* Edit Order */}
+                    {false && <EditOrder orderId={order.id} />}
                     <div className="flex w-full justify-end">
                       <DeleteOrder order={order} />
 

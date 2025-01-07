@@ -23,7 +23,6 @@ import {
   getStartOfDayToday,
 } from '@/generalHelperFunctions/dateHelperFunctions'
 import {
-  OrderItemWithVariations,
   ProductExtra,
   ProductWithVariations,
   Variation,
@@ -58,10 +57,17 @@ export type GroupedProducts = {
   [key: string]: Product[]
 }
 
+export type ProductOrder = {
+  id: string
+  product_id: number
+  quantity: number
+  comment: string
+  extras: ProductExtra[]
+  option: Variation | null
+}
+
 const NewOrder = () => {
-  const [dataOrderItems, setDataOrderItems] = useState<
-    OrderItemWithVariations[]
-  >([])
+  const [dataOrderItems, setDataOrderItems] = useState<ProductOrder[]>([])
   const [sumOrderPrice, setSumOrderPrice] = useState<number>(0)
   const [paymentMethod, setPaymentMethod] = useState<string>('cash')
   // Abweichender Preis:
@@ -87,7 +93,6 @@ const NewOrder = () => {
   // For Edit Order --- Get OrderId from URL
   const [orderIdEdit, setOrderIdEdit] = useState<string>()
   // -------------------------------------
-
   // Hooks
   const { orderId } = useParams()
   const { toast } = useToast()
@@ -160,13 +165,13 @@ const NewOrder = () => {
       editData.table_number && setTableNumber(editData.table_number)
       setOrderNumber(editData.order_number)
 
-      const orderItems: OrderItemWithVariations[] = editData.OrderItems.map(
-        (item) => ({
-          ...item,
-          extras: item.extras as ProductExtra[],
-          option: item.option as Variation,
-        }),
-      )
+      const orderItems: ProductOrder[] = editData.OrderItems.map((item) => ({
+        ...item,
+        id: Math.random().toString(36).substring(2, 8),
+        comment: item.comment ?? '',
+        extras: item.extras as ProductExtra[],
+        option: item.option as Variation,
+      }))
 
       setDataOrderItems(orderItems)
 
@@ -214,7 +219,7 @@ const NewOrder = () => {
     if (products) {
       const sessionData = sessionStorage.getItem('orderItems')
       const sessionData2 = sessionData
-        ? (JSON.parse(sessionData) as OrderItemWithVariations[])
+        ? (JSON.parse(sessionData) as ProductOrder[])
         : []
       setDataOrderItems(sessionData2)
     }
@@ -265,58 +270,67 @@ const NewOrder = () => {
     selectedOption: Variation | null,
     selectExtras: ProductExtra[] | [],
   ): void => {
-    const existingItemIndex = dataOrderItems.findIndex(
-      (item) => item.product_id === product_id,
-    )
+    // const existingItemIndex = dataOrderItems.findIndex(
+    //   (item) => item.product_id === product_id,
+    // )
 
     // If item with same product_id and quantity exists, do nothing
-    if (
-      existingItemIndex !== -1 &&
-      dataOrderItems[existingItemIndex]?.quantity === quantity
-    ) {
-      return
-    }
-    if (existingItemIndex !== -1) {
-      // If item with same product_id but different quantity exists, update quantity
-      setDataOrderItems((prevItems) => {
-        const updatedItems = [...prevItems] // create a copy of the previous items
-        const itemToUpdate = updatedItems[existingItemIndex]
-        if (itemToUpdate) {
-          itemToUpdate.quantity = quantity // update the quantity
-        }
-        sessionStorage.setItem('orderItems', JSON.stringify(updatedItems))
-        return updatedItems // return the updated items
-      })
-    }
+    // if (
+    //   existingItemIndex !== -1 &&
+    //   dataOrderItems[existingItemIndex]?.quantity === quantity
+    // ) {
+    //   return
+    // }
+
+    // if (existingItemIndex !== -1) {
+    //   // If item with same product_id but different quantity exists, update quantity
+    //   setDataOrderItems((prevItems) => {
+    //     const updatedItems = [...prevItems] // create a copy of the previous items
+    //     const itemToUpdate = updatedItems[existingItemIndex]
+    //     if (itemToUpdate) {
+    //       itemToUpdate.quantity = quantity
+    //       itemToUpdate.comment = productComment
+    //       itemToUpdate.extras = selectExtras
+    //       itemToUpdate.option = selectedOption
+    //     }
+    //     sessionStorage.setItem('orderItems', JSON.stringify(updatedItems))
+    //     return updatedItems // return the updated items
+    //   })
+    // }
+
     // If item does not exist in orderItems, add new item
-    if (existingItemIndex === -1) {
-      const newOrderItem: OrderItemWithVariations = {
-        product_id: product_id,
-        quantity: quantity,
-        comment: productComment,
-      }
-      setDataOrderItems((prevDataOrderItems) => {
-        const updatedItems = [...prevDataOrderItems, newOrderItem]
-        // Add Item to OrderItems
-        setSumOrderPrice(
-          calcOrderPrice({
-            dataOrderItems: updatedItems,
-            products: products || [],
-          }),
-        )
-        sessionStorage.setItem('orderItems', JSON.stringify(updatedItems))
-        return updatedItems
-      })
+    // if (existingItemIndex === -1) {
+
+    const newOrderItem = {
+      id: Math.random().toString(36).substring(2, 8),
+      product_id: product_id,
+      quantity: quantity,
+      comment: productComment,
+      extras: selectExtras,
+      option: selectedOption,
     }
+
+    setDataOrderItems((prevDataOrderItems) => {
+      const updatedItems = [...prevDataOrderItems, newOrderItem]
+      // Add Item to OrderItems
+      setSumOrderPrice(
+        calcOrderPrice({
+          dataOrderItems: updatedItems,
+          products: products || [],
+        }),
+      )
+      sessionStorage.setItem('orderItems', JSON.stringify(updatedItems))
+      return updatedItems
+    })
   }
 
   // Delete Product from Orderlist
-  const handleDeleteOrderItem = (product_id: number) => {
-    const updatedOrderItems = dataOrderItems.filter(
-      (item) => item.product_id !== product_id,
-    )
+  const handleDeleteOrderItem = (id: string) => {
+    // Filter out any item whose 'id' matches the provided parameter
+    const updatedOrderItems = dataOrderItems.filter((item) => item.id !== id)
+
+    // Update the state and session storage
     setDataOrderItems(() => {
-      // Delete Item from OrderItems
       sessionStorage.setItem('orderItems', JSON.stringify(updatedOrderItems))
       return updatedOrderItems
     })
@@ -329,7 +343,7 @@ const NewOrder = () => {
   const { mutate: saveOrderItems, isPending: loadingOrderItems } =
     useSaveOrderItemsMutation()
 
-  const handleSumitOrder = () => {
+  const handleSubmitOrder = () => {
     // Save Order to Database
 
     let orderPrice: number = 0
@@ -359,6 +373,8 @@ const NewOrder = () => {
         category:
           products?.find((product) => product.id === item.product_id)
             ?.category || 'unkown',
+        extras: item.extras,
+        option: item.option,
       }
     })
 
@@ -470,6 +486,8 @@ const NewOrder = () => {
           products?.find((product) => product.id === item.product_id)?.price ||
           0,
         quantity: item.quantity,
+        option: item.option,
+        extras: item.extras,
       }
     })
 
@@ -587,7 +605,6 @@ const NewOrder = () => {
                   products={products as ProductWithVariations[]}
                   dataOrderItems={dataOrderItems}
                   handleAddOrder={handleAddOrder}
-                  handleDeleteOrderItem={handleDeleteOrderItem}
                   InventoryData={inventoryData}
                   openOrders={openOrders ?? []}
                 />
@@ -731,7 +748,7 @@ const NewOrder = () => {
           <Button
             className="mb-4 mt-2 w-min bg-amber-600"
             disabled={dataOrderItems.length === 0}
-            onClick={handleSumitOrder}
+            onClick={handleSubmitOrder}
           >
             {loadingOrder || loadingOrderItems || loadingPrint ? (
               <Loader2Icon className="h-8 w-8 animate-spin" />

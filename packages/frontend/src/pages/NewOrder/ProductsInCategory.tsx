@@ -1,6 +1,6 @@
 import { imgPlaceHolder } from '@/data/data'
 import { Inventory } from '@/data/useInventory'
-import { OrderItem, OrdersAndItemsV2 } from '@/data/useOrders'
+import { OrdersAndItemsV2 } from '@/data/useOrders'
 import { centsToEuro } from '@/generalHelperFunctions/currencyHelperFunction'
 import {
   ProductExtra,
@@ -32,14 +32,16 @@ import {
 } from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
 
+import { ProductOrder } from './NewOrder'
 import {
   getInventoryCount,
   getOpenOrdersCount,
 } from './utilityFunctions/getInventoryCount'
+import { centsToEuroString } from './utilityFunctions/handleOrder'
 
 type propsProductInCategory = {
   products: ProductWithVariations[]
-  dataOrderItems: OrderItem[]
+  dataOrderItems: ProductOrder[]
   openOrders: OrdersAndItemsV2
   handleAddOrder: (
     product_id: number,
@@ -48,7 +50,6 @@ type propsProductInCategory = {
     selectedOption: Variation | null,
     selectExtras: ProductExtra[] | [],
   ) => void
-  handleDeleteOrderItem: (product_id: number) => void
   InventoryData: Inventory[] | undefined
 }
 
@@ -97,6 +98,8 @@ const ProductsInCategory = (props: propsProductInCategory) => {
                 onClick={() => {
                   setQuantity(1)
                   setProductComment('')
+                  setSelectedOption(null)
+                  setSelectExtras([])
                 }}
               >
                 <Avatar className="">
@@ -113,13 +116,14 @@ const ProductsInCategory = (props: propsProductInCategory) => {
                   {product.name} ({centsToEuro(product.price)}€)
                 </Label>
 
-                <Label className="ml-1 text-green-700">
+                {/* Show if Product is currently Selected */}
+                {/* <Label className="ml-1 text-green-700">
                   {props.dataOrderItems.find(
                     (item) => item.product_id === product.id,
                   )
                     ? `(${props.dataOrderItems.find((item) => item.product_id === product.id)?.quantity})`
                     : ''}
-                </Label>
+                </Label> */}
               </Button>
 
               {/* Popover -> Select Product Count or Remove */}
@@ -233,7 +237,7 @@ const ProductsInCategory = (props: propsProductInCategory) => {
                             key={option.id}
                             value={JSON.stringify(option)}
                           >
-                            {option.name} ({option.price}€)
+                            {option.name} ({centsToEuroString(option.price)}€)
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -254,7 +258,7 @@ const ProductsInCategory = (props: propsProductInCategory) => {
                           className="flex items-center justify-between"
                         >
                           <Label>
-                            {extra.name} ({extra.price}€)
+                            {extra.name} ({centsToEuroString(extra.price)}€)
                           </Label>
                           <div className="flex items-center">
                             <MinusCircleIcon
@@ -316,8 +320,8 @@ const ProductsInCategory = (props: propsProductInCategory) => {
                     <ShoppingCartIcon className="ml-1 h-5 w-5" />
                   </Button>
                 </PopoverClose>
-                <PopoverClose asChild>
-                  {/* Remove from Cart */}
+                {/* Remove from Cart */}
+                {/* <PopoverClose asChild>
                   <Button
                     className="w-full"
                     onClick={() => {
@@ -327,7 +331,7 @@ const ProductsInCategory = (props: propsProductInCategory) => {
                     Entfernen
                     <TrashIcon className="ml-1 h-5 w-5" />
                   </Button>
-                </PopoverClose>
+                </PopoverClose> */}
               </div>
             </PopoverContent>
           </Popover>

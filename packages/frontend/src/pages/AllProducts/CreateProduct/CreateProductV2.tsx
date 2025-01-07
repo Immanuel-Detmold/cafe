@@ -12,6 +12,7 @@ import {
   centsToEuro,
 } from '@/generalHelperFunctions/currencyHelperFunction'
 import { Variation } from '@/lib/customTypes'
+import { formatCentsToEuroString } from '@/pages/NewOrder/utilityFunctions/handleOrder'
 import { supabase } from '@/services/supabase'
 import { Label } from '@radix-ui/react-label'
 import { ChevronLeftIcon, Loader2Icon, SaveIcon } from 'lucide-react'
@@ -154,14 +155,19 @@ const CreateProductV2 = () => {
       return
     }
 
-    const cleanData = (data: Variation[]) => {
-      return data.filter(
-        (item) => item.name.trim() !== '' && item.price.trim() !== '',
-      )
-    }
+    const cleanAndFormatData = (data: Variation[]) =>
+      data
+        .filter(({ name, price }) => name.trim() !== '' && price.trim() !== '')
+        .map((item) => ({
+          ...item,
+          price: item.price
+            .replace(',', '')
+            .replace('.', '')
+            .replace(/^0+(?!\.)/, ''), // Remove leading zeroes
+        }))
 
-    const cleanedOptions = cleanData(options)
-    const cleanedExtras = cleanData(extras)
+    const cleanedOptions = cleanAndFormatData(options)
+    const cleanedExtras = cleanAndFormatData(extras)
 
     const FilteredConsumption = consumption.filter(
       (item) => item.name !== '' && item.quantity !== '',
@@ -317,10 +323,22 @@ const CreateProductV2 = () => {
             setMethod(method)
           }
           if (options) {
-            setOptions(options as Variation[])
+            // Apply the format to each price in the array of variations
+            setOptions(
+              (options as Variation[]).map((opt) => ({
+                ...opt,
+                price: formatCentsToEuroString(opt.price),
+              })),
+            )
           }
           if (extras) {
-            setExtras(extras as Variation[])
+            // Apply the format to each price in the array of extras
+            setExtras(
+              (extras as Variation[]).map((ext) => ({
+                ...ext,
+                price: formatCentsToEuroString(ext.price),
+              })),
+            )
           }
           if (consumption) {
             setConsumption(consumption as ConsumptionType[])

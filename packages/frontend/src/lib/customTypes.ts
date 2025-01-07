@@ -1,4 +1,4 @@
-import { OrderItem } from '@/data/useOrders'
+import { InsertOrderItem, OrderItem } from '@/data/useOrders'
 import { Product } from '@/data/useProducts'
 
 export type Variation = {
@@ -21,6 +21,14 @@ export type ProductWithVariations = Omit<Product, 'extras' | 'options'> & {
 }
 
 export type OrderItemWithVariations = Omit<OrderItem, 'extras' | 'option'> & {
+  extras: ProductExtra[]
+  option: Variation
+}
+
+export type InsertOrderItemWithVariations = Omit<
+  InsertOrderItem,
+  'extras' | 'option'
+> & {
   extras: ProductExtra[]
   option: Variation
 }
