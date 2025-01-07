@@ -2,7 +2,6 @@ import { queryClient } from '@/App'
 import { useAppData, useUpdateAppData } from '@/data/useAppData'
 import { useInventory } from '@/data/useInventory'
 import {
-  OrderItem,
   useDeleteOrderMutation,
   useOrdersAndItemsQueryV2,
   useSaveOrderItemsMutation,
@@ -23,6 +22,12 @@ import {
   getEndOfDayToday,
   getStartOfDayToday,
 } from '@/generalHelperFunctions/dateHelperFunctions'
+import {
+  OrderItemWithVariations,
+  ProductExtra,
+  ProductWithVariations,
+  Variation,
+} from '@/lib/customTypes'
 import { supabase } from '@/services/supabase'
 import { ArrowPathIcon } from '@heroicons/react/24/outline'
 import { Label } from '@radix-ui/react-label'
@@ -54,7 +59,9 @@ export type GroupedProducts = {
 }
 
 const NewOrder = () => {
-  const [dataOrderItems, setDataOrderItems] = useState<OrderItem[]>([])
+  const [dataOrderItems, setDataOrderItems] = useState<
+    OrderItemWithVariations[]
+  >([])
   const [sumOrderPrice, setSumOrderPrice] = useState<number>(0)
   const [paymentMethod, setPaymentMethod] = useState<string>('cash')
   // Abweichender Preis:
@@ -153,16 +160,17 @@ const NewOrder = () => {
       editData.table_number && setTableNumber(editData.table_number)
       setOrderNumber(editData.order_number)
 
-      // Get Sum Price of orderItems and check if eidtData.Price is the same, if not set custom price
-      const orderItems: OrderItem[] = []
-      editData.OrderItems.forEach((item) => {
-        orderItems.push({
-          product_id: item.product_id,
-          quantity: item.quantity,
-          comment: item.comment || '',
-        })
-      })
+      const orderItems: OrderItemWithVariations[] = editData.OrderItems.map(
+        (item) => ({
+          ...item,
+          extras: item.extras as ProductExtra[],
+          option: item.option as Variation,
+        }),
+      )
+
       setDataOrderItems(orderItems)
+
+      // Get Sum Price of orderItems and check if eiditData.Price is the same, if not set custom price
       const orderItemsPrice = calcOrderPrice({
         dataOrderItems: orderItems,
         products: products || [],
@@ -206,7 +214,7 @@ const NewOrder = () => {
     if (products) {
       const sessionData = sessionStorage.getItem('orderItems')
       const sessionData2 = sessionData
-        ? (JSON.parse(sessionData) as OrderItem[])
+        ? (JSON.parse(sessionData) as OrderItemWithVariations[])
         : []
       setDataOrderItems(sessionData2)
     }
@@ -249,11 +257,13 @@ const NewOrder = () => {
     )
   }
 
-  // Const handleAddOrder. Only Local, no database
+  // Const handleAddOrder. Only Local, no database TODO
   const handleAddOrder = (
     product_id: number,
     quantity: number,
     productComment: string,
+    selectedOption: Variation | null,
+    selectExtras: ProductExtra[] | [],
   ): void => {
     const existingItemIndex = dataOrderItems.findIndex(
       (item) => item.product_id === product_id,
@@ -280,7 +290,7 @@ const NewOrder = () => {
     }
     // If item does not exist in orderItems, add new item
     if (existingItemIndex === -1) {
-      const newOrderItem: OrderItem = {
+      const newOrderItem: OrderItemWithVariations = {
         product_id: product_id,
         quantity: quantity,
         comment: productComment,
@@ -574,7 +584,7 @@ const NewOrder = () => {
                 <h2 className="w-full font-bold">{category}</h2>
                 {/* Iterate over each product in the current category */}
                 <ProductsInCategory
-                  products={products}
+                  products={products as ProductWithVariations[]}
                   dataOrderItems={dataOrderItems}
                   handleAddOrder={handleAddOrder}
                   handleDeleteOrderItem={handleDeleteOrderItem}

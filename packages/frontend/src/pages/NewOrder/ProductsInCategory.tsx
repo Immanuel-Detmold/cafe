@@ -1,8 +1,12 @@
 import { imgPlaceHolder } from '@/data/data'
 import { Inventory } from '@/data/useInventory'
 import { OrderItem, OrdersAndItemsV2 } from '@/data/useOrders'
-import { Product } from '@/data/useProducts'
 import { centsToEuro } from '@/generalHelperFunctions/currencyHelperFunction'
+import {
+  ProductExtra,
+  ProductWithVariations,
+  Variation,
+} from '@/lib/customTypes'
 import { ShoppingCartIcon } from '@heroicons/react/24/outline'
 import { TrashIcon } from '@heroicons/react/24/outline'
 import { PlusCircleIcon } from '@heroicons/react/24/outline'
@@ -19,6 +23,13 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
 
 import {
@@ -27,13 +38,15 @@ import {
 } from './utilityFunctions/getInventoryCount'
 
 type propsProductInCategory = {
-  products: Product[]
+  products: ProductWithVariations[]
   dataOrderItems: OrderItem[]
   openOrders: OrdersAndItemsV2
   handleAddOrder: (
     product_id: number,
     quantity: number,
     productComment: string,
+    selectedOption: Variation | null,
+    selectExtras: ProductExtra[] | [],
   ) => void
   handleDeleteOrderItem: (product_id: number) => void
   InventoryData: Inventory[] | undefined
@@ -42,11 +55,36 @@ type propsProductInCategory = {
 const ProductsInCategory = (props: propsProductInCategory) => {
   const [quantity, setQuantity] = useState<number>(1)
   const [productComment, setProductComment] = useState<string>('')
+  const [selectedOption, setSelectedOption] = useState<Variation | null>(null)
+  const [selectExtras, setSelectExtras] = useState<ProductExtra[]>([])
   const inputRef = useRef<HTMLTextAreaElement>(null)
+
+  const handleExtraChange = (extra: ProductExtra, increment: boolean) => {
+    setSelectExtras((prevExtras) => {
+      const existingExtra = prevExtras.find((e) => e.id === extra.id)
+      if (increment) {
+        if (existingExtra) {
+          return prevExtras.map((e) =>
+            e.id === extra.id ? { ...e, quantity: (e.quantity || 0) + 1 } : e,
+          )
+        } else {
+          return [...prevExtras, { ...extra, quantity: 1 }]
+        }
+      } else {
+        if (existingExtra && (existingExtra.quantity ?? 0) > 1) {
+          return prevExtras.map((e) =>
+            e.id === extra.id ? { ...e, quantity: (e.quantity ?? 0) - 1 } : e,
+          )
+        } else {
+          return prevExtras.filter((e) => e.id !== extra.id)
+        }
+      }
+    })
+  }
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4">
-      {props.products?.map((product: Product) => (
+      {props.products?.map((product) => (
         <div
           key={product.id}
           className="m-1 flex w-min items-center justify-between"
@@ -86,7 +124,7 @@ const ProductsInCategory = (props: propsProductInCategory) => {
 
               {/* Popover -> Select Product Count or Remove */}
             </PopoverTrigger>
-            <PopoverContent className="w-auto">
+            <PopoverContent className="w-auto min-w-[250px]">
               <div className="flex flex-col gap-1">
                 <div className="flex w-full max-w-sm items-center justify-between">
                   <div className="flex w-full justify-between">
@@ -97,6 +135,7 @@ const ProductsInCategory = (props: propsProductInCategory) => {
                       </Label>
                     </div>
 
+                    {/* Plus and Minus Icons */}
                     <div className="flex select-none">
                       <MinusCircleIcon
                         onClick={() => {
@@ -116,7 +155,8 @@ const ProductsInCategory = (props: propsProductInCategory) => {
                   </div>
                 </div>
 
-                {product.stock && product.stock > 0 && (
+                {/* Show How much is in Stock */}
+                {product.stock != null && product.stock > 1 && (
                   <div className="flex justify-between">
                     <div>
                       <Label>Vorrätig:</Label>
@@ -169,6 +209,83 @@ const ProductsInCategory = (props: propsProductInCategory) => {
                   ) : null}
                 </div>
 
+                {/* Fields to Select Option and Extras */}
+                {product.options.length > 0 && (
+                  <div className="mt-4">
+                    <Label className="font-bold">Variation</Label>
+                    <Select
+                      onValueChange={(value) => {
+                        const option = JSON.parse(value) as Variation
+                        setSelectedOption(option)
+                      }}
+                      value={
+                        selectedOption
+                          ? JSON.stringify(selectedOption)
+                          : undefined
+                      }
+                    >
+                      <SelectTrigger className="mt-1 w-full">
+                        <SelectValue placeholder="Wähle eine Option" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {product.options.map((option) => (
+                          <SelectItem
+                            key={option.id}
+                            value={JSON.stringify(option)}
+                          >
+                            {option.name} ({option.price}€)
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                )}
+
+                {/* Extras */}
+                {product.extras.length > 0 && (
+                  <div className="mt-4 select-none">
+                    <Label className="font-bold">Extras</Label>
+
+                    <div className="flex flex-col">
+                      {/* Left Name and Price, Right + and - icon */}
+                      {product.extras.map((extra) => (
+                        <div
+                          key={extra.id}
+                          className="flex items-center justify-between"
+                        >
+                          <Label>
+                            {extra.name} ({extra.price}€)
+                          </Label>
+                          <div className="flex items-center">
+                            <MinusCircleIcon
+                              onClick={() => {
+                                if (
+                                  (selectExtras.find((e) => e.id === extra.id)
+                                    ?.quantity ?? 0) > 0
+                                ) {
+                                  handleExtraChange(extra, false)
+                                }
+                              }}
+                              className="h-6 w-6 cursor-pointer"
+                            />
+                            <span className="mx-2">
+                              {selectExtras.find((e) => e.id === extra.id)
+                                ?.quantity || 0}
+                            </span>
+                            <PlusCircleIcon
+                              onClick={() => {
+                                handleExtraChange(extra, true)
+                              }}
+                              className="h-6 w-6 cursor-pointer"
+                            />
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Comment Field */}
                 <Textarea
                   ref={inputRef}
                   placeholder="Kommentar"
@@ -180,10 +297,17 @@ const ProductsInCategory = (props: propsProductInCategory) => {
                   tabIndex={-1}
                 />
                 <PopoverClose asChild>
+                  {/* Add to Cart */}
                   <Button
                     className="mt-2 w-full"
                     onClick={() => {
-                      props.handleAddOrder(product.id, quantity, productComment)
+                      props.handleAddOrder(
+                        product.id,
+                        quantity,
+                        productComment,
+                        selectedOption,
+                        selectExtras,
+                      )
                       setQuantity(1)
                       setProductComment('')
                     }}
@@ -193,6 +317,7 @@ const ProductsInCategory = (props: propsProductInCategory) => {
                   </Button>
                 </PopoverClose>
                 <PopoverClose asChild>
+                  {/* Remove from Cart */}
                   <Button
                     className="w-full"
                     onClick={() => {

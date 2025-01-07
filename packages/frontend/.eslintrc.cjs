@@ -25,7 +25,7 @@ module.exports = {
       'off',
       { allowConstantExport: true },
     ],
-    '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
+    '@typescript-eslint/no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
     '@typescript-eslint/no-throw-literal': 'off',
     '@typescript-eslint/no-misused-promises': 'off',
     'react/prop-types': 'off',

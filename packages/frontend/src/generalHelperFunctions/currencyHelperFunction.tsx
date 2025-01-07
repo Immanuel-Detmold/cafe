@@ -8,3 +8,12 @@ export const EuroToCents = (priceInEuro: string | number): number => {
 
   return parseInt(value)
 }
+
+export function stringToFloatWithTwoDecimals(input: string) {
+  const normalizedInput = input.replace(',', '.')
+  const floatValue = parseFloat(normalizedInput)
+  if (isNaN(floatValue)) {
+    return null
+  }
+  return floatValue.toFixed(2).replace('.', ',')
+}

@@ -139,8 +139,10 @@ export type Database = {
         Row: {
           comment: string | null
           created_at: string
+          extras: Json[]
           finished: boolean
           id: number
+          option: Json | null
           order_id: number
           product_id: number
           product_name: string
@@ -150,8 +152,10 @@ export type Database = {
         Insert: {
           comment?: string | null
           created_at?: string
+          extras?: Json[]
           finished?: boolean
           id?: number
+          option?: Json | null
           order_id: number
           product_id: number
           product_name: string
@@ -161,8 +165,10 @@ export type Database = {
         Update: {
           comment?: string | null
           created_at?: string
+          extras?: Json[]
           finished?: boolean
           id?: number
+          option?: Json | null
           order_id?: number
           product_id?: number
           product_name?: string
@@ -290,14 +296,14 @@ export type Database = {
           created_at: string
           deleted: boolean | null
           description: string | null
-          extras: Json[] | null
+          extras: Json[]
           id: number
           image: string | null
           images: string[] | null
           method: string | null
           name: string
           only_advertisement_screen: boolean
-          options: Json[] | null
+          options: Json[]
           paused: boolean
           price: number
           short_description: string | null
@@ -312,14 +318,14 @@ export type Database = {
           created_at?: string
           deleted?: boolean | null
           description?: string | null
-          extras?: Json[] | null
+          extras?: Json[]
           id?: number
           image?: string | null
           images?: string[] | null
           method?: string | null
           name: string
           only_advertisement_screen?: boolean
-          options?: Json[] | null
+          options?: Json[]
           paused?: boolean
           price: number
           short_description?: string | null
@@ -334,14 +340,14 @@ export type Database = {
           created_at?: string
           deleted?: boolean | null
           description?: string | null
-          extras?: Json[] | null
+          extras?: Json[]
           id?: number
           image?: string | null
           images?: string[] | null
           method?: string | null
           name?: string
           only_advertisement_screen?: boolean
-          options?: Json[] | null
+          options?: Json[]
           paused?: boolean
           price?: number
           short_description?: string | null

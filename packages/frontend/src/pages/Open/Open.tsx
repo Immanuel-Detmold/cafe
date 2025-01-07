@@ -1,7 +1,7 @@
 import { imgPlaceHolder } from '@/data/data'
 import { useInventory } from '@/data/useInventory'
 import {
-  OrderItems,
+  OrderItem,
   OrderStatus,
   useOrdersAndItemsQueryV2,
   useUpdateOrderItemStatusMutation,
@@ -119,7 +119,7 @@ const Open = ({
   const { mutate: updateOrderItemStatus, isPending } =
     useUpdateOrderItemStatusMutation()
 
-  const handleOrderItemStatus = (orderItem: OrderItems) => {
+  const handleOrderItemStatus = (orderItem: OrderItem) => {
     const newStatus = !orderItem.finished
     updateOrderItemStatus(
       {

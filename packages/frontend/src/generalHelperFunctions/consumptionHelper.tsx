@@ -1,9 +1,9 @@
-import { OrderItems } from '@/data/useOrders'
+import { OrderItem } from '@/data/useOrders'
 import { Product } from '@/data/useProducts'
 import { ConsumptionType } from '@/pages/AllProducts/CreateProduct/CreateProductV2'
 
 export const getAllConsumptions = (
-  orderItems: OrderItems[],
+  orderItems: OrderItem[],
   productData: Product[],
 ) => {
   const consumptions: ConsumptionType[] = []

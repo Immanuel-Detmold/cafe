@@ -1,6 +1,6 @@
 import { CafeCard } from '@/data/useCafeCard'
 import { Expense } from '@/data/useExpense'
-import { OrderItems, OrdersAndItems } from '@/data/useOrders'
+import { OrderItem, OrdersAndItems } from '@/data/useOrders'
 import { UserActionsType } from '@/data/useUserActions.tsx'
 import { centsToEuro } from '@/generalHelperFunctions/currencyHelperFunction'
 
@@ -201,7 +201,7 @@ export const transformOrdersToProductGroups = (dataOrders: OrdersAndItems) => {
   const productData: ProductData[] = []
 
   dataOrders.forEach((order) => {
-    order.OrderItems.forEach((orderItem: OrderItems) => {
+    order.OrderItems.forEach((orderItem: OrderItem) => {
       const existingProduct = productData.find(
         (product) => product.id === orderItem.product_id,
       )
