@@ -131,19 +131,16 @@ const ProductsInCategory = (props: propsProductInCategory) => {
 
               {/* Popover -> Select Product Count or Remove */}
             </PopoverTrigger>
-            <PopoverContent className="w-auto min-w-[250px]">
+            <PopoverContent className="w-auto min-w-[270px]">
               <div className="flex flex-col gap-1">
                 <div className="flex w-full max-w-sm items-center justify-between">
-                  <div className="flex w-full justify-between">
+                  <div className="flex w-full items-center justify-between">
                     <div className="flex-1">
-                      <Label className="font-bold">Anzahl:</Label>
-                      <Label className="ml-1 select-none font-bold">
-                        {quantity}
-                      </Label>
+                      <Label className="font-bold">Anzahl</Label>
                     </div>
 
                     {/* Plus and Minus Icons */}
-                    <div className="flex select-none">
+                    <div className="flex select-none items-center">
                       <MinusCircleIcon
                         onClick={() => {
                           if (quantity > 1) {
@@ -152,6 +149,9 @@ const ProductsInCategory = (props: propsProductInCategory) => {
                         }}
                         className="h-8 w-8 cursor-pointer"
                       />
+
+                      <span className="mx-2">{quantity}</span>
+
                       <PlusCircleIcon
                         onClick={() => {
                           setQuantity((prevQ) => prevQ + 1)
@@ -166,8 +166,8 @@ const ProductsInCategory = (props: propsProductInCategory) => {
                 {product.stock != null && product.stock > 1 && (
                   <div className="flex justify-between">
                     <div>
-                      <Label>Vorrätig:</Label>
-                      <Label className="ml-1 select-none">
+                      <Label className="text-gray-400">Vorrätig:</Label>
+                      <Label className="ml-1 select-none text-gray-400">
                         {product.stock}
                       </Label>
                     </div>
@@ -258,7 +258,7 @@ const ProductsInCategory = (props: propsProductInCategory) => {
                       {product.extras.map((extra) => (
                         <div
                           key={extra.id}
-                          className="flex items-center justify-between"
+                          className="mt-2 flex items-center justify-between"
                         >
                           <Label>
                             {extra.name} ({centsToEuroString(extra.price)}€)
@@ -273,7 +273,7 @@ const ProductsInCategory = (props: propsProductInCategory) => {
                                   handleExtraChange(extra, false)
                                 }
                               }}
-                              className="h-6 w-6 cursor-pointer"
+                              className="h-8 w-8 cursor-pointer"
                             />
                             <span className="mx-2">
                               {selectExtras.find((e) => e.id === extra.id)
@@ -283,7 +283,7 @@ const ProductsInCategory = (props: propsProductInCategory) => {
                               onClick={() => {
                                 handleExtraChange(extra, true)
                               }}
-                              className="h-6 w-6 cursor-pointer"
+                              className="h-8 w-8 cursor-pointer"
                             />
                           </div>
                         </div>
