@@ -1,6 +1,29 @@
 export const imgPlaceHolder =
   'https://hmwxeqgcfhhumndveboe.supabase.co/storage/v1/object/public/ProductImages/placeholder2%20HQ.jpg'
 
+export const PAYMENT_METHODS = [
+  {
+    name: 'cash',
+    label: 'Bar',
+  },
+  {
+    name: 'paypal',
+    label: 'Paypal',
+  },
+  {
+    name: 'cafe_card',
+    label: 'Café Karte',
+  },
+  {
+    name: 'voucher',
+    label: 'Gutschein',
+  },
+  {
+    name: 'youth',
+    label: 'Jugend',
+  },
+]
+
 export const TitleMap = {
   '/admin/login': 'Login',
   '/admin/me': 'Me',

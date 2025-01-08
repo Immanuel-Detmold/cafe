@@ -1,12 +1,17 @@
-import { queryClient } from '@/App'
-import { getStartOfDayToday } from '@/generalHelperFunctions/dateHelperFunctions.tsx'
-import { supabase } from '@/services/supabase'
-import { Database } from '@/services/supabase.types'
-import { useMutation, useQuery } from '@tanstack/react-query'
+import { queryClient } from '@/App';
+import { getStartOfDayToday } from '@/generalHelperFunctions/dateHelperFunctions.tsx';
+import { FormattedOrderData } from '@/lib/customTypes.ts';
+import { supabase } from '@/services/supabase';
+import { Database } from '@/services/supabase.types';
+import { useMutation, useQuery } from '@tanstack/react-query';
 
-import { saveUserAction } from './useUserActions.tsx'
+
+
+import { saveUserAction } from './useUserActions.tsx';
+
 
 export type Order = Database['public']['Tables']['Orders']['Row']
+export type GetOrder = Database['public']['Tables']['Orders']['Row']
 export type InsertOrders = Database['public']['Tables']['Orders']['Insert']
 export type OrderItem = Database['public']['Tables']['OrderItems']['Row']
 export type InsertOrderItem =
@@ -247,8 +252,8 @@ export const useOrdersAndItemsQueryV2 = ({
         throw error
       }
 
-      const formatedData = sortDataOrderItems(data)
-      return formatedData.reverse()
+      const formattedData = sortDataOrderItems(data)
+      return formattedData.reverse()
     },
   })
 

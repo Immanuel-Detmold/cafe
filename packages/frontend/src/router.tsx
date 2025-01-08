@@ -143,7 +143,9 @@ export const router = createBrowserRouter(
         },
         {
           path: 'open',
-          element: <Open statusList={['waiting', 'processing']} />,
+          element: (
+            <Open statusList={['waiting', 'processing']} paymentPage={false} />
+          ),
         },
         {
           path: 'ready-for-pickup',

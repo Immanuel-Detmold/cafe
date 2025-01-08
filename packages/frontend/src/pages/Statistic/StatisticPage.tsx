@@ -401,6 +401,7 @@ const StatisticPage = () => {
           startDate={getStartOfDay(selectedDate).finalDateString}
           endDate={getEndOfDay(selectedDate).endOfDayString}
           currentUrlPage={'statistic'}
+          paymentPage={false}
         ></Open>
       )}
     </>

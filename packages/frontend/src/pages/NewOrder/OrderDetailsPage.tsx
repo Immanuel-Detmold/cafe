@@ -4,6 +4,7 @@ import { centsToEuro } from '@/generalHelperFunctions/currencyHelperFunction'
 import { TrashIcon } from '@heroicons/react/24/outline'
 
 import { Avatar, AvatarImage } from '@/components/ui/avatar'
+import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import {
   Dialog,
@@ -80,13 +81,15 @@ const OrderDetailsPage = (props: propsOrderDetailsPage) => {
                       />
                     </Avatar>
 
+                    {/* Name and Option */}
                     <div className="flex flex-col">
-                      {/* Name and Option */}
                       <Label className="ml-1">
                         {product.name}{' '}
-                        {orderItem.option?.name
-                          ? ` - ${orderItem.option?.name}`
-                          : ''}
+                        {orderItem.option?.name ? (
+                          <Badge>{orderItem.option?.name}</Badge>
+                        ) : (
+                          ''
+                        )}
                       </Label>
 
                       {/* Text for Extras */}

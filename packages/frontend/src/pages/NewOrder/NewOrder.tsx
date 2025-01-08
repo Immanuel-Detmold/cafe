@@ -48,6 +48,7 @@ import { groupProductsToCategories } from './utilityFunctions/groupProductsToCat
 import {
   GetOrderNumber,
   calcOrderPrice,
+  calcSingleOrderItemPrice,
   getProductIds,
   getUniqueCategories,
 } from './utilityFunctions/handleOrder'
@@ -357,22 +358,17 @@ const NewOrder = () => {
     const uniqueProducts = getProductIds(dataOrderItems)
 
     const orderItems = dataOrderItems.map((item) => {
+      const current_product = products?.find(
+        (product) => product.id === item.product_id,
+      )
       return {
         comment: item.comment,
         order_id: 'unkown',
         product_id: item.product_id,
-        product_name:
-          products?.find((product) => product.id === item.product_id)?.name ||
-          'unkown',
-        product_price:
-          centsToEuro(
-            products?.find((product) => product.id === item.product_id)
-              ?.price || 0,
-          ) || '0',
+        product_name: current_product?.name || 'unkown',
+        product_price: calcSingleOrderItemPrice(item, current_product),
         quantity: item.quantity,
-        category:
-          products?.find((product) => product.id === item.product_id)
-            ?.category || 'unkown',
+        category: current_product?.category || 'unkown',
         extras: item.extras,
         option: item.option,
       }
@@ -475,16 +471,15 @@ const NewOrder = () => {
   const handleSaveOrderItems = (order_id: number, orderNumber: string) => {
     // Map to get Product name and Price, because OrderItems only have product_id and price could change
     const orderItems = dataOrderItems.map((item) => {
+      const current_product = products?.find(
+        (product) => product.id === item.product_id,
+      )
       return {
         comment: item.comment,
         order_id: order_id,
         product_id: item.product_id,
-        product_name:
-          products?.find((product) => product.id === item.product_id)?.name ||
-          'unkown',
-        product_price:
-          products?.find((product) => product.id === item.product_id)?.price ||
-          0,
+        product_name: current_product?.name || 'unkown',
+        product_price: calcSingleOrderItemPrice(item, current_product),
         quantity: item.quantity,
         option: item.option,
         extras: item.extras,
