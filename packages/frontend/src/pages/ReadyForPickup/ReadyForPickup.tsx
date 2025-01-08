@@ -6,7 +6,7 @@ import {
   useInventory,
 } from '@/data/useInventory'
 import {
-  OrderItems,
+  OrderItem,
   useChageOrderStatusMutationV2,
   useOrderAndItemsQuery,
 } from '@/data/useOrders'
@@ -63,10 +63,10 @@ const ReadyForPickup = () => {
   const handleStatusUpdate = (
     orderId: number,
     status: OrderStatus,
-    orderItems: OrderItems[] | null,
+    orderItem: OrderItem[] | null,
   ) => {
-    if (status === 'finished' && productsData && inventory && orderItems) {
-      const consumptions = getAllConsumptions(orderItems, productsData)
+    if (status === 'finished' && productsData && inventory && orderItem) {
+      const consumptions = getAllConsumptions(orderItem, productsData)
       changeInventory({ consumption: consumptions, inventory })
     }
 
@@ -93,8 +93,7 @@ const ReadyForPickup = () => {
 
   // Send Audio
   const handleSendText = async (order_number: string) => {
-    const inputValue =
-      'Bestellnummer ' + order_number + ' ist abholbereit!'
+    const inputValue = 'Bestellnummer ' + order_number + ' ist abholbereit!'
     setIsLoading(true) // Start loading
     const requestURL = `${ip}/text-to-speech`
     try {

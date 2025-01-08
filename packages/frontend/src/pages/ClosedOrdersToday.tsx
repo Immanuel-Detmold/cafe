@@ -3,7 +3,7 @@ import Open from './Open/Open'
 const ClosedOrdersToday = () => {
   return (
     <div>
-      <Open statusList={['finished']} />
+      <Open statusList={['finished']} paymentPage={false} />
     </div>
   )
 }

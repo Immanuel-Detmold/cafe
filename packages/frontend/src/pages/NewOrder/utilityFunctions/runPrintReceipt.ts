@@ -1,4 +1,5 @@
 import { Printer } from '@/data/usePrinter'
+import { ProductExtra, Variation } from '@/lib/customTypes'
 import { Json } from '@/services/supabase.types'
 
 type OrderItem = {
@@ -6,9 +7,11 @@ type OrderItem = {
   order_id: string
   product_id: number
   product_name: string
-  product_price: string
+  product_price: number
   quantity: number
   category: string
+  option: Variation | null
+  extras: ProductExtra[]
 }
 
 type printProps = {

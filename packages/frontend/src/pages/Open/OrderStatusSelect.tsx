@@ -1,7 +1,7 @@
 import { Inventory, useChangeInventoryItemQuantity } from '@/data/useInventory'
 import {
   Order,
-  OrderItems,
+  OrderItem,
   OrderStatus,
   useChageOrderStatusMutation,
 } from '@/data/useOrders'
@@ -29,7 +29,7 @@ const OrderStatusPage = ({
   order: Order
   productData: Product[] | undefined
   inventory: Inventory[] | undefined
-  orderItems: OrderItems[] | null
+  orderItems: OrderItem[] | null
 }) => {
   // States
   const [orderStatus, setOrderStatus] = useState<OrderStatus>(order.status)

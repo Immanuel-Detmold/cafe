@@ -7,14 +7,13 @@ import { useMutation, useQuery } from '@tanstack/react-query'
 import { saveUserAction } from './useUserActions.tsx'
 
 export type Order = Database['public']['Tables']['Orders']['Row']
+export type GetOrder = Database['public']['Tables']['Orders']['Row']
 export type InsertOrders = Database['public']['Tables']['Orders']['Insert']
-export type OrderItems = Database['public']['Tables']['OrderItems']['Row']
-
-export type OrderItem = {
-  product_id: number
-  quantity: number
-  comment: string
-}
+export type OrderItem = Database['public']['Tables']['OrderItems']['Row']
+export type InsertOrderItem =
+  Database['public']['Tables']['OrderItems']['Insert']
+export type UpdateOrderItem =
+  Database['public']['Tables']['OrderItems']['Update']
 
 export type OrderStatus = Database['public']['Enums']['order_status']
 // Requests OrderItems with specific orderIds
@@ -249,8 +248,8 @@ export const useOrdersAndItemsQueryV2 = ({
         throw error
       }
 
-      const formatedData = sortDataOrderItems(data)
-      return formatedData.reverse()
+      const formattedData = sortDataOrderItems(data)
+      return formattedData.reverse()
     },
   })
 
