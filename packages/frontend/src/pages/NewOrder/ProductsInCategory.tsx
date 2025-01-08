@@ -8,7 +8,6 @@ import {
   Variation,
 } from '@/lib/customTypes'
 import { ShoppingCartIcon } from '@heroicons/react/24/outline'
-import { TrashIcon } from '@heroicons/react/24/outline'
 import { PlusCircleIcon } from '@heroicons/react/24/outline'
 import { MinusCircleIcon } from '@heroicons/react/24/outline'
 import { Label } from '@radix-ui/react-label'

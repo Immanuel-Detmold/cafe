@@ -1,4 +1,5 @@
 import { queryClient } from '@/App'
+import { PAYMENT_METHODS } from '@/data/data'
 import { useAppData, useUpdateAppData } from '@/data/useAppData'
 import { useInventory } from '@/data/useInventory'
 import {
@@ -622,26 +623,12 @@ const NewOrder = () => {
             sessionStorage.setItem('paymentMethod', method)
           }}
         >
-          <div className="flex items-center space-x-2">
-            <RadioGroupItem value="cash" id="r1" />
-            <Label htmlFor="r1">Bar</Label>
-          </div>
-          <div className="flex items-center space-x-2">
-            <RadioGroupItem value="paypal" id="r3" />
-            <Label htmlFor="r3">Paypal</Label>
-          </div>
-          <div className="flex items-center space-x-2">
-            <RadioGroupItem value="cafe_card" id="r2" />
-            <Label htmlFor="r2">Café Karte</Label>
-          </div>
-          <div className="flex items-center space-x-2">
-            <RadioGroupItem value="voucher" id="r4" />
-            <Label htmlFor="r4">Gutschein</Label>
-          </div>
-          <div className="flex items-center space-x-2">
-            <RadioGroupItem value="youth" id="r4" />
-            <Label htmlFor="r4">Jugend</Label>
-          </div>
+          {PAYMENT_METHODS.map((method, index) => (
+            <div className="flex items-center space-x-2" key={index}>
+              <RadioGroupItem value={method.name} id={`r${index + 1}`} />
+              <Label htmlFor={`r${index + 1}`}>{method.label}</Label>
+            </div>
+          ))}
         </RadioGroup>
 
         {/* Costs */}
