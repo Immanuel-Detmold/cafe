@@ -1,6 +1,7 @@
 'use client'
 
 import { useInventory } from '@/data/useInventory'
+import { Label } from '@radix-ui/react-label'
 import { Trash2 } from 'lucide-react'
 
 import InfoIconPopover from '@/components/InfoIconPopover'
@@ -17,7 +18,6 @@ import {
 } from '@/components/ui/alert-dialog'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
 import {
   Select,
   SelectContent,

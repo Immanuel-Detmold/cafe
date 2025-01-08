@@ -395,9 +395,11 @@ const CreateProductV2 = () => {
               }}
             />
 
-            <Label htmlFor="" className="mt-4 font-bold">
-              Preis
-            </Label>
+            <div className="mt-4 flex items-center">
+              <Label htmlFor="" className=" font-bold">
+                Preis
+              </Label>
+            </div>
             <Input
               tabIndex={-1}
               id="price"
@@ -539,10 +541,13 @@ const CreateProductV2 = () => {
             </div>
 
             {/* Stock */}
-            <div className="mt-4 flex items-center gap-2">
-              <Label htmlFor="stock" className="font-bold">
-                Vorrätig
-              </Label>
+            <div className="mt-4 flex flex-col">
+              <div className="flex items-center">
+                <Label htmlFor="stock" className="font-bold">
+                  Vorrätig
+                </Label>
+                <InfoIconPopover text="Kann alternativ zum Iventar verwendet werden." />
+              </div>
               <Input
                 tabIndex={-1}
                 id="stock"
@@ -553,8 +558,8 @@ const CreateProductV2 = () => {
                   setStock(value)
                 }}
                 placeholder="0"
+                className="mt-1"
               />
-              <InfoIconPopover text="Kann alternativ zum Iventar verwendet werden." />
             </div>
 
             {/* Add consumptions to Product */}

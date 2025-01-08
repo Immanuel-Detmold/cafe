@@ -1,9 +1,10 @@
 import { Variation } from '@/lib/customTypes'
+import { Label } from '@radix-ui/react-label'
 import { Trash2 } from 'lucide-react'
 
+import InfoIconPopover from '@/components/InfoIconPopover'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
 
 interface ProductVariationsProps {
   options: Variation[]
@@ -74,7 +75,10 @@ export function ProductVariations({
   return (
     <div className="mt-4 space-y-6">
       <div>
-        <Label className="mb-4 font-bold">Produktoptionen</Label>
+        <div className="mb-4 flex items-center ">
+          <Label className="font-bold">Produktoptionen</Label>
+          <InfoIconPopover text="Wenn bei einer Bestellung eine Produktoption ausgewählt wird, ersetzt der Preis der Option den normalen Produktpreis." />
+        </div>
         <div className="space-y-2">
           {options.map((option) => (
             <div key={option.id} className="flex items-center space-x-2">
@@ -116,7 +120,11 @@ export function ProductVariations({
       </div>
 
       <div>
-        <Label className="mb-4 font-bold">Extras</Label>
+        <div className="mb-4 flex items-center">
+          <Label className="font-bold">Extras</Label>
+          <InfoIconPopover text="Produktextras: Zucker, Sahne, ..." />
+        </div>
+
         <div className="space-y-2">
           {extras.map((extra) => (
             <div key={extra.id} className="flex items-center space-x-2">
