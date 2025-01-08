@@ -14,6 +14,7 @@ import { Label } from '@radix-ui/react-label'
 import { PopoverClose } from '@radix-ui/react-popover'
 import { ClockIcon } from 'lucide-react'
 import { useRef, useState } from 'react'
+import { useEffect } from 'react'
 
 import { Avatar, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
@@ -36,7 +37,10 @@ import {
   getInventoryCount,
   getOpenOrdersCount,
 } from './utilityFunctions/getInventoryCount'
-import { centsToEuroString } from './utilityFunctions/handleOrder'
+import {
+  calcSingleOrderItemPrice,
+  centsToEuroString,
+} from './utilityFunctions/handleOrder'
 
 type propsProductInCategory = {
   products: ProductWithVariations[]
@@ -53,10 +57,13 @@ type propsProductInCategory = {
 }
 
 const ProductsInCategory = (props: propsProductInCategory) => {
+  const [currentProduct, setCurrentProduct] =
+    useState<ProductWithVariations | null>(null)
   const [quantity, setQuantity] = useState<number>(1)
   const [productComment, setProductComment] = useState<string>('')
   const [selectedOption, setSelectedOption] = useState<Variation | null>(null)
   const [selectExtras, setSelectExtras] = useState<ProductExtra[]>([])
+  const [currentPrice, setCurrentPrice] = useState<number>(0)
   const inputRef = useRef<HTMLTextAreaElement>(null)
 
   const handleExtraChange = (extra: ProductExtra, increment: boolean) => {
@@ -82,6 +89,28 @@ const ProductsInCategory = (props: propsProductInCategory) => {
     })
   }
 
+  // Check if users changes the quantity, extras, options if yes run useeffect to update price
+
+  useEffect(() => {
+    const getCurrentPrice = () => {
+      const orderItem: ProductOrder = {
+        id: '0',
+        product_id: currentProduct?.id ?? 0,
+        quantity: quantity,
+        comment: productComment,
+        extras: selectExtras,
+        option: selectedOption,
+      }
+      const product = props.products.find((p) => p.id === orderItem.product_id)
+      const finalPrice = calcSingleOrderItemPrice(orderItem, product)
+      console.log(finalPrice)
+      return finalPrice
+    }
+
+    // Update the current price whenever quantity, selectedOption, or selectExtras change
+    setCurrentPrice(getCurrentPrice())
+  }, [quantity, selectedOption, selectExtras, productComment, props.products])
+
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4">
       {props.products?.map((product) => (
@@ -99,6 +128,7 @@ const ProductsInCategory = (props: propsProductInCategory) => {
                   setProductComment('')
                   setSelectedOption(null)
                   setSelectExtras([])
+                  setCurrentProduct(product)
                 }}
               >
                 <Avatar className="">
@@ -319,7 +349,7 @@ const ProductsInCategory = (props: propsProductInCategory) => {
                       setProductComment('')
                     }}
                   >
-                    Hinzufügen
+                    Hinzufügen ({centsToEuro(currentPrice)}€)
                     <ShoppingCartIcon className="ml-1 h-5 w-5" />
                   </Button>
                 </PopoverClose>
