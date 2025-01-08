@@ -36,7 +36,7 @@ const OrderDetailsPage = (props: propsOrderDetailsPage) => {
             Details
           </Button>
         </DialogTrigger>
-        <DialogContent className="sm:max-w-[425px]">
+        <DialogContent className="sm:max-w-[600px]">
           <DialogHeader>
             <DialogTitle>Details zur Bestellung</DialogTitle>
             <DialogDescription>
@@ -94,7 +94,7 @@ const OrderDetailsPage = (props: propsOrderDetailsPage) => {
 
                       {/* Text for Extras */}
                       {orderItem.extras && orderItem.extras.length > 0 && (
-                        <div className="">
+                        <div className="mt-1 flex flex-wrap">
                           {orderItem.extras.map((extra) => (
                             <Label
                               className="ml-1 text-xs text-gray-400"
