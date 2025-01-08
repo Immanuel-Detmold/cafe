@@ -1,7 +1,7 @@
-import { imgPlaceHolder } from '@/data/data'
+import { PAYMENT_METHODS, imgPlaceHolder } from '@/data/data'
 import { useInventory } from '@/data/useInventory'
 import {
-  OrderItems,
+  OrderItem,
   OrderStatus,
   useOrdersAndItemsQueryV2,
   useUpdateOrderItemStatusMutation,
@@ -13,6 +13,7 @@ import {
   getStartOfDayToday,
 } from '@/generalHelperFunctions/dateHelperFunctions'
 import { formatDateToTime } from '@/generalHelperFunctions/dateHelperFunctions'
+import { OrderItemsVariationsProduct } from '@/lib/customTypes'
 import { ClipboardDocumentListIcon } from '@heroicons/react/24/outline'
 import {
   ChatBubbleBottomCenterTextIcon,
@@ -25,6 +26,7 @@ import { Separator } from '@radix-ui/react-select'
 import { Loader2Icon } from 'lucide-react'
 import { useEffect, useState } from 'react'
 
+import { Badge } from '@/components/ui/badge'
 import { Input } from '@/components/ui/input'
 import {
   Popover,
@@ -43,11 +45,13 @@ const Open = ({
   startDate,
   endDate,
   currentUrlPage,
+  paymentPage,
 }: {
   statusList?: OrderStatus[]
   startDate?: string
   endDate?: string
   currentUrlPage?: string
+  paymentPage: boolean
 }) => {
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedCategories, setSelectedCategories] = useState<string[]>([])
@@ -69,6 +73,8 @@ const Open = ({
     startDate: startDate,
     endDate: endDate,
   })
+
+  console.log(openOrders)
   const { data: inventory } = useInventory()
 
   const { data: productsData } = useProductsQuery({
@@ -119,7 +125,7 @@ const Open = ({
   const { mutate: updateOrderItemStatus, isPending } =
     useUpdateOrderItemStatusMutation()
 
-  const handleOrderItemStatus = (orderItem: OrderItems) => {
+  const handleOrderItemStatus = (orderItem: OrderItem) => {
     const newStatus = !orderItem.finished
     updateOrderItemStatus(
       {
@@ -211,46 +217,100 @@ const Open = ({
                   <Label className="text-right font-bold">
                     Bestellung: #{order.order_number}
                   </Label>
-                  <Label className="text-right">
-                    Summe: {centsToEuro(order.price)}€
-                  </Label>
+                  <div>
+                    <Badge className="mr-1">
+                      {
+                        PAYMENT_METHODS.find(
+                          (method) => method.name === order.payment_method,
+                        )?.label
+                      }
+                    </Badge>
+                    <Label className="text-right">
+                      Summe: {centsToEuro(order.price)}€
+                    </Label>
+                  </div>
                 </div>
               </div>
 
               <div className="px-2 pb-2">
                 {/* Order Card Middle */}
-                {order.OrderItems.map((orderItem) => (
+                {(
+                  order.OrderItems as unknown as OrderItemsVariationsProduct[]
+                ).map((orderItem) => (
                   // {/* Row for Product */}
                   <div className="mt-2 grid grid-cols-6" key={orderItem.id}>
                     {/* Product Name and Img */}
                     <div className="col-span-4 flex items-center">
                       <Popover>
-                        <PopoverTrigger asChild>
-                          {/* Click on Avatar or Product Name to Show Product Details */}
-                          <div className="flex">
-                            <Avatar className="cursor-pointer">
-                              <AvatarImage
-                                className="aspect-square h-6 w-6 rounded-full object-cover"
-                                //  (orderItem.Products.images && orderItem.Products.images.length > 0) ?  orderItem.Products.images[0] : imgPlaceHolder
-                                src={
-                                  orderItem.Products &&
-                                  orderItem.Products.images &&
-                                  orderItem.Products.images.length > 0
-                                    ? orderItem.Products.images[0]
-                                    : imgPlaceHolder
-                                }
-                              />
-                            </Avatar>
-                            <Label className="ml-1 cursor-pointer">
-                              {orderItem.product_name}
-                            </Label>
+                        <PopoverTrigger asChild className="flex flex-col">
+                          <div>
+                            {/* Click on Avatar or Product Name to Show Product Details */}
+                            <div className="flex">
+                              <Avatar className="cursor-pointer">
+                                {/* Image */}
+                                <AvatarImage
+                                  className="aspect-square h-6 w-6 rounded-full object-cover"
+                                  src={
+                                    orderItem.Products &&
+                                    orderItem.Products.images &&
+                                    orderItem.Products.images.length > 0
+                                      ? orderItem.Products.images[0]
+                                      : imgPlaceHolder
+                                  }
+                                />
+                              </Avatar>
+                              <Label className="ml-1 cursor-pointer">
+                                {orderItem.product_name}
+                              </Label>
+                              <Label className="ml-1 cursor-pointer">
+                                {orderItem.option ? (
+                                  <Badge>{orderItem.option?.name}</Badge>
+                                ) : (
+                                  ''
+                                )}
+                              </Label>
+                            </div>
+                            <div>
+                              {/* Text for Extras */}
+                              {!paymentPage &&
+                                orderItem.extras &&
+                                orderItem.extras.length > 0 && (
+                                  <div className="">
+                                    {orderItem.extras.map((extra) => (
+                                      <Label
+                                        className="ml-1 cursor-pointer text-xs text-gray-400"
+                                        key={extra.id}
+                                      >
+                                        {extra.name} (x{extra.quantity})
+                                      </Label>
+                                    ))}
+                                  </div>
+                                )}
+                              {paymentPage &&
+                                orderItem.extras &&
+                                orderItem.extras.length > 0 && (
+                                  <div className="">
+                                    {orderItem.extras.map((extra) => (
+                                      <Label
+                                        className="ml-1 text-xs text-gray-400"
+                                        key={extra.id}
+                                      >
+                                        {extra.name}(
+                                        {centsToEuro(
+                                          parseInt(extra.price) *
+                                            extra.quantity!,
+                                        )}
+                                        €)
+                                      </Label>
+                                    ))}
+                                  </div>
+                                )}
+                            </div>
                           </div>
                         </PopoverTrigger>
                         <PopoverContent className="w-80">
                           <div className="flex">
-                            {/* (orderItem.Products.images && orderItem.Products.images.length > 0) ?  orderItem.Products.images[0] : imgPlaceHolder */}
-                            {/* (orderItem.Products.images && orderItem.Products.length > 0) ? orderItem.Products.images[0] : imgPlaceHolder */}
-
+                            {/* Image */}
                             <img
                               src={
                                 orderItem.Products?.images &&
@@ -271,7 +331,7 @@ const Open = ({
                               <Label className="ml-1">
                                 Preis:{' '}
                                 {orderItem.Products &&
-                                  centsToEuro(orderItem.Products.price)}
+                                  centsToEuro(orderItem.product_price)}
                                 €
                               </Label>
                             </div>
@@ -330,12 +390,7 @@ const Open = ({
                     {/* Price */}
                     <div className="col-span-1 flex flex-col">
                       <Label className="text-right">
-                        {orderItem.Products
-                          ? centsToEuro(
-                              orderItem.Products.price * orderItem.quantity,
-                            )
-                          : 0}
-                        €
+                        {centsToEuro(orderItem.product_price)}€
                       </Label>
                     </div>
                   </div>

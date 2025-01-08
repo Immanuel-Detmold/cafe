@@ -11,6 +11,8 @@ import {
   EuroToCents,
   centsToEuro,
 } from '@/generalHelperFunctions/currencyHelperFunction'
+import { Variation } from '@/lib/customTypes'
+import { formatCentsToEuroString } from '@/pages/NewOrder/utilityFunctions/handleOrder'
 import { supabase } from '@/services/supabase'
 import { Label } from '@radix-ui/react-label'
 import { ChevronLeftIcon, Loader2Icon, SaveIcon } from 'lucide-react'
@@ -25,17 +27,11 @@ import { Switch } from '@/components/ui/switch'
 import { Textarea } from '@/components/ui/textarea'
 import { useToast } from '@/components/ui/use-toast'
 
-import { ProductDetails } from '../../../components/ProductOptions'
 import DeleteProduct from '../DeleteProduct'
 import Consumption from './Consumption'
 import DisplayImages from './DisplayImages'
 import FileUpload from './FileUpload'
-import { removeEmptyValues } from './helperFunction'
-
-const initialProductDetails: ProductDetails = {
-  options: [],
-  extras: [],
-}
+import { ProductVariations } from './ProductVariations'
 
 interface FileMap {
   [key: string]: File
@@ -55,9 +51,6 @@ const CreateProductV2 = () => {
   const [price, setPrice] = useState('')
   const [category, setCategory] = useState('')
   const [method, setMethod] = useState<string>('')
-  const [productDetails, setProductDetails] = useState<ProductDetails>(
-    initialProductDetails,
-  )
   const [description, setDescription] = useState<string>('')
   const [shortDescription, setShortDescription] = useState<string>('')
   const [showOnlyOnAdvertisement, setShowOnlyOnAdvertisement] = useState(false)
@@ -65,6 +58,8 @@ const CreateProductV2 = () => {
   const [showConsumption, setShowConsumption] = useState(false)
   const [paused, setPaused] = useState(false)
   const [stock, setStock] = useState<string>('0')
+  const [options, setOptions] = useState<Variation[]>([])
+  const [extras, setExtras] = useState<Variation[]>([])
 
   // User State
   const [userRole, setUserRole] = useState('user')
@@ -160,7 +155,20 @@ const CreateProductV2 = () => {
       return
     }
 
-    const { FilteredProductDetails } = removeEmptyValues(productDetails)
+    const cleanAndFormatData = (data: Variation[]) =>
+      data
+        .filter(({ name, price }) => name.trim() !== '' && price.trim() !== '')
+        .map((item) => ({
+          ...item,
+          price: item.price
+            .replace(',', '')
+            .replace('.', '')
+            .replace(/^0+(?!\.)/, ''), // Remove leading zeroes
+        }))
+
+    const cleanedOptions = cleanAndFormatData(options)
+    const cleanedExtras = cleanAndFormatData(extras)
+
     const FilteredConsumption = consumption.filter(
       (item) => item.name !== '' && item.quantity !== '',
     )
@@ -170,7 +178,6 @@ const CreateProductV2 = () => {
       price: EuroToCents(price),
       category: category,
       method: method,
-      product_details: FilteredProductDetails,
       consumption: FilteredConsumption,
       short_description: shortDescription,
       description: description,
@@ -179,6 +186,8 @@ const CreateProductV2 = () => {
       paused: paused,
       advertisement: showAdervertisement,
       stock: parseInt(stock),
+      options: cleanedOptions,
+      extras: cleanedExtras,
     }
 
     // New Product
@@ -293,7 +302,8 @@ const CreateProductV2 = () => {
             price,
             category,
             method,
-            product_details,
+            options,
+            extras,
             consumption,
             short_description,
             description,
@@ -312,8 +322,23 @@ const CreateProductV2 = () => {
           if (method) {
             setMethod(method)
           }
-          if (product_details) {
-            setProductDetails(product_details as ProductDetails)
+          if (options) {
+            // Apply the format to each price in the array of variations
+            setOptions(
+              (options as Variation[]).map((opt) => ({
+                ...opt,
+                price: formatCentsToEuroString(opt.price),
+              })),
+            )
+          }
+          if (extras) {
+            // Apply the format to each price in the array of extras
+            setExtras(
+              (extras as Variation[]).map((ext) => ({
+                ...ext,
+                price: formatCentsToEuroString(ext.price),
+              })),
+            )
           }
           if (consumption) {
             setConsumption(consumption as ConsumptionType[])
@@ -370,9 +395,11 @@ const CreateProductV2 = () => {
               }}
             />
 
-            <Label htmlFor="" className="mt-4 font-bold">
-              Preis
-            </Label>
+            <div className="mt-4 flex items-center">
+              <Label htmlFor="" className=" font-bold">
+                Preis
+              </Label>
+            </div>
             <Input
               tabIndex={-1}
               id="price"
@@ -514,10 +541,13 @@ const CreateProductV2 = () => {
             </div>
 
             {/* Stock */}
-            <div className="mt-4 flex items-center gap-2">
-              <Label htmlFor="stock" className="font-bold">
-                Vorrätig
-              </Label>
+            <div className="mt-4 flex flex-col">
+              <div className="flex items-center">
+                <Label htmlFor="stock" className="font-bold">
+                  Vorrätig
+                </Label>
+                <InfoIconPopover text="Kann alternativ zum Iventar verwendet werden." />
+              </div>
               <Input
                 tabIndex={-1}
                 id="stock"
@@ -528,8 +558,8 @@ const CreateProductV2 = () => {
                   setStock(value)
                 }}
                 placeholder="0"
+                className="mt-1"
               />
-              <InfoIconPopover text="Kann alternativ zum Iventar verwendet werden." />
             </div>
 
             {/* Add consumptions to Product */}
@@ -540,10 +570,12 @@ const CreateProductV2 = () => {
           </div>
 
           {/* Product Options */}
-          {/* <ProductOptions
-            productDetails={productDetails}
-            setProductDetails={setProductDetails}
-          /> */}
+          <ProductVariations
+            options={options}
+            extras={extras}
+            onUpdateOptions={setOptions}
+            onUpdateExtras={setExtras}
+          />
 
           {/* Images */}
           <FileUpload files={files} setFiles={setFiles} />

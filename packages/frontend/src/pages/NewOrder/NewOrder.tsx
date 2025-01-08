@@ -1,8 +1,8 @@
 import { queryClient } from '@/App'
+import { PAYMENT_METHODS } from '@/data/data'
 import { useAppData, useUpdateAppData } from '@/data/useAppData'
 import { useInventory } from '@/data/useInventory'
 import {
-  OrderItem,
   useDeleteOrderMutation,
   useOrdersAndItemsQueryV2,
   useSaveOrderItemsMutation,
@@ -23,6 +23,11 @@ import {
   getEndOfDayToday,
   getStartOfDayToday,
 } from '@/generalHelperFunctions/dateHelperFunctions'
+import {
+  ProductExtra,
+  ProductWithVariations,
+  Variation,
+} from '@/lib/customTypes'
 import { supabase } from '@/services/supabase'
 import { ArrowPathIcon } from '@heroicons/react/24/outline'
 import { Label } from '@radix-ui/react-label'
@@ -44,6 +49,7 @@ import { groupProductsToCategories } from './utilityFunctions/groupProductsToCat
 import {
   GetOrderNumber,
   calcOrderPrice,
+  calcSingleOrderItemPrice,
   getProductIds,
   getUniqueCategories,
 } from './utilityFunctions/handleOrder'
@@ -53,8 +59,17 @@ export type GroupedProducts = {
   [key: string]: Product[]
 }
 
+export type ProductOrder = {
+  id: string
+  product_id: number
+  quantity: number
+  comment: string
+  extras: ProductExtra[]
+  option: Variation | null
+}
+
 const NewOrder = () => {
-  const [dataOrderItems, setDataOrderItems] = useState<OrderItem[]>([])
+  const [dataOrderItems, setDataOrderItems] = useState<ProductOrder[]>([])
   const [sumOrderPrice, setSumOrderPrice] = useState<number>(0)
   const [paymentMethod, setPaymentMethod] = useState<string>('cash')
   // Abweichender Preis:
@@ -80,7 +95,6 @@ const NewOrder = () => {
   // For Edit Order --- Get OrderId from URL
   const [orderIdEdit, setOrderIdEdit] = useState<string>()
   // -------------------------------------
-
   // Hooks
   const { orderId } = useParams()
   const { toast } = useToast()
@@ -153,16 +167,17 @@ const NewOrder = () => {
       editData.table_number && setTableNumber(editData.table_number)
       setOrderNumber(editData.order_number)
 
-      // Get Sum Price of orderItems and check if eidtData.Price is the same, if not set custom price
-      const orderItems: OrderItem[] = []
-      editData.OrderItems.forEach((item) => {
-        orderItems.push({
-          product_id: item.product_id,
-          quantity: item.quantity,
-          comment: item.comment || '',
-        })
-      })
+      const orderItems: ProductOrder[] = editData.OrderItems.map((item) => ({
+        ...item,
+        id: Math.random().toString(36).substring(2, 8),
+        comment: item.comment ?? '',
+        extras: item.extras as ProductExtra[],
+        option: item.option as Variation,
+      }))
+
       setDataOrderItems(orderItems)
+
+      // Get Sum Price of orderItems and check if eiditData.Price is the same, if not set custom price
       const orderItemsPrice = calcOrderPrice({
         dataOrderItems: orderItems,
         products: products || [],
@@ -206,7 +221,7 @@ const NewOrder = () => {
     if (products) {
       const sessionData = sessionStorage.getItem('orderItems')
       const sessionData2 = sessionData
-        ? (JSON.parse(sessionData) as OrderItem[])
+        ? (JSON.parse(sessionData) as ProductOrder[])
         : []
       setDataOrderItems(sessionData2)
     }
@@ -249,64 +264,44 @@ const NewOrder = () => {
     )
   }
 
-  // Const handleAddOrder. Only Local, no database
+  // Const handleAddOrder. Only Local, no database TODO
   const handleAddOrder = (
     product_id: number,
     quantity: number,
     productComment: string,
+    selectedOption: Variation | null,
+    selectExtras: ProductExtra[] | [],
   ): void => {
-    const existingItemIndex = dataOrderItems.findIndex(
-      (item) => item.product_id === product_id,
-    )
+    const newOrderItem = {
+      id: Math.random().toString(36).substring(2, 8),
+      product_id: product_id,
+      quantity: quantity,
+      comment: productComment,
+      extras: selectExtras,
+      option: selectedOption,
+    }
 
-    // If item with same product_id and quantity exists, do nothing
-    if (
-      existingItemIndex !== -1 &&
-      dataOrderItems[existingItemIndex]?.quantity === quantity
-    ) {
-      return
-    }
-    if (existingItemIndex !== -1) {
-      // If item with same product_id but different quantity exists, update quantity
-      setDataOrderItems((prevItems) => {
-        const updatedItems = [...prevItems] // create a copy of the previous items
-        const itemToUpdate = updatedItems[existingItemIndex]
-        if (itemToUpdate) {
-          itemToUpdate.quantity = quantity // update the quantity
-        }
-        sessionStorage.setItem('orderItems', JSON.stringify(updatedItems))
-        return updatedItems // return the updated items
-      })
-    }
-    // If item does not exist in orderItems, add new item
-    if (existingItemIndex === -1) {
-      const newOrderItem: OrderItem = {
-        product_id: product_id,
-        quantity: quantity,
-        comment: productComment,
-      }
-      setDataOrderItems((prevDataOrderItems) => {
-        const updatedItems = [...prevDataOrderItems, newOrderItem]
-        // Add Item to OrderItems
-        setSumOrderPrice(
-          calcOrderPrice({
-            dataOrderItems: updatedItems,
-            products: products || [],
-          }),
-        )
-        sessionStorage.setItem('orderItems', JSON.stringify(updatedItems))
-        return updatedItems
-      })
-    }
+    setDataOrderItems((prevDataOrderItems) => {
+      const updatedItems = [...prevDataOrderItems, newOrderItem]
+      // Add Item to OrderItems
+      setSumOrderPrice(
+        calcOrderPrice({
+          dataOrderItems: updatedItems,
+          products: products || [],
+        }),
+      )
+      sessionStorage.setItem('orderItems', JSON.stringify(updatedItems))
+      return updatedItems
+    })
   }
 
   // Delete Product from Orderlist
-  const handleDeleteOrderItem = (product_id: number) => {
-    const updatedOrderItems = dataOrderItems.filter(
-      (item) => item.product_id !== product_id,
-    )
+  const handleDeleteOrderItem = (id: string) => {
+    // Filter out any item whose 'id' matches the provided parameter
+    const updatedOrderItems = dataOrderItems.filter((item) => item.id !== id)
+
+    // Update the state and session storage
     setDataOrderItems(() => {
-      // Delete Item from OrderItems
       sessionStorage.setItem('orderItems', JSON.stringify(updatedOrderItems))
       return updatedOrderItems
     })
@@ -319,7 +314,7 @@ const NewOrder = () => {
   const { mutate: saveOrderItems, isPending: loadingOrderItems } =
     useSaveOrderItemsMutation()
 
-  const handleSumitOrder = () => {
+  const handleSubmitOrder = () => {
     // Save Order to Database
 
     let orderPrice: number = 0
@@ -333,22 +328,19 @@ const NewOrder = () => {
     const uniqueProducts = getProductIds(dataOrderItems)
 
     const orderItems = dataOrderItems.map((item) => {
+      const current_product = products?.find(
+        (product) => product.id === item.product_id,
+      )
       return {
         comment: item.comment,
         order_id: 'unkown',
         product_id: item.product_id,
-        product_name:
-          products?.find((product) => product.id === item.product_id)?.name ||
-          'unkown',
-        product_price:
-          centsToEuro(
-            products?.find((product) => product.id === item.product_id)
-              ?.price || 0,
-          ) || '0',
+        product_name: current_product?.name || 'unkown',
+        product_price: calcSingleOrderItemPrice(item, current_product),
         quantity: item.quantity,
-        category:
-          products?.find((product) => product.id === item.product_id)
-            ?.category || 'unkown',
+        category: current_product?.category || 'unkown',
+        extras: item.extras,
+        option: item.option,
       }
     })
 
@@ -449,17 +441,18 @@ const NewOrder = () => {
   const handleSaveOrderItems = (order_id: number, orderNumber: string) => {
     // Map to get Product name and Price, because OrderItems only have product_id and price could change
     const orderItems = dataOrderItems.map((item) => {
+      const current_product = products?.find(
+        (product) => product.id === item.product_id,
+      )
       return {
         comment: item.comment,
         order_id: order_id,
         product_id: item.product_id,
-        product_name:
-          products?.find((product) => product.id === item.product_id)?.name ||
-          'unkown',
-        product_price:
-          products?.find((product) => product.id === item.product_id)?.price ||
-          0,
+        product_name: current_product?.name || 'unkown',
+        product_price: calcSingleOrderItemPrice(item, current_product),
         quantity: item.quantity,
+        option: item.option,
+        extras: item.extras,
       }
     })
 
@@ -574,10 +567,9 @@ const NewOrder = () => {
                 <h2 className="w-full font-bold">{category}</h2>
                 {/* Iterate over each product in the current category */}
                 <ProductsInCategory
-                  products={products}
+                  products={products as ProductWithVariations[]}
                   dataOrderItems={dataOrderItems}
                   handleAddOrder={handleAddOrder}
-                  handleDeleteOrderItem={handleDeleteOrderItem}
                   InventoryData={inventoryData}
                   openOrders={openOrders ?? []}
                 />
@@ -631,26 +623,12 @@ const NewOrder = () => {
             sessionStorage.setItem('paymentMethod', method)
           }}
         >
-          <div className="flex items-center space-x-2">
-            <RadioGroupItem value="cash" id="r1" />
-            <Label htmlFor="r1">Bar</Label>
-          </div>
-          <div className="flex items-center space-x-2">
-            <RadioGroupItem value="paypal" id="r3" />
-            <Label htmlFor="r3">Paypal</Label>
-          </div>
-          <div className="flex items-center space-x-2">
-            <RadioGroupItem value="cafe_card" id="r2" />
-            <Label htmlFor="r2">Café Karte</Label>
-          </div>
-          <div className="flex items-center space-x-2">
-            <RadioGroupItem value="voucher" id="r4" />
-            <Label htmlFor="r4">Gutschein</Label>
-          </div>
-          <div className="flex items-center space-x-2">
-            <RadioGroupItem value="youth" id="r4" />
-            <Label htmlFor="r4">Jugend</Label>
-          </div>
+          {PAYMENT_METHODS.map((method, index) => (
+            <div className="flex items-center space-x-2" key={index}>
+              <RadioGroupItem value={method.name} id={`r${index + 1}`} />
+              <Label htmlFor={`r${index + 1}`}>{method.label}</Label>
+            </div>
+          ))}
         </RadioGroup>
 
         {/* Costs */}
@@ -721,7 +699,7 @@ const NewOrder = () => {
           <Button
             className="mb-4 mt-2 w-min bg-amber-600"
             disabled={dataOrderItems.length === 0}
-            onClick={handleSumitOrder}
+            onClick={handleSubmitOrder}
           >
             {loadingOrder || loadingOrderItems || loadingPrint ? (
               <Loader2Icon className="h-8 w-8 animate-spin" />

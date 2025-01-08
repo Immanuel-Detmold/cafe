@@ -1,10 +1,10 @@
 import { imgPlaceHolder } from '@/data/data'
-import { OrderItem } from '@/data/useOrders'
 import { Product } from '@/data/useProducts'
 import { centsToEuro } from '@/generalHelperFunctions/currencyHelperFunction'
 import { TrashIcon } from '@heroicons/react/24/outline'
 
 import { Avatar, AvatarImage } from '@/components/ui/avatar'
+import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import {
   Dialog,
@@ -17,9 +17,12 @@ import {
 import { Label } from '@/components/ui/label'
 import { Separator } from '@/components/ui/separator'
 
+import { ProductOrder } from './NewOrder'
+import { calcSingleOrderItemPrice } from './utilityFunctions/handleOrder'
+
 type propsOrderDetailsPage = {
-  dataOrderItem: OrderItem[]
-  handleDeleteOrderItem: (product_id: number) => void
+  dataOrderItem: ProductOrder[]
+  handleDeleteOrderItem: (id: string) => void
   products: Product[]
   sumOrderPrice: number
 }
@@ -53,7 +56,7 @@ const OrderDetailsPage = (props: propsOrderDetailsPage) => {
 
             <Separator />
 
-            {props.dataOrderItem.map((orderItem: OrderItem) => {
+            {props.dataOrderItem.map((orderItem) => {
               const product = props.products.find(
                 (product) => product.id === orderItem.product_id,
               )
@@ -66,6 +69,7 @@ const OrderDetailsPage = (props: propsOrderDetailsPage) => {
                   className="grid grid-cols-4 items-center gap-4"
                 >
                   <div className="col-span-2 flex items-center">
+                    {/* Image */}
                     <Avatar className="h-6 w-6">
                       <AvatarImage
                         className="aspect-square object-cover"
@@ -76,19 +80,49 @@ const OrderDetailsPage = (props: propsOrderDetailsPage) => {
                         }
                       />
                     </Avatar>
-                    <Label className="ml-1">{product.name}</Label>
+
+                    {/* Name and Option */}
+                    <div className="flex flex-col">
+                      <Label className="ml-1">
+                        {product.name}{' '}
+                        {orderItem.option?.name ? (
+                          <Badge>{orderItem.option?.name}</Badge>
+                        ) : (
+                          ''
+                        )}
+                      </Label>
+
+                      {/* Text for Extras */}
+                      {orderItem.extras && orderItem.extras.length > 0 && (
+                        <div className="">
+                          {orderItem.extras.map((extra) => (
+                            <Label
+                              className="ml-1 text-xs text-gray-400"
+                              key={extra.id}
+                            >
+                              {extra.name}(
+                              {centsToEuro(
+                                parseInt(extra.price) * extra.quantity!,
+                              )}
+                              €)
+                            </Label>
+                          ))}
+                        </div>
+                      )}
+                    </div>
                   </div>
+
+                  {/* Trashicon */}
                   <Label className="flex items-center">
                     {orderItem.quantity}{' '}
                     <TrashIcon
                       className="ml-2 h-5 w-5 cursor-pointer"
-                      onClick={() =>
-                        props.handleDeleteOrderItem(orderItem.product_id)
-                      }
+                      onClick={() => props.handleDeleteOrderItem(orderItem.id)}
                     />
                   </Label>
                   <Label>
-                    {centsToEuro(product.price * orderItem.quantity)}€
+                    {centsToEuro(calcSingleOrderItemPrice(orderItem, product))}€
+                    {/* {centsToEuro(product.price * orderItem.quantity)}€ */}
                   </Label>
                 </div>
               )

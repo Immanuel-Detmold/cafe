@@ -1,8 +1,8 @@
-import { Order, OrderItems, OrdersAndItems } from '@/data/useOrders'
+import { Order, OrderItem, OrdersAndItems } from '@/data/useOrders'
 import { Product } from '@/data/useProducts'
 
 export type OpenOrder = Order & {
-  OrderItems: Array<OrderItems & { Products: Product }>
+  OrderItems: Array<OrderItem & { Products: Product }>
 }
 
 export const getCategoriesAndProducts = (orderData?: OrdersAndItems) => {
