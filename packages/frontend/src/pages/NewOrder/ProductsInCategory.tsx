@@ -90,26 +90,25 @@ const ProductsInCategory = (props: propsProductInCategory) => {
   }
 
   // Check if users changes the quantity, extras, options if yes run useeffect to update price
-
   useEffect(() => {
+    if (currentProduct === null) return
     const getCurrentPrice = () => {
       const orderItem: ProductOrder = {
         id: '0',
-        product_id: currentProduct?.id ?? 0,
+        product_id: currentProduct.id,
         quantity: quantity,
-        comment: productComment,
+        comment: '',
         extras: selectExtras,
         option: selectedOption,
       }
-      const product = props.products.find((p) => p.id === orderItem.product_id)
-      const finalPrice = calcSingleOrderItemPrice(orderItem, product)
-      console.log(finalPrice)
+
+      const finalPrice = calcSingleOrderItemPrice(orderItem, currentProduct)
       return finalPrice
     }
 
     // Update the current price whenever quantity, selectedOption, or selectExtras change
     setCurrentPrice(getCurrentPrice())
-  }, [quantity, selectedOption, selectExtras, productComment, props.products])
+  }, [quantity, selectedOption, selectExtras, productComment, currentProduct])
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4">
