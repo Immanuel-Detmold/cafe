@@ -1,4 +1,4 @@
-import { GetOrder, InsertOrderItem, OrderItem } from '@/data/useOrders'
+import { InsertOrderItem, OrderItem } from '@/data/useOrders'
 import { Product } from '@/data/useProducts'
 
 export type Variation = {
@@ -35,8 +35,4 @@ export type InsertOrderItemWithVariations = Omit<
 > & {
   extras: ProductExtra[]
   option: Variation
-}
-
-export type FormattedOrderData = GetOrder & {
-  OrderItems: OrderItemWithVariations[]
 }

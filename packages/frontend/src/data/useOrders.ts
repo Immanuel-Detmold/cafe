@@ -1,14 +1,10 @@
-import { queryClient } from '@/App';
-import { getStartOfDayToday } from '@/generalHelperFunctions/dateHelperFunctions.tsx';
-import { FormattedOrderData } from '@/lib/customTypes.ts';
-import { supabase } from '@/services/supabase';
-import { Database } from '@/services/supabase.types';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { queryClient } from '@/App'
+import { getStartOfDayToday } from '@/generalHelperFunctions/dateHelperFunctions.tsx'
+import { supabase } from '@/services/supabase'
+import { Database } from '@/services/supabase.types'
+import { useMutation, useQuery } from '@tanstack/react-query'
 
-
-
-import { saveUserAction } from './useUserActions.tsx';
-
+import { saveUserAction } from './useUserActions.tsx'
 
 export type Order = Database['public']['Tables']['Orders']['Row']
 export type GetOrder = Database['public']['Tables']['Orders']['Row']

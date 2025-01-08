@@ -272,7 +272,8 @@ const Open = ({
                             </div>
                             <div>
                               {/* Text for Extras */}
-                              {orderItem.extras &&
+                              {!paymentPage &&
+                                orderItem.extras &&
                                 orderItem.extras.length > 0 && (
                                   <div className="">
                                     {orderItem.extras.map((extra) => (
@@ -281,6 +282,25 @@ const Open = ({
                                         key={extra.id}
                                       >
                                         {extra.name} (x{extra.quantity})
+                                      </Label>
+                                    ))}
+                                  </div>
+                                )}
+                              {paymentPage &&
+                                orderItem.extras &&
+                                orderItem.extras.length > 0 && (
+                                  <div className="">
+                                    {orderItem.extras.map((extra) => (
+                                      <Label
+                                        className="ml-1 text-xs text-gray-400"
+                                        key={extra.id}
+                                      >
+                                        {extra.name}(
+                                        {centsToEuro(
+                                          parseInt(extra.price) *
+                                            extra.quantity!,
+                                        )}
+                                        €)
                                       </Label>
                                     ))}
                                   </div>
