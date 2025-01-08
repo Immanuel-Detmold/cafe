@@ -271,37 +271,6 @@ const NewOrder = () => {
     selectedOption: Variation | null,
     selectExtras: ProductExtra[] | [],
   ): void => {
-    // const existingItemIndex = dataOrderItems.findIndex(
-    //   (item) => item.product_id === product_id,
-    // )
-
-    // If item with same product_id and quantity exists, do nothing
-    // if (
-    //   existingItemIndex !== -1 &&
-    //   dataOrderItems[existingItemIndex]?.quantity === quantity
-    // ) {
-    //   return
-    // }
-
-    // if (existingItemIndex !== -1) {
-    //   // If item with same product_id but different quantity exists, update quantity
-    //   setDataOrderItems((prevItems) => {
-    //     const updatedItems = [...prevItems] // create a copy of the previous items
-    //     const itemToUpdate = updatedItems[existingItemIndex]
-    //     if (itemToUpdate) {
-    //       itemToUpdate.quantity = quantity
-    //       itemToUpdate.comment = productComment
-    //       itemToUpdate.extras = selectExtras
-    //       itemToUpdate.option = selectedOption
-    //     }
-    //     sessionStorage.setItem('orderItems', JSON.stringify(updatedItems))
-    //     return updatedItems // return the updated items
-    //   })
-    // }
-
-    // If item does not exist in orderItems, add new item
-    // if (existingItemIndex === -1) {
-
     const newOrderItem = {
       id: Math.random().toString(36).substring(2, 8),
       product_id: product_id,

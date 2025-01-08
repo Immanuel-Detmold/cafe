@@ -117,13 +117,17 @@ const ProductsInCategory = (props: propsProductInCategory) => {
                 </Label>
 
                 {/* Show if Product is currently Selected */}
-                {/* <Label className="ml-1 text-green-700">
-                  {props.dataOrderItems.find(
-                    (item) => item.product_id === product.id,
-                  )
-                    ? `(${props.dataOrderItems.find((item) => item.product_id === product.id)?.quantity})`
-                    : ''}
-                </Label> */}
+                <Label className="ml-1 text-green-700">
+                  {(() => {
+                    // Sum up the quantities for each orderItem with the matching product_id
+                    const totalQuantity = props.dataOrderItems
+                      .filter((item) => item.product_id === product.id)
+                      .reduce((sum, item) => sum + item.quantity, 0)
+
+                    // If totalQuantity is greater than 0, display it, otherwise display an empty string
+                    return totalQuantity > 0 ? `(${totalQuantity})` : ''
+                  })()}
+                </Label>
               </Button>
 
               {/* Popover -> Select Product Count or Remove */}
