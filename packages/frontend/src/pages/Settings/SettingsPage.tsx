@@ -26,6 +26,7 @@ const SettingsPage = () => {
   const { user } = useUser()
   const navigate = useNavigate()
 
+  // Get Role
   useEffect(() => {
     const role = user?.user_metadata?.role as string
     if (role) {
