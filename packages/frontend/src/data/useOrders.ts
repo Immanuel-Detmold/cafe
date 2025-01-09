@@ -312,15 +312,13 @@ export const useUpdateOrderItemStatusMutation = () => {
     mutationFn: async ({
       orderItemId,
       newStatus,
-      created_at,
     }: {
       orderItemId: number
       newStatus: boolean
-      created_at: string
     }) => {
       const { data, error } = await supabase
         .from('OrderItems')
-        .update({ finished: newStatus, created_at: created_at })
+        .update({ finished: newStatus })
         .eq('id', orderItemId)
         .select()
 
@@ -335,17 +333,26 @@ export const useUpdateOrderItemStatusMutation = () => {
   })
 }
 
-// Sort OrderItems after product_name
+// Sort OrderItems after product_name and then id
 const sortDataOrderItems = (orderAndItems: OrdersAndItems) => {
   const formatedData = orderAndItems.map((order) => {
-    const sorted = order.OrderItems.sort((a, b) =>
-      a.product_name.localeCompare(b.product_name),
-    )
+    const sorted = order.OrderItems.sort((a, b) => {
+      // Compare by product_name
+      const productComparison = a.product_name.localeCompare(b.product_name)
+      if (productComparison !== 0) {
+        return productComparison // Use product_name comparison if they differ
+      }
+
+      // If product_name is the same, compare by id
+      return a.id - b.id
+    })
+
     return {
       ...order,
       OrderItems: sorted,
     }
   })
+
   return formatedData
 }
 

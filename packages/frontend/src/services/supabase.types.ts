@@ -22,9 +22,9 @@ export type Database = {
           created_at?: string
           description?: string | null
           id?: number
-          key: string
+          key?: string
           last_edit?: string
-          value: string
+          value?: string
         }
         Update: {
           created_at?: string

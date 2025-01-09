@@ -51,6 +51,7 @@ import {
   calcOrderPrice,
   calcSingleOrderItemPrice,
   getProductIds,
+  getShoppingCartCount,
   getUniqueCategories,
 } from './utilityFunctions/handleOrder'
 import { runPrintReceipt } from './utilityFunctions/runPrintReceipt'
@@ -572,8 +573,19 @@ const NewOrder = () => {
         />
       </div>
 
+      {/* Shopping Cart Icon */}
+      <div className="sticky top-16 z-30 float-right -mt-12 mr-4">
+        <OrderDetailsPage
+          dataOrderItems={dataOrderItems}
+          handleDeleteOrderItem={handleDeleteOrderItem}
+          products={products || []}
+          sumOrderPrice={sumOrderPrice}
+          onlyCart={true}
+        />
+      </div>
+
       {/* Category and Product */}
-      <div className="">
+      <div className="relative">
         {groupedProducts_filtered &&
           Object.entries(groupedProducts_filtered).map(
             ([category, products]) => (
@@ -652,10 +664,11 @@ const NewOrder = () => {
             Summe: {centsToEuro(sumOrderPrice)}€
           </Label>
           <OrderDetailsPage
-            dataOrderItem={dataOrderItems}
+            dataOrderItems={dataOrderItems}
             handleDeleteOrderItem={handleDeleteOrderItem}
             products={products || []}
             sumOrderPrice={sumOrderPrice}
+            onlyCart={false}
           />
         </div>
 

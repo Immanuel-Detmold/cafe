@@ -114,3 +114,11 @@ export const GetOrderNumber = (appData: AppData) => {
   }
   return number.toString()
 }
+
+export const getShoppingCartCount = (dataOrderItems: ProductOrder[]) => {
+  let count = 0
+  dataOrderItems.forEach((orderItem) => {
+    count += orderItem.quantity
+  })
+  return count
+}

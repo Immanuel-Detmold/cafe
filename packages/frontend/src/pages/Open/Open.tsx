@@ -74,7 +74,8 @@ const Open = ({
     endDate: endDate,
   })
 
-  console.log(openOrders)
+  console.log('openOrders', openOrders)
+
   const { data: inventory } = useInventory()
 
   const { data: productsData } = useProductsQuery({
@@ -131,7 +132,6 @@ const Open = ({
       {
         orderItemId: orderItem.id,
         newStatus: newStatus,
-        created_at: orderItem.created_at,
       },
       {
         onError: () => {

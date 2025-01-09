@@ -2,6 +2,8 @@ import { imgPlaceHolder } from '@/data/data'
 import { Product } from '@/data/useProducts'
 import { centsToEuro } from '@/generalHelperFunctions/currencyHelperFunction'
 import { TrashIcon } from '@heroicons/react/24/outline'
+import { get } from 'http'
+import { ShoppingCart } from 'lucide-react'
 
 import { Avatar, AvatarImage } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
@@ -18,23 +20,60 @@ import { Label } from '@/components/ui/label'
 import { Separator } from '@/components/ui/separator'
 
 import { ProductOrder } from './NewOrder'
-import { calcSingleOrderItemPrice } from './utilityFunctions/handleOrder'
+import {
+  calcSingleOrderItemPrice,
+  getShoppingCartCount,
+} from './utilityFunctions/handleOrder'
 
 type propsOrderDetailsPage = {
-  dataOrderItem: ProductOrder[]
+  dataOrderItems: ProductOrder[]
   handleDeleteOrderItem: (id: string) => void
   products: Product[]
   sumOrderPrice: number
+  onlyCart: boolean
 }
 
-const OrderDetailsPage = (props: propsOrderDetailsPage) => {
+const OrderDetailsPage = ({
+  dataOrderItems,
+  handleDeleteOrderItem,
+  products,
+  sumOrderPrice,
+  onlyCart = true,
+}: propsOrderDetailsPage) => {
   return (
     <div className="ml-2">
       <Dialog>
         <DialogTrigger asChild>
-          <Button variant="outline" disabled={props.dataOrderItem.length === 0}>
-            Details
-          </Button>
+          {onlyCart ? (
+            <Button
+              variant="outline"
+              disabled={dataOrderItems.length === 0}
+              size="icon"
+              className="bg-primary text-primary-foreground hover:bg-primary/90 relative"
+              onClick={() => {
+                /* TODO: Implement cart open functionality */
+              }}
+            >
+              <ShoppingCart className="h-4 w-4" />
+              {dataOrderItems.length > 0 && (
+                <span className="bg-destructive text-destructive-foreground absolute -right-2 -top-2 flex h-5 w-5 items-center justify-center rounded-full text-xs font-bold">
+                  {getShoppingCartCount(dataOrderItems)}
+                </span>
+              )}
+            </Button>
+          ) : (
+            <Button
+              variant="outline"
+              className="relative"
+              disabled={dataOrderItems.length === 0}
+            >
+              <span>Bestelldetails</span>
+              <ShoppingCart className="ml-2 h-4 w-4" />
+              <span className="bg-destructive text-destructive-foreground absolute -right-2 -top-2 flex h-5 w-5 items-center justify-center rounded-full text-xs font-bold">
+                {getShoppingCartCount(dataOrderItems)}
+              </span>
+            </Button>
+          )}
         </DialogTrigger>
         <DialogContent className="sm:max-w-[600px]">
           <DialogHeader>
@@ -56,8 +95,8 @@ const OrderDetailsPage = (props: propsOrderDetailsPage) => {
 
             <Separator />
 
-            {props.dataOrderItem.map((orderItem) => {
-              const product = props.products.find(
+            {dataOrderItems.map((orderItem) => {
+              const product = products.find(
                 (product) => product.id === orderItem.product_id,
               )
               if (!product) {
@@ -117,7 +156,7 @@ const OrderDetailsPage = (props: propsOrderDetailsPage) => {
                     {orderItem.quantity}{' '}
                     <TrashIcon
                       className="ml-2 h-5 w-5 cursor-pointer"
-                      onClick={() => props.handleDeleteOrderItem(orderItem.id)}
+                      onClick={() => handleDeleteOrderItem(orderItem.id)}
                     />
                   </Label>
                   <Label>
@@ -131,7 +170,7 @@ const OrderDetailsPage = (props: propsOrderDetailsPage) => {
 
             <div className="grid grid-cols-4 gap-4">
               <Label className="col-start-4 -mt-2 font-bold text-amber-600">
-                {centsToEuro(props.sumOrderPrice)}€
+                {centsToEuro(sumOrderPrice)}€
               </Label>
             </div>
           </div>
