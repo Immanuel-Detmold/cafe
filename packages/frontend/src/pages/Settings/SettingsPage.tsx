@@ -6,6 +6,7 @@ import {
   HistoryIcon,
   NetworkIcon,
   PrinterIcon,
+  SettingsIcon,
   UserRoundIcon,
 } from 'lucide-react'
 import { useEffect, useState } from 'react'
@@ -109,7 +110,7 @@ const SettingsPage = () => {
             </Button>
           )}
 
-          {/* Printer */}
+          {/* Advertisement */}
           {['admin', 'manager'].includes(userRole) && (
             <Button
               className="flex justify-between"
@@ -124,6 +125,20 @@ const SettingsPage = () => {
               <ChevronRightIcon className="" />
             </Button>
           )}
+
+          {/* Organisation Data */}
+          <Button
+            className="flex justify-between"
+            onClick={() => {
+              navigate('/admin/settings/organisation')
+            }}
+          >
+            <div className="flex items-center">
+              <SettingsIcon />{' '}
+              <Label className="ml-1 cursor-pointer">Organisationsdaten</Label>
+            </div>
+            <ChevronRightIcon className="" />
+          </Button>
         </div>
       </div>
     </>

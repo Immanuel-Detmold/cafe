@@ -46,6 +46,7 @@ export const TitleMap = {
   '/admin/settings/manage-users': 'Benutzer verwalten',
   '/admin/settings/advertisement': 'Werbung verwalten',
   '/admin/expense': 'Ausgaben',
+  '/admin/settings/organisation': 'Verwaltung',
 }
 
 export const MONTHS = [

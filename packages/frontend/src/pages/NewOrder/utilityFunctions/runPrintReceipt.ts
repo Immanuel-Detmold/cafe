@@ -24,6 +24,9 @@ type printProps = {
   time: string
   orderNumber: string
   orderItems: OrderItem[]
+  organisation_name: string
+  organisation_logo: string
+  menu_link: string
 }
 
 export const runPrintReceipt = async (props: printProps) => {

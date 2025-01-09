@@ -82,6 +82,11 @@ const NewOrder = () => {
   const [orderNumber, setOrderNumber] = useState<string>('1')
   const [printReceipt, setPrintReceipt] = useState<boolean>(true)
 
+  // For Receipt
+  const [orgName, setOrgName] = useState('')
+  const [orgLogo, setOrgLogo] = useState('')
+  const [menuLink, setMenuLink] = useState('')
+
   // Print States
   const { access_token } = useUser()
   const [ip, setIp] = useState('')
@@ -360,6 +365,9 @@ const NewOrder = () => {
           time: currentDateAndTime(),
           orderNumber,
           orderItems: orderItems,
+          organisation_name: orgName,
+          organisation_logo: orgLogo,
+          menu_link: menuLink,
         })
           .then(() => {
             setLoadingPrint(false)
@@ -418,6 +426,8 @@ const NewOrder = () => {
     })
 
     handleResetOrder()
+
+    navigate('/admin/new-order')
   }
 
   const handleResetOrder = () => {
@@ -526,12 +536,16 @@ const NewOrder = () => {
     const serverIpData = appData?.find((item) => item.key === 'server_ip')
     const serverPortData = appData?.find((item) => item.key === 'server_port')
     const print_on = appData?.find((item) => item.key === 'print_mode')
-    if (serverIpData) {
-      setIp(serverIpData.value)
-    }
-    if (serverPortData) {
-      setPort(serverPortData.value)
-    }
+    const name = appData?.find((item) => item.key === 'organisation_name')
+    const logo = appData?.find((item) => item.key === 'organisation_logo')
+    const link = appData?.find((item) => item.key === 'menu_link')
+
+    if (serverIpData) setIp(serverIpData.value)
+    if (serverPortData) setPort(serverPortData.value)
+    if (name) setOrgName(name.value)
+    if (logo) setOrgLogo(logo.value)
+    if (link) setMenuLink(link.value)
+
     if (print_on) {
       if (print_on.value === 'true') {
         setPrintReceipt(true)

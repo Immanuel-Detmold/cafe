@@ -24,6 +24,7 @@ import AdvertismentSettings from './pages/Settings/AdvertismentSettings'
 import ManageUsers from './pages/Settings/ManageUsers/ManageUsers'
 import UserInfo from './pages/Settings/ManageUsers/UserInfo'
 import NetworkPage from './pages/Settings/NetworkPage/NetworkPage'
+import { Organisation } from './pages/Settings/Organisation'
 import NewPrinter from './pages/Settings/PrinterPage/NewPrinter'
 import PrinterPage from './pages/Settings/PrinterPage/Printer/PrinterPage'
 import SettingsPage from './pages/Settings/SettingsPage'
@@ -96,6 +97,10 @@ export const router = createBrowserRouter(
         {
           path: 'settings/manage-users',
           element: <ManageUsers />,
+        },
+        {
+          path: 'settings/organisation',
+          element: <Organisation />,
         },
         {
           path: 'settings/manage-users/:userId',
