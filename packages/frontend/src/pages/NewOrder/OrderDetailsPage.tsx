@@ -2,7 +2,6 @@ import { imgPlaceHolder } from '@/data/data'
 import { Product } from '@/data/useProducts'
 import { centsToEuro } from '@/generalHelperFunctions/currencyHelperFunction'
 import { TrashIcon } from '@heroicons/react/24/outline'
-import { get } from 'http'
 import { ShoppingCart } from 'lucide-react'
 
 import { Avatar, AvatarImage } from '@/components/ui/avatar'

@@ -51,7 +51,6 @@ import {
   calcOrderPrice,
   calcSingleOrderItemPrice,
   getProductIds,
-  getShoppingCartCount,
   getUniqueCategories,
 } from './utilityFunctions/handleOrder'
 import { runPrintReceipt } from './utilityFunctions/runPrintReceipt'
