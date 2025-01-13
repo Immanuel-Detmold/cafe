@@ -2,7 +2,7 @@
 
 import { useInventory } from '@/data/useInventory'
 import { Label } from '@radix-ui/react-label'
-import { Edit2Icon, EditIcon, Trash2 } from 'lucide-react'
+import { Edit2Icon, Trash2 } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 
 import InfoIconPopover from '@/components/InfoIconPopover'
