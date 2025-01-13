@@ -59,16 +59,15 @@ const OrderStatusPage = ({
       const consumptions = getAllConsumptions(orderItems, productData)
       changeInventory({ consumption: consumptions, inventory })
 
-      // Update Stock
-      productData.forEach((product) => {
-        const orderItem = orderItems.find(
-          (item) => item.product_id === product.id,
+      // Update Stock for each product
+      orderItems.forEach((orderItem) => {
+        const product = productData.find(
+          (product) => product.id === orderItem.product_id,
         )
-        if (orderItem) {
-          if (product.stock !== null && orderItem.quantity !== null) {
-            const newStock = product.stock - orderItem.quantity
-            changeStock({ product_id: product.id, newStock })
-          }
+        if (product && product.stock !== null && orderItem.quantity !== null) {
+          const newStock = product.stock - orderItem.quantity
+          changeStock({ product_id: product.id, newStock })
+          product.stock = newStock
         }
       })
     }

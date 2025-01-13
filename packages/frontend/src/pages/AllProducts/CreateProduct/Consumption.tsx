@@ -2,7 +2,8 @@
 
 import { useInventory } from '@/data/useInventory'
 import { Label } from '@radix-ui/react-label'
-import { Trash2 } from 'lucide-react'
+import { Edit2Icon, EditIcon, Trash2 } from 'lucide-react'
+import { useNavigate } from 'react-router-dom'
 
 import InfoIconPopover from '@/components/InfoIconPopover'
 import {
@@ -41,6 +42,7 @@ export const Consumption: React.FC<ConsumptionProps> = ({
   setConsumption,
 }) => {
   const { data: inventory } = useInventory()
+  const navigate = useNavigate()
 
   const addConsumption = () => {
     setConsumption((prev) => [...prev, { name: '', quantity: '' }])
@@ -100,12 +102,27 @@ export const Consumption: React.FC<ConsumptionProps> = ({
               onChange={(e) =>
                 updateConsumption(index, 'quantity', e.target.value)
               }
-              className="w-24"
+              className="w-[69px]"
             />
+            <div
+              className="ml-1 cursor-pointer"
+              onClick={() => {
+                const selectedItem = inventory?.find(
+                  (invItem) => invItem.name === item.name,
+                )
+                if (selectedItem) {
+                  navigate(`/admin/inventory/${selectedItem.id}`)
+                } else {
+                  navigate('/admin/inventory')
+                }
+              }}
+            >
+              <Edit2Icon className="h-4 w-4" />
+            </div>
             <AlertDialog>
               <AlertDialogTrigger asChild>
                 <Button variant="destructive" size="icon">
-                  <Trash2 className="h-4 w-4" />
+                  <Trash2 className="h-4 w-4 min-w-8" />
                 </Button>
               </AlertDialogTrigger>
               <AlertDialogContent>
