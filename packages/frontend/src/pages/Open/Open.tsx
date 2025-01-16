@@ -331,7 +331,7 @@ const Open = ({
                               <Label className="ml-1">
                                 Preis:{' '}
                                 {orderItem.Products &&
-                                  centsToEuro(orderItem.product_price)}
+                                  centsToEuro(orderItem.order_price)}
                                 €
                               </Label>
                             </div>
@@ -390,7 +390,7 @@ const Open = ({
                     {/* Price */}
                     <div className="col-span-1 flex flex-col">
                       <Label className="text-right">
-                        {centsToEuro(orderItem.product_price)}€
+                        {centsToEuro(orderItem.order_price)}€
                       </Label>
                     </div>
                   </div>

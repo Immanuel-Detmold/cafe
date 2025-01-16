@@ -208,14 +208,14 @@ export const transformOrdersToProductGroups = (dataOrders: OrdersAndItems) => {
 
       if (existingProduct) {
         existingProduct.quantity += orderItem.quantity
-        existingProduct.sum += orderItem.product_price * orderItem.quantity
+        existingProduct.sum += orderItem.order_price * orderItem.quantity
       } else {
         productData.push({
           id: orderItem.product_id,
           name: orderItem.product_name,
-          price: orderItem.product_price,
+          price: orderItem.order_price,
           quantity: orderItem.quantity,
-          sum: orderItem.product_price * orderItem.quantity,
+          sum: orderItem.order_price * orderItem.quantity,
         })
       }
     })
@@ -241,4 +241,141 @@ export const getSumExpenses = (
   }, 0)
 
   return sum
+}
+
+interface GroupedOutput {
+  productName: string
+  price: number // unit price in cents
+  quantity: number // how many at that unit price
+}
+
+/************************************************
+ * 3) Grouping Function
+ ************************************************/
+export function groupOrdersByNamePriceQuantity(
+  orders: OrdersAndItems,
+): GroupedOutput[] {
+  // Use a nested Map to accumulate quantities.
+  // Outer key = product name;
+  // Inner key = *unit* price in cents => (order_price / quantity)
+  // Value = total quantity at that unit price
+  const productMap = new Map<string, Map<number, number>>()
+
+  for (const order of orders) {
+    for (const item of order.OrderItems) {
+      const { product_name, order_price, quantity } = item
+
+      // Compute the *unit* price for each item in cents
+      // e.g. order_price=300, quantity=2 => unit price=150 per item
+      const unitPrice = Math.round(order_price / quantity)
+
+      // Retrieve or create the inner map for this product name
+      let priceMap = productMap.get(product_name)
+      if (!priceMap) {
+        priceMap = new Map<number, number>()
+        productMap.set(product_name, priceMap)
+      }
+
+      // Accumulate the quantity at the specific unit price
+      const currentQuantity = priceMap.get(unitPrice) || 0
+      priceMap.set(unitPrice, currentQuantity + quantity)
+    }
+  }
+
+  // Transform the nested map into an array of GroupedOutput
+  const output: GroupedOutput[] = []
+
+  for (const [productName, priceMap] of productMap.entries()) {
+    for (const [price, quantity] of priceMap.entries()) {
+      output.push({ productName, price, quantity })
+    }
+  }
+
+  return output
+}
+
+/************************************************
+ * 4) Final Formatted Output
+ ************************************************/
+interface FormattedProductRow {
+  id: string // For use as a key in HTML rendering
+  productName: string
+  quantity: string // e.g. "1,00 (x1), 2,00 (x2)"
+  sum: string // e.g. "3,00" (final total in euro)
+  sumCents: number // e.g. 300
+}
+
+/**
+ * Takes the grouped array (unit price / quantity) and merges
+ * them per productName into a single row:
+ *
+ * Example row:
+ *   {
+ *     id: "prod-cappuccino",
+ *     productName: "cappuccino",
+ *     quantity: "1,00 (x1), 2,00 (x2)",
+ *     sum: "3,00",
+ *     sumCents: 300
+ *   }
+ */
+export function formatGroupedData(
+  grouped: GroupedOutput[],
+): FormattedProductRow[] {
+  // Step 1: group all items by productName
+  const productMap = new Map<string, GroupedOutput[]>()
+
+  for (const item of grouped) {
+    const { productName } = item
+    const existingList = productMap.get(productName) || []
+    existingList.push(item)
+    productMap.set(productName, existingList)
+  }
+
+  // Step 2: build a FormattedProductRow for each productName
+  const result: FormattedProductRow[] = []
+
+  for (const [productName, items] of productMap.entries()) {
+    // Build the concatenated 'quantity' column
+    // e.g. "1,00 (x1), 2,00 (x2)"
+    const quantityString = items
+      .map(({ price, quantity }) => {
+        return `${centsToEuro(price)} (x${quantity})`
+      })
+      .join(', ')
+
+    // Compute the sum in cents (sum of *unitPrice* * quantity)
+    const sumInCents = items.reduce(
+      (acc, { price, quantity }) => acc + price * quantity,
+      0,
+    )
+
+    // Convert that total to euros
+    const sumInEuro = centsToEuro(sumInCents)
+
+    // Push our new formatted row
+    result.push({
+      id: `prod-${productName}`, // or any unique key for your HTML
+      productName,
+      quantity: quantityString, // e.g. "1,00 (x1), 2,00 (x2)"
+      sum: sumInEuro, // e.g. "3,00"
+      sumCents: sumInCents, // e.g. 300
+    })
+  }
+
+  return result
+}
+
+/************************************************
+ * 5) Main Entry Point (Orchestrator)
+ ************************************************/
+export function produceFormattedData(
+  orders: OrdersAndItems,
+): FormattedProductRow[] {
+  // 1) Group orders by productName + unitPrice
+  const groupedOutput = groupOrdersByNamePriceQuantity(orders)
+
+  // 2) Format the data into final rows
+  const formattedRows = formatGroupedData(groupedOutput)
+
+  return formattedRows
 }

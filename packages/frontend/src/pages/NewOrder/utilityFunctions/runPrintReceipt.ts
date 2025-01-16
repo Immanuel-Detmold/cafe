@@ -7,7 +7,7 @@ type OrderItem = {
   order_id: string
   product_id: number
   product_name: string
-  product_price: number
+  order_price: number
   quantity: number
   category: string
   option: Variation | null
