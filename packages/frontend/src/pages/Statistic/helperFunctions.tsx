@@ -377,5 +377,9 @@ export function produceFormattedData(
   // 2) Format the data into final rows
   const formattedRows = formatGroupedData(groupedOutput)
 
+  // 3) Sort them by sumCents (descending):
+  //    For ascending order, swap the subtraction order:
+  formattedRows.sort((a, b) => b.sumCents - a.sumCents)
+
   return formattedRows
 }
