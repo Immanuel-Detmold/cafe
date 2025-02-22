@@ -165,7 +165,7 @@ const ReadyForPickup = () => {
                       {/* Products */}
                       <div className="mt-2 grid grid-cols-2 gap-4">
                         {order.OrderItems &&
-                          order.OrderItems.map((item) => (
+                          order.OrderItems.slice(0, 3).map((item) => (
                             //{/* Product */}
                             <div
                               className="flex items-center justify-between"
@@ -175,7 +175,6 @@ const ReadyForPickup = () => {
                                 <Avatar className="h-8 w-8 lg:h-10 lg:w-10">
                                   <AvatarImage
                                     className="aspect-square object-cover"
-                                    // (item.Products.images && item.Products.images.length > 0) ? item.Products.images[0] : imgPlaceHolder
                                     src={
                                       item.Products &&
                                       item.Products.images &&
@@ -196,6 +195,13 @@ const ReadyForPickup = () => {
                               </div>
                             </div>
                           ))}
+                        {order.OrderItems && order.OrderItems.length > 3 && (
+                          <div className="flex items-center justify-center">
+                            <Label className="cursor-pointer text-lg font-bold">
+                              . . .
+                            </Label>
+                          </div>
+                        )}
                       </div>
                     </div>
                   </PopoverTrigger>
