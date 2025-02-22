@@ -7,6 +7,15 @@ runs:
     - name: Enable Corepack
       run: corepack enable
       shell: bash
+
+    - name: Update Corepack
+      run: corepack prepare pnpm@latest --activate
+      shell: bash
+
+    - name: Refresh Corepack Keys
+      run: rm -rf ~/.cache/corepack && corepack prepare
+      shell: bash
+
     - name: Setup Node
       uses: actions/setup-node@v4
       with:
