@@ -4,16 +4,12 @@ description: 'Sets up Node.js, pnpm and installs dependencies'
 runs:
   using: 'composite'
   steps:
-    - name: Enable Corepack
-      run: corepack enable
-      shell: bash
+    # - name: Enable Corepack
+    #   run: corepack enable
+    #   shell: bash
 
     - name: Update Corepack
       run: corepack prepare pnpm@latest --activate
-      shell: bash
-
-    - name: Refresh Corepack Keys
-      run: rm -rf ~/.cache/corepack && corepack prepare
       shell: bash
 
     - name: Setup Node
