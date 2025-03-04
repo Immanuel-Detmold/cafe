@@ -5,7 +5,7 @@ import {
   OrderStatus,
   useChageOrderStatusMutation,
 } from '@/data/useOrders'
-import { Product, useUpdateProductStockMutation } from '@/data/useProducts'
+import { Product } from '@/data/useProducts'
 import { getAllConsumptions } from '@/generalHelperFunctions/consumptionHelper'
 import { supabase } from '@/services/supabase'
 import { Loader2Icon } from 'lucide-react'
@@ -44,9 +44,6 @@ const OrderStatusPage = ({
   )
   const { mutate: changeInventory, isPending: isPendingInventory } =
     useChangeInventoryItemQuantity()
-
-  const { mutate: changeStock, isPending: isPendingStock } =
-    useUpdateProductStockMutation()
 
   // Use Effect
   useEffect(() => {
@@ -109,7 +106,7 @@ const OrderStatusPage = ({
             {isPending ? <Loader2Icon className="animate-spin" /> : 'Warten'}
           </SelectItem>
           <SelectItem value="processing">
-            {isPending || isPendingInventory || isPendingStock ? (
+            {isPending || isPendingInventory ? (
               <Loader2Icon className="animate-spin" />
             ) : (
               'In Bearbeitung'
@@ -123,7 +120,7 @@ const OrderStatusPage = ({
             )}
           </SelectItem>
           <SelectItem value="finished">
-            {isPending || isPendingInventory || isPendingStock ? (
+            {isPending || isPendingInventory ? (
               <Loader2Icon className="animate-spin" />
             ) : (
               'Abgeschlossen'

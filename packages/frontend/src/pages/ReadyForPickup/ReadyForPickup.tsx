@@ -11,10 +11,7 @@ import {
   useOrderAndItemsQuery,
 } from '@/data/useOrders'
 import { OrderStatus } from '@/data/useOrders'
-import {
-  useProductsQuery,
-  useUpdateProductStockMutation,
-} from '@/data/useProducts'
+import { useProductsQuery } from '@/data/useProducts'
 import { useUser } from '@/data/useUser'
 import { getAllConsumptions } from '@/generalHelperFunctions/consumptionHelper'
 import { supabase } from '@/services/supabase'
@@ -63,8 +60,6 @@ const ReadyForPickup = () => {
   const { mutate: changeStatus, isPending } = useChageOrderStatusMutationV2()
   const { mutate: changeInventory, isPending: isPendingInventory } =
     useChangeInventoryItemQuantity()
-  const { mutate: changeStock, isPending: isPendingStock } =
-    useUpdateProductStockMutation()
 
   const handleStatusUpdate = (
     orderId: number,
@@ -243,7 +238,7 @@ const ReadyForPickup = () => {
                         )
                       }}
                     >
-                      {(isPending || isPendingInventory || isPendingStock) &&
+                      {(isPending || isPendingInventory) &&
                       clickedButton === 'finished' ? (
                         <Loader2Icon className="h-8 w-8 animate-spin" />
                       ) : (
