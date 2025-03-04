@@ -11,9 +11,13 @@ import {
   useOrderAndItemsQuery,
 } from '@/data/useOrders'
 import { OrderStatus } from '@/data/useOrders'
-import { useProductsQuery } from '@/data/useProducts'
+import {
+  useProductsQuery,
+  useUpdateProductStockMutation,
+} from '@/data/useProducts'
 import { useUser } from '@/data/useUser'
 import { getAllConsumptions } from '@/generalHelperFunctions/consumptionHelper'
+import { supabase } from '@/services/supabase'
 import { Json } from '@/services/supabase.types'
 // import { supabase } from '@/services/supabase'
 import { ShoppingBagIcon } from '@heroicons/react/24/outline'
@@ -59,6 +63,8 @@ const ReadyForPickup = () => {
   const { mutate: changeStatus, isPending } = useChageOrderStatusMutationV2()
   const { mutate: changeInventory, isPending: isPendingInventory } =
     useChangeInventoryItemQuantity()
+  const { mutate: changeStock, isPending: isPendingStock } =
+    useUpdateProductStockMutation()
 
   const handleStatusUpdate = (
     orderId: number,
@@ -68,6 +74,24 @@ const ReadyForPickup = () => {
     if (status === 'finished' && productsData && inventory && orderItem) {
       const consumptions = getAllConsumptions(orderItem, productsData)
       changeInventory({ consumption: consumptions, inventory })
+
+      // Update Stock for each product
+      orderItem.forEach(async (orderItem) => {
+        const product = productsData.find(
+          (product) => product.id === orderItem.product_id,
+        )
+        if (
+          product &&
+          product.stock !== null &&
+          product.stock > 0 &&
+          orderItem.quantity !== null
+        ) {
+          await supabase.rpc('update_product_stock', {
+            product_id: product.id,
+            quantity: -orderItem.quantity,
+          })
+        }
+      })
     }
 
     changeStatus(
@@ -219,7 +243,7 @@ const ReadyForPickup = () => {
                         )
                       }}
                     >
-                      {(isPending || isPendingInventory) &&
+                      {(isPending || isPendingInventory || isPendingStock) &&
                       clickedButton === 'finished' ? (
                         <Loader2Icon className="h-8 w-8 animate-spin" />
                       ) : (

@@ -451,6 +451,13 @@ export type Database = {
           raw_user_meta_data: Json
         }[]
       }
+      update_product_stock: {
+        Args: {
+          product_id: number
+          quantity: number
+        }
+        Returns: boolean
+      }
       update_single_user: {
         Args: {
           user_id: string

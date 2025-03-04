@@ -7,6 +7,7 @@ import {
 } from '@/data/useOrders'
 import { Product, useUpdateProductStockMutation } from '@/data/useProducts'
 import { getAllConsumptions } from '@/generalHelperFunctions/consumptionHelper'
+import { supabase } from '@/services/supabase'
 import { Loader2Icon } from 'lucide-react'
 import { useEffect, useState } from 'react'
 
@@ -60,14 +61,20 @@ const OrderStatusPage = ({
       changeInventory({ consumption: consumptions, inventory })
 
       // Update Stock for each product
-      orderItems.forEach((orderItem) => {
+      orderItems.forEach(async (orderItem) => {
         const product = productData.find(
           (product) => product.id === orderItem.product_id,
         )
-        if (product && product.stock !== null && orderItem.quantity !== null) {
-          const newStock = product.stock - orderItem.quantity
-          changeStock({ product_id: product.id, newStock })
-          product.stock = newStock
+        if (
+          product &&
+          product.stock !== null &&
+          product.stock > 0 &&
+          orderItem.quantity !== null
+        ) {
+          await supabase.rpc('update_product_stock', {
+            product_id: product.id,
+            quantity: -orderItem.quantity,
+          })
         }
       })
     }
