@@ -192,7 +192,7 @@ const ProductsInCategory = (props: propsProductInCategory) => {
                 </div>
 
                 {/* Show How much is in Stock */}
-                {product.stock != null && product.stock > 1 && (
+                {product.stock != null && product.stock > 0 && (
                   <div className="flex justify-between">
                     <div>
                       <Label className="text-gray-400">Vorrätig:</Label>

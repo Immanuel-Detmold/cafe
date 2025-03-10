@@ -21,6 +21,7 @@ import { ShoppingBagIcon } from '@heroicons/react/24/outline'
 import { Loader2Icon, PlayCircleIcon, UserRoundIcon } from 'lucide-react'
 import { useEffect, useState } from 'react'
 
+import { LoadingOverlay } from '@/components/LoadingOverlay'
 import { Avatar, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
@@ -36,6 +37,7 @@ import InProcessPage from './InProcess'
 const ReadyForPickup = () => {
   // States
   const [clickedButton, setClickedButton] = useState('finished')
+  const [loadingStock, setLoadingStock] = useState(false)
 
   // States for audio
   const [isLoading, setIsLoading] = useState(false)
@@ -71,6 +73,7 @@ const ReadyForPickup = () => {
       changeInventory({ consumption: consumptions, inventory })
 
       // Update Stock for each product
+      setLoadingStock(true)
       orderItem.forEach(async (orderItem) => {
         const product = productsData.find(
           (product) => product.id === orderItem.product_id,
@@ -87,6 +90,7 @@ const ReadyForPickup = () => {
           })
         }
       })
+      setLoadingStock(false)
     }
 
     changeStatus(
@@ -156,6 +160,10 @@ const ReadyForPickup = () => {
 
   return (
     <>
+      <LoadingOverlay
+        isLoading={isPending || isPendingInventory || loadingStock}
+        message="Bitte warten..."
+      />
       <div className="2xl:grid 2xl:grid-cols-5">
         {/* Left side Ready to Pickup  */}
         <div className="2xl:col-span-4">
@@ -238,7 +246,7 @@ const ReadyForPickup = () => {
                         )
                       }}
                     >
-                      {(isPending || isPendingInventory) &&
+                      {(isPending || isPendingInventory || loadingStock) &&
                       clickedButton === 'finished' ? (
                         <Loader2Icon className="h-8 w-8 animate-spin" />
                       ) : (

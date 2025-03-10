@@ -46,11 +46,6 @@ export const useUpdateAppData = () => {
         throw error
       }
 
-      if (data && data.length > 0 && key == 'order_number') {
-        console.log('Appdata', data[0]?.value)
-        return data
-      }
-
       return data
     },
     onSuccess: async () => {

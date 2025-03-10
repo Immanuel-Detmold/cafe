@@ -35,6 +35,7 @@ import { Loader2Icon, ShoppingCart } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 
+import { LoadingOverlay } from '@/components/LoadingOverlay'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
@@ -568,6 +569,11 @@ const NewOrder = () => {
 
   return (
     <div className="select-none">
+      <LoadingOverlay
+        isLoading={loadingOrder || loadingOrderItems || loadingPrint}
+        message="Bitte warten..."
+      />
+
       {/* <ProductDetails /> */}
       <div className="header bg-background sticky top-0 z-10 flex items-center pb-1 pt-2">
         <Input

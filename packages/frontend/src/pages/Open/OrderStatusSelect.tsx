@@ -11,6 +11,7 @@ import { supabase } from '@/services/supabase'
 import { Loader2Icon } from 'lucide-react'
 import { useEffect, useState } from 'react'
 
+import { LoadingOverlay } from '@/components/LoadingOverlay'
 import {
   Select,
   SelectContent,
@@ -34,6 +35,7 @@ const OrderStatusPage = ({
 }) => {
   // States
   const [orderStatus, setOrderStatus] = useState<OrderStatus>(order.status)
+  const [loadingStock, setLoadingStock] = useState(false)
 
   // MiniFunctions
   const { toast } = useToast()
@@ -58,6 +60,7 @@ const OrderStatusPage = ({
       changeInventory({ consumption: consumptions, inventory })
 
       // Update Stock for each product
+      setLoadingStock(true)
       orderItems.forEach(async (orderItem) => {
         const product = productData.find(
           (product) => product.id === orderItem.product_id,
@@ -74,6 +77,7 @@ const OrderStatusPage = ({
           })
         }
       })
+      setLoadingStock(false)
     }
 
     changeOrderStatus(newStatus, {
@@ -90,45 +94,52 @@ const OrderStatusPage = ({
   }
 
   return (
-    <Select
-      onValueChange={(status: OrderStatus) => handleStatusChange(status)}
-      defaultValue={orderStatus}
-      value={orderStatus}
-    >
-      <SelectTrigger
-        className={`ml-2 w-[140px] ${orderStatus === 'processing' ? 'bg-amber-600 text-white' : orderStatus === 'finished' ? 'bg-emerald-800 text-white' : ''}`}
+    <>
+      <LoadingOverlay
+        isLoading={isPending || isPendingInventory || loadingStock}
+        message="Bitte warten..."
+      />
+
+      <Select
+        onValueChange={(status: OrderStatus) => handleStatusChange(status)}
+        defaultValue={orderStatus}
+        value={orderStatus}
       >
-        <SelectValue placeholder="Wähle Status" />
-      </SelectTrigger>
-      <SelectContent>
-        <SelectGroup>
-          <SelectItem value="waiting">
-            {isPending ? <Loader2Icon className="animate-spin" /> : 'Warten'}
-          </SelectItem>
-          <SelectItem value="processing">
-            {isPending || isPendingInventory ? (
-              <Loader2Icon className="animate-spin" />
-            ) : (
-              'In Bearbeitung'
-            )}
-          </SelectItem>
-          <SelectItem value="ready">
-            {isPending ? (
-              <Loader2Icon className="animate-spin" />
-            ) : (
-              'Abholbereit'
-            )}
-          </SelectItem>
-          <SelectItem value="finished">
-            {isPending || isPendingInventory ? (
-              <Loader2Icon className="animate-spin" />
-            ) : (
-              'Abgeschlossen'
-            )}
-          </SelectItem>
-        </SelectGroup>
-      </SelectContent>
-    </Select>
+        <SelectTrigger
+          className={`ml-2 w-[140px] ${orderStatus === 'processing' ? 'bg-amber-600 text-white' : orderStatus === 'finished' ? 'bg-emerald-800 text-white' : ''}`}
+        >
+          <SelectValue placeholder="Wähle Status" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectGroup>
+            <SelectItem value="waiting">
+              {isPending ? <Loader2Icon className="animate-spin" /> : 'Warten'}
+            </SelectItem>
+            <SelectItem value="processing">
+              {isPending || isPendingInventory ? (
+                <Loader2Icon className="animate-spin" />
+              ) : (
+                'In Bearbeitung'
+              )}
+            </SelectItem>
+            <SelectItem value="ready">
+              {isPending ? (
+                <Loader2Icon className="animate-spin" />
+              ) : (
+                'Abholbereit'
+              )}
+            </SelectItem>
+            <SelectItem value="finished">
+              {isPending || isPendingInventory || loadingStock ? (
+                <Loader2Icon className="animate-spin" />
+              ) : (
+                'Abgeschlossen'
+              )}
+            </SelectItem>
+          </SelectGroup>
+        </SelectContent>
+      </Select>
+    </>
   )
 }
 
