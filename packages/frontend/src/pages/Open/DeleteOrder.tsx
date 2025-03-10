@@ -3,6 +3,7 @@ import { Order, useDeleteOrderMutation } from '@/data/useOrders'
 import { TrashIcon } from '@heroicons/react/24/outline'
 import { Loader2Icon } from 'lucide-react'
 
+import { LoadingOverlay } from '@/components/LoadingOverlay'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -34,44 +35,47 @@ const DeleteOrder = ({ order }: { order: Order }) => {
   }
 
   return (
-    <AlertDialog>
-      <AlertDialogTrigger asChild>
-        <div className="">
-          <Button className="w-min bg-red-700" variant="destructive">
-            {isPending ? (
-              <Loader2Icon className="h-4 w-4 animate-spin" />
-            ) : (
-              <TrashIcon className="h-4 w-4" />
-            )}
-          </Button>
-        </div>
-      </AlertDialogTrigger>
-      <AlertDialogContent>
-        <AlertDialogHeader>
-          <AlertDialogTitle>
-            Möchtest du die Bestellung wirklich löschen?
-          </AlertDialogTitle>
-          <AlertDialogDescription>
-            Diese Aktion kann nicht rückgängig gemacht werden.
-          </AlertDialogDescription>
-        </AlertDialogHeader>
-
-        <AlertDialogFooter>
+    <>
+      <LoadingOverlay isLoading={isPending} message="Bitte warten..." />
+      <AlertDialog>
+        <AlertDialogTrigger asChild>
           <div className="">
-            <AlertDialogCancel>Abbrechen</AlertDialogCancel>
-
-            <AlertDialogAction
-              className="ml-2 bg-red-700"
-              onClick={() => {
-                handleDeleteOrder(order.id)
-              }}
-            >
-              Löschen
-            </AlertDialogAction>
+            <Button className="w-min bg-red-700" variant="destructive">
+              {isPending ? (
+                <Loader2Icon className="h-4 w-4 animate-spin" />
+              ) : (
+                <TrashIcon className="h-4 w-4" />
+              )}
+            </Button>
           </div>
-        </AlertDialogFooter>
-      </AlertDialogContent>
-    </AlertDialog>
+        </AlertDialogTrigger>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>
+              Möchtest du die Bestellung wirklich löschen?
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              Diese Aktion kann nicht rückgängig gemacht werden.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+
+          <AlertDialogFooter>
+            <div className="">
+              <AlertDialogCancel>Abbrechen</AlertDialogCancel>
+
+              <AlertDialogAction
+                className="ml-2 bg-red-700"
+                onClick={() => {
+                  handleDeleteOrder(order.id)
+                }}
+              >
+                Löschen
+              </AlertDialogAction>
+            </div>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </>
   )
 }
 
