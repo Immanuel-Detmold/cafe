@@ -74,8 +74,6 @@ const Open = ({
     endDate: endDate,
   })
 
-  console.log('openOrders', openOrders)
-
   const { data: inventory } = useInventory()
 
   const { data: productsData } = useProductsQuery({

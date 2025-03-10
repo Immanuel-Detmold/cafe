@@ -76,8 +76,6 @@ const StatisticPage = () => {
     endDate: convertToSupabaseDate(getEndOfMonth(new Date())),
   })
 
-  console.log(expensesThisMonth)
-
   // Gets all Cafe Cards from this year
   const { data: cafeCardsAllTime, isLoading: l3 } = useCafeCards({})
 

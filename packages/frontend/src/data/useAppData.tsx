@@ -20,6 +20,15 @@ export const useAppData = () =>
     },
   })
 
+export type GetAppData = {
+  created_at: string
+  description: string | null
+  id: number
+  key: string
+  last_edit: string
+  value: string
+}
+
 // Update AppData value
 export const useUpdateAppData = () => {
   return useMutation({
@@ -35,6 +44,11 @@ export const useUpdateAppData = () => {
 
       if (error) {
         throw error
+      }
+
+      if (data && data.length > 0 && key == 'order_number') {
+        console.log('Appdata', data[0]?.value)
+        return data
       }
 
       return data

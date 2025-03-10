@@ -26,7 +26,6 @@ const MenuCard = () => {
   if (dataCategories && products) {
     groupedProducts = groupProductsToCategories(dataCategories, products)
   }
-  console.log('groupedProducts', groupedProducts)
 
   if (error) {
     toast({ title: 'Fehler beim Laden der Produkte! ❌' })

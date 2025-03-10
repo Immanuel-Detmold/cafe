@@ -96,7 +96,6 @@ const NewOrder = () => {
   // Add filter to NewOrder Page
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedCategories, setSelectedCategories] = useState<string[]>([])
-
   // For Edit Order --- Get OrderId from URL
   const [orderIdEdit, setOrderIdEdit] = useState<string>()
   // -------------------------------------
@@ -136,7 +135,7 @@ const NewOrder = () => {
     toast({ title: 'Fehler beim Laden der Produkte! ❌' })
   }
 
-  // Realtime for Inventory changes
+  // Realtime for Inventory, Product changes. Other Realtime functions are in supabase.ts.
   supabase
     .channel('inventory-db-changes')
     .on(
@@ -257,7 +256,8 @@ const NewOrder = () => {
   }, [products])
 
   useEffect(() => {
-    orderId && setOrderIdEdit(orderId)
+    // Set orderIdEdit to orderId if it exists, otherwise set to undefined
+    setOrderIdEdit(orderId || undefined)
   }, [orderId])
 
   // Initialize a new object to group the products by category
@@ -329,9 +329,11 @@ const NewOrder = () => {
       orderPrice = sumOrderPrice
     }
 
+    // Get Unique Categories and Products
     const uniqueCategories = getUniqueCategories(dataOrderItems, products || [])
     const uniqueProducts = getProductIds(dataOrderItems)
 
+    // Create OrderItems for Receipt
     const orderItems = dataOrderItems.map((item) => {
       const current_product = products?.find(
         (product) => product.id === item.product_id,
@@ -403,10 +405,19 @@ const NewOrder = () => {
 
         // Increase Order Number if not edited
         if (!orderIdEdit) {
-          updateAppData({
-            key: 'order_number',
-            value: orderNumber,
-          })
+          updateAppData(
+            {
+              key: 'order_number',
+              value: orderNumber,
+            },
+            {
+              onSuccess: (data) => {
+                if (data.length > 0 && data[0]?.key == 'order_number') {
+                  setOrderNumber(data[0]?.value || '1')
+                }
+              },
+            },
+          )
         }
 
         const order_id = order[0]?.id
@@ -426,7 +437,7 @@ const NewOrder = () => {
     })
 
     handleResetOrder()
-
+    // setOrderIdEdit(undefined)
     navigate('/admin/new-order')
   }
 
