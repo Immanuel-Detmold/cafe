@@ -18,6 +18,7 @@ import { supabase } from '@/services/supabase'
 import { Json } from '@/services/supabase.types'
 // import { supabase } from '@/services/supabase'
 import { ShoppingBagIcon } from '@heroicons/react/24/outline'
+import { PopoverClose } from '@radix-ui/react-popover'
 import { Loader2Icon, PlayCircleIcon, UserRoundIcon } from 'lucide-react'
 import { useEffect, useState } from 'react'
 
@@ -164,6 +165,7 @@ const ReadyForPickup = () => {
         isLoading={isPending || isPendingInventory || loadingStock}
         message="Daten werden gespeichert..."
       />
+
       <div className="2xl:grid 2xl:grid-cols-5">
         {/* Left side Ready to Pickup  */}
         <div className="2xl:col-span-4">
@@ -233,46 +235,48 @@ const ReadyForPickup = () => {
                     </div>
                   </PopoverTrigger>
                   <PopoverContent className="flex w-80 flex-col items-center justify-center">
-                    <Button
-                      className="m-2 w-40 bg-emerald-800 hover:bg-emerald-900"
-                      variant={'default'}
-                      tabIndex={-1}
-                      onClick={() => {
-                        setClickedButton('finished')
-                        handleStatusUpdate(
-                          order.id,
-                          'finished',
-                          order.OrderItems,
-                        )
-                      }}
-                    >
-                      {(isPending || isPendingInventory || loadingStock) &&
-                      clickedButton === 'finished' ? (
-                        <Loader2Icon className="h-8 w-8 animate-spin" />
-                      ) : (
-                        'Abgeholt'
-                      )}
-                    </Button>
-                    <Button
-                      className="m-2 w-40"
-                      variant={'default'}
-                      tabIndex={-1}
-                      onClick={() => {
-                        setClickedButton('processing')
-                        handleStatusUpdate(
-                          order.id,
-                          'processing',
-                          order.OrderItems,
-                        )
-                      }}
-                    >
-                      {isPending && clickedButton === 'processing' ? (
-                        <Loader2Icon className="h-8 w-8 animate-spin" />
-                      ) : (
-                        'In Bearbeitung'
-                      )}
-                    </Button>
-
+                    <PopoverClose asChild>
+                      <Button
+                        className="m-2 w-40 bg-emerald-800 hover:bg-emerald-900"
+                        variant={'default'}
+                        onClick={() => {
+                          setClickedButton('finished')
+                          handleStatusUpdate(
+                            order.id,
+                            'finished',
+                            order.OrderItems,
+                          )
+                        }}
+                      >
+                        {(isPending || isPendingInventory || loadingStock) &&
+                        clickedButton === 'finished' ? (
+                          <Loader2Icon className="h-8 w-8 animate-spin" />
+                        ) : (
+                          'Abgeholt'
+                        )}
+                      </Button>
+                    </PopoverClose>
+                    <PopoverClose asChild>
+                      <Button
+                        className="m-2 w-40"
+                        variant={'default'}
+                        onClick={() => {
+                          setClickedButton('processing')
+                          handleStatusUpdate(
+                            order.id,
+                            'processing',
+                            order.OrderItems,
+                          )
+                        }}
+                      >
+                        {isPending && clickedButton === 'processing' ? (
+                          <Loader2Icon className="h-8 w-8 animate-spin" />
+                        ) : (
+                          'In Bearbeitung'
+                        )}
+                      </Button>
+                    </PopoverClose>
+                    {/* Play Audio Button */}
                     {true && (
                       <Button
                         className="m-2 w-40"
