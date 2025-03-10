@@ -571,7 +571,7 @@ const NewOrder = () => {
     <div className="select-none">
       <LoadingOverlay
         isLoading={loadingOrder || loadingOrderItems || loadingPrint}
-        message="Bitte warten..."
+        message="Bestellung wird gespeichert..."
       />
 
       {/* <ProductDetails /> */}

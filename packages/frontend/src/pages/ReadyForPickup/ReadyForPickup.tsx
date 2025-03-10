@@ -162,7 +162,7 @@ const ReadyForPickup = () => {
     <>
       <LoadingOverlay
         isLoading={isPending || isPendingInventory || loadingStock}
-        message="Bitte warten..."
+        message="Daten werden gespeichert..."
       />
       <div className="2xl:grid 2xl:grid-cols-5">
         {/* Left side Ready to Pickup  */}

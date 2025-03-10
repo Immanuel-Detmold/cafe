@@ -97,7 +97,7 @@ const OrderStatusPage = ({
     <>
       <LoadingOverlay
         isLoading={isPending || isPendingInventory || loadingStock}
-        message="Bitte warten..."
+        message="Daten werden gespeichert..."
       />
 
       <Select
