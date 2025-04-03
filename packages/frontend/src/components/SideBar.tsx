@@ -160,7 +160,7 @@ const SideBar = () => {
                 className="ml-3 overflow-x-hidden"
               >
                 <AccordionItem value="item-1">
-                  <AccordionTrigger>Weitere Funktionien</AccordionTrigger>
+                  <AccordionTrigger>Weitere Funktionen</AccordionTrigger>
                   <AccordionContent>
                     <div className="flex w-full flex-col space-y-2">
                       {/* Screen */}
