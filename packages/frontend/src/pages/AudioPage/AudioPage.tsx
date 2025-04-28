@@ -5,6 +5,7 @@ import { Label } from '@radix-ui/react-label'
 import { InfoIcon, Loader2Icon, PlayCircleIcon } from 'lucide-react'
 import { useEffect, useState } from 'react'
 
+import { AudioTemplates } from '@/components/AudioTemplates'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -74,6 +75,10 @@ const AudioPage = () => {
   // Change Default Voice
   const changeDefaultVoice = (voice: string) => {
     updateAppData({ key: 'voice', value: voice })
+  }
+
+  const handleSelectTemplate = (templateText: string) => {
+    setInputValue(templateText)
   }
 
   // UseEffects
@@ -157,6 +162,8 @@ const AudioPage = () => {
               Bestellungen verwendet.
             </AlertDescription>
           </Alert>
+
+          <AudioTemplates onSelectTemplate={handleSelectTemplate} />
         </div>
       </div>
     </>
