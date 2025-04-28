@@ -42,6 +42,7 @@ const StatisticPage = () => {
   const [userRole, setUserRole] = useState('user')
   const [showAllOrders, setShowAllOrders] = useState(false)
   const [selectedDate, setSelectedDate] = useState('')
+  const [userName, setUserName] = useState('')
 
   // Mini Functions
   const { monthDataFormat } = getCurrentMonthStartDate()
@@ -188,6 +189,10 @@ const StatisticPage = () => {
 
   useEffect(() => {
     const role = user?.user_metadata?.role as string
+    const name = user?.user_metadata?.name as string
+    if (name) {
+      setUserName(name)
+    }
     if (role) {
       setUserRole(role)
     }
@@ -398,7 +403,7 @@ const StatisticPage = () => {
         <Open
           startDate={getStartOfDay(selectedDate).finalDateString}
           endDate={getEndOfDay(selectedDate).endOfDayString}
-          currentUrlPage={'statistic'}
+          currentUrlPage={userName === 'Ronny' ? 'Ronny' : 'statistic'}
           paymentPage={false}
         ></Open>
       )}
