@@ -10,14 +10,23 @@ import {
   Edit2,
   Loader2,
   Plus,
-  Power,
-  PowerOff,
   Star,
   Trash2,
 } from 'lucide-react'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import {
@@ -45,7 +54,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { Switch } from '@/components/ui/switch'
 import { Textarea } from '@/components/ui/textarea'
 
 interface ColorOption {
@@ -59,7 +67,6 @@ interface FormData {
   description: string
   color: string
   icon: string
-  active: boolean
 }
 
 const colorOptions: ColorOption[] = [
@@ -96,7 +103,6 @@ export default function RevenueStreamManager(): JSX.Element {
     description: '',
     color: '#3B82F6',
     icon: '💰',
-    active: true,
   })
 
   // Hooks for data fetching and mutations
@@ -113,7 +119,6 @@ export default function RevenueStreamManager(): JSX.Element {
       description: stream.description || '',
       color: stream.color || '',
       icon: stream.icon || '',
-      active: stream.active || true,
     })
     setIsDialogOpen(true)
   }
@@ -125,7 +130,6 @@ export default function RevenueStreamManager(): JSX.Element {
       description: '',
       color: '#3B82F6',
       icon: '💰',
-      active: true,
     })
     setIsDialogOpen(true)
   }
@@ -154,23 +158,10 @@ export default function RevenueStreamManager(): JSX.Element {
   }
 
   const handleDelete = async (streamId: number): Promise<void> => {
-    if (window.confirm('Möchtest du diese Umsatzgruppe wirklich löschen?')) {
-      try {
-        await deleteMutation.mutateAsync(streamId)
-      } catch (error) {
-        console.error('Error deleting revenue stream:', error)
-      }
-    }
-  }
-
-  const handleToggleActive = async (stream: RevenueStream): Promise<void> => {
     try {
-      await updateMutation.mutateAsync({
-        id: stream.id,
-        updates: { active: !stream.active },
-      })
+      await deleteMutation.mutateAsync(streamId)
     } catch (error) {
-      console.error('Error toggling revenue stream status:', error)
+      console.error('Error deleting revenue stream:', error)
     }
   }
 
@@ -316,24 +307,6 @@ export default function RevenueStreamManager(): JSX.Element {
                   </Select>
                 </div>
               </div>
-
-              <div className="flex items-center space-x-2">
-                <Switch
-                  id="active"
-                  checked={formData.active}
-                  onCheckedChange={(active: boolean) =>
-                    setFormData((prev) => ({ ...prev, active }))
-                  }
-                />
-                <Label htmlFor="active" className="flex items-center gap-2">
-                  {formData.active ? (
-                    <Power className="h-4 w-4 text-green-600" />
-                  ) : (
-                    <PowerOff className="h-4 w-4 text-red-600" />
-                  )}
-                  {formData.active ? 'Aktiv' : 'Inaktiv'}
-                </Label>
-              </div>
             </div>
 
             <DialogFooter>
@@ -356,10 +329,7 @@ export default function RevenueStreamManager(): JSX.Element {
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         {revenueStreams?.map((stream) => (
-          <Card
-            key={stream.id}
-            className={`relative ${!stream.active ? 'opacity-60' : ''}`}
-          >
+          <Card key={stream.id} className="relative">
             <CardHeader className="pb-2">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
@@ -371,28 +341,8 @@ export default function RevenueStreamManager(): JSX.Element {
                       Standard
                     </Badge>
                   )}
-                  {!stream.active && (
-                    <Badge variant="destructive" className="ml-2">
-                      Inaktiv
-                    </Badge>
-                  )}
                 </div>
                 <div className="flex gap-1">
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => handleToggleActive(stream)}
-                    disabled={updateMutation.isPending}
-                    title={stream.active ? 'Deaktivieren' : 'Aktivieren'}
-                  >
-                    {updateMutation.isPending ? (
-                      <Loader2 className="h-4 w-4 animate-spin" />
-                    ) : stream.active ? (
-                      <Power className="h-4 w-4 text-green-600" />
-                    ) : (
-                      <PowerOff className="h-4 w-4 text-red-600" />
-                    )}
-                  </Button>
                   <Button
                     variant="ghost"
                     size="sm"
@@ -401,19 +351,41 @@ export default function RevenueStreamManager(): JSX.Element {
                   >
                     <Edit2 className="h-4 w-4" />
                   </Button>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="text-destructive hover:text-destructive"
-                    onClick={() => handleDelete(stream.id)}
-                    disabled={deleteMutation.isPending}
-                  >
-                    {deleteMutation.isPending ? (
-                      <Loader2 className="h-4 w-4 animate-spin" />
-                    ) : (
-                      <Trash2 className="h-4 w-4" />
-                    )}
-                  </Button>
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="text-destructive hover:text-destructive"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>
+                          Umsatzgruppe löschen
+                        </AlertDialogTitle>
+                        <AlertDialogDescription>
+                          Möchtest du die Umsatzgruppe {stream.name} wirklich
+                          löschen? Diese Aktion kann nicht rückgängig gemacht
+                          werden.
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>Abbrechen</AlertDialogCancel>
+                        <AlertDialogAction
+                          onClick={() => handleDelete(stream.id)}
+                          className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                        >
+                          {deleteMutation.isPending ? (
+                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                          ) : null}
+                          Löschen
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
                 </div>
               </div>
             </CardHeader>
@@ -427,11 +399,9 @@ export default function RevenueStreamManager(): JSX.Element {
                   style={{ backgroundColor: stream.color || '' }}
                 />
                 <span className="text-muted-foreground text-xs">
-                  {stream.active ? (
-                    <span className="font-medium text-green-600">Aktiv</span>
-                  ) : (
-                    <span className="font-medium text-red-600">Inaktiv</span>
-                  )}
+                  Farbe:{' '}
+                  {colorOptions.find((c) => c.value === stream.color)?.label ||
+                    'Unbekannt'}
                 </span>
               </div>
             </CardContent>
