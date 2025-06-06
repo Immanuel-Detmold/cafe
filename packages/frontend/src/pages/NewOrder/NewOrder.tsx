@@ -13,6 +13,10 @@ import { usePrintersQuery } from '@/data/usePrinter'
 import { useProductCategories } from '@/data/useProductCategories'
 import { useProductsQuery } from '@/data/useProducts'
 import { Product } from '@/data/useProducts'
+import {
+  getDefaultRevenueStream,
+  useRevenueStreamsQuery,
+} from '@/data/useRevenueStreams.tsx'
 import { useUser } from '@/data/useUser'
 import {
   EuroToCents,
@@ -39,6 +43,13 @@ import { LoadingOverlay } from '@/components/LoadingOverlay'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
 import { Switch } from '@/components/ui/switch'
 import { Textarea } from '@/components/ui/textarea'
 import { useToast } from '@/components/ui/use-toast'
@@ -82,6 +93,9 @@ const NewOrder = () => {
   const [tableNumber, setTableNumber] = useState<string>('')
   const [orderNumber, setOrderNumber] = useState<string>('1')
   const [printReceipt, setPrintReceipt] = useState<boolean>(true)
+  const [selectedRevenueStream, setSelectedRevenueStream] = useState<
+    number | null
+  >(null)
 
   // For Receipt
   const [orgName, setOrgName] = useState('')
@@ -108,6 +122,7 @@ const NewOrder = () => {
 
   // Data & Mutate
   const { data: appData } = useAppData()
+  const { data: revenueStreams } = useRevenueStreamsQuery(true)
   const { data: inventoryData } = useInventory()
   const { mutate: updateAppData } = useUpdateAppData()
   const { data: products, error } = useProductsQuery({
@@ -163,6 +178,17 @@ const NewOrder = () => {
     orderId: orderId,
   })
 
+  // Revenue Stream
+  useEffect(() => {
+    if (revenueStreams && selectedRevenueStream === null && !editData) {
+      // Only set default if we're not editing and no revenue stream is selected
+      const defaultStream = getDefaultRevenueStream(revenueStreams)
+      if (defaultStream) {
+        setSelectedRevenueStream(defaultStream.id)
+      }
+    }
+  }, [revenueStreams, editData, selectedRevenueStream])
+
   // Load Data if Edit Order
   useEffect(() => {
     if (editData) {
@@ -170,6 +196,8 @@ const NewOrder = () => {
       editData.customer_name && setOrderName(editData.customer_name)
       editData.payment_method && setPaymentMethod(editData.payment_method)
       editData.table_number && setTableNumber(editData.table_number)
+      editData.revenue_stream_id &&
+        setSelectedRevenueStream(editData.revenue_stream_id)
       setOrderNumber(editData.order_number)
 
       const orderItems: ProductOrder[] = editData.OrderItems.map((item) => ({
@@ -395,6 +423,7 @@ const NewOrder = () => {
       table_number: tableNumber,
       order_number: orderNumber,
       custom_price: customPrice,
+      revenue_stream_id: selectedRevenueStream,
     }
 
     saveOrder(orderData, {
@@ -673,9 +702,33 @@ const NewOrder = () => {
           ))}
         </RadioGroup>
 
-        {/* Costs */}
+        {/*RevenueStreams*/}
+        <Label className="mt-4 font-bold">Umsatzgruppe</Label>
+        <Select
+          value={selectedRevenueStream?.toString() || ''}
+          onValueChange={(value: string) =>
+            setSelectedRevenueStream(Number(value))
+          }
+        >
+          <SelectTrigger className="mt-1 max-w-60">
+            <SelectValue placeholder="💰 Umsatzgruppe wählen" />
+          </SelectTrigger>
+          <SelectContent>
+            {revenueStreams?.map((stream) => (
+              <SelectItem key={stream.id} value={stream.id.toString()}>
+                {stream.icon} {stream.name}
+                {stream.is_default && (
+                  <span className="text-muted-foreground ml-2 text-xs">
+                    (Standard)
+                  </span>
+                )}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
 
-        <div className="flex items-center">
+        {/* Costs */}
+        <div className="mt-4 flex items-center">
           <Label className="w-min whitespace-nowrap rounded-lg border p-2 font-bold text-orange-600">
             Summe: {centsToEuro(sumOrderPrice)}€
           </Label>

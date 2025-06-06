@@ -183,6 +183,7 @@ export const useOrdersAndItemsQueryV2 = ({
   startDate,
   endDate,
   payment_method,
+  revenue_stream_id,
 }: {
   statusList?: OrderStatus[]
   searchTerm?: string
@@ -191,6 +192,7 @@ export const useOrdersAndItemsQueryV2 = ({
   startDate?: string
   endDate?: string
   payment_method?: string
+  revenue_stream_id?: number
 }) =>
   useQuery({
     queryKey: [
@@ -202,6 +204,7 @@ export const useOrdersAndItemsQueryV2 = ({
       startDate,
       endDate,
       payment_method,
+      revenue_stream_id,
     ],
     queryFn: async () => {
       let query = supabase
@@ -219,6 +222,9 @@ export const useOrdersAndItemsQueryV2 = ({
       }
       if (startDate !== '' && startDate !== undefined) {
         query = query.gte('created_at', startDate)
+      }
+      if (revenue_stream_id !== undefined) {
+        query = query.eq('revenue_stream_id', revenue_stream_id)
       }
       if (endDate !== '' && endDate !== undefined) {
         query = query.lte('created_at', endDate)

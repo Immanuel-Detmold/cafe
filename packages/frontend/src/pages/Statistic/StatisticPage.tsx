@@ -2,6 +2,7 @@ import { MONTHS } from '@/data/data'
 import { useCafeCards } from '@/data/useCafeCard'
 import { useExpensesQuery } from '@/data/useExpense'
 import { useOrdersAndItemsQueryV2 } from '@/data/useOrders'
+import { useRevenueStreamsQuery } from '@/data/useRevenueStreams.tsx'
 import { useUser } from '@/data/useUser'
 import { centsToEuro } from '@/generalHelperFunctions/currencyHelperFunction'
 import {
@@ -18,10 +19,18 @@ import {
 } from '@/generalHelperFunctions/dateHelperFunctions'
 import { Label } from '@radix-ui/react-label'
 import { PDFDownloadLink } from '@react-pdf/renderer'
+import { Layers3 } from 'lucide-react'
 import { FileTextIcon, Loader2Icon } from 'lucide-react'
 import { useEffect, useMemo, useState } from 'react'
 
 import { Button } from '@/components/ui/button'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
 import { Switch } from '@/components/ui/switch'
 
 import Open from '../Open/Open'
@@ -43,20 +52,29 @@ const StatisticPage = () => {
   const [showAllOrders, setShowAllOrders] = useState(false)
   const [selectedDate, setSelectedDate] = useState('')
   const [userName, setUserName] = useState('')
-
+  const { data: revenueStreams } = useRevenueStreamsQuery()
+  const [selectedRevenueStream, setSelectedRevenueStream] = useState<
+    number | string | undefined
+  >('all')
   // Mini Functions
   const { monthDataFormat } = getCurrentMonthStartDate()
   const { yearDataFormat, year } = getThisYear()
 
   const { user } = useUser()
   const thisMonth = MONTHS[new Date().getMonth()]
+
   // Data
+
   const { data: ordersMonth, isLoading: l1 } = useOrdersAndItemsQueryV2({
     statusList: ['finished'],
     searchTerm: '',
     categories: [],
     products: [],
     startDate: monthDataFormat,
+    revenue_stream_id:
+      selectedRevenueStream === 'all'
+        ? undefined
+        : (selectedRevenueStream as number),
   })
 
   const { data: ordersYear, isLoading: l2 } = useOrdersAndItemsQueryV2({
@@ -65,6 +83,10 @@ const StatisticPage = () => {
     categories: [],
     products: [],
     startDate: yearDataFormat,
+    revenue_stream_id:
+      selectedRevenueStream === 'all'
+        ? undefined
+        : (selectedRevenueStream as number),
   })
 
   const { data: expensesYear, isLoading: l6 } = useExpensesQuery({
@@ -81,13 +103,22 @@ const StatisticPage = () => {
   const { data: cafeCardsAllTime, isLoading: l3 } = useCafeCards({})
 
   // Returns all Orders
-  const { data: orders, isLoading: l4 } = useOrdersAndItemsQueryV2({})
+  const { data: orders, isLoading: l4 } = useOrdersAndItemsQueryV2({
+    revenue_stream_id:
+      selectedRevenueStream === 'all'
+        ? undefined
+        : (selectedRevenueStream as number),
+  })
 
   const { data: filteredData, isLoading: l5 } = useOrdersAndItemsQueryV2({
     statusList: ['finished'],
     startDate: getStartOfDay(selectedDate || '2000-01-01T00:00:00')
       .finalDateString,
     endDate: getEndOfDay(selectedDate || '2024-05-01T00:00:00').endOfDayString,
+    revenue_stream_id:
+      selectedRevenueStream === 'all'
+        ? undefined
+        : (selectedRevenueStream as number),
   })
 
   // Get distinct dates
@@ -174,13 +205,9 @@ const StatisticPage = () => {
     return getSumOrdersPayMethod(filteredData, 'voucher') + '€'
   }, [filteredData])
 
-  // Sum total youth
-  const sumTotalYouth = useMemo(() => {
-    if (!filteredData) return '...'
-    return getSumOrdersPayMethod(filteredData, 'youth') + '€'
-  }, [filteredData])
-
   // UseEffect
+  // Set default revenue stream if not selected
+
   useEffect(() => {
     if (distinctDates.length > 0 && distinctDates !== undefined) {
       setSelectedDate(distinctDates[0] || '')
@@ -210,6 +237,40 @@ const StatisticPage = () => {
         {userRole === 'admin' && (
           <>
             {/* Turnover current month*/}
+            <div className=" mr-auto mt-4 flex items-center space-x-4">
+              <Label htmlFor="revenue-stream-select" className="font-black">
+                Umsatzgruppe
+              </Label>
+              <Select
+                value={selectedRevenueStream?.toString() || 'all'}
+                onValueChange={(value) =>
+                  setSelectedRevenueStream(
+                    value === 'all' ? 'all' : parseInt(value),
+                  )
+                }
+              >
+                <SelectTrigger
+                  id="revenue-stream-select"
+                  className="mr-auto w-[200px]"
+                >
+                  <SelectValue placeholder="Select Revenue Stream" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">
+                    <div className="flex items-center gap-2">
+                      <Layers3 className="h-4 w-4" />
+                      Alle Gruppen
+                    </div>
+                  </SelectItem>
+                  {revenueStreams?.map((stream) => (
+                    <SelectItem key={stream.id} value={stream.id.toString()}>
+                      {stream.icon} {stream.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
             <div className="mt-2 grid w-full grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-4">
               {/* Current month */}
               <div className="grid grid-cols-1 gap-1 rounded-lg border p-2">
@@ -336,13 +397,6 @@ const StatisticPage = () => {
               <div className="grid grid-cols-1 gap-1 rounded-lg border p-2">
                 <Label className="text-base">Gutscheine</Label>
                 <Label className="text-2xl font-bold">{sumTotalVouchers}</Label>
-                <Label className="text-muted-foreground">Umsatz</Label>
-              </div>
-
-              {/* Sum youth */}
-              <div className="grid grid-cols-1 gap-1 rounded-lg border p-2">
-                <Label className="text-base">Jugend</Label>
-                <Label className="text-2xl font-bold">{sumTotalYouth}</Label>
                 <Label className="text-muted-foreground">Umsatz</Label>
               </div>
             </div>

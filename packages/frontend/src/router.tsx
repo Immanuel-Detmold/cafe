@@ -1,3 +1,4 @@
+import RevenueStreamManager from '@/pages/Settings/RevenueStreamManagement/StreamManagement.tsx'
 import { createBrowserRouter, redirect } from 'react-router-dom'
 
 import TestComponent from './TestComponent'
@@ -129,6 +130,10 @@ export const router = createBrowserRouter(
         {
           path: 'settings/advertisement',
           element: <AdvertismentSettings />,
+        },
+        {
+          path: 'settings/revenue-streams',
+          element: <RevenueStreamManager />,
         },
         {
           path: 'login',

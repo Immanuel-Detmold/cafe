@@ -18,10 +18,6 @@ export const PAYMENT_METHODS = [
     name: 'voucher',
     label: 'Gutschein',
   },
-  {
-    name: 'youth',
-    label: 'Jugend',
-  },
 ]
 
 export const TitleMap = {

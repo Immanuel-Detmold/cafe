@@ -2,6 +2,7 @@ import { useUser } from '@/data/useUser'
 import { Label } from '@radix-ui/react-label'
 import {
   ChevronRightIcon,
+  CircleDollarSign,
   Edit2Icon,
   HistoryIcon,
   NetworkIcon,
@@ -122,6 +123,22 @@ const SettingsPage = () => {
               <div className="flex items-center">
                 <Edit2Icon />{' '}
                 <Label className="ml-1 cursor-pointer">Werbung anpassen</Label>
+              </div>
+              <ChevronRightIcon className="" />
+            </Button>
+          )}
+
+          {/* RevenueStreams */}
+          {['admin', 'manager'].includes(userRole) && (
+            <Button
+              className="flex justify-between"
+              onClick={() => {
+                navigate('/admin/settings/revenue-streams')
+              }}
+            >
+              <div className="flex items-center">
+                <CircleDollarSign />{' '}
+                <Label className="ml-1 cursor-pointer">Umsatzgruppen</Label>
               </div>
               <ChevronRightIcon className="" />
             </Button>

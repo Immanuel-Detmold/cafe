@@ -225,6 +225,7 @@ export type Database = {
           payment_method: string
           price: number
           product_ids: string[]
+          revenue_stream_id: number | null
           status: Database['public']['Enums']['order_status']
           table_number: string | null
           user_id: string | null
@@ -240,6 +241,7 @@ export type Database = {
           payment_method: string
           price: number
           product_ids: string[]
+          revenue_stream_id?: number | null
           status: Database['public']['Enums']['order_status']
           table_number?: string | null
           user_id?: string | null
@@ -255,11 +257,20 @@ export type Database = {
           payment_method?: string
           price?: number
           product_ids?: string[]
+          revenue_stream_id?: number | null
           status?: Database['public']['Enums']['order_status']
           table_number?: string | null
           user_id?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: 'Orders_revenue_stream_id_fkey'
+            columns: ['revenue_stream_id']
+            isOneToOne: false
+            referencedRelation: 'RevenueStreams'
+            referencedColumns: ['id']
+          },
+        ]
       }
       Printers: {
         Row: {
@@ -399,6 +410,42 @@ export type Database = {
         }
         Relationships: []
       }
+      RevenueStreams: {
+        Row: {
+          active: boolean | null
+          color: string | null
+          created_at: string
+          description: string | null
+          icon: string | null
+          id: number
+          is_default: boolean | null
+          name: string
+          user_id: string | null
+        }
+        Insert: {
+          active?: boolean | null
+          color?: string | null
+          created_at?: string
+          description?: string | null
+          icon?: string | null
+          id?: never
+          is_default?: boolean | null
+          name: string
+          user_id?: string | null
+        }
+        Update: {
+          active?: boolean | null
+          color?: string | null
+          created_at?: string
+          description?: string | null
+          icon?: string | null
+          id?: never
+          is_default?: boolean | null
+          name?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       Test: {
         Row: {
           age: number | null
@@ -461,6 +508,18 @@ export type Database = {
       delete_user: {
         Args: { user_id: string }
         Returns: undefined
+      }
+      get_all_table_definitions: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          table_name: string
+          column_name: string
+          data_type: string
+          is_nullable: string
+          column_default: string
+          constraint_type: string
+          constraint_name: string
+        }[]
       }
       get_auth_users: {
         Args: Record<PropertyKey, never>
