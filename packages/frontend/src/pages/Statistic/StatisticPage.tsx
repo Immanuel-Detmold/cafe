@@ -21,6 +21,7 @@ import { Label } from '@radix-ui/react-label'
 import { PDFDownloadLink } from '@react-pdf/renderer'
 import { Layers3 } from 'lucide-react'
 import { FileTextIcon, Loader2Icon } from 'lucide-react'
+import { CreditCard } from 'lucide-react'
 import { useEffect, useMemo, useState } from 'react'
 
 import { Button } from '@/components/ui/button'
@@ -63,8 +64,14 @@ const StatisticPage = () => {
   const { user } = useUser()
   const thisMonth = MONTHS[new Date().getMonth()]
 
-  // Data
+  const getRevenueStreamIcon = () => {
+    if (selectedRevenueStream === 'all') {
+      return <Layers3 className="h-4 w-4" />
+    }
+    return revenueStreams?.find((s) => s.id === selectedRevenueStream)?.icon
+  }
 
+  // Data
   const { data: ordersMonth, isLoading: l1 } = useOrdersAndItemsQueryV2({
     statusList: ['finished'],
     searchTerm: '',
@@ -236,7 +243,7 @@ const StatisticPage = () => {
       <div className="flex flex-col items-center">
         {userRole === 'admin' && (
           <>
-            {/* Turnover current month*/}
+            {/* Revenuestream Group*/}
             <div className=" mr-auto mt-4 flex items-center space-x-4">
               <Label htmlFor="revenue-stream-select" className="font-black">
                 Umsatzgruppe
@@ -278,7 +285,11 @@ const StatisticPage = () => {
                 <Label className="text-2xl font-bold">
                   {ordersMonth ? sumMonth.toString() + '€' : '...'}
                 </Label>
-                <Label className="text-muted-foreground">Umsatz</Label>
+                <div className="flex items-center gap-2">
+                  {' '}
+                  {getRevenueStreamIcon()}
+                  <Label className="text-muted-foreground">Umsatz</Label>
+                </div>
               </div>
 
               {/* Turnover current year */}
@@ -287,7 +298,11 @@ const StatisticPage = () => {
                 <Label className="text-2xl font-bold">
                   {ordersYear ? sumYear.toString() + '€' : '...'}
                 </Label>
-                <Label className="text-muted-foreground">Umsatz</Label>
+                <div className="flex items-center gap-2">
+                  {' '}
+                  {getRevenueStreamIcon()}
+                  <Label className="text-muted-foreground">Umsatz</Label>
+                </div>
               </div>
 
               {/* Expense current month */}
@@ -320,7 +335,12 @@ const StatisticPage = () => {
                       ).toString() + '€'
                     : '...'}
                 </Label>
-                <Label className="text-muted-foreground">Summe</Label>
+                <div className="flex items-center gap-2">
+                  {' '}
+                  {/* 🆕 Changed from Label to div */}
+                  <CreditCard className="h-4 w-4" /> {/* 🆕 Add card icon */}
+                  <Label className="text-muted-foreground">Summe</Label>
+                </div>
               </div>
 
               {/* Summe Cafe Cards */}
@@ -331,13 +351,20 @@ const StatisticPage = () => {
                     ? centsToEuro(sumCafeCards).toString() + '€'
                     : '...'}
                 </Label>
-                <Label className="text-muted-foreground">
-                  {cafeCardsAllTime ? (
-                    <Label className="text-muted-foreground">
-                      Summe (10€ x {tenCardCount} | 5€ x {fiveCardCount})
-                    </Label>
-                  ) : null}
-                </Label>
+                <div className="flex items-center gap-2">
+                  {' '}
+                  {/* 🆕 Changed from Label to div */}
+                  <CreditCard className="h-4 w-4" /> {/* 🆕 Add card icon */}
+                  <Label className="text-muted-foreground">
+                    {cafeCardsAllTime ? (
+                      <Label className="text-muted-foreground">
+                        Summe (10€ x {tenCardCount} | 5€ x {fiveCardCount})
+                      </Label>
+                    ) : (
+                      'Summe'
+                    )}
+                  </Label>
+                </div>
               </div>
             </div>
 
@@ -362,42 +389,60 @@ const StatisticPage = () => {
               <div className="grid grid-cols-1 gap-1 rounded-lg border p-2">
                 <Label className="text-base">Bestellungen</Label>
                 <Label className="text-2xl font-bold">{sumCountOrders}</Label>
-                <Label className="text-muted-foreground">Umsatz</Label>
+                <div className="flex items-center gap-2">
+                  {getRevenueStreamIcon()}
+                  <Label className="text-muted-foreground">Anzahl</Label>
+                </div>
               </div>
 
               {/* Sum Price */}
               <div className="grid grid-cols-1 gap-1 rounded-lg border p-2">
                 <Label className="text-base">Gesamt</Label>
                 <Label className="text-2xl font-bold">{sumTotalTurnover}</Label>
-                <Label className="text-muted-foreground">Umsatz</Label>
+                <div className="flex items-center gap-2">
+                  {getRevenueStreamIcon()}
+                  <Label className="text-muted-foreground">Umsatz</Label>
+                </div>
               </div>
 
               {/* Sum Cash */}
               <div className="grid grid-cols-1 gap-1 rounded-lg border p-2">
                 <Label className="text-base">Bar</Label>
                 <Label className="text-2xl font-bold">{sumTotalCash}</Label>
-                <Label className="text-muted-foreground">Umsatz</Label>
+                <div className="flex items-center gap-2">
+                  {getRevenueStreamIcon()}
+                  <Label className="text-muted-foreground">Umsatz</Label>
+                </div>
               </div>
 
               {/* Sum Cafe Card */}
               <div className="grid grid-cols-1 gap-1 rounded-lg border p-2">
                 <Label className="text-base">Café Karte</Label>
                 <Label className="text-2xl font-bold">{sumTotalCafeCard}</Label>
-                <Label className="text-muted-foreground">Umsatz</Label>
+                <div className="flex items-center gap-2">
+                  {getRevenueStreamIcon()}
+                  <Label className="text-muted-foreground">Umsatz</Label>
+                </div>
               </div>
 
               {/* Sum Paypal */}
               <div className="grid grid-cols-1 gap-1 rounded-lg border p-2">
                 <Label className="text-base">Paypal</Label>
                 <Label className="text-2xl font-bold">{sumTotalPayPal}</Label>
-                <Label className="text-muted-foreground">Umsatz</Label>
+                <div className="flex items-center gap-2">
+                  {getRevenueStreamIcon()}
+                  <Label className="text-muted-foreground">Umsatz</Label>
+                </div>
               </div>
 
               {/* Sum vouchers */}
               <div className="grid grid-cols-1 gap-1 rounded-lg border p-2">
                 <Label className="text-base">Gutscheine</Label>
                 <Label className="text-2xl font-bold">{sumTotalVouchers}</Label>
-                <Label className="text-muted-foreground">Umsatz</Label>
+                <div className="flex items-center gap-2">
+                  {getRevenueStreamIcon()}
+                  <Label className="text-muted-foreground">Umsatz</Label>
+                </div>
               </div>
             </div>
           </div>
