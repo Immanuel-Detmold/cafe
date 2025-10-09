@@ -557,7 +557,7 @@ const CreateProductV2 = () => {
               <label htmlFor="show-stock-colored" className="ml-2">
                 Ausverkauft bei Bestellung anzeigen
               </label>
-              <InfoIconPopover text="Wenn aktiviert, wird Ausverkauft angezeigt, sobald der Vorrat 0 ist." />
+              <InfoIconPopover text="Wenn aktiviert, wird Ausverkauft angezeigt, sobald der Voxrrat 0 ist." />
             </div>
 
             {/* Stock */}

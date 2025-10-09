@@ -135,7 +135,13 @@ const ProductsInCategory = (props: propsProductInCategory) => {
                 {(product.stock == null || product.stock <= 0) &&
                   product.show_stock_colors && (
                     <span className="pointer-events-none absolute inset-0 z-20 flex items-center justify-center">
-                      <span className="absolute inset-0 bg-black/30 backdrop-blur-sm" />
+                      <span
+                        className="absolute inset-0"
+                        style={{
+                          backdropFilter: 'blur(2px)',
+                          background: 'rgba(0,0,0,0.15)',
+                        }}
+                      />
                       <span className="relative z-30 rounded px-2 py-1 text-sm font-bold tracking-widest text-white">
                         Ausverkauft
                       </span>
@@ -176,8 +182,8 @@ const ProductsInCategory = (props: propsProductInCategory) => {
               <div className="flex flex-col gap-1">
                 <div className="flex w-full max-w-sm items-center justify-between">
                   <div className="flex w-full items-center justify-between">
-                    <div className="flex-1">
-                      <Label className="font-bold">Anzahl</Label>
+                    <div className="flex flex-1 flex-col">
+                      <Label className="font-bold">{product.name}</Label>
                     </div>
 
                     {/* Plus and Minus Icons */}
