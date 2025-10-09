@@ -60,6 +60,7 @@ const CreateProductV2 = () => {
   const [stock, setStock] = useState<string>('0')
   const [options, setOptions] = useState<Variation[]>([])
   const [extras, setExtras] = useState<Variation[]>([])
+  const [showStockColored, setShowStockColored] = useState(false)
 
   // User State
   const [userRole, setUserRole] = useState('user')
@@ -183,6 +184,7 @@ const CreateProductV2 = () => {
       description: description,
       only_advertisement_screen: showOnlyOnAdvertisement,
       show_consumption: showConsumption,
+      show_stock_colors: showStockColored,
       paused: paused,
       advertisement: showAdervertisement,
       stock: parseInt(stock),
@@ -312,6 +314,7 @@ const CreateProductV2 = () => {
             paused,
             advertisement,
             stock,
+            show_stock_colors,
           } = data
           setName(name)
           setPrice(centsToEuro(price))
@@ -354,6 +357,9 @@ const CreateProductV2 = () => {
           }
           if (stock) {
             setStock(stock.toString())
+          }
+          if (show_stock_colors !== undefined) {
+            setShowStockColored(!!show_stock_colors)
           }
         } else if (error) {
           console.error('Error fetching product data:', error)
@@ -538,6 +544,20 @@ const CreateProductV2 = () => {
                 Inventar vom Produkt bei Bestellung anzeigen
               </label>
               <InfoIconPopover text="Kann verwendet werden, um bei der Bestellungsaufnahme anzuzeigen, wie viel von dem Produkt noch im Inventar ist." />
+            </div>
+
+            <div className="mt-4 flex items-center">
+              <Switch
+                id="show-stock-colored"
+                checked={showStockColored}
+                onCheckedChange={(e) => {
+                  setShowStockColored(e)
+                }}
+              />
+              <label htmlFor="show-stock-colored" className="ml-2">
+                Ausverkauft bei Bestellung anzeigen
+              </label>
+              <InfoIconPopover text="Wenn aktiviert, wird Ausverkauft angezeigt, sobald der Vorrat 0 ist." />
             </div>
 
             {/* Stock */}

@@ -118,10 +118,11 @@ const ProductsInCategory = (props: propsProductInCategory) => {
           className="m-1 flex w-min items-center justify-between"
         >
           <Popover>
-            <PopoverTrigger asChild className="ml-2">
+            <PopoverTrigger asChild className="relative ml-2">
+              {/* Horizontal red line */}
               <Button
                 variant="outline"
-                className={`h-14 rounded-full px-2 ${props.dataOrderItems.some((item) => item.product_id === product.id) ? 'bg-secondary' : ''}`}
+                className={`relative h-14 overflow-hidden rounded-full px-2 ${props.dataOrderItems.some((item) => item.product_id === product.id) ? 'bg-secondary' : ''}`}
                 onClick={() => {
                   setQuantity(1)
                   setProductComment('')
@@ -130,6 +131,17 @@ const ProductsInCategory = (props: propsProductInCategory) => {
                   setCurrentProduct(product)
                 }}
               >
+                {/* If out of stock: blur background and show SOLD overlay */}
+                {(product.stock == null || product.stock <= 0) &&
+                  product.show_stock_colors && (
+                    <span className="pointer-events-none absolute inset-0 z-20 flex items-center justify-center">
+                      <span className="absolute inset-0 bg-black/30 backdrop-blur-sm" />
+                      <span className="relative z-30 rounded px-2 py-1 text-sm font-bold tracking-widest text-white">
+                        Ausverkauft
+                      </span>
+                    </span>
+                  )}
+
                 <Avatar className="">
                   <AvatarImage
                     className="aspect-square object-cover"
@@ -197,7 +209,8 @@ const ProductsInCategory = (props: propsProductInCategory) => {
                     <div>
                       <Label className="text-gray-400">Vorrätig:</Label>
                       <Label className="ml-1 select-none text-gray-400">
-                        {product.stock}
+                        {product.stock -
+                          getOpenOrdersCount(product.id, props.openOrders)}
                       </Label>
                     </div>
                     <Label className="ml-1 select-none">
