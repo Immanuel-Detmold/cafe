@@ -219,7 +219,8 @@ const ProductsInCategory = (props: propsProductInCategory) => {
                           getOpenOrdersCount(product.id, props.openOrders)}
                       </Label>
                     </div>
-                    <Label className="ml-1 select-none">
+
+                    {/* <Label className="ml-1 select-none">
                       {
                         <span className="text-amber-600">
                           {getOpenOrdersCount(product.id, props.openOrders)}
@@ -229,7 +230,7 @@ const ProductsInCategory = (props: propsProductInCategory) => {
                           />
                         </span>
                       }
-                    </Label>
+                    </Label> */}
                   </div>
                 )}
 
@@ -252,13 +253,13 @@ const ProductsInCategory = (props: propsProductInCategory) => {
                   product.show_consumption ? (
                     <Label className="ml-1 select-none">
                       {
-                        <span className="text-amber-600">
-                          {getOpenOrdersCount(product.id, props.openOrders)}
-                          <ClockIcon
-                            className="delay-90 ml-1 inline-block h-4 w-4 animate-pulse stroke-[1px]"
-                            size={60}
-                          />
-                        </span>
+                        // <span className="text-amber-600">
+                        //   {getOpenOrdersCount(product.id, props.openOrders)}
+                        //   <ClockIcon
+                        //     className="delay-90 ml-1 inline-block h-4 w-4 animate-pulse stroke-[1px]"
+                        //     size={60}
+                        //   />
+                        // </span>
                       }
                     </Label>
                   ) : null}
