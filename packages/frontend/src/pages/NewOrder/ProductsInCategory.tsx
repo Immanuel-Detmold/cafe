@@ -12,7 +12,6 @@ import { PlusCircleIcon } from '@heroicons/react/24/outline'
 import { MinusCircleIcon } from '@heroicons/react/24/outline'
 import { Label } from '@radix-ui/react-label'
 import { PopoverClose } from '@radix-ui/react-popover'
-import { ClockIcon } from 'lucide-react'
 import { useRef, useState } from 'react'
 import { useEffect } from 'react'
 
@@ -253,13 +252,13 @@ const ProductsInCategory = (props: propsProductInCategory) => {
                   product.show_consumption ? (
                     <Label className="ml-1 select-none">
                       {
-                        // <span className="text-amber-600">
-                        //   {getOpenOrdersCount(product.id, props.openOrders)}
-                        //   <ClockIcon
-                        //     className="delay-90 ml-1 inline-block h-4 w-4 animate-pulse stroke-[1px]"
-                        //     size={60}
-                        //   />
-                        // </span>
+                        <span className="text-amber-600">
+                          {/* {getOpenOrdersCount(product.id, props.openOrders)}
+                          <ClockIcon
+                            className="delay-90 ml-1 inline-block h-4 w-4 animate-pulse stroke-[1px]"
+                            size={60}
+                          /> */}
+                        </span>
                       }
                     </Label>
                   ) : null}
