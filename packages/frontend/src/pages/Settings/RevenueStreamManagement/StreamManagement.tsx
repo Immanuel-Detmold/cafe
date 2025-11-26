@@ -93,6 +93,7 @@ const iconOptions: string[] = [
   '🎵',
   '💼',
   '💰',
+  '🎁',
 ]
 
 export default function RevenueStreamManager(): JSX.Element {
