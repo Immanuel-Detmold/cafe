@@ -513,12 +513,9 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      delete_user: {
-        Args: { user_id: string }
-        Returns: undefined
-      }
+      delete_user: { Args: { user_id: string }; Returns: undefined }
       get_all_table_definitions: {
-        Args: Record<PropertyKey, never>
+        Args: never
         Returns: {
           column_default: string
           column_name: string
@@ -530,7 +527,7 @@ export type Database = {
         }[]
       }
       get_auth_users: {
-        Args: Record<PropertyKey, never>
+        Args: never
         Returns: {
           email: string
           id: string

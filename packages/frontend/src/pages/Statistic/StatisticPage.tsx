@@ -241,7 +241,7 @@ const StatisticPage = () => {
         </Label>
       )}
       <div className="flex flex-col items-center">
-        {userRole === 'admin' && (
+        {
           <>
             {/* Revenuestream Group*/}
             <div className=" mr-auto mt-4 flex items-center space-x-4">
@@ -379,7 +379,7 @@ const StatisticPage = () => {
               }
             </div>
           </>
-        )}
+        }
 
         {selectedDate && filteredData && (
           <div className="w-full">
