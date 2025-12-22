@@ -65,20 +65,19 @@ const SettingsPage = () => {
           )}
 
           {/* User Logs */}
-          {userRole === 'admin' && (
-            <Button
-              className="flex justify-between"
-              onClick={() => {
-                navigate('/admin/settings/user-actions')
-              }}
-            >
-              <div className="flex items-center">
-                <HistoryIcon />{' '}
-                <Label className="ml-1 cursor-pointer">Benutzer Aktionen</Label>
-              </div>
-              <ChevronRightIcon className="" />
-            </Button>
-          )}
+
+          <Button
+            className="flex justify-between"
+            onClick={() => {
+              navigate('/admin/settings/user-actions')
+            }}
+          >
+            <div className="flex items-center">
+              <HistoryIcon />{' '}
+              <Label className="ml-1 cursor-pointer">Benutzer Aktionen</Label>
+            </div>
+            <ChevronRightIcon className="" />
+          </Button>
 
           {/* Network */}
           {['admin', 'manager'].includes(userRole) && (

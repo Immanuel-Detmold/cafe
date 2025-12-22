@@ -274,12 +274,12 @@ export const useChageOrderStatusMutation = (orderId: number) => {
 
       return data
     },
-    onSuccess: async () => {
+    onSuccess: async (data) => {
       await queryClient.invalidateQueries({ queryKey: ['ordersAndItems'] })
-      // await saveUserAction({
-      //   action: data,
-      //   short_description: `Change Order Status: ${data[0]?.order_number} - ${data[0]?.status}`,
-      // })
+      await saveUserAction({
+        action: data,
+        short_description: `Change Order Status: ${data[0]?.order_number} - ${data[0]?.status}`,
+      })
     },
   })
 }
