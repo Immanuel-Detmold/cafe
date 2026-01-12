@@ -12,10 +12,12 @@ import {
   CommandItem,
 } from '@/components/ui/command'
 import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover'
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog'
 
 type DatePickerProps = {
   distinctDates: string[]
@@ -31,13 +33,13 @@ export default function DatePicker({
   const [open, setOpen] = React.useState(false)
 
   return (
-    <Popover open={open} onOpenChange={setOpen}>
-      <PopoverTrigger asChild className="w-full">
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogTrigger asChild>
         <Button
           variant="outline"
           role="combobox"
           aria-expanded={open}
-          className="w-wull justify-between"
+          className="w-full justify-between"
         >
           {selectedDate
             ? formatDate(
@@ -46,12 +48,18 @@ export default function DatePicker({
             : 'Wähle Datum...'}
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
-      </PopoverTrigger>
-      <PopoverContent className="w-[200px] p-0">
+      </DialogTrigger>
+      <DialogContent
+        className="p-0"
+        onOpenAutoFocus={(e) => e.preventDefault()}
+      >
+        <DialogHeader className="px-4 pt-4">
+          <DialogTitle>Wähle ein Datum</DialogTitle>
+        </DialogHeader>
         <Command>
-          <CommandInput tabIndex={-1} placeholder="Suche nach Datum..." />
+          <CommandInput autoFocus={false} placeholder="Suche nach Datum..." />
           <CommandEmpty>Kein Datum gefunden.</CommandEmpty>
-          <CommandGroup>
+          <CommandGroup className="max-h-[300px] overflow-y-auto">
             {distinctDates.map((order) => (
               <CommandItem
                 key={order}
@@ -74,7 +82,7 @@ export default function DatePicker({
             ))}
           </CommandGroup>
         </Command>
-      </PopoverContent>
-    </Popover>
+      </DialogContent>
+    </Dialog>
   )
 }
