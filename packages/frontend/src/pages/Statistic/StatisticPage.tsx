@@ -1,7 +1,7 @@
 import { MONTHS } from '@/data/data'
 import { useCafeCards } from '@/data/useCafeCard'
 import { useExpensesQuery } from '@/data/useExpense'
-import { useOrdersAndItemsQueryV2 } from '@/data/useOrders'
+import { useOrderYears, useOrdersAndItemsQueryV2 } from '@/data/useOrders'
 import { useRevenueStreamsQuery } from '@/data/useRevenueStreams.tsx'
 import { useUser } from '@/data/useUser'
 import { centsToEuro } from '@/generalHelperFunctions/currencyHelperFunction'
@@ -57,6 +57,9 @@ const StatisticPage = () => {
   const [selectedRevenueStream, setSelectedRevenueStream] = useState<
     number | string | undefined
   >('all')
+  const [selectedYear, setSelectedYear] = useState<string>(
+    new Date().getFullYear().toString(),
+  )
   // Mini Functions
   const { monthDataFormat } = getCurrentMonthStartDate()
   const { yearDataFormat, year } = getThisYear()
@@ -70,6 +73,20 @@ const StatisticPage = () => {
     }
     return revenueStreams?.find((s) => s.id === selectedRevenueStream)?.icon
   }
+
+  // Calculate Years
+  const { data: oldestOrder } = useOrderYears()
+
+  const years = useMemo(() => {
+    const currentYear = new Date().getFullYear()
+    if (!oldestOrder?.created_at) return [currentYear.toString()]
+    const startYear = new Date(oldestOrder.created_at).getFullYear()
+    const yearsArr = []
+    for (let y = startYear; y <= currentYear; y++) {
+      yearsArr.push(y.toString())
+    }
+    return yearsArr.reverse()
+  }, [oldestOrder])
 
   // Data
   const { data: ordersMonth, isLoading: l1 } = useOrdersAndItemsQueryV2({
@@ -115,6 +132,12 @@ const StatisticPage = () => {
       selectedRevenueStream === 'all'
         ? undefined
         : (selectedRevenueStream as number),
+    startDate: convertToSupabaseDate(
+      getStartOfYear(new Date(parseInt(selectedYear), 0, 1)),
+    ),
+    endDate: convertToSupabaseDate(
+      getEndOfYear(new Date(parseInt(selectedYear), 0, 1)),
+    ),
   })
 
   const { data: filteredData, isLoading: l5 } = useOrdersAndItemsQueryV2({
@@ -245,37 +268,39 @@ const StatisticPage = () => {
           <>
             {/* Revenuestream Group*/}
             <div className=" mr-auto mt-4 flex items-center space-x-4">
-              <Label htmlFor="revenue-stream-select" className="font-black">
-                Umsatzgruppe
-              </Label>
-              <Select
-                value={selectedRevenueStream?.toString() || 'all'}
-                onValueChange={(value) =>
-                  setSelectedRevenueStream(
-                    value === 'all' ? 'all' : parseInt(value),
-                  )
-                }
-              >
-                <SelectTrigger
-                  id="revenue-stream-select"
-                  className="mr-auto w-[200px]"
+              <div className="flex flex-col space-y-1.5">
+                <Label htmlFor="revenue-stream-select" className="font-black">
+                  Umsatzgruppe
+                </Label>
+                <Select
+                  value={selectedRevenueStream?.toString() || 'all'}
+                  onValueChange={(value) =>
+                    setSelectedRevenueStream(
+                      value === 'all' ? 'all' : parseInt(value),
+                    )
+                  }
                 >
-                  <SelectValue placeholder="Select Revenue Stream" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">
-                    <div className="flex items-center gap-2">
-                      <Layers3 className="h-4 w-4" />
-                      Alle Gruppen
-                    </div>
-                  </SelectItem>
-                  {revenueStreams?.map((stream) => (
-                    <SelectItem key={stream.id} value={stream.id.toString()}>
-                      {stream.icon} {stream.name}
+                  <SelectTrigger
+                    id="revenue-stream-select"
+                    className="mr-auto w-[200px]"
+                  >
+                    <SelectValue placeholder="Select Revenue Stream" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">
+                      <div className="flex items-center gap-2">
+                        <Layers3 className="h-4 w-4" />
+                        Alle Gruppen
+                      </div>
                     </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+                    {revenueStreams?.map((stream) => (
+                      <SelectItem key={stream.id} value={stream.id.toString()}>
+                        {stream.icon} {stream.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
 
             <div className="mt-2 grid w-full grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-4">
@@ -368,15 +393,43 @@ const StatisticPage = () => {
               </div>
             </div>
 
-            {/* Select Date to filter */}
-            <div className="col-span-2 mt-2 w-full">
-              {
-                <DatePicker
-                  distinctDates={distinctDates}
-                  selectedDate={selectedDate || ''}
-                  setSelectedDate={setSelectedDate}
-                />
-              }
+            {/* Select Date and Year to filter */}
+            <div className="col-span-2 mt-2 mt-4 flex w-full items-end gap-2">
+              <div className="flex flex-col space-y-1.5">
+                <Label htmlFor="year-select" className="font-black">
+                  Jahr
+                </Label>
+                <Select
+                  value={selectedYear}
+                  onValueChange={(value) => setSelectedYear(value)}
+                >
+                  <SelectTrigger id="year-select" className="w-[120px]">
+                    <SelectValue placeholder="Jahr" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {years.map((year) => (
+                      <SelectItem key={year} value={year}>
+                        {year}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="flex w-full flex-col space-y-1.5">
+                <Label className="font-black">Datum</Label>
+                {l4 ? (
+                  <div className="border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring flex h-10 w-full items-center justify-center rounded-md border px-3 py-2 text-sm file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50">
+                    <Loader2Icon className="mr-2 h-4 w-4 animate-spin" />
+                    Lade Daten...
+                  </div>
+                ) : (
+                  <DatePicker
+                    distinctDates={distinctDates}
+                    selectedDate={selectedDate || ''}
+                    setSelectedDate={setSelectedDate}
+                  />
+                )}
+              </div>
             </div>
           </>
         }

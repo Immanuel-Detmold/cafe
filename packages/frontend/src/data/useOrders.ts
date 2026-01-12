@@ -384,3 +384,21 @@ export const useSingleOrder = ({ orderId }: { orderId: string | undefined }) =>
       return data
     },
   })
+
+export const useOrderYears = () =>
+  useQuery({
+    queryKey: ['orderYears'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('Orders')
+        .select('created_at')
+        .order('created_at', { ascending: true })
+        .limit(1)
+        .maybeSingle()
+
+      if (error) {
+        throw error
+      }
+      return data
+    },
+  })

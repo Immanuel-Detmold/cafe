@@ -1,0 +1,15 @@
+## Project Structure
+- This is a monorepo using pnpm.
+- Frontend code is located in `packages/frontend`.
+
+## Tech Stack
+- React
+- TypeScript
+- Tailwind CSS (mostly)
+- Supabase (Backend/Database)
+- Shadcn UI (Components)
+
+
+## User Preferences
+loading spinner
+import { Loader2Icon } from 'lucide-react'
