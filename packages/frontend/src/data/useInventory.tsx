@@ -33,7 +33,7 @@ export const useInventory = () =>
   })
 
 // Get single Item
-export const useInventoryItem = (id?: string) =>
+export const useInventoryItem = (id?: number) =>
   useQuery({
     queryKey: ['inventoryItem', id],
     queryFn: async () => {

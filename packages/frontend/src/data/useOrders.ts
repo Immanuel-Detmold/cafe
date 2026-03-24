@@ -362,7 +362,7 @@ const sortDataOrderItems = (orderAndItems: OrdersAndItems) => {
   return formatedData
 }
 
-export const useSingleOrder = ({ orderId }: { orderId: string | undefined }) =>
+export const useSingleOrder = ({ orderId }: { orderId: number | undefined }) =>
   useQuery({
     queryKey: ['singleOrder', orderId],
     queryFn: async () => {

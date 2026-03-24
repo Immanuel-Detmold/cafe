@@ -40,7 +40,7 @@ export const useExpensesQuery = ({
   })
 
 // Get a single expense
-export const useExpenseQuery = ({ id }: { id?: string }) => {
+export const useExpenseQuery = ({ id }: { id?: number }) => {
   return useQuery({
     queryKey: ['expense', id],
     queryFn: async () => {
@@ -106,7 +106,7 @@ export const useUpdateExpenseMutation = (id: number) => {
 // Delete an expense
 export const useDeleteExpenseMutation = () => {
   return useMutation({
-    mutationFn: async (id: string) => {
+    mutationFn: async (id: number) => {
       const { data, error } = await supabase
         .from('Expense')
         .delete()

@@ -21,7 +21,7 @@ export const usePrintersQuery = () => {
   })
 }
 
-export const usePrinterQuery = ({ id }: { id: string }) => {
+export const usePrinterQuery = ({ id }: { id: number }) => {
   return useQuery({
     queryKey: ['printer', id],
     queryFn: async () => {
@@ -81,7 +81,7 @@ export const useUpdatePrinterMutation = (id: number) => {
 
 export const useDeletePrinterMutation = () => {
   return useMutation({
-    mutationFn: async (id: string) => {
+    mutationFn: async (id: number) => {
       const { data, error } = await supabase
         .from('Printers')
         .delete()
