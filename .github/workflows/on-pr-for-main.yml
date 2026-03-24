@@ -9,7 +9,7 @@ permissions:
 
 env:
   VITE_SUPABASE_URL: ${{ vars.VITE_SUPABASE_URL }}
-  VITE_ANONKEY: ${{ vars.VITE_ANONKEY }}
+  VITE_SUPABASE_PUBLISHABLE_KEY: ${{ vars.VITE_SUPABASE_PUBLISHABLE_KEY }}
 
 jobs:
   build:

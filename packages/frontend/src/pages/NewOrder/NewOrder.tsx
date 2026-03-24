@@ -1,6 +1,6 @@
 import { queryClient } from '@/App'
 import { PAYMENT_METHODS } from '@/data/data'
-import { useAppData, useUpdateAppData } from '@/data/useAppData'
+import { getServerIp, useAppData, useUpdateAppData } from '@/data/useAppData'
 import { useInventory } from '@/data/useInventory'
 import {
   useDeleteOrderMutation,
@@ -581,7 +581,7 @@ const NewOrder = () => {
     const logo = appData?.find((item) => item.key === 'organisation_logo')
     const link = appData?.find((item) => item.key === 'menu_link')
 
-    if (serverIpData) setIp(serverIpData.value)
+    if (serverIpData) setIp(getServerIp(serverIpData.value))
     if (serverPortData) setPort(serverPortData.value)
     if (name) setOrgName(name.value)
     if (logo) setOrgLogo(logo.value)

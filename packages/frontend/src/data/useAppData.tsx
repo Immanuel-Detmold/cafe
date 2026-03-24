@@ -7,6 +7,17 @@ import { useMutation, useQuery } from '@tanstack/react-query'
 
 export type AppData = ReturnType<typeof useAppData>['data']
 
+// Returns localhost:8080 when running locally, otherwise the IP from the database
+export const getServerIp = (dbIp: string): string => {
+  if (
+    window.location.hostname === 'localhost' ||
+    window.location.hostname === '127.0.0.1'
+  ) {
+    return 'http://localhost:8080'
+  }
+  return dbIp
+}
+
 export const useAppData = () =>
   useQuery({
     queryKey: ['appData'],

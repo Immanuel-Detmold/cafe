@@ -1,4 +1,4 @@
-import { useAppData, useUpdateAppData } from '@/data/useAppData'
+import { getServerIp, useAppData, useUpdateAppData } from '@/data/useAppData'
 import { useUser } from '@/data/useUser'
 import { Json } from '@/services/supabase.types'
 import { Label } from '@radix-ui/react-label'
@@ -88,7 +88,7 @@ const AudioPage = () => {
     const defaultVoice = appData?.find((item) => item.key === 'voice')
 
     if (serverIpData) {
-      setIp(serverIpData.value)
+      setIp(getServerIp(serverIpData.value))
     }
 
     if (defaultVoice) {

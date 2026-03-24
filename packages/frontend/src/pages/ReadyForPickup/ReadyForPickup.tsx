@@ -1,6 +1,6 @@
 // import { queryClient } from '@/App'
 import { imgPlaceHolder } from '@/data/data'
-import { useAppData } from '@/data/useAppData'
+import { getServerIp, useAppData } from '@/data/useAppData'
 import {
   useChangeInventoryItemQuantity,
   useInventory,
@@ -151,7 +151,7 @@ const ReadyForPickup = () => {
     const defaultVoice = appData?.find((item) => item.key === 'voice')
 
     if (serverIpData) {
-      setIp(serverIpData.value)
+      setIp(getServerIp(serverIpData.value))
     }
 
     if (defaultVoice) {

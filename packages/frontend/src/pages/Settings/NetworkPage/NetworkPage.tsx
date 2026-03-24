@@ -1,4 +1,4 @@
-import { useAppData, useUpdateAppData } from '@/data/useAppData'
+import { getServerIp, useAppData, useUpdateAppData } from '@/data/useAppData'
 import { useUser } from '@/data/useUser'
 import { Json } from '@/services/supabase.types'
 import { ChevronLeftIcon, Loader2Icon } from 'lucide-react'
@@ -30,7 +30,7 @@ const NetworkPage = () => {
     const serverIpData = appData?.find((item) => item.key === 'server_ip')
     const serverPortData = appData?.find((item) => item.key === 'server_port')
     if (serverIpData) {
-      setIp(serverIpData.value)
+      setIp(getServerIp(serverIpData.value))
     }
     if (serverPortData) {
       setPort(serverPortData.value)
