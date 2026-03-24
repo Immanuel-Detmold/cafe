@@ -17,7 +17,7 @@ import {
 import { Button } from '@/components/ui/button'
 import { useToast } from '@/components/ui/use-toast'
 
-const DeletePrinter = ({ printerId }: { printerId: string }) => {
+const DeletePrinter = ({ printerId }: { printerId: number }) => {
   const { mutate: markPrinterAsDeletedMutation, isPending } =
     useDeletePrinterMutation()
   const { toast } = useToast()

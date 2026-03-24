@@ -175,7 +175,7 @@ const NewOrder = () => {
 
   // Load Order from Database if Edit Order ---
   const { data: editData } = useSingleOrder({
-    orderId: orderId,
+    orderId: orderId ? Number(orderId) : undefined,
   })
 
   // Revenue Stream

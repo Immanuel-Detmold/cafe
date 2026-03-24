@@ -17,7 +17,7 @@ import {
 import { Button } from '@/components/ui/button'
 import { useToast } from '@/components/ui/use-toast'
 
-const DeleteExpense = ({ expenseId }: { expenseId: string }) => {
+const DeleteExpense = ({ expenseId }: { expenseId: number }) => {
   const { mutate: markExpenseAsDeletedMutation, isPending } =
     useDeleteExpenseMutation()
   const { toast } = useToast()

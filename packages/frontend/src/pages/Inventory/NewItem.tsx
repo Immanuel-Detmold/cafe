@@ -49,7 +49,9 @@ const NewItem = () => {
   // Data
   const { data: categoryData } = useInventoryCategories()
   const mutationInventory = useSaveInventoryMutation()
-  const { data: inventoryItem } = useInventoryItem(itemId)
+  const { data: inventoryItem } = useInventoryItem(
+    itemId ? Number(itemId) : undefined,
+  )
   const updateItem = useUpdateInventoryMutation()
 
   // Use Effects

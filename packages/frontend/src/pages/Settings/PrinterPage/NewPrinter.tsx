@@ -35,7 +35,7 @@ const NewPrinter = () => {
   const { mutate: editPrinter } = useUpdatePrinterMutation(
     printerId ? parseInt(printerId) : 0,
   )
-  const printerData = usePrinterQuery({ id: printerId ? printerId : '' })
+  const printerData = usePrinterQuery({ id: printerId ? Number(printerId) : 0 })
 
   const handleCategoryChange = (category: string, checked: boolean) => {
     if (checked) {
@@ -200,7 +200,7 @@ const NewPrinter = () => {
           </div>
 
           <div className="flex justify-end">
-            {printerId && <DeletePrinter printerId={printerId} />}
+            {printerId && <DeletePrinter printerId={Number(printerId)} />}
             <Button onClick={handleSavePrinter} className="ml-2">
               <SaveIcon className="mr-1 cursor-pointer" />
               Speichern

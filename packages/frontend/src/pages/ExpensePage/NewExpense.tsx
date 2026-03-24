@@ -36,7 +36,9 @@ const NewExpense = () => {
   const { mutate: editExpense } = useUpdateExpenseMutation(
     expenseId ? parseInt(expenseId) : 0,
   )
-  const expenseData = useExpenseQuery({ id: expenseId ?? expenseId })
+  const expenseData = useExpenseQuery({
+    id: expenseId ? Number(expenseId) : undefined,
+  })
 
   // Functions
   const handleSaveExpense = () => {
@@ -155,7 +157,7 @@ const NewExpense = () => {
           </div>
 
           <div className="flex justify-end">
-            {expenseId && <DeleteExpense expenseId={expenseId} />}
+            {expenseId && <DeleteExpense expenseId={Number(expenseId)} />}
             <Button onClick={handleSaveExpense} className="ml-2">
               <SaveIcon className="mr-1 cursor-pointer" />
               Speichern
