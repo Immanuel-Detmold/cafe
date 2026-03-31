@@ -4,6 +4,8 @@
 
 React 18 + TypeScript SPA in a pnpm monorepo. Main package: `packages/frontend/`. Backend `packages/frontend/`: Supabase. Deployed on Netlify.
 
+Skills are in .agents/skills
+
 ## Tech Stack
 
 - **Framework**: React 18 + TypeScript, Vite (base path `/cafe`, port 3000)
