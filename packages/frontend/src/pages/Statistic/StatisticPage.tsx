@@ -400,7 +400,7 @@ const StatisticPage = () => {
             </div>
 
             {/* Select Date and Year to filter */}
-            <div className="col-span-2 mt-2 mt-4 flex w-full items-end gap-2">
+            <div className="col-span-2 mt-4 flex w-full items-end gap-2">
               <div className="flex flex-col space-y-1.5">
                 <Label htmlFor="year-select" className="font-black">
                   Jahr
