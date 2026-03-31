@@ -103,6 +103,9 @@ importers:
       '@react-pdf/renderer':
         specifier: ^3.4.2
         version: 3.4.4(react@18.3.1)
+      '@sumup/sdk':
+        specifier: ^0.1.4
+        version: 0.1.4
       '@supabase/supabase-js':
         specifier: ^2.100.0
         version: 2.100.0
@@ -1933,6 +1936,13 @@ packages:
       }
     cpu: [x64]
     os: [win32]
+
+  '@sumup/sdk@0.1.4':
+    resolution:
+      {
+        integrity: sha512-Y1xxnnpEu7yvBhA1Rq3OGQZLpXqgonXSXKCR4W1HoHP0PjOVH/hT3b1uH4G8dI5vx2yL/dBfUrRZ0wR+0L93eA==,
+      }
+    engines: { node: '>=18' }
 
   '@supabase/auth-js@2.100.0':
     resolution:
@@ -7518,6 +7528,8 @@ snapshots:
   '@rollup/rollup-win32-x64-msvc@4.20.0':
     optional: true
 
+  '@sumup/sdk@0.1.4': {}
+
   '@supabase/auth-js@2.100.0':
     dependencies:
       tslib: 2.8.1
@@ -7560,7 +7572,7 @@ snapshots:
 
   '@swc/helpers@0.4.14':
     dependencies:
-      tslib: 2.6.3
+      tslib: 2.8.1
 
   '@swc/helpers@0.4.36':
     dependencies:

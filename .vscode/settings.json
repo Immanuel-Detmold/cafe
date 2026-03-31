@@ -11,4 +11,6 @@
     
   ],
   "typescript.tsdk": "node_modules/typescript/lib",
+  "deno.enablePaths": ["packages/supabase/"],
+  "deno.importMap": "./packages/supabase/import_map.json"
 }

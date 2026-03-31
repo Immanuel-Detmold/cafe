@@ -91,6 +91,7 @@ const OrdersPDF = ({
   sumTotalTurnover,
   sumTotalCash,
   sumTotalPayPal,
+  sumTotalTerminal,
   sumTotalCafeCard,
   sumTotalVouchers,
 }: {
@@ -99,6 +100,7 @@ const OrdersPDF = ({
   sumTotalTurnover?: string
   sumTotalCash?: string
   sumTotalPayPal?: string
+  sumTotalTerminal?: string
   sumTotalCafeCard?: string
   sumTotalVouchers?: string
 }) => {
@@ -151,6 +153,14 @@ const OrdersPDF = ({
             </View>
             <View style={styles.tableCol}>
               <Text style={styles.tableCell}>{sumTotalPayPal}</Text>
+            </View>
+          </View>
+          <View style={styles.tableRow}>
+            <View style={styles.tableColHeader}>
+              <Text style={styles.tableCellHeader}>Umsatz Terminal</Text>
+            </View>
+            <View style={styles.tableCol}>
+              <Text style={styles.tableCell}>{sumTotalTerminal}</Text>
             </View>
           </View>
           <View style={styles.tableRow}>

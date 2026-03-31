@@ -223,6 +223,12 @@ const StatisticPage = () => {
     return getSumOrdersPayMethod(filteredData, 'paypal') + '€'
   }, [filteredData])
 
+  // Sum Total Terminal
+  const sumTotalTerminal = useMemo(() => {
+    if (!filteredData) return '...'
+    return getSumOrdersPayMethod(filteredData, 'terminal') + '€'
+  }, [filteredData])
+
   // Sum Total Cafe Card
   const sumTotalCafeCard = useMemo(() => {
     if (!filteredData) return '...'
@@ -488,6 +494,16 @@ const StatisticPage = () => {
                 </div>
               </div>
 
+              {/* Sum Terminal */}
+              <div className="grid grid-cols-1 gap-1 rounded-lg border p-2">
+                <Label className="text-base">Terminal</Label>
+                <Label className="text-2xl font-bold">{sumTotalTerminal}</Label>
+                <div className="flex items-center gap-2">
+                  {getRevenueStreamIcon()}
+                  <Label className="text-muted-foreground">Umsatz</Label>
+                </div>
+              </div>
+
               {/* Sum vouchers */}
               <div className="grid grid-cols-1 gap-1 rounded-lg border p-2">
                 <Label className="text-base">Gutscheine</Label>
@@ -510,6 +526,7 @@ const StatisticPage = () => {
                 sumTotalTurnover={sumTotalTurnover}
                 sumTotalCash={sumTotalCash}
                 sumTotalPayPal={sumTotalPayPal}
+                sumTotalTerminal={sumTotalTerminal}
                 sumTotalCafeCard={sumTotalCafeCard}
                 sumTotalVouchers={sumTotalVouchers}
               />

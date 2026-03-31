@@ -7,8 +7,8 @@ export const PAYMENT_METHODS = [
     label: 'Bar',
   },
   {
-    name: 'paypal',
-    label: 'Paypal',
+    name: 'terminal',
+    label: 'Terminal',
   },
   {
     name: 'cafe_card',
