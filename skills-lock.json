@@ -1,0 +1,10 @@
+{
+  "version": 1,
+  "skills": {
+    "sumup": {
+      "source": "sumup/sumup-skills",
+      "sourceType": "github",
+      "computedHash": "34e13828aafb70b8255929fa2a7f0563e51f951f32ef3f8fae4ed180dc161888"
+    }
+  }
+}
