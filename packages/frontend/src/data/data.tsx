@@ -11,12 +11,20 @@ export const PAYMENT_METHODS = [
     label: 'Terminal',
   },
   {
+    name: 'paypal',
+    label: 'Paypal',
+  },
+  {
     name: 'cafe_card',
     label: 'Café Karte',
   },
   {
     name: 'voucher',
     label: 'Gutschein',
+  },
+  {
+    name: 'online',
+    label: 'Online',
   },
 ]
 
