@@ -241,6 +241,12 @@ const StatisticPage = () => {
     return getSumOrdersPayMethod(filteredData, 'voucher') + '€'
   }, [filteredData])
 
+  // Sum total online
+  const sumTotalOnline = useMemo(() => {
+    if (!filteredData) return '...'
+    return getSumOrdersPayMethod(filteredData, 'online') + '€'
+  }, [filteredData])
+
   // UseEffect
   // Set default revenue stream if not selected
 
@@ -513,6 +519,16 @@ const StatisticPage = () => {
                   <Label className="text-muted-foreground">Umsatz</Label>
                 </div>
               </div>
+
+              {/* Sum online */}
+              <div className="grid grid-cols-1 gap-1 rounded-lg border p-2">
+                <Label className="text-base">Online</Label>
+                <Label className="text-2xl font-bold">{sumTotalOnline}</Label>
+                <div className="flex items-center gap-2">
+                  {getRevenueStreamIcon()}
+                  <Label className="text-muted-foreground">Umsatz</Label>
+                </div>
+              </div>
             </div>
           </div>
         )}
@@ -529,6 +545,7 @@ const StatisticPage = () => {
                 sumTotalTerminal={sumTotalTerminal}
                 sumTotalCafeCard={sumTotalCafeCard}
                 sumTotalVouchers={sumTotalVouchers}
+                sumTotalOnline={sumTotalOnline}
               />
             }
             fileName="orders.pdf"

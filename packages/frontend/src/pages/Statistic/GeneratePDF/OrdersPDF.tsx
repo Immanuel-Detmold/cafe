@@ -94,6 +94,7 @@ const OrdersPDF = ({
   sumTotalTerminal,
   sumTotalCafeCard,
   sumTotalVouchers,
+  sumTotalOnline,
 }: {
   filteredData?: OrdersAndItems
   selectedDate?: string
@@ -103,6 +104,7 @@ const OrdersPDF = ({
   sumTotalTerminal?: string
   sumTotalCafeCard?: string
   sumTotalVouchers?: string
+  sumTotalOnline?: string
 }) => {
   const totalOrderCount = filteredData ? filteredData.length : 0
 
@@ -169,6 +171,14 @@ const OrdersPDF = ({
             </View>
             <View style={styles.tableCol}>
               <Text style={styles.tableCell}>{sumTotalVouchers}</Text>
+            </View>
+          </View>
+          <View style={styles.tableRow}>
+            <View style={styles.tableColHeader}>
+              <Text style={styles.tableCellHeader}>Umsatz Online</Text>
+            </View>
+            <View style={styles.tableCol}>
+              <Text style={styles.tableCell}>{sumTotalOnline}</Text>
             </View>
           </View>
         </View>
