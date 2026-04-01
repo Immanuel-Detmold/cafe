@@ -10,6 +10,7 @@ import {
 import { ShoppingCartIcon } from '@heroicons/react/24/outline'
 import { PlusCircleIcon } from '@heroicons/react/24/outline'
 import { MinusCircleIcon } from '@heroicons/react/24/outline'
+import { TrashIcon } from '@heroicons/react/24/outline'
 import { Label } from '@radix-ui/react-label'
 import { PopoverClose } from '@radix-ui/react-popover'
 import { useRef, useState } from 'react'
@@ -52,6 +53,7 @@ type propsProductInCategory = {
     selectedOption: Variation | null,
     selectExtras: ProductExtra[] | [],
   ) => void
+  handleRemoveProductFromCart: (product_id: number) => void
   InventoryData: Inventory[] | undefined
 }
 
@@ -193,7 +195,7 @@ const ProductsInCategory = (props: propsProductInCategory) => {
                             setQuantity((prevQ) => prevQ - 1)
                           }
                         }}
-                        className="h-8 w-8 cursor-pointer"
+                        className="ml-2 h-8 w-8 cursor-pointer"
                       />
 
                       <span className="mx-2">{quantity}</span>
@@ -300,7 +302,6 @@ const ProductsInCategory = (props: propsProductInCategory) => {
                 {product.extras.length > 0 && (
                   <div className="mt-4 select-none">
                     <Label className="font-bold">Extras</Label>
-
                     <div className="flex flex-col">
                       {/* Left Name and Price, Right + and - icon */}
                       {product.extras.map((extra) => (
@@ -372,17 +373,22 @@ const ProductsInCategory = (props: propsProductInCategory) => {
                   </Button>
                 </PopoverClose>
                 {/* Remove from Cart */}
-                {/* <PopoverClose asChild>
-                  <Button
-                    className="w-full"
-                    onClick={() => {
-                      props.handleDeleteOrderItem(product.id)
-                    }}
-                  >
-                    Entfernen
-                    <TrashIcon className="ml-1 h-5 w-5" />
-                  </Button>
-                </PopoverClose> */}
+                {props.dataOrderItems.some(
+                  (item) => item.product_id === product.id,
+                ) && (
+                  <PopoverClose asChild>
+                    <Button
+                      variant="destructive"
+                      className="mt-1 w-full"
+                      onClick={() => {
+                        props.handleRemoveProductFromCart(product.id)
+                      }}
+                    >
+                      Entfernen
+                      <TrashIcon className="ml-1 h-5 w-5" />
+                    </Button>
+                  </PopoverClose>
+                )}
               </div>
             </PopoverContent>
           </Popover>

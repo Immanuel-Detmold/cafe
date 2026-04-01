@@ -41,6 +41,13 @@ import { useNavigate, useParams } from 'react-router-dom'
 
 import { LoadingOverlay } from '@/components/LoadingOverlay'
 import { Button } from '@/components/ui/button'
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import {
@@ -96,6 +103,18 @@ const NewOrder = () => {
   const [selectedRevenueStream, setSelectedRevenueStream] = useState<
     number | null
   >(null)
+
+  // Payment dialogs
+  const [showCashDialog, setShowCashDialog] = useState(false)
+  const [showTerminalDialog, setShowTerminalDialog] = useState(false)
+  const [cashGiven, setCashGiven] = useState('')
+  const [terminalLoading, setTerminalLoading] = useState(false)
+  // Holds computed order data while waiting for confirmation
+  const [pendingOrderData, setPendingOrderData] = useState<{
+    orderPrice: number
+    uniqueCategories: string[]
+    uniqueProducts: string[]
+  } | null>(null)
 
   // For Receipt
   const [orgName, setOrgName] = useState('')
@@ -341,6 +360,14 @@ const NewOrder = () => {
     })
   }
 
+  const handleRemoveProductFromCart = (product_id: number) => {
+    setDataOrderItems((prev) => {
+      const updated = prev.filter((item) => item.product_id !== product_id)
+      sessionStorage.setItem('orderItems', JSON.stringify(updated))
+      return updated
+    })
+  }
+
   const { mutate: deleteOrder } = useDeleteOrderMutation()
   // Save Order
   const { mutate: saveOrder, isPending: loadingOrder } = useSaveOrderMutation()
@@ -348,25 +375,13 @@ const NewOrder = () => {
   const { mutate: saveOrderItems, isPending: loadingOrderItems } =
     useSaveOrderItemsMutation()
 
-  const handleSubmitOrder = () => {
-    // Save Order to Database
-
-    let orderPrice: number = 0
-    if (customPrice) {
-      orderPrice = EuroToCents(customPriceValue)
-    } else {
-      orderPrice = sumOrderPrice
-    }
-
-    // Get Unique Categories and Products
+  // Shared: actually save the order + items to DB after payment is confirmed
+  const commitOrder = (orderPrice: number) => {
     const uniqueCategories = getUniqueCategories(dataOrderItems, products || [])
     const uniqueProducts = getProductIds(dataOrderItems)
 
-    // Create OrderItems for Receipt
     const orderItems = dataOrderItems.map((item) => {
-      const current_product = products?.find(
-        (product) => product.id === item.product_id,
-      )
+      const current_product = products?.find((p) => p.id === item.product_id)
       return {
         comment: item.comment,
         order_id: 'unkown',
@@ -380,38 +395,45 @@ const NewOrder = () => {
       }
     })
 
-    // Print only if Switch is ON
-    {
-      printReceipt && setLoadingPrint(true)
-    }
-    {
-      printReceipt &&
-        runPrintReceipt({
-          printers: printers,
-          payment_method: paymentMethod,
-          ip: ip,
-          port: port,
-          access_token: access_token ?? '',
-          sumPriceOrder: centsToEuro(orderPrice),
-          time: currentDateAndTime(),
-          orderNumber,
-          orderItems: orderItems,
-          organisation_name: orgName,
-          organisation_logo: orgLogo,
-          menu_link: menuLink,
+    if (printReceipt) {
+      setLoadingPrint(true)
+      runPrintReceipt({
+        printers,
+        payment_method: paymentMethod,
+        ip,
+        port,
+        access_token: access_token ?? '',
+        sumPriceOrder: centsToEuro(orderPrice),
+        time: currentDateAndTime(),
+        orderNumber,
+        orderItems,
+        organisation_name: orgName,
+        organisation_logo: orgLogo,
+        menu_link: menuLink,
+      })
+        .then(() => setLoadingPrint(false))
+        .catch(() => {
+          setLoadingPrint(false)
+          toast({
+            title: 'Keine Verbindung zum Server (Drucker/Audio)',
+            duration: 2000,
+          })
         })
-          .then(() => {
-            setLoadingPrint(false)
-          })
-          .catch(() => {
-            setLoadingPrint(false)
-            toast({
-              title: 'Keine Verbindung zum Server (Drucker/Audio)',
-              duration: 2000,
-            })
-          })
     }
-    // Create Order Object
+
+    if (!orderIdEdit) {
+      updateAppData(
+        { key: 'order_number', value: orderNumber },
+        {
+          onSuccess: (data) => {
+            if (data.length > 0 && data[0]?.key == 'order_number') {
+              setOrderNumber(data[0]?.value || '1')
+            }
+          },
+        },
+      )
+    }
+
     const orderData = {
       customer_name: orderName,
       comment: orderComment,
@@ -428,37 +450,11 @@ const NewOrder = () => {
 
     saveOrder(orderData, {
       onSuccess: (order) => {
-        // If editOrder is true, then delete it before adding new Order
-        if (orderIdEdit) {
-          deleteOrder(parseInt(orderIdEdit))
-        }
-
-        // Increase Order Number if not edited
-        if (!orderIdEdit) {
-          updateAppData(
-            {
-              key: 'order_number',
-              value: orderNumber,
-            },
-            {
-              onSuccess: (data) => {
-                if (data.length > 0 && data[0]?.key == 'order_number') {
-                  setOrderNumber(data[0]?.value || '1')
-                }
-              },
-            },
-          )
-        }
-
+        if (orderIdEdit) deleteOrder(parseInt(orderIdEdit))
         const order_id = order[0]?.id
-        if (order_id) {
-          handleSaveOrderItems(order_id, orderNumber)
-        }
+        if (order_id) handleSaveOrderItems(order_id, orderNumber)
       },
       onError: (error) => {
-        // To DO! If Order Saved, but Failed to save OrderItmes, then Delete Order
-        // const { mutate: deleteOrder } = useDeleteOrderMutation()
-        // deleteOrder()
         toast({
           title: 'Bestellung konnte nicht gespeichert werden! ❌',
           description: error.message,
@@ -467,8 +463,72 @@ const NewOrder = () => {
     })
 
     handleResetOrder()
-    // setOrderIdEdit(undefined)
     navigate('/admin/new-order')
+  }
+
+  // "Bezahlen" button clicked — open the appropriate dialog
+  const handleSubmitOrder = () => {
+    const orderPrice = customPrice
+      ? EuroToCents(customPriceValue)
+      : sumOrderPrice
+    setPendingOrderData({
+      orderPrice,
+      uniqueCategories: getUniqueCategories(dataOrderItems, products || []),
+      uniqueProducts: getProductIds(dataOrderItems),
+    })
+
+    if (paymentMethod === 'cash') {
+      setCashGiven('')
+      setShowCashDialog(true)
+    } else if (paymentMethod === 'terminal') {
+      setTerminalLoading(true)
+      setShowTerminalDialog(true)
+      void supabase.functions
+        .invoke('sumup-terminal-checkout', {
+          body: {
+            order_items: dataOrderItems.map((item) => ({
+              product_id: item.product_id,
+              quantity: item.quantity,
+              extras: item.extras,
+              option: item.option,
+              comment: item.comment,
+            })),
+            custom_price_value: customPrice ? orderPrice : null,
+          },
+        })
+        .then(({ error: fnError }: { error: Error | null }) => {
+          setTerminalLoading(false)
+          if (fnError) {
+            setShowTerminalDialog(false)
+            toast({
+              title: 'Terminal-Zahlung fehlgeschlagen ❌',
+              description: fnError.message,
+            })
+          }
+        })
+    } else {
+      // All other methods (paypal, cafe_card, voucher): commit immediately
+      commitOrder(orderPrice)
+    }
+  }
+
+  const handleCashConfirm = () => {
+    if (!pendingOrderData) return
+    setShowCashDialog(false)
+    commitOrder(pendingOrderData.orderPrice)
+    setCashGiven('')
+  }
+
+  const handleTerminalConfirm = () => {
+    if (!pendingOrderData) return
+    setShowTerminalDialog(false)
+    commitOrder(pendingOrderData.orderPrice)
+  }
+
+  const handleTerminalCancel = () => {
+    setShowTerminalDialog(false)
+    setTerminalLoading(false)
+    setPendingOrderData(null)
   }
 
   const handleResetOrder = () => {
@@ -478,7 +538,9 @@ const NewOrder = () => {
     setCustomPriceValue('')
     setOrderComment('')
     setOrderName('')
-    setPaymentMethod('cash')
+    const keepPaymentMethod =
+      paymentMethod !== 'cafe_card' && paymentMethod !== 'voucher'
+    if (!keepPaymentMethod) setPaymentMethod('cash')
     setSumOrderPrice(0)
     setTableNumber('')
 
@@ -486,7 +548,10 @@ const NewOrder = () => {
     sessionStorage.setItem('orderComment', '')
     sessionStorage.setItem('orderName', '')
     sessionStorage.setItem('tableNumber', '')
-    sessionStorage.setItem('paymentMethod', 'cash')
+    sessionStorage.setItem(
+      'paymentMethod',
+      keepPaymentMethod ? paymentMethod : 'cash',
+    )
   }
 
   const handleSaveOrderItems = (order_id: number, orderNumber: string) => {
@@ -641,6 +706,7 @@ const NewOrder = () => {
                   products={products as ProductWithVariations[]}
                   dataOrderItems={dataOrderItems}
                   handleAddOrder={handleAddOrder}
+                  handleRemoveProductFromCart={handleRemoveProductFromCart}
                   InventoryData={inventoryData}
                   openOrders={openOrders ?? []}
                 />
@@ -790,6 +856,107 @@ const NewOrder = () => {
           </div>
         )}
 
+        {/* Cash change dialog */}
+        <Dialog open={showCashDialog} onOpenChange={setShowCashDialog}>
+          <DialogContent className="max-w-xs">
+            <DialogHeader>
+              <DialogTitle>Barzahlung</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-3 py-2">
+              <div>
+                <Label className="text-muted-foreground text-sm">
+                  Zu zahlen
+                </Label>
+                <p className="text-2xl font-bold">
+                  {centsToEuro(pendingOrderData?.orderPrice ?? 0)} €
+                </p>
+              </div>
+              <div>
+                <Label htmlFor="cash-given" className="text-sm">
+                  Gegeben
+                </Label>
+                <Input
+                  id="cash-given"
+                  type="number"
+                  step="0.01"
+                  min="0"
+                  autoFocus
+                  placeholder="0,00"
+                  value={cashGiven}
+                  onChange={(e) => setCashGiven(e.target.value)}
+                  onKeyDown={(e) => e.key === 'Enter' && handleCashConfirm()}
+                  className="mt-1"
+                />
+              </div>
+              {cashGiven &&
+                parseFloat(cashGiven) * 100 >=
+                  (pendingOrderData?.orderPrice ?? 0) && (
+                  <div>
+                    <Label className="text-muted-foreground text-sm">
+                      Rückgeld
+                    </Label>
+                    <p className="text-xl font-semibold text-green-600">
+                      {(
+                        parseFloat(cashGiven) -
+                        (pendingOrderData?.orderPrice ?? 0) / 100
+                      )
+                        .toFixed(2)
+                        .replace('.', ',')}{' '}
+                      €
+                    </p>
+                  </div>
+                )}
+            </div>
+            <DialogFooter>
+              <Button
+                variant="outline"
+                onClick={() => setShowCashDialog(false)}
+              >
+                Abbrechen
+              </Button>
+              <Button onClick={handleCashConfirm}>Bestätigen</Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+
+        {/* Terminal waiting dialog */}
+        <Dialog open={showTerminalDialog} onOpenChange={() => {}}>
+          <DialogContent
+            className="max-w-xs"
+            onInteractOutside={(e) => e.preventDefault()}
+          >
+            <DialogHeader>
+              <DialogTitle>Terminal-Zahlung</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-3 py-2">
+              <p className="text-2xl font-bold">
+                {centsToEuro(pendingOrderData?.orderPrice ?? 0)} €
+              </p>
+              {terminalLoading ? (
+                <div className="text-muted-foreground flex items-center gap-2 text-sm">
+                  <Loader2Icon className="h-4 w-4 animate-spin" />
+                  Wird ans Terminal gesendet...
+                </div>
+              ) : (
+                <p className="text-muted-foreground text-sm">
+                  Bitte auf Zahlung des Kunden am Terminal warten.
+                </p>
+              )}
+            </div>
+            <DialogFooter>
+              <Button variant="outline" onClick={handleTerminalCancel}>
+                Abbrechen
+              </Button>
+              <Button
+                disabled={terminalLoading}
+                onClick={handleTerminalConfirm}
+              >
+                Zahlung bestätigt
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+
         {/* Send & Reset Button */}
         <div className="flex justify-between">
           <Button
@@ -800,7 +967,7 @@ const NewOrder = () => {
             {loadingOrder || loadingOrderItems || loadingPrint ? (
               <Loader2Icon className="h-8 w-8 animate-spin" />
             ) : (
-              'Absenden'
+              'Bezahlen'
             )}{' '}
             <ShoppingCart className="ml-1 h-4 w-4"></ShoppingCart>
           </Button>
