@@ -10,27 +10,17 @@ export type InsertProductCategories =
 
 export type Category = Database['public']['Tables']['ProductCategories']['Row']
 
-export const useProductCategories = (hideNumber = true) => {
+export const useProductCategories = () => {
   return useQuery({
     queryKey: ['categories'],
     queryFn: async () => {
       const { data, error } = await supabase
         .from('ProductCategories')
         .select()
-        .order('category', { ascending: true })
+        .order('sort_order', { ascending: true })
 
       if (error) {
         throw error
-      }
-
-      if (data) {
-        return hideNumber
-          ? data.map((categoryObject) => ({
-              ...categoryObject,
-              // Replace any leading number and dash (e.g., "1-", "2-", "10-", etc.)
-              category: categoryObject.category.replace(/^\d+-/, ''),
-            }))
-          : data
       }
 
       return data
@@ -86,6 +76,35 @@ export const useAddCategory = () =>
       await saveUserAction({
         action: data,
         short_description: `Add Category: ${data[0]?.category}`,
+      })
+    },
+  })
+
+// Update Category Order (batch)
+export const useUpdateCategoryOrderMutation = () =>
+  useMutation({
+    mutationFn: async (items: { id: number; sort_order: number }[]) => {
+      const results = await Promise.all(
+        items.map(({ id, sort_order }) =>
+          supabase
+            .from('ProductCategories')
+            .update({ sort_order })
+            .eq('id', id)
+            .select(),
+        ),
+      )
+
+      const error = results.find((r) => r.error)?.error
+      if (error) throw error
+
+      return results.map((r) => r.data).flat()
+    },
+    onSuccess: async (data) => {
+      await queryClient.invalidateQueries({ queryKey: ['categories'] })
+
+      await saveUserAction({
+        action: data,
+        short_description: 'Reorder Categories',
       })
     },
   })

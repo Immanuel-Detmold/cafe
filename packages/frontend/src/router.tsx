@@ -9,7 +9,6 @@ import CreateProductV2 from './pages/AllProducts/CreateProduct/CreateProductV2'
 import AudioPage from './pages/AudioPage/AudioPage'
 import ForgotPassword from './pages/Authentication/ForgotPassword'
 import LoginPw from './pages/Authentication/LoginPw'
-import { Me } from './pages/Authentication/Me'
 import UpdatePassword from './pages/Authentication/UpdatePassword'
 import CafeCards from './pages/CafeCards/CafeCardsPage'
 import ClosedOrdersToday from './pages/ClosedOrdersToday'
@@ -68,6 +67,20 @@ export const router = createBrowserRouter(
     {
       path: 'admin',
       element: <Navigation />,
+      loader: async ({ request }) => {
+        const user = await getUser()
+        const url = new URL(request.url)
+        const publicPaths = [
+          '/admin/login',
+          '/admin/forgot-pw',
+          '/admin/update-pw',
+        ]
+        const isPublicPath = publicPaths.some((p) => url.pathname.endsWith(p))
+        if (!user && !isPublicPath) {
+          return redirect('/admin/login')
+        }
+        return null
+      },
       children: [
         { path: 'cafe-cards', element: <CafeCards /> },
         { path: 'create-product', element: <CreateProductV2 /> },
@@ -146,10 +159,6 @@ export const router = createBrowserRouter(
         {
           path: 'update-pw',
           element: <UpdatePassword />,
-        },
-        {
-          path: 'me',
-          element: <Me />,
         },
         {
           path: 'open',

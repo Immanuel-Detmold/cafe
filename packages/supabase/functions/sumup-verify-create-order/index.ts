@@ -136,25 +136,7 @@ Deno.serve(async (req: Request) => {
     )
   }
 
-  // 4. Generate order_number server-side (max today + 1, mod 100)
-  const todayStart = new Date()
-  todayStart.setHours(0, 0, 0, 0)
-
-  const { data: lastOrder } = await supabaseAdmin
-    .from('Orders')
-    .select('order_number')
-    .gte('created_at', todayStart.toISOString())
-    .order('created_at', { ascending: false })
-    .limit(1)
-    .single()
-
-  let orderNumber = '1'
-  if (lastOrder?.order_number) {
-    const next = (parseInt(lastOrder.order_number, 10) + 1) % 100
-    orderNumber = (next === 0 ? 1 : next).toString()
-  }
-
-  // 5. Build categories and product_ids from DB data
+  // 4. Build categories and product_ids from DB data
   const categories = [
     ...new Set(
       order_items
@@ -167,11 +149,10 @@ Deno.serve(async (req: Request) => {
   ]
   const product_ids = order_items.map((item) => item.product_id.toString())
 
-  // 6. Create order
+  // 5. Create order (order_number is auto-assigned by DB trigger)
   const { data: orderData, error: orderError } = await supabaseAdmin
     .from('Orders')
     .insert({
-      order_number: orderNumber,
       status: 'waiting',
       price: calculatedTotal,
       payment_method: 'online',
@@ -196,7 +177,7 @@ Deno.serve(async (req: Request) => {
     )
   }
 
-  // 7. Insert OrderItems with DB-verified prices
+  // 6. Insert OrderItems with DB-verified prices
   const orderItemsPayload = order_items.map((item) => {
     const product = products.find((p) => p.id === item.product_id)!
     let itemPrice: number

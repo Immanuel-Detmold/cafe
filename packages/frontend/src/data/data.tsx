@@ -6,10 +6,10 @@ export const PAYMENT_METHODS = [
     name: 'cash',
     label: 'Bar',
   },
-  {
-    name: 'terminal',
-    label: 'Terminal',
-  },
+  // {
+  //   name: 'terminal',
+  //   label: 'Terminal',
+  // },
   {
     name: 'paypal',
     label: 'Paypal',

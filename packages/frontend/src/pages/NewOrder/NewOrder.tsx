@@ -1,6 +1,6 @@
 import { queryClient } from '@/App'
 import { PAYMENT_METHODS } from '@/data/data'
-import { getServerIp, useAppData, useUpdateAppData } from '@/data/useAppData'
+import { getServerIp, useAppData } from '@/data/useAppData'
 import { useInventory } from '@/data/useInventory'
 import {
   useDeleteOrderMutation,
@@ -66,7 +66,6 @@ import OrderDetailsPage from './OrderDetailsPage'
 import ProductsInCategory from './ProductsInCategory'
 import { groupProductsToCategories } from './utilityFunctions/groupProductsToCategories'
 import {
-  GetOrderNumber,
   calcOrderPrice,
   calcSingleOrderItemPrice,
   getProductIds,
@@ -98,7 +97,6 @@ const NewOrder = () => {
   const [orderComment, setOrderComment] = useState<string>('')
   const [orderName, setOrderName] = useState<string>('')
   const [tableNumber, setTableNumber] = useState<string>('')
-  const [orderNumber, setOrderNumber] = useState<string>('1')
   const [printReceipt, setPrintReceipt] = useState<boolean>(true)
   const [selectedRevenueStream, setSelectedRevenueStream] = useState<
     number | null
@@ -143,7 +141,6 @@ const NewOrder = () => {
   const { data: appData } = useAppData()
   const { data: revenueStreams } = useRevenueStreamsQuery(true)
   const { data: inventoryData } = useInventory()
-  const { mutate: updateAppData } = useUpdateAppData()
   const { data: products, error } = useProductsQuery({
     searchTerm: '',
     ascending: true,
@@ -217,7 +214,6 @@ const NewOrder = () => {
       editData.table_number && setTableNumber(editData.table_number)
       editData.revenue_stream_id &&
         setSelectedRevenueStream(editData.revenue_stream_id)
-      setOrderNumber(editData.order_number)
 
       const orderItems: ProductOrder[] = editData.OrderItems.map((item) => ({
         ...item,
@@ -239,13 +235,8 @@ const NewOrder = () => {
         setCustomPrice(true)
         setCustomPriceValue(centsToEuro(editData.price))
       }
-
-      // Set OrderNumber to old oder Number
-      setOrderNumber(editData.order_number)
-    } else {
-      setOrderNumber(GetOrderNumber(appData))
     }
-  }, [editData, products, orderIdEdit, appData])
+  }, [editData, products, orderIdEdit])
 
   // Redirect to login if not user
   useEffect(() => {
@@ -397,41 +388,6 @@ const NewOrder = () => {
 
     if (printReceipt) {
       setLoadingPrint(true)
-      runPrintReceipt({
-        printers,
-        payment_method: paymentMethod,
-        ip,
-        port,
-        access_token: access_token ?? '',
-        sumPriceOrder: centsToEuro(orderPrice),
-        time: currentDateAndTime(),
-        orderNumber,
-        orderItems,
-        organisation_name: orgName,
-        organisation_logo: orgLogo,
-        menu_link: menuLink,
-      })
-        .then(() => setLoadingPrint(false))
-        .catch(() => {
-          setLoadingPrint(false)
-          toast({
-            title: 'Keine Verbindung zum Server (Drucker/Audio)',
-            duration: 2000,
-          })
-        })
-    }
-
-    if (!orderIdEdit) {
-      updateAppData(
-        { key: 'order_number', value: orderNumber },
-        {
-          onSuccess: (data) => {
-            if (data.length > 0 && data[0]?.key == 'order_number') {
-              setOrderNumber(data[0]?.value || '1')
-            }
-          },
-        },
-      )
     }
 
     const orderData = {
@@ -443,16 +399,46 @@ const NewOrder = () => {
       categories: uniqueCategories,
       product_ids: uniqueProducts,
       table_number: tableNumber,
-      order_number: orderNumber,
       custom_price: customPrice,
       revenue_stream_id: selectedRevenueStream,
+      ...(orderIdEdit && editData
+        ? { order_number: editData.order_number }
+        : {}),
     }
 
     saveOrder(orderData, {
       onSuccess: (order) => {
         if (orderIdEdit) deleteOrder(parseInt(orderIdEdit))
         const order_id = order[0]?.id
-        if (order_id) handleSaveOrderItems(order_id, orderNumber)
+        const assignedOrderNumber = order[0]?.order_number ?? ''
+
+        // Print receipt after DB insert so we have the assigned order number
+        if (printReceipt) {
+          runPrintReceipt({
+            printers,
+            payment_method: paymentMethod,
+            ip,
+            port,
+            access_token: access_token ?? '',
+            sumPriceOrder: centsToEuro(orderPrice),
+            time: currentDateAndTime(),
+            orderNumber: assignedOrderNumber,
+            orderItems,
+            organisation_name: orgName,
+            organisation_logo: orgLogo,
+            menu_link: menuLink,
+          })
+            .then(() => setLoadingPrint(false))
+            .catch(() => {
+              setLoadingPrint(false)
+              toast({
+                title: 'Keine Verbindung zum Server (Drucker/Audio)',
+                duration: 2000,
+              })
+            })
+        }
+
+        if (order_id) handleSaveOrderItems(order_id, assignedOrderNumber)
       },
       onError: (error) => {
         toast({
@@ -480,32 +466,32 @@ const NewOrder = () => {
     if (paymentMethod === 'cash') {
       setCashGiven('')
       setShowCashDialog(true)
-    } else if (paymentMethod === 'terminal') {
-      setTerminalLoading(true)
-      setShowTerminalDialog(true)
-      void supabase.functions
-        .invoke('sumup-terminal-checkout', {
-          body: {
-            order_items: dataOrderItems.map((item) => ({
-              product_id: item.product_id,
-              quantity: item.quantity,
-              extras: item.extras,
-              option: item.option,
-              comment: item.comment,
-            })),
-            custom_price_value: customPrice ? orderPrice : null,
-          },
-        })
-        .then(({ error: fnError }: { error: Error | null }) => {
-          setTerminalLoading(false)
-          if (fnError) {
-            setShowTerminalDialog(false)
-            toast({
-              title: 'Terminal-Zahlung fehlgeschlagen ❌',
-              description: fnError.message,
-            })
-          }
-        })
+      // } else if (paymentMethod === 'terminal') {
+      //   setTerminalLoading(true)
+      //   setShowTerminalDialog(true)
+      //   void supabase.functions
+      //     .invoke('sumup-terminal-checkout', {
+      //       body: {
+      //         order_items: dataOrderItems.map((item) => ({
+      //           product_id: item.product_id,
+      //           quantity: item.quantity,
+      //           extras: item.extras,
+      //           option: item.option,
+      //           comment: item.comment,
+      //         })),
+      //         custom_price_value: customPrice ? orderPrice : null,
+      //       },
+      //     })
+      //     .then(({ error: fnError }: { error: Error | null }) => {
+      //       setTerminalLoading(false)
+      //       if (fnError) {
+      //         setShowTerminalDialog(false)
+      //         toast({
+      //           title: 'Terminal-Zahlung fehlgeschlagen ❌',
+      //           description: fnError.message,
+      //         })
+      //       }
+      //     })
     } else {
       // All other methods (paypal, cafe_card, voucher): commit immediately
       commitOrder(orderPrice)

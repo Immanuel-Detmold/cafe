@@ -242,7 +242,7 @@ export type Database = {
           custom_price?: boolean
           customer_name?: string | null
           id?: number
-          order_number: string
+          order_number?: string
           payment_method: string
           price: number
           product_ids: string[]
@@ -312,16 +312,19 @@ export type Database = {
           category: string
           created_at: string
           id: number
+          sort_order: number | null
         }
         Insert: {
           category: string
           created_at?: string
           id?: number
+          sort_order?: number | null
         }
         Update: {
           category?: string
           created_at?: string
           id?: number
+          sort_order?: number | null
         }
         Relationships: []
       }

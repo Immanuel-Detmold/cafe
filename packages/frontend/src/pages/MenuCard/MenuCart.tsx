@@ -1,7 +1,6 @@
 import { Product } from '@/data/useProducts'
 import { centsToEuro } from '@/generalHelperFunctions/currencyHelperFunction'
-import { ProductWithVariations } from '@/lib/customTypes'
-import { ShoppingCart, Trash2, X } from 'lucide-react'
+import { ShoppingCart, Trash2 } from 'lucide-react'
 import { useState } from 'react'
 
 import { Badge } from '@/components/ui/badge'
@@ -70,9 +69,6 @@ const MenuCart = ({ products }: { products: Product[] }) => {
               <div className="flex flex-col gap-3 pr-1">
                 {items.map((item) => {
                   const product = products.find((p) => p.id === item.product_id)
-                  const typedProduct = product as
-                    | ProductWithVariations
-                    | undefined
                   const itemPrice = calcCartItemPrice(item, product)
 
                   return (

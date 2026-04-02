@@ -18,7 +18,7 @@ export function groupProductsToCategories(
   groupedProducts['Sonstige'] = []
   // push each product to its category
   products.forEach((product: Product) => {
-    const category = product.category.replace(/^\d+-/, '')
+    const category = product.category
     if (groupedProducts[category]) {
       groupedProducts[category].push(product)
     } else {

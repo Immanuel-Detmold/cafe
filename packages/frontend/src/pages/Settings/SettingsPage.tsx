@@ -20,7 +20,6 @@ import ChangeInventoryCategories from './ChangeInventoryCategories'
 import DesignPage from './DesignPage'
 import PasswordChange from './PasswordChange'
 import RegisterNewUser from './RegisterNewUser'
-import ResetOrderNumber from './ResetOrderNumber'
 
 const SettingsPage = () => {
   const [userRole, setUserRole] = useState('user')
@@ -46,7 +45,6 @@ const SettingsPage = () => {
           ) : null}
           {userRole === 'admin' && <ChangeCategories />}
           {userRole === 'admin' && <ChangeInventoryCategories />}
-          {userRole === 'admin' && <ResetOrderNumber />}
 
           {/* Manage Users */}
           {userRole === 'admin' && (
