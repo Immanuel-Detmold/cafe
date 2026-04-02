@@ -10,6 +10,7 @@ import {
   DragEndEvent,
   KeyboardSensor,
   PointerSensor,
+  TouchSensor,
   closestCenter,
   useSensor,
   useSensors,
@@ -30,7 +31,7 @@ import {
   SaveIcon,
   Trash2Icon,
 } from 'lucide-react'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import {
   AlertDialog,
@@ -75,6 +76,7 @@ function SortableCategoryItem({
         <div className="flex items-center gap-2">
           <GripVerticalIcon
             className="text-muted-foreground cursor-grab"
+            style={{ touchAction: 'none' }}
             {...attributes}
             {...listeners}
           />
@@ -111,7 +113,13 @@ const ChangeCategories = () => {
   const [newCategory, setNewCategory] = useState('')
 
   const { data } = useProductCategories()
+  const [categories, setCategories] = useState<Category[]>([])
   const { toast } = useToast()
+
+  // Sync local state when server data changes
+  useEffect(() => {
+    if (data) setCategories(data)
+  }, [data])
 
   const { mutate: deleteCategory } = useDeleteCategory()
   const { mutate: addCategory } = useAddCategory()
@@ -119,6 +127,9 @@ const ChangeCategories = () => {
 
   const sensors = useSensors(
     useSensor(PointerSensor),
+    useSensor(TouchSensor, {
+      activationConstraint: { distance: 5 },
+    }),
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
     }),
@@ -126,11 +137,14 @@ const ChangeCategories = () => {
 
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event
-    if (!over || active.id === over.id || !data) return
+    if (!over || active.id === over.id || !categories.length) return
 
-    const oldIndex = data.findIndex((c) => c.id === active.id)
-    const newIndex = data.findIndex((c) => c.id === over.id)
-    const reordered = arrayMove(data, oldIndex, newIndex)
+    const oldIndex = categories.findIndex((c) => c.id === active.id)
+    const newIndex = categories.findIndex((c) => c.id === over.id)
+    const reordered = arrayMove(categories, oldIndex, newIndex)
+
+    // Optimistically update local state
+    setCategories(reordered)
 
     // Assign sequential sort_order values
     const updates = reordered.map((c, index) => ({
@@ -143,6 +157,8 @@ const ChangeCategories = () => {
         toast({ title: 'Reihenfolge gespeichert ✅', duration: 2000 })
       },
       onError: () => {
+        // Revert on error
+        if (data) setCategories(data)
         toast({ title: 'Fehler beim Speichern der Reihenfolge ❌' })
       },
     })
@@ -151,8 +167,8 @@ const ChangeCategories = () => {
   // Add new Category
   const handleAddCategory = () => {
     if (!newCategory) return
-    const maxOrder = data
-      ? Math.max(...data.map((c) => c.sort_order ?? 0), -1)
+    const maxOrder = categories.length
+      ? Math.max(...categories.map((c) => c.sort_order ?? 0), -1)
       : 0
     addCategory(
       { category: newCategory, sort_order: maxOrder + 1 },
@@ -206,10 +222,10 @@ const ChangeCategories = () => {
               onDragEnd={handleDragEnd}
             >
               <SortableContext
-                items={data?.map((c) => c.id) ?? []}
+                items={categories.map((c) => c.id)}
                 strategy={verticalListSortingStrategy}
               >
-                {data?.map((category) => (
+                {categories.map((category) => (
                   <SortableCategoryItem
                     key={category.id}
                     category={category}
