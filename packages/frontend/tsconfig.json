@@ -8,7 +8,6 @@
     "resolveJsonModule": true,
     "moduleDetection": "force",
     "isolatedModules": true,
-    "ignoreDeprecations": "6.0",
 
     /* Strictness */
     "strict": true,
