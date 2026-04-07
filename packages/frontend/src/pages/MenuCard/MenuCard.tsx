@@ -1,5 +1,6 @@
 import { useProductCategories } from '@/data/useProductCategories'
 import { useProductsQuery } from '@/data/useProducts'
+import { ProductWithVariations } from '@/lib/customTypes'
 
 import { useToast } from '@/components/ui/use-toast'
 
@@ -33,7 +34,7 @@ const MenuCard = () => {
       : products.filter((p) => !p.name.toLowerCase().includes('test'))
     groupedProducts = groupProductsToCategories(
       filteredCategories,
-      filteredProducts,
+      filteredProducts as ProductWithVariations[],
     )
   }
 

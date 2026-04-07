@@ -537,6 +537,7 @@ export type Database = {
           raw_user_meta_data: Json
         }[]
       }
+      get_next_order_number: { Args: never; Returns: string }
       update_product_stock: {
         Args: { product_id: number; quantity: number }
         Returns: boolean

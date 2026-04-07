@@ -12,7 +12,6 @@ import {
 import { usePrintersQuery } from '@/data/usePrinter'
 import { useProductCategories } from '@/data/useProductCategories'
 import { useProductsQuery } from '@/data/useProducts'
-import { Product } from '@/data/useProducts'
 import {
   getDefaultRevenueStream,
   useRevenueStreamsQuery,
@@ -74,7 +73,7 @@ import {
 import { runPrintReceipt } from './utilityFunctions/runPrintReceipt'
 
 export type GroupedProducts = {
-  [key: string]: Product[]
+  [key: string]: ProductWithVariations[]
 }
 
 export type ProductOrder = {
@@ -300,11 +299,11 @@ const NewOrder = () => {
   }, [orderId])
 
   // Initialize a new object to group the products by category
-  let groupedProducts_filtered = undefined
+  let groupedProducts_filtered: GroupedProducts | undefined = undefined
   if (dataCategories && products_filtered) {
     groupedProducts_filtered = groupProductsToCategories(
       dataCategories,
-      products_filtered,
+      products_filtered as ProductWithVariations[],
     )
   }
 
@@ -466,32 +465,41 @@ const NewOrder = () => {
     if (paymentMethod === 'cash') {
       setCashGiven('')
       setShowCashDialog(true)
-      // } else if (paymentMethod === 'terminal') {
-      //   setTerminalLoading(true)
-      //   setShowTerminalDialog(true)
-      //   void supabase.functions
-      //     .invoke('sumup-terminal-checkout', {
-      //       body: {
-      //         order_items: dataOrderItems.map((item) => ({
-      //           product_id: item.product_id,
-      //           quantity: item.quantity,
-      //           extras: item.extras,
-      //           option: item.option,
-      //           comment: item.comment,
-      //         })),
-      //         custom_price_value: customPrice ? orderPrice : null,
-      //       },
-      //     })
-      //     .then(({ error: fnError }: { error: Error | null }) => {
-      //       setTerminalLoading(false)
-      //       if (fnError) {
-      //         setShowTerminalDialog(false)
-      //         toast({
-      //           title: 'Terminal-Zahlung fehlgeschlagen ❌',
-      //           description: fnError.message,
-      //         })
-      //       }
-      //     })
+    } else if (paymentMethod === 'terminal') {
+      if (orderPrice < 100) {
+        toast({
+          title: 'Mindestbestellwert: 1,00 € ❌',
+          description:
+            'Terminal-Zahlungen erfordern einen Mindestbetrag von 1,00 €.',
+        })
+        setPendingOrderData(null)
+        return
+      }
+      setTerminalLoading(true)
+      setShowTerminalDialog(true)
+      void supabase.functions
+        .invoke('sumup-terminal-checkout', {
+          body: {
+            order_items: dataOrderItems.map((item) => ({
+              product_id: item.product_id,
+              quantity: item.quantity,
+              extras: item.extras,
+              option: item.option,
+              comment: item.comment,
+            })),
+            custom_price_value: customPrice ? orderPrice : null,
+          },
+        })
+        .then(({ error: fnError }: { error: Error | null }) => {
+          setTerminalLoading(false)
+          if (fnError) {
+            setShowTerminalDialog(false)
+            toast({
+              title: 'Terminal-Zahlung fehlgeschlagen ❌',
+              description: fnError.message,
+            })
+          }
+        })
     } else {
       // All other methods (paypal, cafe_card, voucher): commit immediately
       commitOrder(orderPrice)
@@ -689,7 +697,7 @@ const NewOrder = () => {
                 <h2 className="w-full font-bold">{category}</h2>
                 {/* Iterate over each product in the current category */}
                 <ProductsInCategory
-                  products={products as ProductWithVariations[]}
+                  products={products}
                   dataOrderItems={dataOrderItems}
                   handleAddOrder={handleAddOrder}
                   handleRemoveProductFromCart={handleRemoveProductFromCart}

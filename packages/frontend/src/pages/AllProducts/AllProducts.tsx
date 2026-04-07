@@ -1,5 +1,6 @@
 import { useProductCategories } from '@/data/useProductCategories'
 import { useProductsQuery } from '@/data/useProducts'
+import { ProductWithVariations } from '@/lib/customTypes'
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
@@ -30,7 +31,7 @@ const AllProducts = () => {
   if (dataCategories && products) {
     groupedProducts_filtered = groupProductsToCategories(
       dataCategories,
-      products,
+      products as ProductWithVariations[],
     )
   }
 

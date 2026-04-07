@@ -143,10 +143,19 @@ const MenuCart = ({ products }: { products: Product[] }) => {
                 </span>
               </div>
 
+              {/* Minimum order warning */}
+              {total < 100 && (
+                <p className="text-destructive text-sm">
+                  Mindestbestellwert: 1,00 € (noch {centsToEuro(100 - total)} €
+                  fehlend)
+                </p>
+              )}
+
               {/* Pay button */}
               <Button
                 className="w-full"
                 size="lg"
+                disabled={total < 100}
                 onClick={() => {
                   setOpen(false)
                   setShowCheckout(true)

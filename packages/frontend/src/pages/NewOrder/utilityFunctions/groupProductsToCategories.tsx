@@ -1,11 +1,11 @@
 import { Category } from '@/data/useProductCategories'
-import { Product } from '@/data/useProducts'
+import { ProductWithVariations } from '@/lib/customTypes'
 
 import { GroupedProducts } from '../NewOrder'
 
 export function groupProductsToCategories(
   dataCategories: Category[],
-  products: Product[],
+  products: ProductWithVariations[],
 ): GroupedProducts {
   const groupedProducts = dataCategories.reduce(
     (group: GroupedProducts, category) => {
@@ -17,7 +17,7 @@ export function groupProductsToCategories(
 
   groupedProducts['Sonstige'] = []
   // push each product to its category
-  products.forEach((product: Product) => {
+  products.forEach((product: ProductWithVariations) => {
     const category = product.category
     if (groupedProducts[category]) {
       groupedProducts[category].push(product)
