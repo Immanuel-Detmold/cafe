@@ -68,6 +68,16 @@ const LoginPw = () => {
           >
             Passwort vergessen
           </Button>
+          <Button
+            className="mt-2 w-full"
+            onClick={() => {
+              navigate('/menu')
+            }}
+            variant={'outline'}
+            tabIndex={-1}
+          >
+            Zur Menükarte
+          </Button>
           {errors.root && (
             <Label className="mt-2 text-red-500">{errors.root?.message}</Label>
           )}
