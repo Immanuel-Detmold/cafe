@@ -31,6 +31,8 @@ const MenuCard = () => {
     (/iPad|iPhone|iPod/.test(navigator.userAgent) && !('MSStream' in window))
 
   useEffect(() => {
+    if (isStandalone || localStorage.getItem('pwa-hint-dismissed')) return
+
     // DEV: always show install hint
     if (import.meta.env.DEV) {
       setShowInstallHint(true)
@@ -59,7 +61,7 @@ const MenuCard = () => {
   }, [deferredPrompt])
 
   const dismissInstallHint = () => {
-    sessionStorage.setItem('pwa-hint-dismissed', '1')
+    localStorage.setItem('pwa-hint-dismissed', '1')
     setShowInstallHint(false)
   }
 
