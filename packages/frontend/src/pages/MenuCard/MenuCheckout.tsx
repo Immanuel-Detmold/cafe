@@ -2,7 +2,7 @@ import { Product } from '@/data/useProducts'
 import { loadSumUpScript } from '@/data/useSumUpWidget'
 import { centsToEuro } from '@/generalHelperFunctions/currencyHelperFunction'
 import { supabase } from '@/services/supabase'
-import { ArrowLeft, CheckCircle, Eye, Loader2, XCircle } from 'lucide-react'
+import { ArrowLeft, CheckCircle, Loader2, XCircle } from 'lucide-react'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
@@ -274,11 +274,7 @@ const MenuCheckout = ({
               Deine Bestellung wird vorbereitet.
             </p>
             <div className="mt-4 flex flex-col gap-2">
-              <Button
-                onClick={() => navigate('/menu/orders')}
-                className="gap-2"
-              >
-                <Eye className="h-4 w-4" />
+              <Button onClick={() => navigate('/menu/orders')}>
                 Bestellung verfolgen
               </Button>
               <Button variant="outline" onClick={onBack}>
