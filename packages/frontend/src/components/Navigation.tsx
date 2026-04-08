@@ -12,6 +12,12 @@ import Navbar from './Navbar'
 export const Navigation = () => {
   const outlet = useOutlet()
   const { pathname } = useLocation()
+
+  const isAuthPage =
+    pathname.endsWith('/login') ||
+    pathname.endsWith('/forgot-pw') ||
+    pathname.endsWith('/update-pw')
+
   const showNavbar =
     pathname.endsWith('new-order') ||
     pathname.endsWith('open') ||
@@ -21,7 +27,7 @@ export const Navigation = () => {
   return (
     <>
       <div className="main-container relative flex max-h-screen flex-col">
-        {isBigScreen ? <HeaderPC /> : <Header />}
+        {!isAuthPage && (isBigScreen ? <HeaderPC /> : <Header />)}
         <div
           className={`container flex-1 overflow-y-auto ${showNavbar && !isBigScreen ? 'mb-20' : 'mb-2'}`}
         >
