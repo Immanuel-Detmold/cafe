@@ -1,7 +1,7 @@
 import { useProductCategories } from '@/data/useProductCategories'
 import { useProductsQuery } from '@/data/useProducts'
 import { ProductWithVariations } from '@/lib/customTypes'
-import { Download, Share, X } from 'lucide-react'
+import { MoreVertical, X } from 'lucide-react'
 import { useCallback, useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 
@@ -112,11 +112,12 @@ const MenuCard = () => {
       {/* PWA install hint */}
       {showInstallHint && (
         <div className="bg-card mx-4 mt-4 flex items-start gap-3 rounded-lg border px-4 py-3">
-          <Download className="text-primary mt-0.5 h-5 w-5 shrink-0" />
+          <MoreVertical className="text-primary mt-0.5 h-5 w-5 shrink-0" />
           <div className="flex-1 text-sm">
             {isIOS ? (
               <p>
-                Tippe auf <Share className="inline h-4 w-4 align-text-bottom" />{' '}
+                Tippe auf{' '}
+                <MoreVertical className="inline h-4 w-4 align-text-bottom" />{' '}
                 und dann auf{' '}
                 <strong>{'\u201EZum Home-Bildschirm\u201C'}</strong>, um die App
                 zu installieren und Benachrichtigungen zu erhalten.
