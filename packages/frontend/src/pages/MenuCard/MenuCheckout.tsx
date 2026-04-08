@@ -2,12 +2,14 @@ import { Product } from '@/data/useProducts'
 import { loadSumUpScript } from '@/data/useSumUpWidget'
 import { centsToEuro } from '@/generalHelperFunctions/currencyHelperFunction'
 import { supabase } from '@/services/supabase'
-import { ArrowLeft, CheckCircle, Loader2, XCircle } from 'lucide-react'
+import { ArrowLeft, CheckCircle, Eye, Loader2, XCircle } from 'lucide-react'
 import { useCallback, useEffect, useRef, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 import { Button } from '@/components/ui/button'
 
 import { useMenuCart } from './MenuCartContext'
+import { addTrackedOrder } from './orderTrackingStore'
 
 declare global {
   interface Window {
@@ -30,6 +32,7 @@ interface CheckoutResponse {
 
 interface VerifyResponse {
   success?: boolean
+  order_id?: number
   order_number?: string
   error?: string
 }
@@ -46,6 +49,7 @@ const MenuCheckout = ({
   onBack: () => void
 }) => {
   const { items, clearCart, totalPrice } = useMenuCart()
+  const navigate = useNavigate()
   const [state, setState] = useState<CheckoutState>('creating')
   const [errorMessage, setErrorMessage] = useState('')
   const [orderNumber, setOrderNumber] = useState('')
@@ -181,6 +185,24 @@ const MenuCheckout = ({
       if (!mountedRef.current) return
 
       setOrderNumber(data.order_number ?? '')
+
+      // Store order for tracking
+      if (data.order_id && data.order_number) {
+        addTrackedOrder({
+          orderId: data.order_id,
+          orderNumber: data.order_number,
+          createdAt: new Date().toISOString(),
+        })
+      }
+
+      // Request notification permission
+      if (
+        typeof Notification !== 'undefined' &&
+        Notification.permission === 'default'
+      ) {
+        void Notification.requestPermission()
+      }
+
       clearCart()
       setState('success')
     } catch (err) {
@@ -251,9 +273,18 @@ const MenuCheckout = ({
             <p className="text-muted-foreground">
               Deine Bestellung wird vorbereitet.
             </p>
-            <Button className="mt-4" onClick={onBack}>
-              Zurück zur Menükarte
-            </Button>
+            <div className="mt-4 flex flex-col gap-2">
+              <Button
+                onClick={() => navigate('/menu/orders')}
+                className="gap-2"
+              >
+                <Eye className="h-4 w-4" />
+                Bestellung verfolgen
+              </Button>
+              <Button variant="outline" onClick={onBack}>
+                Zurück zur Menükarte
+              </Button>
+            </div>
           </div>
         )}
 

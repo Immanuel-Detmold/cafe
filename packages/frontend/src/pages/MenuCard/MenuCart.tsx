@@ -1,7 +1,9 @@
 import { Product } from '@/data/useProducts'
 import { centsToEuro } from '@/generalHelperFunctions/currencyHelperFunction'
+import { supabase } from '@/services/supabase'
 import { ShoppingCart, Trash2 } from 'lucide-react'
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -17,12 +19,15 @@ import {
 
 import { calcCartItemPrice, useMenuCart } from './MenuCartContext'
 import MenuCheckout from './MenuCheckout'
+import { addTrackedOrder } from './orderTrackingStore'
 
 const MenuCart = ({ products }: { products: Product[] }) => {
-  const { items, removeItem, totalPrice, itemCount } = useMenuCart()
+  const { items, removeItem, clearCart, totalPrice, itemCount } = useMenuCart()
+  const navigate = useNavigate()
   const [open, setOpen] = useState(false)
   const [customerName, setCustomerName] = useState('')
   const [showCheckout, setShowCheckout] = useState(false)
+  const [isCreatingTestOrder, setIsCreatingTestOrder] = useState(false)
 
   const total = totalPrice(products)
 
@@ -163,6 +168,88 @@ const MenuCart = ({ products }: { products: Product[] }) => {
               >
                 Bezahlen
               </Button>
+
+              {/* DEV ONLY: Test order without payment */}
+              {import.meta.env.DEV && (
+                <Button
+                  className="w-full border-dashed"
+                  variant="outline"
+                  size="lg"
+                  disabled={items.length === 0 || isCreatingTestOrder}
+                  onClick={async () => {
+                    setIsCreatingTestOrder(true)
+                    try {
+                      const categories = [
+                        ...new Set(
+                          items.map((item) => {
+                            const p = products.find(
+                              (pr) => pr.id === item.product_id,
+                            )
+                            return p?.category ?? ''
+                          }),
+                        ),
+                      ].filter(Boolean)
+
+                      const { data: orderData, error: orderError } =
+                        await supabase
+                          .from('Orders')
+                          .insert({
+                            status: 'waiting',
+                            price: total,
+                            payment_method: 'online',
+                            customer_name: customerName || null,
+                            custom_price: false,
+                            categories,
+                            product_ids: items.map((i) =>
+                              i.product_id.toString(),
+                            ),
+                          })
+                          .select('id, order_number')
+                          .single()
+
+                      if (orderError || !orderData) throw orderError
+
+                      const orderItems = items.map((item) => {
+                        const product = products.find(
+                          (p) => p.id === item.product_id,
+                        )
+                        return {
+                          order_id: orderData.id,
+                          product_id: item.product_id,
+                          product_name: product?.name ?? 'Unbekannt',
+                          quantity: item.quantity,
+                          order_price: calcCartItemPrice(item, product),
+                          extras: item.extras,
+                          option: item.option,
+                          comment: null,
+                          finished: false,
+                        }
+                      })
+
+                      await supabase.from('OrderItems').insert(orderItems)
+
+                      addTrackedOrder({
+                        orderId: orderData.id,
+                        orderNumber: orderData.order_number,
+                        createdAt: new Date().toISOString(),
+                      })
+
+                      clearCart()
+                      setOpen(false)
+                      navigate('/menu/orders')
+                    } catch (err) {
+                      console.error('Test order failed:', err)
+                      alert('Test order failed — check console')
+                    } finally {
+                      setIsCreatingTestOrder(false)
+                    }
+                  }}
+                >
+                  {isCreatingTestOrder
+                    ? 'Erstelle...'
+                    : '🧪 Test Bestellung (DEV)'}
+                </Button>
+              )}
             </SheetFooter>
           )}
         </SheetContent>

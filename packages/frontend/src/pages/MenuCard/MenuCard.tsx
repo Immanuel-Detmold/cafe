@@ -1,15 +1,20 @@
 import { useProductCategories } from '@/data/useProductCategories'
 import { useProductsQuery } from '@/data/useProducts'
 import { ProductWithVariations } from '@/lib/customTypes'
+import { useState } from 'react'
+import { Link } from 'react-router-dom'
 
+import { Button } from '@/components/ui/button'
 import { useToast } from '@/components/ui/use-toast'
 
 import { groupProductsToCategories } from '../NewOrder/utilityFunctions/groupProductsToCategories'
 import MenuCart from './MenuCart'
 import { MenuCartProvider } from './MenuCartContext'
 import MenuProductCard from './MenuProductCard'
+import { getTrackedOrders } from './orderTrackingStore'
 
 const MenuCard = () => {
+  const [trackedOrders] = useState(() => getTrackedOrders())
   // Mini Functions
   const { toast } = useToast()
 
@@ -44,6 +49,27 @@ const MenuCard = () => {
 
   return (
     <MenuCartProvider>
+      {/* Active orders banner */}
+      {trackedOrders.length > 0 && (
+        <div className="bg-card mx-4 mt-4 flex items-center justify-between rounded-lg border px-4 py-3">
+          <div className="flex items-center gap-2">
+            <span className="relative flex h-2.5 w-2.5">
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-green-400 opacity-75" />
+              <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-green-500" />
+            </span>
+            <span className="text-sm font-medium">
+              Du hast{' '}
+              {trackedOrders.length === 1
+                ? 'eine offene Bestellung'
+                : `${trackedOrders.length} offene Bestellungen`}
+            </span>
+          </div>
+          <Link to="/menu/orders">
+            <Button size="sm">Status ansehen</Button>
+          </Link>
+        </div>
+      )}
+
       <div className="mt-6">
         <h1 className="cinzel-decorative-bold text-center text-4xl">
           Menükarte

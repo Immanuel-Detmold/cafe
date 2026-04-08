@@ -17,6 +17,7 @@ import NewExpense from './pages/ExpensePage/NewExpense'
 import Inventory from './pages/Inventory/Inventory/Inventory'
 import NewItem from './pages/Inventory/NewItem'
 import MenuCard from './pages/MenuCard/MenuCard'
+import OrderTracking from './pages/MenuCard/OrderTracking'
 import NewOrder from './pages/NewOrder/NewOrder'
 import Open from './pages/Open/Open'
 import ReadyForPickup from './pages/ReadyForPickup/ReadyForPickup'
@@ -59,6 +60,10 @@ export const router = createBrowserRouter(
     {
       path: 'menu',
       element: <MenuCard />,
+    },
+    {
+      path: 'menu/orders',
+      element: <OrderTracking />,
     },
     {
       path: 'advertisement',

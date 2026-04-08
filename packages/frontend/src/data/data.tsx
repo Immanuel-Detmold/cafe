@@ -22,10 +22,10 @@ export const PAYMENT_METHODS = [
     name: 'voucher',
     label: 'Gutschein',
   },
-  // {
-  //   name: 'online',
-  //   label: 'Online',
-  // },
+  {
+    name: 'online',
+    label: 'Online',
+  },
 ]
 
 export const TitleMap = {
