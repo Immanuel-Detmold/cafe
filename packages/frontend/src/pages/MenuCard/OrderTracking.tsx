@@ -155,10 +155,17 @@ const OrderTracking = () => {
           typeof Notification !== 'undefined' &&
           Notification.permission === 'granted'
         ) {
-          new Notification(`Bestellung #${order.orderNumber} ist bereit! 🎉`, {
-            body: 'Deine Bestellung kann abgeholt werden.',
-            icon: '/cafe/favicon.ico',
-          })
+          navigator.serviceWorker?.ready
+            .then((reg) =>
+              reg.showNotification(
+                `Bestellung #${order.orderNumber} ist bereit! 🎉`,
+                {
+                  body: 'Deine Bestellung kann abgeholt werden.',
+                  icon: '/cafe/favicon.ico',
+                },
+              ),
+            )
+            .catch(() => {})
         }
       }
       prevStatusesRef.current[order.orderId] = order.status
