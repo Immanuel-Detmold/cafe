@@ -10,6 +10,7 @@ import { useToast } from '@/components/ui/use-toast'
 import { groupProductsToCategories } from '../NewOrder/utilityFunctions/groupProductsToCategories'
 import MenuCart from './MenuCart'
 import { MenuCartProvider } from './MenuCartContext'
+import MenuFooter from './MenuFooter'
 import MenuProductCard from './MenuProductCard'
 import { getTrackedOrders } from './orderTrackingStore'
 
@@ -91,6 +92,10 @@ const MenuCard = () => {
             </div>
           </div>
         ))}
+
+        <div className="mt-16">
+          <MenuFooter />
+        </div>
       </div>
 
       {products && <MenuCart products={products} />}

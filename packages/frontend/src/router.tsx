@@ -16,7 +16,10 @@ import ExpensePage from './pages/ExpensePage/Expense/ExpenseTable'
 import NewExpense from './pages/ExpensePage/NewExpense'
 import Inventory from './pages/Inventory/Inventory/Inventory'
 import NewItem from './pages/Inventory/NewItem'
+import MenuAGB from './pages/MenuCard/MenuAGB'
 import MenuCard from './pages/MenuCard/MenuCard'
+import MenuDatenschutz from './pages/MenuCard/MenuDatenschutz'
+import MenuImpressum from './pages/MenuCard/MenuImpressum'
 import OrderTracking from './pages/MenuCard/OrderTracking'
 import NewOrder from './pages/NewOrder/NewOrder'
 import Open from './pages/Open/Open'
@@ -64,6 +67,18 @@ export const router = createBrowserRouter(
     {
       path: 'menu/orders',
       element: <OrderTracking />,
+    },
+    {
+      path: 'menu/impressum',
+      element: <MenuImpressum />,
+    },
+    {
+      path: 'menu/datenschutz',
+      element: <MenuDatenschutz />,
+    },
+    {
+      path: 'menu/agb',
+      element: <MenuAGB />,
     },
     {
       path: 'advertisement',
