@@ -22,6 +22,12 @@ const MenuFooter = () => {
       <p className="mt-2">
         © {new Date().getFullYear()} Christengemeinde Immanuel e. V.
       </p>
+      <Link
+        to="/admin/login"
+        className="mt-2 inline-block text-xs opacity-50 hover:opacity-100"
+      >
+        Mitarbeiter-Login
+      </Link>
     </footer>
   )
 }

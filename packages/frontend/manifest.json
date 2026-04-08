@@ -1,13 +1,26 @@
 {
-  "name": "Cafe",
-  "short_name": "Cafe",
-  "start_url": "/cafe",
+  "name": "Immanuel Café",
+  "short_name": "Café",
+  "id": "/cafe",
+  "start_url": "/cafe/menu",
   "icons": [
     {
       "src": "/cafe/img/icons/CafeBlack144x144.png",
       "sizes": "144x144",
       "type": "image/png",
       "purpose": "any"
+    },
+    {
+      "src": "/cafe/img/icons/CafeBlack192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/cafe/img/icons/CafeBlack512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
     }
   ],
   "display": "fullscreen",
