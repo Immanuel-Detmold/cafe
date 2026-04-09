@@ -171,6 +171,13 @@ export const router = createBrowserRouter(
         {
           path: 'login',
           element: <LoginPw />,
+          loader: async () => {
+            const user = await getUser()
+            if (user) {
+              return redirect('/admin/new-order')
+            }
+            return null
+          },
         },
         {
           path: 'forgot-pw',
