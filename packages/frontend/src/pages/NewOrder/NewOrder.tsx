@@ -34,7 +34,7 @@ import {
 import { supabase } from '@/services/supabase'
 import { ArrowPathIcon } from '@heroicons/react/24/outline'
 import { Label } from '@radix-ui/react-label'
-import { Loader2Icon, ShoppingCart } from 'lucide-react'
+import { AlertTriangle, Loader2Icon, ShoppingCart } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 
@@ -63,6 +63,7 @@ import { useToast } from '@/components/ui/use-toast'
 import Filters from './Filters'
 import OrderDetailsPage from './OrderDetailsPage'
 import ProductsInCategory from './ProductsInCategory'
+import { getOpenOrdersCount } from './utilityFunctions/getInventoryCount'
 import { groupProductsToCategories } from './utilityFunctions/groupProductsToCategories'
 import {
   calcOrderPrice,
@@ -104,6 +105,10 @@ const NewOrder = () => {
   // Payment dialogs
   const [showCashDialog, setShowCashDialog] = useState(false)
   const [showTerminalDialog, setShowTerminalDialog] = useState(false)
+  const [showStockWarningDialog, setShowStockWarningDialog] = useState(false)
+  const [stockWarnings, setStockWarnings] = useState<
+    { name: string; available: number; requested: number }[]
+  >([])
   const [cashGiven, setCashGiven] = useState('')
   const [terminalLoading, setTerminalLoading] = useState(false)
   // Holds computed order data while waiting for confirmation
@@ -453,6 +458,42 @@ const NewOrder = () => {
 
   // "Bezahlen" button clicked — open the appropriate dialog
   const handleSubmitOrder = () => {
+    // Check stock availability and warn if issues found
+    if (products && openOrders) {
+      const warnings: { name: string; available: number; requested: number }[] =
+        []
+      const qtyByProduct = new Map<number, number>()
+      for (const item of dataOrderItems) {
+        qtyByProduct.set(
+          item.product_id,
+          (qtyByProduct.get(item.product_id) ?? 0) + item.quantity,
+        )
+      }
+      for (const [productId, orderQty] of qtyByProduct) {
+        const product = products.find((p) => p.id === productId)
+        if (!product || product.stock == null) continue
+        const queued = getOpenOrdersCount(productId, openOrders)
+        const available = product.stock - queued
+        if (orderQty > available) {
+          warnings.push({
+            name: product.name,
+            available: Math.max(0, available),
+            requested: orderQty,
+          })
+        }
+      }
+      if (warnings.length > 0) {
+        setStockWarnings(warnings)
+        setShowStockWarningDialog(true)
+        return
+      }
+    }
+
+    proceedWithOrder()
+  }
+
+  /** Continue with the order after stock check (or after user confirms warning) */
+  const proceedWithOrder = () => {
     const orderPrice = customPrice
       ? EuroToCents(customPriceValue)
       : sumOrderPrice
@@ -851,6 +892,60 @@ const NewOrder = () => {
         )}
 
         {/* Cash change dialog */}
+        {/* Stock warning dialog */}
+        <Dialog
+          open={showStockWarningDialog}
+          onOpenChange={setShowStockWarningDialog}
+        >
+          <DialogContent className="max-w-sm">
+            <DialogHeader>
+              <DialogTitle>
+                <AlertTriangle className="inline h-5 w-5 text-amber-500" />{' '}
+                Verfügbarkeit
+              </DialogTitle>
+            </DialogHeader>
+            <div className="space-y-2 py-2">
+              <p className="text-sm">
+                Folgende Produkte sind nicht in ausreichender Menge verfügbar:
+              </p>
+              <ul className="space-y-1">
+                {stockWarnings.map((w) => (
+                  <li
+                    key={w.name}
+                    className="flex justify-between rounded border px-3 py-2 text-sm"
+                  >
+                    <span className="font-medium">{w.name}</span>
+                    <span className="text-muted-foreground">
+                      {w.available === 0
+                        ? 'Ausverkauft'
+                        : `${w.available} verfügbar, ${w.requested} bestellt`}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+              <p className="text-muted-foreground text-sm">
+                Möchtest du trotzdem fortfahren?
+              </p>
+            </div>
+            <DialogFooter className="gap-2 sm:gap-0">
+              <Button
+                variant="outline"
+                onClick={() => setShowStockWarningDialog(false)}
+              >
+                Abbrechen
+              </Button>
+              <Button
+                onClick={() => {
+                  setShowStockWarningDialog(false)
+                  proceedWithOrder()
+                }}
+              >
+                Trotzdem bestellen
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+
         <Dialog open={showCashDialog} onOpenChange={setShowCashDialog}>
           <DialogContent className="max-w-xs">
             <DialogHeader>

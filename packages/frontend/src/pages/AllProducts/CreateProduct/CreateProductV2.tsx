@@ -61,6 +61,7 @@ const CreateProductV2 = () => {
   const [options, setOptions] = useState<Variation[]>([])
   const [extras, setExtras] = useState<Variation[]>([])
   const [showStockColored, setShowStockColored] = useState(false)
+  const [showStockMenu, setShowStockMenu] = useState(true)
 
   // User State
   const [userRole, setUserRole] = useState('user')
@@ -185,6 +186,7 @@ const CreateProductV2 = () => {
       only_advertisement_screen: showOnlyOnAdvertisement,
       show_consumption: showConsumption,
       show_stock_colors: showStockColored,
+      show_stock_menu: showStockMenu,
       paused: paused,
       advertisement: showAdervertisement,
       stock: parseInt(stock),
@@ -315,6 +317,7 @@ const CreateProductV2 = () => {
             advertisement,
             stock,
             show_stock_colors,
+            show_stock_menu,
           } = data
           setName(name)
           setPrice(centsToEuro(price))
@@ -360,6 +363,9 @@ const CreateProductV2 = () => {
           }
           if (show_stock_colors !== undefined) {
             setShowStockColored(!!show_stock_colors)
+          }
+          if (show_stock_menu !== undefined) {
+            setShowStockMenu(!!show_stock_menu)
           }
         } else if (error) {
           console.error('Error fetching product data:', error)
@@ -558,6 +564,20 @@ const CreateProductV2 = () => {
                 Ausverkauft bei Bestellung anzeigen
               </label>
               <InfoIconPopover text="Wenn aktiviert, wird Ausverkauft angezeigt, sobald der Voxrrat 0 ist." />
+            </div>
+
+            <div className="mt-4 flex items-center">
+              <Switch
+                id="show-stock-menu"
+                checked={showStockMenu}
+                onCheckedChange={(e) => {
+                  setShowStockMenu(e)
+                }}
+              />
+              <label htmlFor="show-stock-menu" className="ml-2">
+                Vorrätig auf Menükarte anzeigen
+              </label>
+              <InfoIconPopover text="Wenn aktiviert, wird die Verfügbarkeit auf der Menükarte für Kunden angezeigt." />
             </div>
 
             {/* Stock */}

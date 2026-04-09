@@ -1,7 +1,8 @@
+import { OrdersAndItemsV2 } from '@/data/useOrders'
 import { Product } from '@/data/useProducts'
 import { centsToEuro } from '@/generalHelperFunctions/currencyHelperFunction'
 import { supabase } from '@/services/supabase'
-import { ShoppingCart, Trash2 } from 'lucide-react'
+import { AlertTriangle, ShoppingCart, Trash2 } from 'lucide-react'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
@@ -16,20 +17,68 @@ import {
   SheetHeader,
   SheetTitle,
 } from '@/components/ui/sheet'
+import { useToast } from '@/components/ui/use-toast'
 
+import { getOpenOrdersCount } from '../NewOrder/utilityFunctions/getInventoryCount'
 import { calcCartItemPrice, useMenuCart } from './MenuCartContext'
 import MenuCheckout from './MenuCheckout'
 import { addTrackedOrder } from './orderTrackingStore'
 
-const MenuCart = ({ products }: { products: Product[] }) => {
+const MenuCart = ({
+  products,
+  openOrders,
+}: {
+  products: Product[]
+  openOrders?: OrdersAndItemsV2
+}) => {
   const { items, removeItem, clearCart, totalPrice, itemCount } = useMenuCart()
   const navigate = useNavigate()
+  const { toast } = useToast()
   const [open, setOpen] = useState(false)
   const [customerName, setCustomerName] = useState('')
   const [showCheckout, setShowCheckout] = useState(false)
   const [isCreatingTestOrder, setIsCreatingTestOrder] = useState(false)
 
   const total = totalPrice(products)
+
+  /** Compute available stock for a product (stock minus open orders in queue) */
+  const getAvailableStock = (product: Product): number | null => {
+    if (product.stock == null) return null
+    const queued = openOrders ? getOpenOrdersCount(product.id, openOrders) : 0
+    return product.stock - queued
+  }
+
+  /** Sum the quantity of a product across all cart items */
+  const getCartQuantity = (productId: number): number =>
+    items
+      .filter((i) => i.product_id === productId)
+      .reduce((sum, i) => sum + i.quantity, 0)
+
+  /** Validate that all cart items are still within available stock */
+  const validateStock = (): boolean => {
+    for (const product of products) {
+      if (!product.show_stock_menu) continue
+      const available = getAvailableStock(product)
+      if (available == null) continue
+      const cartQty = getCartQuantity(product.id)
+      if (cartQty > 0 && available <= 0) {
+        console.log(
+          `Product ${product.name} is out of stock (available: ${available}, in cart: ${cartQty})`,
+        )
+        toast({
+          title: `${product.name} ist leider ausverkauft. Bitte entferne es aus dem Warenkorb. ❌`,
+        })
+        return false
+      }
+      if (cartQty > 0 && cartQty > available) {
+        toast({
+          title: `${product.name} ist nicht mehr in ausreichender Menge verfügbar (${available} übrig). Bitte passe deinen Warenkorb an. ❌`,
+        })
+        return false
+      }
+    }
+    return true
+  }
 
   if (showCheckout) {
     return (
@@ -108,6 +157,28 @@ const MenuCart = ({ products }: { products: Product[] }) => {
                         <p className="mt-1 text-sm font-semibold">
                           {centsToEuro(itemPrice)} €
                         </p>
+                        {/* Live stock indicator */}
+                        {product &&
+                          product.show_stock_menu &&
+                          (() => {
+                            const available = getAvailableStock(product)
+                            if (available == null) return null
+                            const cartQty = getCartQuantity(product.id)
+                            const overLimit = cartQty > available
+                            return (
+                              <p
+                                className={`mt-1 flex items-center gap-1 text-xs ${overLimit ? 'font-semibold text-red-500' : 'text-gray-400'}`}
+                              >
+                                {overLimit && (
+                                  <AlertTriangle className="h-3 w-3" />
+                                )}
+                                {available <= 0
+                                  ? 'Ausverkauft'
+                                  : `Noch ${available} verfügbar`}
+                                {overLimit && ` (${cartQty} im Warenkorb)`}
+                              </p>
+                            )
+                          })()}
                       </div>
                       <Button
                         variant="ghost"
@@ -162,6 +233,7 @@ const MenuCart = ({ products }: { products: Product[] }) => {
                 size="lg"
                 disabled={total < 100}
                 onClick={() => {
+                  if (!validateStock()) return
                   setOpen(false)
                   setShowCheckout(true)
                 }}

@@ -1,3 +1,4 @@
+import { imgPlaceHolder } from '@/data/data'
 import { Product } from '@/data/useProducts'
 import { centsToEuro } from '@/generalHelperFunctions/currencyHelperFunction'
 
@@ -15,7 +16,7 @@ const ProductDetails = ({ product }: { product: Product }) => {
   return (
     <>
       <div className="flex w-72 flex-col items-center lg:w-96">
-        {product.images && product.images?.length > 0 && (
+        {product.images && product.images?.length > 0 ? (
           <Carousel className="max-w-x w-full">
             <CarouselContent className="">
               {product.images?.map((imgUrl, index) => (
@@ -48,6 +49,19 @@ const ProductDetails = ({ product }: { product: Product }) => {
               <CarouselNext className="mr-8 h-7 w-7" />
             )}
           </Carousel>
+        ) : (
+          <div className="mt-4 w-full p-1">
+            <AspectRatio
+              ratio={1 / 1}
+              className="rounded-md shadow-md shadow-black"
+            >
+              <img
+                src={imgPlaceHolder}
+                alt={product.name}
+                className="mx-auto aspect-square rounded-md object-cover"
+              />
+            </AspectRatio>
+          </div>
         )}
         <h1 className="cinzel-decorative-regular mt-2 w-full text-2xl">
           {product.name}

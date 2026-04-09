@@ -40,6 +40,7 @@ export type ProductWithVariations = {
   short_description: string | null
   show_consumption: boolean
   show_stock_colors: boolean
+  show_stock_menu: boolean
   stock: number | null
   user_id: string | null
 }

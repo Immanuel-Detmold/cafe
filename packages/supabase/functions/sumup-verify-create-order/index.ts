@@ -235,6 +235,100 @@ Deno.serve(async (req: Request) => {
     )
   }
 
+  // 7. Fire-and-forget: print staff receipt via print server
+  const PRINT_SERVER_URL = Deno.env.get('PRINT_SERVER_URL')
+  const PRINT_SERVER_API_KEY = Deno.env.get('PRINT_SERVER_API_KEY')
+
+  if (PRINT_SERVER_URL && PRINT_SERVER_API_KEY) {
+    try {
+      // Fetch printers and app data in parallel
+      const [printersResult, appDataResult] = await Promise.all([
+        supabaseAdmin.from('Printers').select(),
+        supabaseAdmin
+          .from('AppData')
+          .select()
+          .in('key', [
+            'print_mode',
+            'organisation_name',
+            'organisation_logo',
+            'menu_link',
+          ]),
+      ])
+
+      // Only staff printers — online orders don't need a customer receipt
+      const printers = (printersResult.data ?? []).filter(
+        (p: { print_for: string[] }) => p.print_for.includes('staff'),
+      )
+      const appDataRows = appDataResult.data ?? []
+      const getAppValue = (key: string) =>
+        appDataRows.find((r: { key: string; value: string }) => r.key === key)
+          ?.value ?? ''
+
+      const printMode = getAppValue('print_mode')
+
+      if (printMode === 'true' && printers.length > 0) {
+        // Build order items with category for printer filtering
+        const printOrderItems = order_items.map((item) => {
+          const product = products.find((p) => p.id === item.product_id)!
+          const payload = orderItemsPayload.find(
+            (p) => p.product_id === item.product_id,
+          )!
+          return {
+            comment: '',
+            order_id: String(orderData.id),
+            product_id: item.product_id,
+            product_name: product.name,
+            order_price: payload.order_price,
+            quantity: item.quantity,
+            category: product.category,
+            extras: payload.extras ?? [],
+            option: payload.option,
+          }
+        })
+
+        const totalEuro = (calculatedTotal / 100).toFixed(2).replace('.', ',')
+        const now = new Date()
+        const berlinTime = now.toLocaleString('de-DE', {
+          timeZone: 'Europe/Berlin',
+          day: '2-digit',
+          month: '2-digit',
+          year: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit',
+        })
+
+        const printPayload = {
+          printers,
+          payment_method: 'online',
+          ip: PRINT_SERVER_URL,
+          port: '',
+          access_token: '',
+          sumPriceOrder: totalEuro,
+          time: berlinTime,
+          orderNumber: String(orderData.order_number ?? ''),
+          orderItems: printOrderItems,
+          organisation_name: getAppValue('organisation_name'),
+          organisation_logo: getAppValue('organisation_logo'),
+          menu_link: getAppValue('menu_link'),
+        }
+
+        // Fire-and-forget — don't await, don't block order response
+        fetch(`${PRINT_SERVER_URL}/print-receipt`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer apikey:${PRINT_SERVER_API_KEY}`,
+          },
+          body: JSON.stringify(printPayload),
+        }).catch((err) => {
+          console.error('Print server error (non-blocking):', err)
+        })
+      }
+    } catch (err) {
+      console.error('Print setup error (non-blocking):', err)
+    }
+  }
+
   return new Response(
     JSON.stringify({
       success: true,

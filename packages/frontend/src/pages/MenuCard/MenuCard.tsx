@@ -1,11 +1,17 @@
+import { useOrdersAndItemsQueryV2 } from '@/data/useOrders'
 import { useProductCategories } from '@/data/useProductCategories'
 import { useProductsQuery } from '@/data/useProducts'
+import {
+  getEndOfDayToday,
+  getStartOfDayToday,
+} from '@/generalHelperFunctions/dateHelperFunctions'
 import { ProductWithVariations } from '@/lib/customTypes'
 import { MoreVertical, Share, X } from 'lucide-react'
 import { useCallback, useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 
 import { Button } from '@/components/ui/button'
+import { Toaster } from '@/components/ui/toaster'
 import { useToast } from '@/components/ui/use-toast'
 
 import { groupProductsToCategories } from '../NewOrder/utilityFunctions/groupProductsToCategories'
@@ -73,6 +79,12 @@ const MenuCard = () => {
     paused: false,
   })
   const { data: dataCategories } = useProductCategories()
+
+  const { data: openOrders } = useOrdersAndItemsQueryV2({
+    statusList: ['waiting', 'processing', 'ready'],
+    startDate: getStartOfDayToday().finalDateString,
+    endDate: getEndOfDayToday().endOfDayString,
+  })
 
   const isDev = import.meta.env.DEV
 
@@ -174,7 +186,11 @@ const MenuCard = () => {
             {/* Products */}
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
               {products.map((product) => (
-                <MenuProductCard key={product.id} product={product} />
+                <MenuProductCard
+                  key={product.id}
+                  product={product}
+                  openOrders={openOrders}
+                />
               ))}
             </div>
           </div>
@@ -185,7 +201,8 @@ const MenuCard = () => {
         </div>
       </div>
 
-      {products && <MenuCart products={products} />}
+      {products && <MenuCart products={products} openOrders={openOrders} />}
+      <Toaster />
     </MenuCartProvider>
   )
 }

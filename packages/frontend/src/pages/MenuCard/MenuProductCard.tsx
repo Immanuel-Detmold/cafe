@@ -1,4 +1,5 @@
 import { imgPlaceHolder } from '@/data/data'
+import { OrdersAndItemsV2 } from '@/data/useOrders'
 import { Product } from '@/data/useProducts'
 import { centsToEuro } from '@/generalHelperFunctions/currencyHelperFunction'
 import {
@@ -29,9 +30,16 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 
+import { getOpenOrdersCount } from '../NewOrder/utilityFunctions/getInventoryCount'
 import { CartItem, calcCartItemPrice, useMenuCart } from './MenuCartContext'
 
-const MenuProductCard = ({ product }: { product: Product }) => {
+const MenuProductCard = ({
+  product,
+  openOrders,
+}: {
+  product: Product
+  openOrders?: OrdersAndItemsV2
+}) => {
   const { addItem } = useMenuCart()
   const [open, setOpen] = useState(false)
   const [quantity, setQuantity] = useState(1)
@@ -40,6 +48,15 @@ const MenuProductCard = ({ product }: { product: Product }) => {
   const [currentPrice, setCurrentPrice] = useState(0)
 
   const typedProduct = product as ProductWithVariations
+
+  const openOrdersCount = openOrders
+    ? getOpenOrdersCount(product.id, openOrders)
+    : 0
+  const showStockOnMenu = product.show_stock_menu !== false
+  const availableStock =
+    showStockOnMenu && product.stock != null
+      ? product.stock - openOrdersCount
+      : null
 
   const handleExtraChange = (extra: ProductExtra, increment: boolean) => {
     setSelectExtras((prev) => {
@@ -117,9 +134,21 @@ const MenuProductCard = ({ product }: { product: Product }) => {
                 {centsToEuro(product.price)} €
               </p>
             </div>
-            <p className="merriweather-regular mt-1 text-left text-sm text-gray-500">
-              {product.short_description}
-            </p>
+            <div className="flex items-center justify-between">
+              <p className="merriweather-regular mt-1 text-left text-sm text-gray-500">
+                {product.short_description}
+              </p>
+              {availableStock != null && availableStock > 0 && (
+                <span className="mr-2 min-w-fit text-xs text-gray-400">
+                  Noch {availableStock} verfügbar
+                </span>
+              )}
+              {availableStock != null && availableStock <= 0 && (
+                <span className="mr-2 min-w-fit text-xs font-semibold text-red-500">
+                  Ausverkauft
+                </span>
+              )}
+            </div>
           </div>
         </div>
       </DialogTrigger>
@@ -127,7 +156,7 @@ const MenuProductCard = ({ product }: { product: Product }) => {
       <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-md">
         <div className="flex flex-col items-center">
           {/* Image Carousel */}
-          {product.images && product.images.length > 0 && (
+          {product.images && product.images.length > 0 ? (
             <Carousel className="max-w-x w-full">
               <CarouselContent>
                 {product.images.map((imgUrl, index) => (
@@ -160,6 +189,19 @@ const MenuProductCard = ({ product }: { product: Product }) => {
                 <CarouselNext className="mr-8 h-7 w-7" />
               )}
             </Carousel>
+          ) : (
+            <div className="mt-4 w-full p-1">
+              <AspectRatio
+                ratio={1 / 1}
+                className="rounded-md shadow-md shadow-black"
+              >
+                <img
+                  src={imgPlaceHolder}
+                  alt={product.name}
+                  className="mx-auto aspect-square rounded-md object-cover"
+                />
+              </AspectRatio>
+            </div>
           )}
 
           <h1 className="cinzel-decorative-regular mt-2 w-full text-2xl">
@@ -168,6 +210,18 @@ const MenuProductCard = ({ product }: { product: Product }) => {
           <p className="merriweather-regular mb-1 mt-2 w-full text-left text-sm text-gray-500">
             {product.description}
           </p>
+
+          {/* Available stock */}
+          {availableStock != null && availableStock > 0 && (
+            <p className="mt-1 w-full text-left text-sm text-gray-400">
+              Noch {availableStock} verfügbar
+            </p>
+          )}
+          {availableStock != null && availableStock <= 0 && (
+            <p className="mt-1 w-full text-left text-sm font-semibold text-red-500">
+              Ausverkauft
+            </p>
+          )}
 
           {/* Quantity */}
           <div className="mt-4 flex w-full select-none items-center justify-between">

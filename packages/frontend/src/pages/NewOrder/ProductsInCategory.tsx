@@ -133,21 +133,26 @@ const ProductsInCategory = (props: propsProductInCategory) => {
                 }}
               >
                 {/* If out of stock: blur background and show SOLD overlay */}
-                {(product.stock == null || product.stock <= 0) &&
-                  product.show_stock_colors && (
-                    <span className="pointer-events-none absolute inset-0 z-20 flex items-center justify-center">
-                      <span
-                        className="absolute inset-0"
-                        style={{
-                          backdropFilter: 'blur(2px)',
-                          background: 'rgba(0,0,0,0.15)',
-                        }}
-                      />
-                      <span className="relative z-30 rounded px-2 py-1 text-sm font-bold tracking-widest text-white">
-                        Ausverkauft
-                      </span>
+                {((product.show_stock_colors &&
+                  (product.stock == null || product.stock <= 0)) ||
+                  (product.show_stock_menu &&
+                    product.stock != null &&
+                    product.stock -
+                      getOpenOrdersCount(product.id, props.openOrders) <=
+                      0)) && (
+                  <span className="pointer-events-none absolute inset-0 z-[5] flex items-center justify-center">
+                    <span
+                      className="absolute inset-0"
+                      style={{
+                        backdropFilter: 'blur(2px)',
+                        background: 'rgba(0,0,0,0.15)',
+                      }}
+                    />
+                    <span className="relative z-[6] rounded px-2 py-1 text-sm font-bold tracking-widest text-white">
+                      Ausverkauft
                     </span>
-                  )}
+                  </span>
+                )}
 
                 <Avatar className="">
                   <AvatarImage
