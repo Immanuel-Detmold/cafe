@@ -56,6 +56,7 @@ const MenuCheckout = ({
   const widgetRef = useRef<{ unmount: () => void } | null>(null)
   const checkoutIdRef = useRef<string | null>(null)
   const mountedRef = useRef(true)
+  const verifyCalledRef = useRef(false)
 
   const total = totalPrice(products)
 
@@ -144,6 +145,8 @@ const MenuCheckout = ({
           if (!mountedRef.current) return
 
           if (type === 'success') {
+            if (verifyCalledRef.current) return
+            verifyCalledRef.current = true
             void handlePaymentSuccess()
           } else if (type === 'error' || type === 'fail') {
             setState('error')
@@ -209,16 +212,23 @@ const MenuCheckout = ({
       if (!mountedRef.current) return
       setState('error')
       setErrorMessage(
-        err instanceof Error ? err.message : 'Verifizierung fehlgeschlagen',
+        'Deine Zahlung wurde möglicherweise erfolgreich durchgeführt. Bitte überprüfe deine Bestellungen, bevor du es erneut versuchst.',
       )
     }
   }
 
   const handleRetry = () => {
+    // If we already called verify, retry the same checkout (idempotent)
+    if (verifyCalledRef.current && checkoutIdRef.current) {
+      verifyCalledRef.current = false
+      void handlePaymentSuccess()
+      return
+    }
     setErrorMessage('')
     widgetRef.current?.unmount()
     widgetRef.current = null
     checkoutIdRef.current = null
+    verifyCalledRef.current = false
     // Re-trigger the checkout flow by remounting
     setState('creating')
     window.location.reload()

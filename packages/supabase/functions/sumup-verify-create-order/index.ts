@@ -136,7 +136,29 @@ Deno.serve(async (req: Request) => {
     )
   }
 
-  // 4. Build categories and product_ids from DB data
+  // 4. Idempotency: check if an order for this checkout already exists
+  const { data: existingOrder } = await supabaseAdmin
+    .from('Orders')
+    .select('id, order_number')
+    .eq('checkout_id', checkout_id)
+    .maybeSingle()
+
+  if (existingOrder) {
+    // Order was already created (e.g. previous call succeeded but response was lost)
+    return new Response(
+      JSON.stringify({
+        success: true,
+        order_id: existingOrder.id,
+        order_number: existingOrder.order_number,
+      }),
+      {
+        status: 200,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      },
+    )
+  }
+
+  // 5. Build categories and product_ids from DB data
   const categories = [
     ...new Set(
       order_items
@@ -149,7 +171,7 @@ Deno.serve(async (req: Request) => {
   ]
   const product_ids = order_items.map((item) => item.product_id.toString())
 
-  // 5. Create order (order_number is auto-assigned by DB trigger)
+  // 6. Create order (order_number is auto-assigned by DB trigger)
   const { data: orderData, error: orderError } = await supabaseAdmin
     .from('Orders')
     .insert({
@@ -160,6 +182,7 @@ Deno.serve(async (req: Request) => {
       custom_price: false,
       categories,
       product_ids,
+      checkout_id,
     })
     .select('id, order_number')
     .single()
