@@ -221,6 +221,7 @@ export type Database = {
       Orders: {
         Row: {
           categories: string[]
+          checkout_id: string | null
           comment: string | null
           created_at: string
           custom_price: boolean
@@ -237,6 +238,7 @@ export type Database = {
         }
         Insert: {
           categories: string[]
+          checkout_id?: string | null
           comment?: string | null
           created_at?: string
           custom_price?: boolean
@@ -253,6 +255,7 @@ export type Database = {
         }
         Update: {
           categories?: string[]
+          checkout_id?: string | null
           comment?: string | null
           created_at?: string
           custom_price?: boolean

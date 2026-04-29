@@ -183,6 +183,7 @@ Deno.serve(async (req: Request) => {
       categories,
       product_ids,
       checkout_id,
+      revenue_stream_id: 1,
     })
     .select('id, order_number')
     .single()

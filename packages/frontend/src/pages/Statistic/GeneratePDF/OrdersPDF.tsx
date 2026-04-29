@@ -48,20 +48,21 @@ const styles = StyleSheet.create({
     borderBottomWidth: 0,
     borderRadius: 4,
     overflow: 'hidden',
+    marginBottom: 12,
   },
   tableRow: {
     margin: 'auto',
     flexDirection: 'row',
   },
   tableColHeader: {
-    width: '30%',
+    width: '40%',
     borderStyle: 'solid',
     borderWidth: 1,
     borderLeftWidth: 0,
     borderTopWidth: 0,
   },
   tableCol: {
-    width: '70%',
+    width: '60%',
     borderStyle: 'solid',
     borderWidth: 1,
     borderLeftWidth: 0,
@@ -77,6 +78,37 @@ const styles = StyleSheet.create({
     marginLeft: 4,
     marginTop: 5,
     fontSize: 10,
+  },
+  groupRow: {
+    margin: 'auto',
+    flexDirection: 'row',
+    backgroundColor: '#F0F0F0',
+  },
+  groupColHeader: {
+    width: '40%',
+    borderStyle: 'solid',
+    borderWidth: 1,
+    borderLeftWidth: 0,
+    borderTopWidth: 0,
+  },
+  groupCol: {
+    width: '60%',
+    borderStyle: 'solid',
+    borderWidth: 1,
+    borderLeftWidth: 0,
+    borderTopWidth: 0,
+  },
+  groupCellHeader: {
+    marginLeft: 4,
+    marginTop: 5,
+    fontSize: 12,
+    fontFamily: 'Helvetica-Bold',
+  },
+  groupCell: {
+    marginLeft: 4,
+    marginTop: 5,
+    fontSize: 10,
+    fontFamily: 'Helvetica-Bold',
   },
   image: {
     width: 30,
@@ -108,6 +140,24 @@ const OrdersPDF = ({
 }) => {
   const totalOrderCount = filteredData ? filteredData.length : 0
 
+  // Parse "12.34€" / "12,34€" -> number
+  const parseEuro = (val?: string): number => {
+    if (!val) return 0
+    const cleaned = val.replace('€', '').replace(',', '.').trim()
+    const n = parseFloat(cleaned)
+    return isNaN(n) ? 0 : n
+  }
+
+  const formatEuro = (n: number): string => `${n.toFixed(2)}€`
+
+  const sumCashGroup =
+    parseEuro(sumTotalCash) +
+    parseEuro(sumTotalPayPal) +
+    parseEuro(sumTotalCafeCard)
+
+  const sumTerminalOnlineGroup =
+    parseEuro(sumTotalTerminal) + parseEuro(sumTotalOnline)
+
   return (
     <Document>
       <Page style={styles.page}>
@@ -116,6 +166,8 @@ const OrdersPDF = ({
           <Text style={styles.headerText}> Umsatzübersicht Immanuel Café</Text>
         </Text>
         <Text style={styles.date}>vom {selectedDate}</Text>
+
+        {/* Tabelle 1: Anzahl Bestellungen + Gesamtumsatz */}
         <View style={styles.table}>
           <View style={styles.tableRow}>
             <View style={styles.tableColHeader}>
@@ -133,6 +185,10 @@ const OrdersPDF = ({
               <Text style={styles.tableCell}>{sumTotalTurnover}</Text>
             </View>
           </View>
+        </View>
+
+        {/* Tabelle 2: Bar + Café Karte + PayPal + Summe */}
+        <View style={styles.table}>
           <View style={styles.tableRow}>
             <View style={styles.tableColHeader}>
               <Text style={styles.tableCellHeader}>Umsatz Bar</Text>
@@ -157,6 +213,32 @@ const OrdersPDF = ({
               <Text style={styles.tableCell}>{sumTotalPayPal}</Text>
             </View>
           </View>
+          <View style={styles.groupRow}>
+            <View style={styles.groupColHeader}>
+              <Text style={styles.groupCellHeader}>
+                Summe Bar + Café Karte + PayPal
+              </Text>
+            </View>
+            <View style={styles.groupCol}>
+              <Text style={styles.groupCell}>{formatEuro(sumCashGroup)}</Text>
+            </View>
+          </View>
+        </View>
+
+        {/* Tabelle 3: Gutscheine */}
+        <View style={styles.table}>
+          <View style={styles.tableRow}>
+            <View style={styles.tableColHeader}>
+              <Text style={styles.tableCellHeader}>Umsatz Gutscheine</Text>
+            </View>
+            <View style={styles.tableCol}>
+              <Text style={styles.tableCell}>{sumTotalVouchers}</Text>
+            </View>
+          </View>
+        </View>
+
+        {/* Tabelle 4: Terminal + Online + Summe */}
+        <View style={styles.table}>
           <View style={styles.tableRow}>
             <View style={styles.tableColHeader}>
               <Text style={styles.tableCellHeader}>Umsatz Terminal</Text>
@@ -167,18 +249,22 @@ const OrdersPDF = ({
           </View>
           <View style={styles.tableRow}>
             <View style={styles.tableColHeader}>
-              <Text style={styles.tableCellHeader}>Umsatz Gutscheine</Text>
-            </View>
-            <View style={styles.tableCol}>
-              <Text style={styles.tableCell}>{sumTotalVouchers}</Text>
-            </View>
-          </View>
-          <View style={styles.tableRow}>
-            <View style={styles.tableColHeader}>
               <Text style={styles.tableCellHeader}>Umsatz Online</Text>
             </View>
             <View style={styles.tableCol}>
               <Text style={styles.tableCell}>{sumTotalOnline}</Text>
+            </View>
+          </View>
+          <View style={styles.groupRow}>
+            <View style={styles.groupColHeader}>
+              <Text style={styles.groupCellHeader}>
+                Summe Terminal + Online
+              </Text>
+            </View>
+            <View style={styles.groupCol}>
+              <Text style={styles.groupCell}>
+                {formatEuro(sumTerminalOnlineGroup)}
+              </Text>
             </View>
           </View>
         </View>
