@@ -1,0 +1,32 @@
+# Dependencies
+node_modules/
+**/node_modules/
+
+# Build outputs
+packages/frontend/dist/
+**/dist/
+
+# Environment files (never bake secrets into the image)
+.env
+.env.*
+!.env.example
+
+# Supabase local dev
+packages/supabase/
+supabase/.branches/
+supabase/.temp/
+
+# Dev/test artifacts
+coverage/
+**/.turbo/
+**/tsconfig.tsbuildinfo
+
+# Editor & OS
+.vscode/
+.idea/
+.DS_Store
+*.log
+
+# Git
+.git/
+.gitignore
