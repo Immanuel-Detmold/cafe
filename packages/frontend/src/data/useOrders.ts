@@ -259,6 +259,23 @@ export const useOrdersAndItemsQueryV2 = ({
     },
   })
 
+// Fetches only the created_at of the most recent finished order
+export const useLastOrderDateQuery = () =>
+  useQuery<string | null, Error>({
+    queryKey: ['lastOrderDate'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('Orders')
+        .select('created_at')
+        .eq('status', 'finished')
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .maybeSingle()
+      if (error) throw error
+      return data?.created_at ?? null
+    },
+  })
+
 export const useChageOrderStatusMutation = (orderId: number) => {
   return useMutation({
     mutationFn: async (newStatus: OrderStatus) => {
@@ -340,7 +357,7 @@ export const useUpdateOrderItemStatusMutation = () => {
 }
 
 // Sort OrderItems after product_name and then id
-const sortDataOrderItems = (orderAndItems: OrdersAndItems) => {
+const sortDataOrderItems = (orderAndItems: OrdersAndItems): OrdersAndItems => {
   const formatedData = orderAndItems.map((order) => {
     const sorted = order.OrderItems.sort((a, b) => {
       // Compare by product_name

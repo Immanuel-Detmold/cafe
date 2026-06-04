@@ -119,7 +119,7 @@ const styles = StyleSheet.create({
 
 const OrdersPDF = ({
   filteredData,
-  selectedDate,
+  dateRangeLabel,
   sumTotalTurnover,
   sumTotalCash,
   sumTotalPayPal,
@@ -127,9 +127,11 @@ const OrdersPDF = ({
   sumTotalCafeCard,
   sumTotalVouchers,
   sumTotalOnline,
+  sumExpenses,
+  profit,
 }: {
   filteredData?: OrdersAndItems
-  selectedDate?: string
+  dateRangeLabel?: string
   sumTotalTurnover?: string
   sumTotalCash?: string
   sumTotalPayPal?: string
@@ -137,6 +139,8 @@ const OrdersPDF = ({
   sumTotalCafeCard?: string
   sumTotalVouchers?: string
   sumTotalOnline?: string
+  sumExpenses?: string
+  profit?: string
 }) => {
   const totalOrderCount = filteredData ? filteredData.length : 0
 
@@ -165,7 +169,7 @@ const OrdersPDF = ({
           <Image style={styles.image} src={cafeImage} />
           <Text style={styles.headerText}> Umsatzübersicht Immanuel Café</Text>
         </Text>
-        <Text style={styles.date}>vom {selectedDate}</Text>
+        <Text style={styles.date}>{dateRangeLabel}</Text>
 
         {/* Tabelle 1: Anzahl Bestellungen + Gesamtumsatz */}
         <View style={styles.table}>
@@ -265,6 +269,28 @@ const OrdersPDF = ({
               <Text style={styles.groupCell}>
                 {formatEuro(sumTerminalOnlineGroup)}
               </Text>
+            </View>
+          </View>
+        </View>
+
+        {/* Tabelle 5: Ausgaben + Gewinn */}
+        <View style={styles.table}>
+          <View style={styles.tableRow}>
+            <View style={styles.tableColHeader}>
+              <Text style={styles.tableCellHeader}>Ausgaben</Text>
+            </View>
+            <View style={styles.tableCol}>
+              <Text style={styles.tableCell}>{sumExpenses}</Text>
+            </View>
+          </View>
+          <View style={styles.groupRow}>
+            <View style={styles.groupColHeader}>
+              <Text style={styles.groupCellHeader}>
+                Gewinn (Umsatz - Ausgaben)
+              </Text>
+            </View>
+            <View style={styles.groupCol}>
+              <Text style={styles.groupCell}>{profit}</Text>
             </View>
           </View>
         </View>

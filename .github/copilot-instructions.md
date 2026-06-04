@@ -20,6 +20,11 @@ Skills are in .agents/skills
 - **Dates**: date-fns v3
 - **Testing**: Vitest
 
+## Random
+
+So kannst du db types neu generieren:
+cd /Users/ronny/Documents/GitHub/cafe/packages/frontend && pnpm run dev:generate:ts 2>&1
+
 ## Path Alias
 
 `@/` → `packages/frontend/src/`

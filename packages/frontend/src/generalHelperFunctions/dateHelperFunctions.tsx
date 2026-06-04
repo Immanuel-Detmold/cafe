@@ -167,6 +167,51 @@ export const getEndOfMonth = (date: Date) => {
   return endOfMonth
 }
 
+// Returns the start of the week (Monday) from input Date
+export const getStartOfWeek = (date: Date) => {
+  const startOfWeek = new Date(date)
+  const day = startOfWeek.getDay() // 0 = Sunday, 1 = Monday, ...
+  // Calculate how many days to subtract to reach Monday
+  const diff = day === 0 ? 6 : day - 1
+  startOfWeek.setDate(startOfWeek.getDate() - diff)
+  startOfWeek.setHours(0)
+  startOfWeek.setMinutes(0)
+  startOfWeek.setSeconds(0)
+  startOfWeek.setMilliseconds(0)
+  return startOfWeek
+}
+
+// Returns the end of the week (Sunday) from input Date
+export const getEndOfWeek = (date: Date) => {
+  const endOfWeek = getStartOfWeek(date)
+  endOfWeek.setDate(endOfWeek.getDate() + 6)
+  endOfWeek.setHours(23)
+  endOfWeek.setMinutes(59)
+  endOfWeek.setSeconds(59)
+  endOfWeek.setMilliseconds(999)
+  return endOfWeek
+}
+
+// Returns start of the given day (00:00:00.000)
+export const getStartOfDayFromDate = (date: Date): Date => {
+  const start = new Date(date)
+  start.setHours(0)
+  start.setMinutes(0)
+  start.setSeconds(0)
+  start.setMilliseconds(0)
+  return start
+}
+
+// Returns end of the given day (23:59:59.999)
+export const getEndOfDayFromDate = (date: Date): Date => {
+  const end = new Date(date)
+  end.setHours(23)
+  end.setMinutes(59)
+  end.setSeconds(59)
+  end.setMilliseconds(999)
+  return end
+}
+
 // Format 2024-04-17T05:58:16.36199+00:00 -> 17.04.2024
 export const formatDate = (date: string) => {
   const dateObject = new Date(date)

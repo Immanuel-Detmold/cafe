@@ -10,9 +10,15 @@ export type CafeCard = Database['public']['Tables']['CafeCards']['Row']
 export type CafeCardInsert = Database['public']['Tables']['CafeCards']['Insert']
 
 // Get Cafe Cards
-export const useCafeCards = ({ startDate }: { startDate?: string }) =>
+export const useCafeCards = ({
+  startDate,
+  endDate,
+}: {
+  startDate?: string
+  endDate?: string
+}) =>
   useQuery({
-    queryKey: ['cafeCards', startDate],
+    queryKey: ['cafeCards', startDate, endDate],
     queryFn: async () => {
       let query = supabase
         .from('CafeCards')
@@ -21,6 +27,9 @@ export const useCafeCards = ({ startDate }: { startDate?: string }) =>
 
       if (startDate) {
         query = query.gte('created_at', startDate)
+      }
+      if (endDate) {
+        query = query.lte('created_at', endDate)
       }
 
       const { data, error } = await query
@@ -53,6 +62,58 @@ export const useCreateCafeCard = () =>
       await saveUserAction({
         action: data,
         short_description: `Created Card: ${centsToEuro(data[0]?.price ?? 0)}`,
+      })
+    },
+  })
+
+export const useCreateCafeCards = () =>
+  useMutation({
+    mutationFn: async (cafeCards: CafeCardInsert[]) => {
+      const groupId = crypto.randomUUID()
+      const cardsWithGroup = cafeCards.map((c) => ({
+        ...c,
+        purchase_group_id: groupId,
+      }))
+      const { data, error } = await supabase
+        .from('CafeCards')
+        .insert(cardsWithGroup)
+        .select()
+
+      if (error) {
+        throw error
+      }
+      return data
+    },
+    onSuccess: async (data) => {
+      await queryClient.invalidateQueries({ queryKey: ['cafeCards'] })
+
+      await saveUserAction({
+        action: data,
+        short_description: `Created ${data.length} Cards: ${data.map((c) => `${centsToEuro(c.price)}€`).join(', ')}`,
+      })
+    },
+  })
+
+export const useDeleteCafeCards = () =>
+  useMutation({
+    mutationFn: async (ids: number[]) => {
+      const { data, error } = await supabase
+        .from('CafeCards')
+        .delete()
+        .in('id', ids)
+        .select()
+
+      if (error) {
+        throw error
+      }
+      return data
+    },
+    onSuccess: async (data) => {
+      await queryClient.invalidateQueries({ queryKey: ['cafeCards'] })
+
+      await saveUserAction({
+        action: data,
+        short_description: `Deleted ${data.length} Cards`,
       })
     },
   })

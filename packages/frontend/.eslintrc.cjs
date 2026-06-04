@@ -28,6 +28,13 @@ module.exports = {
     '@typescript-eslint/no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
     '@typescript-eslint/no-throw-literal': 'off',
     '@typescript-eslint/no-misused-promises': 'off',
+    // Disabled: recommended-type-checked produces false positives with Supabase JS v2
+    // query builder types (complex nested inference). tsc --noEmit is the source of truth.
+    '@typescript-eslint/no-unsafe-assignment': 'off',
+    '@typescript-eslint/no-unsafe-call': 'off',
+    '@typescript-eslint/no-unsafe-return': 'off',
+    '@typescript-eslint/no-unsafe-argument': 'off',
+    '@typescript-eslint/no-unsafe-member-access': 'off',
     'react/prop-types': 'off',
   },
   settings: {

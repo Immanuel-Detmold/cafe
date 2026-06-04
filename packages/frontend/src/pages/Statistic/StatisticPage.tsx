@@ -1,28 +1,23 @@
-import { MONTHS } from '@/data/data'
 import { useCafeCards } from '@/data/useCafeCard'
 import { useExpensesQuery } from '@/data/useExpense'
-import { useOrderYears, useOrdersAndItemsQueryV2 } from '@/data/useOrders'
+import {
+  useLastOrderDateQuery,
+  useOrdersAndItemsQueryV2,
+} from '@/data/useOrders'
 import { useRevenueStreamsQuery } from '@/data/useRevenueStreams.tsx'
 import { useUser } from '@/data/useUser'
 import { centsToEuro } from '@/generalHelperFunctions/currencyHelperFunction'
 import {
   convertToSupabaseDate,
-  formatDate,
-  getCurrentMonthStartDate,
-  getEndOfDay,
-  getEndOfMonth,
+  getEndOfDayFromDate,
   getEndOfYear,
-  getStartOfDay,
-  getStartOfMonth,
+  getStartOfDayFromDate,
   getStartOfYear,
-  getThisYear,
 } from '@/generalHelperFunctions/dateHelperFunctions'
 import { Label } from '@radix-ui/react-label'
 import { PDFDownloadLink } from '@react-pdf/renderer'
-import { Layers3 } from 'lucide-react'
-import { FileTextIcon, Loader2Icon } from 'lucide-react'
-import { CreditCard } from 'lucide-react'
-import { useEffect, useMemo, useState } from 'react'
+import { CreditCard, FileTextIcon, Layers3, Loader2Icon } from 'lucide-react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 
 import { Button } from '@/components/ui/button'
 import {
@@ -35,15 +30,20 @@ import {
 import { Switch } from '@/components/ui/switch'
 
 import Open from '../Open/Open'
-import DatePicker from './DatePicker'
+import DateRangeControls, {
+  DateRange,
+  Granularity,
+  buildRange,
+} from './DateRangeControls'
 import OrdersPDF from './GeneratePDF/OrdersPDF'
 import OrderTable from './OrderTable'
+import StatisticCharts from './StatisticCharts'
 import {
-  getDistinctDates,
   getSumCafeCards,
   getSumCafeCardsGrouped,
   getSumCafeCardsOrders,
   getSumOrdersPayMethod,
+  getSumPriceCents,
   getSumPriceData,
 } from './helperFunctions'
 
@@ -51,21 +51,29 @@ const StatisticPage = () => {
   // States
   const [userRole, setUserRole] = useState('user')
   const [showAllOrders, setShowAllOrders] = useState(false)
-  const [selectedDate, setSelectedDate] = useState('')
   const [userName, setUserName] = useState('')
+  const { user } = useUser()
+  const isAdmin = userRole === 'admin'
+
   const { data: revenueStreams } = useRevenueStreamsQuery()
   const [selectedRevenueStream, setSelectedRevenueStream] = useState<
     number | string | undefined
   >('all')
-  const [selectedYear, setSelectedYear] = useState<string>(
-    new Date().getFullYear().toString(),
-  )
-  // Mini Functions
-  const { monthDataFormat } = getCurrentMonthStartDate()
-  const { yearDataFormat, year } = getThisYear()
 
-  const { user } = useUser()
-  const thisMonth = MONTHS[new Date().getMonth()]
+  // Time range (defaults to today, updated to last revenue day once data loads)
+  const [granularity, setGranularity] = useState<Granularity>('day')
+  const [range, setRange] = useState<DateRange>(() =>
+    buildRange('day', new Date()),
+  )
+  const rangeInitialized = useRef(false)
+
+  // Fetch most recent order date to pre-select it as the default day
+  const { data: lastOrderDate } = useLastOrderDateQuery()
+
+  const revenueStreamId =
+    selectedRevenueStream === 'all'
+      ? undefined
+      : (selectedRevenueStream as number)
 
   const getRevenueStreamIcon = () => {
     if (selectedRevenueStream === 'all') {
@@ -74,188 +82,138 @@ const StatisticPage = () => {
     return revenueStreams?.find((s) => s.id === selectedRevenueStream)?.icon
   }
 
-  // Calculate Years
-  const { data: oldestOrder } = useOrderYears()
+  // Year boundaries derived from the selected range (top KPIs follow context)
+  const rangeYear = range.from.getFullYear()
+  const yearStart = useMemo(
+    () => convertToSupabaseDate(getStartOfYear(new Date(rangeYear, 0, 1))),
+    [rangeYear],
+  )
+  const yearEnd = useMemo(
+    () => convertToSupabaseDate(getEndOfYear(new Date(rangeYear, 0, 1))),
+    [rangeYear],
+  )
 
-  const years = useMemo(() => {
-    const currentYear = new Date().getFullYear()
-    if (!oldestOrder?.created_at) return [currentYear.toString()]
-    const startYear = new Date(oldestOrder.created_at).getFullYear()
-    const yearsArr = []
-    for (let y = startYear; y <= currentYear; y++) {
-      yearsArr.push(y.toString())
-    }
-    return yearsArr.reverse()
-  }, [oldestOrder])
+  // Range boundaries in Supabase format
+  const rangeStart = convertToSupabaseDate(range.from)
+  const rangeEnd = convertToSupabaseDate(range.to)
 
-  // Data
-  const { data: ordersMonth, isLoading: l1 } = useOrdersAndItemsQueryV2({
+  // Data: selected range
+  const { data: ordersRange, isLoading: lRange } = useOrdersAndItemsQueryV2({
     statusList: ['finished'],
-    searchTerm: '',
-    categories: [],
-    products: [],
-    startDate: monthDataFormat,
-    revenue_stream_id:
-      selectedRevenueStream === 'all'
-        ? undefined
-        : (selectedRevenueStream as number),
+    startDate: rangeStart,
+    endDate: rangeEnd,
+    revenue_stream_id: revenueStreamId,
   })
 
-  const { data: ordersYear, isLoading: l2 } = useOrdersAndItemsQueryV2({
+  const { data: expensesRange, isLoading: lExpRange } = useExpensesQuery({
+    startDate: rangeStart,
+    endDate: rangeEnd,
+  })
+
+  // Data: selected year (top KPIs)
+  const { data: ordersYear, isLoading: lYear } = useOrdersAndItemsQueryV2({
     statusList: ['finished'],
-    searchTerm: '',
-    categories: [],
-    products: [],
-    startDate: yearDataFormat,
-    revenue_stream_id:
-      selectedRevenueStream === 'all'
-        ? undefined
-        : (selectedRevenueStream as number),
+    startDate: yearStart,
+    endDate: yearEnd,
+    revenue_stream_id: revenueStreamId,
   })
 
-  const { data: expensesYear, isLoading: l6 } = useExpensesQuery({
-    startDate: convertToSupabaseDate(getStartOfYear(new Date())),
-    endDate: convertToSupabaseDate(getEndOfYear(new Date())),
+  const { data: expensesYear, isLoading: lExpYear } = useExpensesQuery({
+    startDate: yearStart,
+    endDate: yearEnd,
   })
 
-  const { data: expensesThisMonth, isLoading: l7 } = useExpensesQuery({
-    startDate: convertToSupabaseDate(getStartOfMonth(new Date())),
-    endDate: convertToSupabaseDate(getEndOfMonth(new Date())),
-  })
+  // Cafe cards (all time)
+  const { data: cafeCardsAllTime } = useCafeCards({})
 
-  // Gets all Cafe Cards from this year
-  const { data: cafeCardsAllTime, isLoading: l3 } = useCafeCards({})
+  // ---- Top KPIs (year) ----
+  const yearRevenueCents = useMemo(
+    () => (ordersYear ? getSumPriceCents(ordersYear) : 0),
+    [ordersYear],
+  )
+  const yearExpenseCents = useMemo(
+    () => (expensesYear ? getSumPriceCents(expensesYear) : 0),
+    [expensesYear],
+  )
+  const yearProfitCents = yearRevenueCents - yearExpenseCents
 
-  // Returns all Orders
-  const { data: orders, isLoading: l4 } = useOrdersAndItemsQueryV2({
-    revenue_stream_id:
-      selectedRevenueStream === 'all'
-        ? undefined
-        : (selectedRevenueStream as number),
-    startDate: convertToSupabaseDate(
-      getStartOfYear(new Date(parseInt(selectedYear), 0, 1)),
-    ),
-    endDate: convertToSupabaseDate(
-      getEndOfYear(new Date(parseInt(selectedYear), 0, 1)),
-    ),
-  })
-
-  const { data: filteredData, isLoading: l5 } = useOrdersAndItemsQueryV2({
-    statusList: ['finished'],
-    startDate: getStartOfDay(selectedDate || '2000-01-01T00:00:00')
-      .finalDateString,
-    endDate: getEndOfDay(selectedDate || '2024-05-01T00:00:00').endOfDayString,
-    revenue_stream_id:
-      selectedRevenueStream === 'all'
-        ? undefined
-        : (selectedRevenueStream as number),
-  })
-
-  // Get distinct dates
-  const distinctDates = useMemo(() => {
-    if (!orders) return []
-    return getDistinctDates(orders)
-  }, [orders])
-
-  // Sum This Month
-  const sumMonth = useMemo(() => {
-    if (!ordersMonth) return '...'
-    return getSumPriceData(ordersMonth)
-  }, [ordersMonth])
-
-  // Sum This Year
-  const sumYear = useMemo(() => {
-    if (!ordersYear) return '...'
-    return getSumPriceData(ordersYear)
-  }, [ordersYear])
-
-  // Sum expense this month
-  const sumThisMonthExpense = useMemo(() => {
-    if (!expensesThisMonth) return '...'
-    return getSumPriceData(expensesThisMonth)
-  }, [expensesThisMonth])
-
-  // Sum expense this year
-  const sumYearExpenses = useMemo(() => {
-    if (!expensesYear) return '...'
-    return getSumPriceData(expensesYear)
-  }, [expensesYear])
-
-  // Sum Cafe Cards
-  const sumCafeCards = useMemo(() => {
-    if (!cafeCardsAllTime) return 0
-    return getSumCafeCards(cafeCardsAllTime)
-  }, [cafeCardsAllTime])
-
-  // Sum Cafe Cards seperated by ammount. 5€ and 10€
+  // ---- Cafe cards ----
+  const sumCafeCards = useMemo(
+    () => (cafeCardsAllTime ? getSumCafeCards(cafeCardsAllTime) : 0),
+    [cafeCardsAllTime],
+  )
   const { tenCardCount, fiveCardCount } = useMemo(() => {
     if (!cafeCardsAllTime) return { tenCardCount: '...', fiveCardCount: '...' }
     return getSumCafeCardsGrouped(cafeCardsAllTime)
   }, [cafeCardsAllTime])
+  const sumYearCafeCardsPayments = useMemo(
+    () => (ordersYear ? getSumCafeCardsOrders(ordersYear) : 0),
+    [ordersYear],
+  )
 
-  // Sum Payed with Cafe Card this Year
-  const sumYearCafeCardsPayments = useMemo(() => {
-    if (!orders) return 0
-    return getSumCafeCardsOrders(orders)
-  }, [orders])
+  // ---- Range KPIs ----
+  const rangeRevenueCents = useMemo(
+    () => (ordersRange ? getSumPriceCents(ordersRange) : 0),
+    [ordersRange],
+  )
+  const rangeExpenseCents = useMemo(
+    () => (expensesRange ? getSumPriceCents(expensesRange) : 0),
+    [expensesRange],
+  )
+  const rangeProfitCents = rangeRevenueCents - rangeExpenseCents
 
-  // Sum Count Orders
-  const sumCountOrders = useMemo(() => {
-    if (!filteredData) return '...'
-    return filteredData.length
-  }, [filteredData])
+  const sumCountOrders = ordersRange ? ordersRange.length : '...'
+  const sumTotalTurnover = ordersRange
+    ? getSumPriceData(ordersRange) + '€'
+    : '...'
+  const sumTotalCash = ordersRange
+    ? getSumOrdersPayMethod(ordersRange, 'cash') + '€'
+    : '...'
+  const sumTotalPayPal = ordersRange
+    ? getSumOrdersPayMethod(ordersRange, 'paypal') + '€'
+    : '...'
+  const sumTotalTerminal = ordersRange
+    ? getSumOrdersPayMethod(ordersRange, 'terminal') + '€'
+    : '...'
+  const sumTotalCafeCard = ordersRange
+    ? getSumOrdersPayMethod(ordersRange, 'cafe_card') + '€'
+    : '...'
+  const sumTotalVouchers = ordersRange
+    ? getSumOrdersPayMethod(ordersRange, 'voucher') + '€'
+    : '...'
+  const sumTotalOnline = ordersRange
+    ? getSumOrdersPayMethod(ordersRange, 'online') + '€'
+    : '...'
+  const sumRangeExpenses = centsToEuro(rangeExpenseCents) + '€'
+  const sumRangeProfit = centsToEuro(rangeProfitCents) + '€'
 
-  // Sum Total Turnover for selected Date
-  const sumTotalTurnover = useMemo(() => {
-    if (!filteredData) return '...'
-    return getSumPriceData(filteredData) + '€'
-  }, [filteredData])
+  // Label for the selected range
+  const rangeLabel = useMemo(() => {
+    const fromStr = range.from.toLocaleDateString('de-DE')
+    const toStr = range.to.toLocaleDateString('de-DE')
+    if (granularity === 'day') return `vom ${fromStr}`
+    return `${fromStr} – ${toStr}`
+  }, [range, granularity])
 
-  // Sum Total Cash
-  const sumTotalCash = useMemo(() => {
-    if (!filteredData) return '...'
-    return getSumOrdersPayMethod(filteredData, 'cash') + '€'
-  }, [filteredData])
+  const pdfFileName = useMemo(() => {
+    const fromIso = range.from.toISOString().split('T')[0]
+    const toIso = range.to.toISOString().split('T')[0]
+    return `umsatz_${fromIso}_${toIso}.pdf`
+  }, [range])
 
-  // Sum Total PayPal
-  const sumTotalPayPal = useMemo(() => {
-    if (!filteredData) return '...'
-    return getSumOrdersPayMethod(filteredData, 'paypal') + '€'
-  }, [filteredData])
+  const isLoading = lRange || lExpRange || lYear || lExpYear
 
-  // Sum Total Terminal
-  const sumTotalTerminal = useMemo(() => {
-    if (!filteredData) return '...'
-    return getSumOrdersPayMethod(filteredData, 'terminal') + '€'
-  }, [filteredData])
-
-  // Sum Total Cafe Card
-  const sumTotalCafeCard = useMemo(() => {
-    if (!filteredData) return '...'
-    return getSumOrdersPayMethod(filteredData, 'cafe_card') + '€'
-  }, [filteredData])
-
-  // Sum total vouchers
-  const sumTotalVouchers = useMemo(() => {
-    if (!filteredData) return '...'
-    return getSumOrdersPayMethod(filteredData, 'voucher') + '€'
-  }, [filteredData])
-
-  // Sum total online
-  const sumTotalOnline = useMemo(() => {
-    if (!filteredData) return '...'
-    return getSumOrdersPayMethod(filteredData, 'online') + '€'
-  }, [filteredData])
+  // Handle range changes (ignored for non-admin users)
+  const handleRangeChange = (
+    newRange: DateRange,
+    newGranularity: Granularity,
+  ) => {
+    if (!isAdmin) return
+    setRange(newRange)
+    setGranularity(newGranularity)
+  }
 
   // UseEffect
-  // Set default revenue stream if not selected
-
-  useEffect(() => {
-    if (distinctDates.length > 0 && distinctDates !== undefined) {
-      setSelectedDate(distinctDates[0] || '')
-    }
-  }, [distinctDates])
-
   useEffect(() => {
     const role = user?.user_metadata?.role as string
     const name = user?.user_metadata?.name as string
@@ -267,14 +225,36 @@ const StatisticPage = () => {
     }
   }, [user])
 
+  // Non-admin users are always pinned to today
+  useEffect(() => {
+    if (userRole !== 'admin') {
+      setRange(buildRange('day', new Date()))
+      setGranularity('day')
+    }
+  }, [userRole])
+
+  // Once both user and last order date are known, set the initial range (once)
+  useEffect(() => {
+    if (rangeInitialized.current) return
+    if (lastOrderDate === undefined) return // still loading
+    if (!user) return // user not yet loaded
+    rangeInitialized.current = true
+    if (lastOrderDate) {
+      setRange(buildRange('day', new Date(lastOrderDate)))
+      setGranularity('day')
+    }
+  }, [lastOrderDate, user])
+
   return (
     <>
-      {l1 && l2 && l3 && l4 && l5 && l6 && l7 && (
-        <Label className="mt-2 flex font-bold">
-          <Loader2Icon className="animate-spin" />{' '}
-          <span className="ml-1">Daten werden geladen...</span>
-        </Label>
-      )}
+      <Label
+        className="mt-2 flex h-6 items-center font-bold transition-opacity duration-200"
+        style={{ opacity: isLoading ? 1 : 0, pointerEvents: 'none' }}
+        aria-live="polite"
+      >
+        <Loader2Icon className="h-4 w-4 animate-spin" />
+        <span className="ml-1">Daten werden geladen...</span>
+      </Label>
       <div className="flex flex-col items-center">
         {
           <>
@@ -315,54 +295,41 @@ const StatisticPage = () => {
               </div>
             </div>
 
+            {/* Top KPIs: selected year */}
             <div className="mt-2 grid w-full grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-4">
-              {/* Current month */}
+              {/* Turnover year */}
               <div className="grid grid-cols-1 gap-1 rounded-lg border p-2">
-                <Label className="text-base">Dieser Monat ({thisMonth})</Label>
+                <Label className="text-base">Jahr {rangeYear}</Label>
                 <Label className="text-2xl font-bold">
-                  {ordersMonth ? sumMonth.toString() + '€' : '...'}
+                  {ordersYear ? centsToEuro(yearRevenueCents) + '€' : '...'}
                 </Label>
                 <div className="flex items-center gap-2">
-                  {' '}
                   {getRevenueStreamIcon()}
                   <Label className="text-muted-foreground">Umsatz</Label>
                 </div>
               </div>
 
-              {/* Turnover current year */}
+              {/* Expense year */}
               <div className="grid grid-cols-1 gap-1 rounded-lg border p-2">
-                <Label className="text-base">Dieses Jahr ({year})</Label>
+                <Label className="text-base">Jahr {rangeYear}</Label>
                 <Label className="text-2xl font-bold">
-                  {ordersYear ? sumYear.toString() + '€' : '...'}
+                  {expensesYear ? centsToEuro(yearExpenseCents) + '€' : '...'}
                 </Label>
-                <div className="flex items-center gap-2">
-                  {' '}
-                  {getRevenueStreamIcon()}
-                  <Label className="text-muted-foreground">Umsatz</Label>
-                </div>
+                <Label className="text-muted-foreground">Ausgaben</Label>
               </div>
 
-              {/* Expense current month */}
+              {/* Profit year */}
               <div className="grid grid-cols-1 gap-1 rounded-lg border p-2">
-                <Label className="text-base">Dieser Monat ({thisMonth})</Label>
+                <Label className="text-base">Jahr {rangeYear}</Label>
                 <Label className="text-2xl font-bold">
-                  {expensesThisMonth
-                    ? sumThisMonthExpense.toString() + '€'
+                  {ordersYear && expensesYear
+                    ? centsToEuro(yearProfitCents) + '€'
                     : '...'}
                 </Label>
-                <Label className="text-muted-foreground">Ausgaben</Label>
+                <Label className="text-muted-foreground">Gewinn</Label>
               </div>
 
-              {/* Expense current year */}
-              <div className="grid grid-cols-1 gap-1 rounded-lg border p-2">
-                <Label className="text-base">Dieses Jahr ({year})</Label>
-                <Label className="text-2xl font-bold">
-                  {expensesYear ? sumYearExpenses.toString() + '€' : '...'}
-                </Label>
-                <Label className="text-muted-foreground">Ausgaben</Label>
-              </div>
-
-              {/* Money not used and still on cards */}
+              {/* Money still on cards */}
               <div className="grid grid-cols-1 gap-1 rounded-lg border p-2">
                 <Label className="text-base">Übriges Guthaben auf Karten</Label>
                 <Label className="text-2xl font-bold">
@@ -373,9 +340,7 @@ const StatisticPage = () => {
                     : '...'}
                 </Label>
                 <div className="flex items-center gap-2">
-                  {' '}
-                  {/* 🆕 Changed from Label to div */}
-                  <CreditCard className="h-4 w-4" /> {/* 🆕 Add card icon */}
+                  <CreditCard className="h-4 w-4" />
                   <Label className="text-muted-foreground">Summe</Label>
                 </div>
               </div>
@@ -389,9 +354,7 @@ const StatisticPage = () => {
                     : '...'}
                 </Label>
                 <div className="flex items-center gap-2">
-                  {' '}
-                  {/* 🆕 Changed from Label to div */}
-                  <CreditCard className="h-4 w-4" /> {/* 🆕 Add card icon */}
+                  <CreditCard className="h-4 w-4" />
                   <Label className="text-muted-foreground">
                     {cafeCardsAllTime ? (
                       <Label className="text-muted-foreground">
@@ -405,50 +368,41 @@ const StatisticPage = () => {
               </div>
             </div>
 
-            {/* Select Date and Year to filter */}
-            <div className="col-span-2 mt-4 flex w-full items-end gap-2">
-              <div className="flex flex-col space-y-1.5">
-                <Label htmlFor="year-select" className="font-black">
-                  Jahr
-                </Label>
-                <Select
-                  value={selectedYear}
-                  onValueChange={(value) => setSelectedYear(value)}
-                >
-                  <SelectTrigger id="year-select" className="w-[120px]">
-                    <SelectValue placeholder="Jahr" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {years.map((year) => (
-                      <SelectItem key={year} value={year}>
-                        {year}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+            {/* Time range selection */}
+            {isAdmin ? (
+              <div className="mt-4 flex w-full flex-col gap-2">
+                <DateRangeControls
+                  granularity={granularity}
+                  range={range}
+                  onChange={handleRangeChange}
+                />
               </div>
-              <div className="flex w-full flex-col space-y-1.5">
-                <Label className="font-black">Datum</Label>
-                {l4 ? (
-                  <div className="border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring flex h-10 w-full items-center justify-center rounded-md border px-3 py-2 text-sm file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50">
-                    <Loader2Icon className="mr-2 h-4 w-4 animate-spin" />
-                    Lade Daten...
-                  </div>
-                ) : (
-                  <DatePicker
-                    distinctDates={distinctDates}
-                    selectedDate={selectedDate || ''}
-                    setSelectedDate={setSelectedDate}
-                  />
+            ) : (
+              <div className="text-muted-foreground mt-4 text-sm">
+                {range.from.toLocaleDateString('de-DE', {
+                  day: '2-digit',
+                  month: '2-digit',
+                  year: 'numeric',
+                })}
+                {range.from.toDateString() !== range.to.toDateString() && (
+                  <>
+                    {' '}
+                    –{' '}
+                    {range.to.toLocaleDateString('de-DE', {
+                      day: '2-digit',
+                      month: '2-digit',
+                      year: 'numeric',
+                    })}
+                  </>
                 )}
               </div>
-            </div>
+            )}
           </>
         }
 
-        {selectedDate && filteredData && (
+        {ordersRange && (
           <div className="w-full">
-            {/* Lower Block (Under Selected Date) */}
+            {/* Range KPIs */}
             <div className="mt-2 grid w-full grid-cols-2 gap-2 md:grid-cols-2 lg:grid-cols-4">
               {/* Count of Orders */}
               <div className="grid grid-cols-1 gap-1 rounded-lg border p-2">
@@ -510,6 +464,16 @@ const StatisticPage = () => {
                 </div>
               </div>
 
+              {/* Sum online */}
+              <div className="grid grid-cols-1 gap-1 rounded-lg border p-2">
+                <Label className="text-base">Online</Label>
+                <Label className="text-2xl font-bold">{sumTotalOnline}</Label>
+                <div className="flex items-center gap-2">
+                  {getRevenueStreamIcon()}
+                  <Label className="text-muted-foreground">Umsatz</Label>
+                </div>
+              </div>
+
               {/* Sum vouchers */}
               <div className="grid grid-cols-1 gap-1 rounded-lg border p-2">
                 <Label className="text-base">Gutscheine</Label>
@@ -520,25 +484,44 @@ const StatisticPage = () => {
                 </div>
               </div>
 
-              {/* Sum online */}
+              {/* Expenses range */}
               <div className="grid grid-cols-1 gap-1 rounded-lg border p-2">
-                <Label className="text-base">Online</Label>
-                <Label className="text-2xl font-bold">{sumTotalOnline}</Label>
-                <div className="flex items-center gap-2">
-                  {getRevenueStreamIcon()}
-                  <Label className="text-muted-foreground">Umsatz</Label>
-                </div>
+                <Label className="text-base">Ausgaben</Label>
+                <Label className="text-2xl font-bold">
+                  {expensesRange ? sumRangeExpenses : '...'}
+                </Label>
+                <Label className="text-muted-foreground">Zeitraum</Label>
+              </div>
+
+              {/* Profit range */}
+              <div className="grid grid-cols-1 gap-1 rounded-lg border p-2">
+                <Label className="text-base">Gewinn</Label>
+                <Label className="text-2xl font-bold">
+                  {ordersRange && expensesRange ? sumRangeProfit : '...'}
+                </Label>
+                <Label className="text-muted-foreground">
+                  Umsatz - Ausgaben
+                </Label>
               </div>
             </div>
           </div>
         )}
 
-        {filteredData && selectedDate && (
+        {/* Charts (collapsed by default) */}
+        {ordersRange && expensesRange && (
+          <StatisticCharts
+            orders={ordersRange}
+            expenses={expensesRange}
+            range={range}
+          />
+        )}
+
+        {ordersRange && (
           <PDFDownloadLink
             document={
               <OrdersPDF
-                filteredData={filteredData}
-                selectedDate={formatDate(selectedDate)}
+                filteredData={ordersRange}
+                dateRangeLabel={rangeLabel}
                 sumTotalTurnover={sumTotalTurnover}
                 sumTotalCash={sumTotalCash}
                 sumTotalPayPal={sumTotalPayPal}
@@ -546,9 +529,11 @@ const StatisticPage = () => {
                 sumTotalCafeCard={sumTotalCafeCard}
                 sumTotalVouchers={sumTotalVouchers}
                 sumTotalOnline={sumTotalOnline}
+                sumExpenses={sumRangeExpenses}
+                profit={sumRangeProfit}
               />
             }
-            fileName="orders.pdf"
+            fileName={pdfFileName}
             className="w-30 ml-auto mt-2"
           >
             {({ loading }) =>
@@ -566,11 +551,9 @@ const StatisticPage = () => {
         )}
 
         {/* Table */}
-        {filteredData && selectedDate && (
-          <OrderTable filteredData={filteredData} />
-        )}
+        {ordersRange && <OrderTable filteredData={ordersRange} />}
 
-        {filteredData && selectedDate && userRole === 'admin' && (
+        {ordersRange && isAdmin && (
           <div className="my-4 mr-auto flex items-center space-x-2">
             <Switch
               id="load-orders"
@@ -580,15 +563,15 @@ const StatisticPage = () => {
               }}
             />
             <Label htmlFor="load-orders">
-              Alle Bestellungen vom {formatDate(selectedDate)} Laden
+              Alle Bestellungen ({rangeLabel}) Laden
             </Label>
           </div>
         )}
       </div>
-      {showAllOrders && selectedDate && userRole === 'admin' && (
+      {showAllOrders && isAdmin && (
         <Open
-          startDate={getStartOfDay(selectedDate).finalDateString}
-          endDate={getEndOfDay(selectedDate).endOfDayString}
+          startDate={convertToSupabaseDate(getStartOfDayFromDate(range.from))}
+          endDate={convertToSupabaseDate(getEndOfDayFromDate(range.to))}
           currentUrlPage={userName === 'Ronny' ? 'Ronny' : 'statistic'}
           paymentPage={false}
         ></Open>

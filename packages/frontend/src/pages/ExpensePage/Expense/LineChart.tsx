@@ -22,9 +22,6 @@ import {
   ChartTooltipContent,
 } from '@/components/ui/chart'
 
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-
 // const chartData2 =
 
 const chartConfig: ChartConfig = {
@@ -69,8 +66,7 @@ export function LineChartComponent({
               tickLine={false}
               axisLine={false}
               tickMargin={8}
-              // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-              tickFormatter={(value) => value.slice(0, 3)}
+              tickFormatter={(value: string) => value.slice(0, 3)}
             />
             <ChartTooltip cursor={false} content={<ChartTooltipContent />} />
             <Line

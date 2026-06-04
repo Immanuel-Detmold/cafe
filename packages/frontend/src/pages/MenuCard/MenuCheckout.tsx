@@ -96,7 +96,6 @@ const MenuCheckout = ({
         setState('creating')
 
         // 1. Create checkout server-side (price calculated on server)
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         const { data, error } =
           await supabase.functions.invoke<CheckoutResponse>(
             'sumup-create-online-checkout',
@@ -167,7 +166,6 @@ const MenuCheckout = ({
       setState('verifying')
 
       // 4. Verify payment + create order server-side
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       const { data, error } = await supabase.functions.invoke<VerifyResponse>(
         'sumup-verify-create-order',
         {

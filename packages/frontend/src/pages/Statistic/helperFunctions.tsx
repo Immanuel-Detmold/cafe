@@ -20,6 +20,21 @@ export const getSumPriceData = <
   return centsToEuro(sum)
 }
 
+// Like getSumPriceData but returns the raw sum in cents (for profit math).
+// Excludes voucher and youth payments.
+export const getSumPriceCents = <
+  T extends { price: number; payment_method?: string },
+>(
+  dataOrders: T[],
+): number => {
+  return dataOrders
+    .filter(
+      (order) =>
+        order.payment_method !== 'voucher' && order.payment_method !== 'youth',
+    )
+    .reduce((total, order) => total + order.price, 0)
+}
+
 // !!! CHECK IF CORRECT
 export const getSumOrdersV2 = (
   dataOrders: OrdersAndItems,

@@ -48,10 +48,7 @@ export default function PickYear({
           className="w-wull justify-between"
         >
           {selectedYear
-            ? distinctYears.find(
-                (year) =>
-                  year === selectedYear.startDate.getFullYear().toString(),
-              )
+            ? selectedYear.startDate.getFullYear().toString()
             : 'Wähle Datum...'}
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
