@@ -18,6 +18,9 @@ declare global {
         id: string
         checkoutId: string
         onResponse: (type: string, body: Record<string, unknown>) => void
+        locale?: string
+        country?: string
+        googlePay?: { merchantId: string; merchantName: string }
       }) => { unmount: () => void }
     }
   }
@@ -137,9 +140,22 @@ const MenuCheckout = ({
     const checkoutId = checkoutIdRef.current
     const timerId = setTimeout(() => {
       if (!mountedRef.current) return
+      const googlePayMerchantId = import.meta.env
+        .VITE_GOOGLE_PAY_MERCHANT_ID as string | undefined
+
       widgetRef.current = window.SumUpCard.mount({
         id: 'sumup-card-widget',
         checkoutId,
+        locale: 'de-DE',
+        country: 'DE',
+        ...(googlePayMerchantId
+          ? {
+              googlePay: {
+                merchantId: googlePayMerchantId,
+                merchantName: 'Christengemeinde Immanuel',
+              },
+            }
+          : {}),
         onResponse: (type, body) => {
           if (!mountedRef.current) return
 

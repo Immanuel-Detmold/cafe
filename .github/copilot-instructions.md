@@ -2,6 +2,9 @@
 
 ## Project Overview
 
+die domain heißt https://immanue-cafe.de
+ich nutze coolify nicht mehr netlify
+
 React 18 + TypeScript SPA in a pnpm monorepo. Main package: `packages/frontend/`. Backend `packages/frontend/`: Supabase. Deployed on Netlify.
 
 Skills are in .agents/skills
