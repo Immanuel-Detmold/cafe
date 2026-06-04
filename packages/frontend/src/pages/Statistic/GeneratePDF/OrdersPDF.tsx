@@ -125,7 +125,7 @@ const OrdersPDF = ({
   sumTotalPayPal,
   sumTotalTerminal,
   sumTotalCafeCard,
-  sumTotalVouchers,
+  sumTotalFreeDrinks,
   sumTotalOnline,
   sumExpenses,
   profit,
@@ -137,7 +137,7 @@ const OrdersPDF = ({
   sumTotalPayPal?: string
   sumTotalTerminal?: string
   sumTotalCafeCard?: string
-  sumTotalVouchers?: string
+  sumTotalFreeDrinks?: string
   sumTotalOnline?: string
   sumExpenses?: string
   profit?: string
@@ -229,14 +229,14 @@ const OrdersPDF = ({
           </View>
         </View>
 
-        {/* Tabelle 3: Gutscheine */}
+        {/* Tabelle 3: Freigetränke */}
         <View style={styles.table}>
           <View style={styles.tableRow}>
             <View style={styles.tableColHeader}>
-              <Text style={styles.tableCellHeader}>Umsatz Gutscheine</Text>
+              <Text style={styles.tableCellHeader}>Umsatz Freigetränke</Text>
             </View>
             <View style={styles.tableCol}>
-              <Text style={styles.tableCell}>{sumTotalVouchers}</Text>
+              <Text style={styles.tableCell}>{sumTotalFreeDrinks}</Text>
             </View>
           </View>
         </View>

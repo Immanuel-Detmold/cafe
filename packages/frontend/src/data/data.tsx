@@ -19,8 +19,8 @@ export const PAYMENT_METHODS = [
     label: 'Café Karte',
   },
   {
-    name: 'voucher',
-    label: 'Gutschein',
+    name: 'free_drink',
+    label: 'Freigetränk',
   },
   {
     name: 'online',

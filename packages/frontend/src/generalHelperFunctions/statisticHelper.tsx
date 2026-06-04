@@ -65,7 +65,7 @@ export const combineData = (
 // ]
 
 // Bucket revenue + expenses by day or month depending on the range length.
-// Revenue excludes voucher/youth payments (matches getSumPriceData).
+// Revenue excludes free_drink/youth payments (matches getSumPriceData).
 export type BucketDatum = {
   bucket: string
   revenue: number // in euro
@@ -123,7 +123,8 @@ export const groupRevenueExpenseByBucket = (
   }
 
   orders.forEach((o) => {
-    if (o.payment_method === 'voucher' || o.payment_method === 'youth') return
+    if (o.payment_method === 'free_drink' || o.payment_method === 'youth')
+      return
     const key = keyFor(new Date(o.created_at))
     const entry = buckets.get(key)
     if (entry) entry.revenue += o.price

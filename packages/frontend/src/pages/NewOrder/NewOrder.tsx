@@ -542,7 +542,7 @@ const NewOrder = () => {
           }
         })
     } else {
-      // All other methods (paypal, cafe_card, voucher): commit immediately
+      // All other methods (paypal, cafe_card, free_drink): commit immediately
       commitOrder(orderPrice)
     }
   }
@@ -574,7 +574,7 @@ const NewOrder = () => {
     setOrderComment('')
     setOrderName('')
     const keepPaymentMethod =
-      paymentMethod !== 'cafe_card' && paymentMethod !== 'voucher'
+      paymentMethod !== 'cafe_card' && paymentMethod !== 'free_drink'
     if (!keepPaymentMethod) setPaymentMethod('cash')
     setSumOrderPrice(0)
     setTableNumber('')

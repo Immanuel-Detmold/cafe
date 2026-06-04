@@ -178,8 +178,8 @@ const StatisticPage = () => {
   const sumTotalCafeCard = ordersRange
     ? getSumOrdersPayMethod(ordersRange, 'cafe_card') + '€'
     : '...'
-  const sumTotalVouchers = ordersRange
-    ? getSumOrdersPayMethod(ordersRange, 'voucher') + '€'
+  const sumTotalFreeDrinks = ordersRange
+    ? getSumOrdersPayMethod(ordersRange, 'free_drink') + '€'
     : '...'
   const sumTotalOnline = ordersRange
     ? getSumOrdersPayMethod(ordersRange, 'online') + '€'
@@ -474,10 +474,12 @@ const StatisticPage = () => {
                 </div>
               </div>
 
-              {/* Sum vouchers */}
+              {/* Sum free drinks */}
               <div className="grid grid-cols-1 gap-1 rounded-lg border p-2">
-                <Label className="text-base">Gutscheine</Label>
-                <Label className="text-2xl font-bold">{sumTotalVouchers}</Label>
+                <Label className="text-base">Freigetränke</Label>
+                <Label className="text-2xl font-bold">
+                  {sumTotalFreeDrinks}
+                </Label>
                 <div className="flex items-center gap-2">
                   {getRevenueStreamIcon()}
                   <Label className="text-muted-foreground">Umsatz</Label>
@@ -527,7 +529,7 @@ const StatisticPage = () => {
                 sumTotalPayPal={sumTotalPayPal}
                 sumTotalTerminal={sumTotalTerminal}
                 sumTotalCafeCard={sumTotalCafeCard}
-                sumTotalVouchers={sumTotalVouchers}
+                sumTotalFreeDrinks={sumTotalFreeDrinks}
                 sumTotalOnline={sumTotalOnline}
                 sumExpenses={sumRangeExpenses}
                 profit={sumRangeProfit}
