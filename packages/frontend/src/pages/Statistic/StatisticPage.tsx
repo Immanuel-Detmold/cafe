@@ -125,6 +125,11 @@ const StatisticPage = () => {
 
   // Cafe cards (all time)
   const { data: cafeCardsAllTime } = useCafeCards({})
+  // Cafe cards (selected year)
+  const { data: cafeCardsYear } = useCafeCards({
+    startDate: yearStart,
+    endDate: yearEnd,
+  })
 
   // ---- Top KPIs (year) ----
   const yearRevenueCents = useMemo(
@@ -142,10 +147,15 @@ const StatisticPage = () => {
     () => (cafeCardsAllTime ? getSumCafeCards(cafeCardsAllTime) : 0),
     [cafeCardsAllTime],
   )
-  const { tenCardCount, fiveCardCount } = useMemo(() => {
-    if (!cafeCardsAllTime) return { tenCardCount: '...', fiveCardCount: '...' }
-    return getSumCafeCardsGrouped(cafeCardsAllTime)
-  }, [cafeCardsAllTime])
+  const sumCafeCardsYear = useMemo(
+    () => (cafeCardsYear ? getSumCafeCards(cafeCardsYear) : 0),
+    [cafeCardsYear],
+  )
+  const { tenCardCount: tenCardCountYear, fiveCardCount: fiveCardCountYear } =
+    useMemo(() => {
+      if (!cafeCardsYear) return { tenCardCount: '...', fiveCardCount: '...' }
+      return getSumCafeCardsGrouped(cafeCardsYear)
+    }, [cafeCardsYear])
   const sumYearCafeCardsPayments = useMemo(
     () => (ordersYear ? getSumCafeCardsOrders(ordersYear) : 0),
     [ordersYear],
@@ -347,18 +357,21 @@ const StatisticPage = () => {
 
               {/* Summe Cafe Cards */}
               <div className="grid grid-cols-1 gap-1 rounded-lg border p-2">
-                <Label className="text-base">Summe Café Karten</Label>
+                <Label className="text-base">
+                  Summe Café Karten {rangeYear}
+                </Label>
                 <Label className="text-2xl font-bold">
-                  {cafeCardsAllTime
-                    ? centsToEuro(sumCafeCards).toString() + '€'
+                  {cafeCardsYear
+                    ? centsToEuro(sumCafeCardsYear).toString() + '€'
                     : '...'}
                 </Label>
                 <div className="flex items-center gap-2">
                   <CreditCard className="h-4 w-4" />
                   <Label className="text-muted-foreground">
-                    {cafeCardsAllTime ? (
+                    {cafeCardsYear ? (
                       <Label className="text-muted-foreground">
-                        Summe (10€ x {tenCardCount} | 5€ x {fiveCardCount})
+                        Summe (10€ x {tenCardCountYear} | 5€ x{' '}
+                        {fiveCardCountYear})
                       </Label>
                     ) : (
                       'Summe'
