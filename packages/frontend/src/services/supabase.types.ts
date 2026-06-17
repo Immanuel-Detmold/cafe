@@ -229,6 +229,7 @@ export type Database = {
           created_at: string
           custom_price: boolean
           customer_name: string | null
+          fee_amount: number | null
           id: number
           order_number: string
           payment_method: string
@@ -246,6 +247,7 @@ export type Database = {
           created_at?: string
           custom_price?: boolean
           customer_name?: string | null
+          fee_amount?: number | null
           id?: number
           order_number?: string
           payment_method: string
@@ -263,6 +265,7 @@ export type Database = {
           created_at?: string
           custom_price?: boolean
           customer_name?: string | null
+          fee_amount?: number | null
           id?: number
           order_number?: string
           payment_method?: string
