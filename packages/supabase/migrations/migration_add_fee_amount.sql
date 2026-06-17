@@ -1,0 +1,1 @@
+ALTER TABLE "Orders" ADD COLUMN IF NOT EXISTS fee_amount integer NULL DEFAULT NULL;

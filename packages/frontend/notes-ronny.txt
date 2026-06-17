@@ -20,3 +20,7 @@ Settings: Manager können nutzer anlegen
 
 Sandbox Api Sumup Key:
 sup_sk_FzbDjplnzRkWWGlGMysndfLpOVpyIiwaM
+
+
+Deploy all supabase edge functions
+cd packages/supabase && supabase functions deploy
