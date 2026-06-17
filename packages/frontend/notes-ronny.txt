@@ -17,3 +17,6 @@ Gesamte Statistik (Datum Auswählen, Gesamt Jahr/Monat) kann nur Admin
 Admin & Manager können Proukte hinzufügen oder editieren
 
 Settings: Manager können nutzer anlegen
+
+Sandbox Api Sumup Key:
+sup_sk_FzbDjplnzRkWWGlGMysndfLpOVpyIiwaM

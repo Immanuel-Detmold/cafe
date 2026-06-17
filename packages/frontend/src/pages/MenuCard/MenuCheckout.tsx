@@ -152,7 +152,7 @@ const MenuCheckout = ({
           ? {
               googlePay: {
                 merchantId: googlePayMerchantId,
-                merchantName: 'Christengemeinde Immanuel',
+                merchantName: 'Christengemeinde Immanuel e.V.',
               },
             }
           : {}),
