@@ -5,6 +5,7 @@ import {
   useOrdersAndItemsQueryV2,
 } from '@/data/useOrders'
 import { useRevenueStreamsQuery } from '@/data/useRevenueStreams.tsx'
+import { useSumUpPayoutsQuery } from '@/data/useSumUpPayouts'
 import { useUser } from '@/data/useUser'
 import { centsToEuro } from '@/generalHelperFunctions/currencyHelperFunction'
 import {
@@ -110,6 +111,12 @@ const StatisticPage = () => {
     endDate: rangeEnd,
   })
 
+  const { data: sumupPayouts, isLoading: lSumup } = useSumUpPayoutsQuery({
+    from: range.from.toISOString(),
+    to: range.to.toISOString(),
+    enabled: isAdmin,
+  })
+
   // Data: selected year (top KPIs)
   const { data: ordersYear, isLoading: lYear } = useOrdersAndItemsQueryV2({
     statusList: ['finished'],
@@ -211,7 +218,7 @@ const StatisticPage = () => {
     return `umsatz_${fromIso}_${toIso}.pdf`
   }, [range])
 
-  const isLoading = lRange || lExpRange || lYear || lExpYear
+  const isLoading = lRange || lExpRange || lYear || lExpYear || lSumup
 
   // Handle range changes (ignored for non-admin users)
   const handleRangeChange = (
@@ -518,6 +525,40 @@ const StatisticPage = () => {
                   Umsatz - Ausgaben
                 </Label>
               </div>
+
+              {isAdmin && (
+                <>
+                  {/* SumUp fees */}
+                  <div className="grid grid-cols-1 gap-1 rounded-lg border p-2">
+                    <Label className="text-base">SumUp Gebühren</Label>
+                    <Label className="text-2xl font-bold">
+                      {sumupPayouts
+                        ? sumupPayouts.fee_complete
+                          ? centsToEuro(sumupPayouts.fee_cents) + '€'
+                          : '—'
+                        : '...'}
+                    </Label>
+                    <Label className="text-muted-foreground">
+                      Terminal & Online
+                    </Label>
+                  </div>
+
+                  {/* SumUp net */}
+                  <div className="grid grid-cols-1 gap-1 rounded-lg border p-2">
+                    <Label className="text-base">Nettoumsatz</Label>
+                    <Label className="text-2xl font-bold">
+                      {sumupPayouts
+                        ? sumupPayouts.fee_complete
+                          ? centsToEuro(sumupPayouts.net_cents) + '€'
+                          : '—'
+                        : '...'}
+                    </Label>
+                    <Label className="text-muted-foreground">
+                      SumUp Umsatz - Gebühren
+                    </Label>
+                  </div>
+                </>
+              )}
             </div>
           </div>
         )}
