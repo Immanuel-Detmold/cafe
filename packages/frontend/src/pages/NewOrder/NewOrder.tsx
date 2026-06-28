@@ -1,5 +1,6 @@
 import { queryClient } from '@/App'
 import { PAYMENT_METHODS } from '@/data/data'
+import { getPrintMode, setPrintMode } from '@/data/printModeStore'
 import { getServerIp, useAppData } from '@/data/useAppData'
 import { useInventory } from '@/data/useInventory'
 import {
@@ -97,7 +98,7 @@ const NewOrder = () => {
   const [orderComment, setOrderComment] = useState<string>('')
   const [orderName, setOrderName] = useState<string>('')
   const [tableNumber, setTableNumber] = useState<string>('')
-  const [printReceipt, setPrintReceipt] = useState<boolean>(true)
+  const [printReceipt, setPrintReceipt] = useState<boolean>(getPrintMode())
   const [selectedRevenueStream, setSelectedRevenueStream] = useState<
     number | null
   >(null)
@@ -676,7 +677,6 @@ const NewOrder = () => {
   useEffect(() => {
     const serverIpData = appData?.find((item) => item.key === 'server_ip')
     const serverPortData = appData?.find((item) => item.key === 'server_port')
-    const print_on = appData?.find((item) => item.key === 'print_mode')
     const name = appData?.find((item) => item.key === 'organisation_name')
     const logo = appData?.find((item) => item.key === 'organisation_logo')
     const link = appData?.find((item) => item.key === 'menu_link')
@@ -686,14 +686,6 @@ const NewOrder = () => {
     if (name) setOrgName(name.value)
     if (logo) setOrgLogo(logo.value)
     if (link) setMenuLink(link.value)
-
-    if (print_on) {
-      if (print_on.value === 'true') {
-        setPrintReceipt(true)
-      } else {
-        setPrintReceipt(false)
-      }
-    }
   }, [appData])
 
   return (
@@ -849,6 +841,7 @@ const NewOrder = () => {
             checked={printReceipt}
             onCheckedChange={() => {
               setPrintReceipt(!printReceipt)
+              setPrintMode(!printReceipt)
             }}
           />
           <Label htmlFor="airplane-mode" className="font-bold">

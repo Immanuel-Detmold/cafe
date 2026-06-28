@@ -1,4 +1,4 @@
-import { useAppData, useUpdateAppData } from '@/data/useAppData'
+import { getPrintMode, setPrintMode } from '@/data/printModeStore'
 import { usePrintersQuery } from '@/data/usePrinter'
 import { ChevronLeftIcon } from 'lucide-react'
 import { useEffect, useState } from 'react'
@@ -20,20 +20,11 @@ export default function UserActions() {
   // Data
   const { data: printers } = usePrintersQuery()
   const columns = Columns()
-  const { data: appData } = useAppData()
-
-  // Mutations
-  const { mutate: updateAppData } = useUpdateAppData()
 
   // Use Effect
   useEffect(() => {
-    const print_on = appData?.find((item) => item.key === 'print_mode')
-    if (print_on) {
-      if (print_on.value === 'true') {
-        setPrintOn(true)
-      }
-    }
-  }, [appData])
+    setPrintOn(getPrintMode())
+  }, [])
 
   return (
     // Table
@@ -57,7 +48,7 @@ export default function UserActions() {
             checked={printOn}
             onCheckedChange={() => {
               setPrintOn(!printOn)
-              updateAppData({ key: 'print_mode', value: (!printOn).toString() })
+              setPrintMode(!printOn)
             }}
           />
           <label htmlFor={'printOn'} className="ml-2">
