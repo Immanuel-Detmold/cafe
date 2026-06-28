@@ -731,23 +731,28 @@ const NewOrder = () => {
                 {products?.length ?? 0}
               </Badge>
             </Button>
-            {dataCategories?.map((category) => (
-              <Button
-                key={category.category}
-                variant="ghost"
-                className={`w-full justify-between ${
-                  selectedCategories[0] === category.category
-                    ? 'bg-amber-600 text-white hover:bg-amber-600 hover:text-white'
-                    : ''
-                }`}
-                onClick={() => handleSelectCategory(category.category)}
-              >
-                <span className="truncate">{category.category}</span>
-                <Badge variant="secondary" className="ml-2 shrink-0">
-                  {productCountByCategory[category.category] ?? 0}
-                </Badge>
-              </Button>
-            ))}
+            {dataCategories
+              ?.filter(
+                (category) =>
+                  (productCountByCategory[category.category] ?? 0) > 0,
+              )
+              .map((category) => (
+                <Button
+                  key={category.category}
+                  variant="ghost"
+                  className={`w-full justify-between ${
+                    selectedCategories[0] === category.category
+                      ? 'bg-amber-600 text-white hover:bg-amber-600 hover:text-white'
+                      : ''
+                  }`}
+                  onClick={() => handleSelectCategory(category.category)}
+                >
+                  <span className="truncate">{category.category}</span>
+                  <Badge variant="secondary" className="ml-2 shrink-0">
+                    {productCountByCategory[category.category] ?? 0}
+                  </Badge>
+                </Button>
+              ))}
           </div>
         </aside>
 
