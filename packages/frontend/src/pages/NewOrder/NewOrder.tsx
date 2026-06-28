@@ -734,6 +734,7 @@ const NewOrder = () => {
             {dataCategories
               ?.filter(
                 (category) =>
+                  category.category !== 'Werbung' &&
                   (productCountByCategory[category.category] ?? 0) > 0,
               )
               .map((category) => (
