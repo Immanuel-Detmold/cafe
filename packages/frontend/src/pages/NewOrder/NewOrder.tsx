@@ -40,6 +40,7 @@ import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 
 import { LoadingOverlay } from '@/components/LoadingOverlay'
+import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import {
   Dialog,
@@ -303,6 +304,13 @@ const NewOrder = () => {
     // Set orderIdEdit to orderId if it exists, otherwise set to undefined
     setOrderIdEdit(orderId || undefined)
   }, [orderId])
+
+  // Count products per category (unfiltered) for the sidebar badges
+  const productCountByCategory: Record<string, number> = {}
+  products?.forEach((p) => {
+    productCountByCategory[p.category] =
+      (productCountByCategory[p.category] ?? 0) + 1
+  })
 
   // Initialize a new object to group the products by category
   let groupedProducts_filtered: GroupedProducts | undefined = undefined
@@ -643,6 +651,16 @@ const NewOrder = () => {
     setTableNumber(tableNumber)
   }
 
+  // Single-select category from sidebar. null => "Alle" (no filter)
+  const handleSelectCategory = (category: string | null) => {
+    const updated = category ? [category] : []
+    setSelectedCategories(updated)
+    sessionStorage.setItem(
+      'selectedCategoriesNewOrder',
+      JSON.stringify(updated),
+    )
+  }
+
   // Handle CheckboxChange for Filter
   const handleCheckboxChange = (
     type: string,
@@ -695,375 +713,430 @@ const NewOrder = () => {
         message="Bestellung wird gespeichert..."
       />
 
-      {/* <ProductDetails /> */}
-      <div className="header bg-background sticky top-0 z-10 flex items-center pb-1 pt-2">
-        <Input
-          className="w-[100%]"
-          placeholder="Produkt suchen"
-          onChange={(e) => {
-            setSearchTerm(e.target.value)
-          }}
-        />
-        <Filters
-          handleCheckboxChange={handleCheckboxChange}
-          selectedCategories={selectedCategories}
-        />
-      </div>
-
-      {/* Shopping Cart Icon */}
-      <div className="sticky top-16 z-30 float-right -mt-12 mr-4">
-        <OrderDetailsPage
-          dataOrderItems={dataOrderItems}
-          handleDeleteOrderItem={handleDeleteOrderItem}
-          products={products || []}
-          sumOrderPrice={sumOrderPrice}
-          onlyCart={true}
-        />
-      </div>
-
-      {/* Category and Product */}
-      <div className="relative">
-        {groupedProducts_filtered &&
-          Object.entries(groupedProducts_filtered).map(
-            ([category, products]) => (
-              <div key={category} className="mt-4">
-                <h2 className="w-full font-bold">{category}</h2>
-                {/* Iterate over each product in the current category */}
-                <ProductsInCategory
-                  products={products}
-                  dataOrderItems={dataOrderItems}
-                  handleAddOrder={handleAddOrder}
-                  handleRemoveProductFromCart={handleRemoveProductFromCart}
-                  InventoryData={inventoryData}
-                  openOrders={openOrders ?? []}
-                />
-              </div>
-            ),
-          )}
-      </div>
-
-      <div className="flex flex-col">
-        {/* Comment Field */}
-        <Textarea
-          className="mt-2"
-          placeholder="Kommentar (optional)"
-          value={orderComment}
-          onChange={(e) => {
-            setOrderComment(e.target.value)
-            sessionStorage.setItem('orderComment', e.target.value)
-          }}
-        ></Textarea>
-
-        {/* Customer Name */}
-        <Input
-          className="mt-2"
-          placeholder="Name (optional)"
-          value={orderName}
-          onChange={(e) => {
-            setOrderName(e.target.value)
-            sessionStorage.setItem('orderName', e.target.value)
-          }}
-        />
-
-        {/* Table Number */}
-        <Input
-          className="mt-2"
-          placeholder="Tischnummer (optional)"
-          value={tableNumber}
-          onChange={(e) => {
-            handleSetTableNumber(e.target.value)
-            sessionStorage.setItem('tableNumber', e.target.value)
-          }}
-        />
-
-        {/* Payment Method */}
-        <Label className="mt-2 font-bold">Bezahlung</Label>
-        <RadioGroup
-          value={paymentMethod}
-          defaultValue={paymentMethod}
-          className="mb-2 ml-1"
-          onValueChange={(method) => {
-            setPaymentMethod(method)
-            sessionStorage.setItem('paymentMethod', method)
-          }}
-        >
-          {PAYMENT_METHODS.map((method, index) => (
-            <div className="flex items-center space-x-2" key={index}>
-              <RadioGroupItem value={method.name} id={`r${index + 1}`} />
-              <Label htmlFor={`r${index + 1}`}>{method.label}</Label>
-            </div>
-          ))}
-        </RadioGroup>
-
-        {/*RevenueStreams*/}
-        <Label className="mt-4 font-bold">Umsatzgruppe</Label>
-        <Select
-          value={selectedRevenueStream?.toString() || ''}
-          onValueChange={(value: string) =>
-            setSelectedRevenueStream(Number(value))
-          }
-        >
-          <SelectTrigger className="mt-1 max-w-60">
-            <SelectValue placeholder="💰 Umsatzgruppe wählen" />
-          </SelectTrigger>
-          <SelectContent>
-            {revenueStreams?.map((stream) => (
-              <SelectItem key={stream.id} value={stream.id.toString()}>
-                {stream.icon} {stream.name}
-                {stream.is_default && (
-                  <span className="text-muted-foreground ml-2 text-xs">
-                    (Standard)
-                  </span>
-                )}
-              </SelectItem>
+      <div className="md:flex md:gap-4">
+        {/* Category sidebar — only on wide screens (tablet+) */}
+        <aside className="hidden shrink-0 md:block md:w-44 lg:w-52">
+          <div className="bg-background sticky top-16 max-h-[calc(100vh-5rem)] space-y-1 overflow-y-auto pt-2">
+            <Button
+              variant="ghost"
+              className={`w-full justify-between ${
+                selectedCategories.length === 0
+                  ? 'bg-amber-600 text-white hover:bg-amber-600 hover:text-white'
+                  : ''
+              }`}
+              onClick={() => handleSelectCategory(null)}
+            >
+              <span className="truncate">Alle</span>
+              <Badge variant="secondary" className="ml-2 shrink-0">
+                {products?.length ?? 0}
+              </Badge>
+            </Button>
+            {dataCategories?.map((category) => (
+              <Button
+                key={category.category}
+                variant="ghost"
+                className={`w-full justify-between ${
+                  selectedCategories[0] === category.category
+                    ? 'bg-amber-600 text-white hover:bg-amber-600 hover:text-white'
+                    : ''
+                }`}
+                onClick={() => handleSelectCategory(category.category)}
+              >
+                <span className="truncate">{category.category}</span>
+                <Badge variant="secondary" className="ml-2 shrink-0">
+                  {productCountByCategory[category.category] ?? 0}
+                </Badge>
+              </Button>
             ))}
-          </SelectContent>
-        </Select>
+          </div>
+        </aside>
 
-        {/* Costs */}
-        <div className="mt-4 flex items-center">
-          <Label className="w-min whitespace-nowrap rounded-lg border p-2 font-bold text-orange-600">
-            Summe: {centsToEuro(sumOrderPrice)}€
-          </Label>
-          <OrderDetailsPage
-            dataOrderItems={dataOrderItems}
-            handleDeleteOrderItem={handleDeleteOrderItem}
-            products={products || []}
-            sumOrderPrice={sumOrderPrice}
-            onlyCart={false}
-          />
-        </div>
-
-        {/* Printing Receipt */}
-        <div className="mt-4 flex items-center space-x-2">
-          <Switch
-            id="print-receipt"
-            checked={printReceipt}
-            onCheckedChange={() => {
-              setPrintReceipt(!printReceipt)
-              setPrintMode(!printReceipt)
-            }}
-          />
-          <Label htmlFor="airplane-mode" className="font-bold">
-            Kassenbon drucken
-          </Label>
-        </div>
-
-        {/* Custom Price */}
-        <div className="mt-2 flex items-center space-x-2">
-          <Switch
-            id="airplane-mode"
-            checked={customPrice}
-            onCheckedChange={() => {
-              setCustomPrice(!customPrice)
-            }}
-          />
-          <Label htmlFor="airplane-mode" className="font-bold">
-            Kunde bezahlt abweichenden Preis
-          </Label>
-        </div>
-
-        <Label className="mt-1">
-          Da die Bezahlung auf Spendenbasis beruht, hat der Kunde das Recht,
-          einen selbst bestimmten Betrag zu bezahlen. Ist das der Fall,
-          aktiviere diese Checkbox.
-        </Label>
-        {/* Make Input field for custom number, if customer wants to pay custom price */}
-        {customPrice && (
-          <div className="mt-1">
-            <Label htmlFor="custom-price" className="font-bold">
-              Bezahlter Preis
-            </Label>
+        {/* Main column */}
+        <div className="min-w-0 flex-1">
+          {/* <ProductDetails /> */}
+          <div className="header bg-background sticky top-0 z-10 flex items-center pb-1 pt-2">
             <Input
-              className="mt-1"
-              id="custom-price"
-              type="string"
-              value={customPriceValue}
-              onChange={(e) => handleCustomPrice(e.target.value)}
+              className="w-[100%]"
+              placeholder="Produkt suchen"
+              onChange={(e) => {
+                setSearchTerm(e.target.value)
+              }}
+            />
+            {/* Filter popover only on narrow screens — sidebar replaces it on tablet+ */}
+            <div className="md:hidden">
+              <Filters
+                handleCheckboxChange={handleCheckboxChange}
+                selectedCategories={selectedCategories}
+              />
+            </div>
+          </div>
+
+          {/* Shopping Cart Icon */}
+          <div className="sticky top-16 z-30 float-right -mt-12 mr-4">
+            <OrderDetailsPage
+              dataOrderItems={dataOrderItems}
+              handleDeleteOrderItem={handleDeleteOrderItem}
+              products={products || []}
+              sumOrderPrice={sumOrderPrice}
+              onlyCart={true}
             />
           </div>
-        )}
 
-        {/* Cash change dialog */}
-        {/* Stock warning dialog */}
-        <Dialog
-          open={showStockWarningDialog}
-          onOpenChange={setShowStockWarningDialog}
-        >
-          <DialogContent className="max-w-sm">
-            <DialogHeader>
-              <DialogTitle>
-                <AlertTriangle className="inline h-5 w-5 text-amber-500" />{' '}
-                Verfügbarkeit
-              </DialogTitle>
-            </DialogHeader>
-            <div className="space-y-2 py-2">
-              <p className="text-sm">
-                Folgende Produkte sind nicht in ausreichender Menge verfügbar:
-              </p>
-              <ul className="space-y-1">
-                {stockWarnings.map((w) => (
-                  <li
-                    key={w.name}
-                    className="flex justify-between rounded border px-3 py-2 text-sm"
-                  >
-                    <span className="font-medium">{w.name}</span>
-                    <span className="text-muted-foreground">
-                      {w.available === 0
-                        ? 'Ausverkauft'
-                        : `${w.available} verfügbar, ${w.requested} bestellt`}
-                    </span>
-                  </li>
+          {/* Category and Product */}
+          <div className="relative">
+            {groupedProducts_filtered &&
+              Object.entries(groupedProducts_filtered).map(
+                ([category, products]) => (
+                  <div key={category} className="mt-4">
+                    <h2 className="w-full font-bold">{category}</h2>
+                    {/* Iterate over each product in the current category */}
+                    <ProductsInCategory
+                      products={products}
+                      dataOrderItems={dataOrderItems}
+                      handleAddOrder={handleAddOrder}
+                      handleRemoveProductFromCart={handleRemoveProductFromCart}
+                      InventoryData={inventoryData}
+                      openOrders={openOrders ?? []}
+                    />
+                  </div>
+                ),
+              )}
+            {groupedProducts_filtered &&
+              Object.keys(groupedProducts_filtered).length === 0 && (
+                <div className="text-muted-foreground mt-8 flex flex-col items-center justify-center gap-2 py-8 text-center">
+                  <ShoppingCart className="h-8 w-8 opacity-50" />
+                  <p>Keine Produkte in dieser Kategorie</p>
+                </div>
+              )}
+          </div>
+
+          <div className="flex flex-col">
+            {/* Comment Field */}
+            <Textarea
+              className="mt-2"
+              placeholder="Kommentar (optional)"
+              value={orderComment}
+              onChange={(e) => {
+                setOrderComment(e.target.value)
+                sessionStorage.setItem('orderComment', e.target.value)
+              }}
+            ></Textarea>
+
+            {/* Customer Name */}
+            <Input
+              className="mt-2"
+              placeholder="Name (optional)"
+              value={orderName}
+              onChange={(e) => {
+                setOrderName(e.target.value)
+                sessionStorage.setItem('orderName', e.target.value)
+              }}
+            />
+
+            {/* Table Number */}
+            <Input
+              className="mt-2"
+              placeholder="Tischnummer (optional)"
+              value={tableNumber}
+              onChange={(e) => {
+                handleSetTableNumber(e.target.value)
+                sessionStorage.setItem('tableNumber', e.target.value)
+              }}
+            />
+
+            {/* Payment Method */}
+            <Label className="mt-2 font-bold">Bezahlung</Label>
+            <RadioGroup
+              value={paymentMethod}
+              defaultValue={paymentMethod}
+              className="mb-2 ml-1"
+              onValueChange={(method) => {
+                setPaymentMethod(method)
+                sessionStorage.setItem('paymentMethod', method)
+              }}
+            >
+              {PAYMENT_METHODS.map((method, index) => (
+                <div className="flex items-center space-x-2" key={index}>
+                  <RadioGroupItem value={method.name} id={`r${index + 1}`} />
+                  <Label htmlFor={`r${index + 1}`}>{method.label}</Label>
+                </div>
+              ))}
+            </RadioGroup>
+
+            {/*RevenueStreams*/}
+            <Label className="mt-4 font-bold">Umsatzgruppe</Label>
+            <Select
+              value={selectedRevenueStream?.toString() || ''}
+              onValueChange={(value: string) =>
+                setSelectedRevenueStream(Number(value))
+              }
+            >
+              <SelectTrigger className="mt-1 max-w-60">
+                <SelectValue placeholder="💰 Umsatzgruppe wählen" />
+              </SelectTrigger>
+              <SelectContent>
+                {revenueStreams?.map((stream) => (
+                  <SelectItem key={stream.id} value={stream.id.toString()}>
+                    {stream.icon} {stream.name}
+                    {stream.is_default && (
+                      <span className="text-muted-foreground ml-2 text-xs">
+                        (Standard)
+                      </span>
+                    )}
+                  </SelectItem>
                 ))}
-              </ul>
-              <p className="text-muted-foreground text-sm">
-                Möchtest du trotzdem fortfahren?
-              </p>
-            </div>
-            <DialogFooter className="gap-2 sm:gap-0">
-              <Button
-                variant="outline"
-                onClick={() => setShowStockWarningDialog(false)}
-              >
-                Abbrechen
-              </Button>
-              <Button
-                onClick={() => {
-                  setShowStockWarningDialog(false)
-                  proceedWithOrder()
-                }}
-              >
-                Trotzdem bestellen
-              </Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
+              </SelectContent>
+            </Select>
 
-        <Dialog open={showCashDialog} onOpenChange={setShowCashDialog}>
-          <DialogContent className="max-w-xs">
-            <DialogHeader>
-              <DialogTitle>Barzahlung</DialogTitle>
-            </DialogHeader>
-            <div className="space-y-3 py-2">
-              <div>
-                <Label className="text-muted-foreground text-sm">
-                  Zu zahlen
-                </Label>
-                <p className="text-2xl font-bold">
-                  {centsToEuro(pendingOrderData?.orderPrice ?? 0)} €
-                </p>
-              </div>
-              <div>
-                <Label htmlFor="cash-given" className="text-sm">
-                  Gegeben
+            {/* Costs */}
+            <div className="mt-4 flex items-center">
+              <Label className="w-min whitespace-nowrap rounded-lg border p-2 font-bold text-orange-600">
+                Summe: {centsToEuro(sumOrderPrice)}€
+              </Label>
+              <OrderDetailsPage
+                dataOrderItems={dataOrderItems}
+                handleDeleteOrderItem={handleDeleteOrderItem}
+                products={products || []}
+                sumOrderPrice={sumOrderPrice}
+                onlyCart={false}
+              />
+            </div>
+
+            {/* Printing Receipt */}
+            <div className="mt-4 flex items-center space-x-2">
+              <Switch
+                id="print-receipt"
+                checked={printReceipt}
+                onCheckedChange={() => {
+                  setPrintReceipt(!printReceipt)
+                  setPrintMode(!printReceipt)
+                }}
+              />
+              <Label htmlFor="airplane-mode" className="font-bold">
+                Kassenbon drucken
+              </Label>
+            </div>
+
+            {/* Custom Price */}
+            <div className="mt-2 flex items-center space-x-2">
+              <Switch
+                id="airplane-mode"
+                checked={customPrice}
+                onCheckedChange={() => {
+                  setCustomPrice(!customPrice)
+                }}
+              />
+              <Label htmlFor="airplane-mode" className="font-bold">
+                Kunde bezahlt abweichenden Preis
+              </Label>
+            </div>
+
+            <Label className="mt-1">
+              Da die Bezahlung auf Spendenbasis beruht, hat der Kunde das Recht,
+              einen selbst bestimmten Betrag zu bezahlen. Ist das der Fall,
+              aktiviere diese Checkbox.
+            </Label>
+            {/* Make Input field for custom number, if customer wants to pay custom price */}
+            {customPrice && (
+              <div className="mt-1">
+                <Label htmlFor="custom-price" className="font-bold">
+                  Bezahlter Preis
                 </Label>
                 <Input
-                  id="cash-given"
-                  type="number"
-                  step="0.01"
-                  min="0"
-                  autoFocus
-                  placeholder="0,00"
-                  value={cashGiven}
-                  onChange={(e) => setCashGiven(e.target.value)}
-                  onKeyDown={(e) => e.key === 'Enter' && handleCashConfirm()}
                   className="mt-1"
+                  id="custom-price"
+                  type="string"
+                  value={customPriceValue}
+                  onChange={(e) => handleCustomPrice(e.target.value)}
                 />
               </div>
-              {cashGiven &&
-                parseFloat(cashGiven) * 100 >=
-                  (pendingOrderData?.orderPrice ?? 0) && (
+            )}
+
+            {/* Cash change dialog */}
+            {/* Stock warning dialog */}
+            <Dialog
+              open={showStockWarningDialog}
+              onOpenChange={setShowStockWarningDialog}
+            >
+              <DialogContent className="max-w-sm">
+                <DialogHeader>
+                  <DialogTitle>
+                    <AlertTriangle className="inline h-5 w-5 text-amber-500" />{' '}
+                    Verfügbarkeit
+                  </DialogTitle>
+                </DialogHeader>
+                <div className="space-y-2 py-2">
+                  <p className="text-sm">
+                    Folgende Produkte sind nicht in ausreichender Menge
+                    verfügbar:
+                  </p>
+                  <ul className="space-y-1">
+                    {stockWarnings.map((w) => (
+                      <li
+                        key={w.name}
+                        className="flex justify-between rounded border px-3 py-2 text-sm"
+                      >
+                        <span className="font-medium">{w.name}</span>
+                        <span className="text-muted-foreground">
+                          {w.available === 0
+                            ? 'Ausverkauft'
+                            : `${w.available} verfügbar, ${w.requested} bestellt`}
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+                  <p className="text-muted-foreground text-sm">
+                    Möchtest du trotzdem fortfahren?
+                  </p>
+                </div>
+                <DialogFooter className="gap-2 sm:gap-0">
+                  <Button
+                    variant="outline"
+                    onClick={() => setShowStockWarningDialog(false)}
+                  >
+                    Abbrechen
+                  </Button>
+                  <Button
+                    onClick={() => {
+                      setShowStockWarningDialog(false)
+                      proceedWithOrder()
+                    }}
+                  >
+                    Trotzdem bestellen
+                  </Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
+
+            <Dialog open={showCashDialog} onOpenChange={setShowCashDialog}>
+              <DialogContent className="max-w-xs">
+                <DialogHeader>
+                  <DialogTitle>Barzahlung</DialogTitle>
+                </DialogHeader>
+                <div className="space-y-3 py-2">
                   <div>
                     <Label className="text-muted-foreground text-sm">
-                      Rückgeld
+                      Zu zahlen
                     </Label>
-                    <p className="text-xl font-semibold text-green-600">
-                      {(
-                        parseFloat(cashGiven) -
-                        (pendingOrderData?.orderPrice ?? 0) / 100
-                      )
-                        .toFixed(2)
-                        .replace('.', ',')}{' '}
-                      €
+                    <p className="text-2xl font-bold">
+                      {centsToEuro(pendingOrderData?.orderPrice ?? 0)} €
                     </p>
                   </div>
-                )}
-            </div>
-            <DialogFooter>
-              <Button
-                variant="outline"
-                onClick={() => setShowCashDialog(false)}
-              >
-                Abbrechen
-              </Button>
-              <Button onClick={handleCashConfirm}>Bestätigen</Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
-
-        {/* Terminal waiting dialog */}
-        <Dialog open={showTerminalDialog} onOpenChange={() => {}}>
-          <DialogContent
-            className="max-w-xs"
-            onInteractOutside={(e) => e.preventDefault()}
-          >
-            <DialogHeader>
-              <DialogTitle>Terminal-Zahlung</DialogTitle>
-            </DialogHeader>
-            <div className="space-y-3 py-2">
-              <p className="text-2xl font-bold">
-                {centsToEuro(pendingOrderData?.orderPrice ?? 0)} €
-              </p>
-              {terminalLoading ? (
-                <div className="text-muted-foreground flex items-center gap-2 text-sm">
-                  <Loader2Icon className="h-4 w-4 animate-spin" />
-                  Wird ans Terminal gesendet...
+                  <div>
+                    <Label htmlFor="cash-given" className="text-sm">
+                      Gegeben
+                    </Label>
+                    <Input
+                      id="cash-given"
+                      type="number"
+                      step="0.01"
+                      min="0"
+                      autoFocus
+                      placeholder="0,00"
+                      value={cashGiven}
+                      onChange={(e) => setCashGiven(e.target.value)}
+                      onKeyDown={(e) =>
+                        e.key === 'Enter' && handleCashConfirm()
+                      }
+                      className="mt-1"
+                    />
+                  </div>
+                  {cashGiven &&
+                    parseFloat(cashGiven) * 100 >=
+                      (pendingOrderData?.orderPrice ?? 0) && (
+                      <div>
+                        <Label className="text-muted-foreground text-sm">
+                          Rückgeld
+                        </Label>
+                        <p className="text-xl font-semibold text-green-600">
+                          {(
+                            parseFloat(cashGiven) -
+                            (pendingOrderData?.orderPrice ?? 0) / 100
+                          )
+                            .toFixed(2)
+                            .replace('.', ',')}{' '}
+                          €
+                        </p>
+                      </div>
+                    )}
                 </div>
-              ) : (
-                <p className="text-muted-foreground text-sm">
-                  Bitte auf Zahlung des Kunden am Terminal warten.
-                </p>
-              )}
-            </div>
-            <DialogFooter>
-              <Button variant="outline" onClick={handleTerminalCancel}>
-                Abbrechen
-              </Button>
-              <Button
-                disabled={terminalLoading}
-                onClick={handleTerminalConfirm}
+                <DialogFooter>
+                  <Button
+                    variant="outline"
+                    onClick={() => setShowCashDialog(false)}
+                  >
+                    Abbrechen
+                  </Button>
+                  <Button onClick={handleCashConfirm}>Bestätigen</Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
+
+            {/* Terminal waiting dialog */}
+            <Dialog open={showTerminalDialog} onOpenChange={() => {}}>
+              <DialogContent
+                className="max-w-xs"
+                onInteractOutside={(e) => e.preventDefault()}
               >
-                Zahlung bestätigt
+                <DialogHeader>
+                  <DialogTitle>Terminal-Zahlung</DialogTitle>
+                </DialogHeader>
+                <div className="space-y-3 py-2">
+                  <p className="text-2xl font-bold">
+                    {centsToEuro(pendingOrderData?.orderPrice ?? 0)} €
+                  </p>
+                  {terminalLoading ? (
+                    <div className="text-muted-foreground flex items-center gap-2 text-sm">
+                      <Loader2Icon className="h-4 w-4 animate-spin" />
+                      Wird ans Terminal gesendet...
+                    </div>
+                  ) : (
+                    <p className="text-muted-foreground text-sm">
+                      Bitte auf Zahlung des Kunden am Terminal warten.
+                    </p>
+                  )}
+                </div>
+                <DialogFooter>
+                  <Button variant="outline" onClick={handleTerminalCancel}>
+                    Abbrechen
+                  </Button>
+                  <Button
+                    disabled={terminalLoading}
+                    onClick={handleTerminalConfirm}
+                  >
+                    Zahlung bestätigt
+                  </Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
+
+            {/* Send & Reset Button */}
+            <div className="flex justify-between">
+              <Button
+                className="mb-4 mt-2 w-min bg-amber-600"
+                disabled={dataOrderItems.length === 0}
+                onClick={handleSubmitOrder}
+              >
+                {loadingOrder || loadingOrderItems || loadingPrint ? (
+                  <Loader2Icon className="h-8 w-8 animate-spin" />
+                ) : (
+                  'Bezahlen'
+                )}{' '}
+                <ShoppingCart className="ml-1 h-4 w-4"></ShoppingCart>
               </Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
 
-        {/* Send & Reset Button */}
-        <div className="flex justify-between">
-          <Button
-            className="mb-4 mt-2 w-min bg-amber-600"
-            disabled={dataOrderItems.length === 0}
-            onClick={handleSubmitOrder}
-          >
-            {loadingOrder || loadingOrderItems || loadingPrint ? (
-              <Loader2Icon className="h-8 w-8 animate-spin" />
-            ) : (
-              'Bezahlen'
-            )}{' '}
-            <ShoppingCart className="ml-1 h-4 w-4"></ShoppingCart>
-          </Button>
-
-          <Button
-            className=" ml-2 mt-2 w-min bg-amber-600"
-            // disabled={dataOrderItems.length === 0}
-            onClick={() => {
-              handleResetOrder()
-            }}
-          >
-            Reset
-            <ArrowPathIcon className="ml-1 h-4 w-4" />
-          </Button>
+              <Button
+                className=" ml-2 mt-2 w-min bg-amber-600"
+                // disabled={dataOrderItems.length === 0}
+                onClick={() => {
+                  handleResetOrder()
+                }}
+              >
+                Reset
+                <ArrowPathIcon className="ml-1 h-4 w-4" />
+              </Button>
+            </div>
+          </div>
         </div>
       </div>
     </div>
