@@ -36,7 +36,7 @@ import { supabase } from '@/services/supabase'
 import { ArrowPathIcon } from '@heroicons/react/24/outline'
 import { Label } from '@radix-ui/react-label'
 import { AlertTriangle, Loader2Icon, ShoppingCart } from 'lucide-react'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 
 import { LoadingOverlay } from '@/components/LoadingOverlay'
@@ -87,6 +87,65 @@ export type ProductOrder = {
   extras: ProductExtra[]
   option: Variation | null
 }
+
+const CATEGORY_COLORS = [
+  {
+    border: 'border-amber-500',
+    text: 'text-amber-600',
+    activeBg: 'bg-amber-600',
+    activeHoverBg: 'hover:bg-amber-700',
+    sectionBg: 'bg-amber-50 dark:bg-amber-950/20',
+  },
+  {
+    border: 'border-sky-500',
+    text: 'text-sky-600',
+    activeBg: 'bg-sky-600',
+    activeHoverBg: 'hover:bg-sky-700',
+    sectionBg: 'bg-sky-50 dark:bg-sky-950/20',
+  },
+  {
+    border: 'border-emerald-500',
+    text: 'text-emerald-600',
+    activeBg: 'bg-emerald-600',
+    activeHoverBg: 'hover:bg-emerald-700',
+    sectionBg: 'bg-emerald-50 dark:bg-emerald-950/20',
+  },
+  {
+    border: 'border-violet-500',
+    text: 'text-violet-600',
+    activeBg: 'bg-violet-600',
+    activeHoverBg: 'hover:bg-violet-700',
+    sectionBg: 'bg-violet-50 dark:bg-violet-950/20',
+  },
+  {
+    border: 'border-rose-500',
+    text: 'text-rose-600',
+    activeBg: 'bg-rose-600',
+    activeHoverBg: 'hover:bg-rose-700',
+    sectionBg: 'bg-rose-50 dark:bg-rose-950/20',
+  },
+  {
+    border: 'border-teal-500',
+    text: 'text-teal-600',
+    activeBg: 'bg-teal-600',
+    activeHoverBg: 'hover:bg-teal-700',
+    sectionBg: 'bg-teal-50 dark:bg-teal-950/20',
+  },
+  {
+    border: 'border-orange-500',
+    text: 'text-orange-600',
+    activeBg: 'bg-orange-600',
+    activeHoverBg: 'hover:bg-orange-700',
+    sectionBg: 'bg-orange-50 dark:bg-orange-950/20',
+  },
+  {
+    border: 'border-indigo-500',
+    text: 'text-indigo-600',
+    activeBg: 'bg-indigo-600',
+    activeHoverBg: 'hover:bg-indigo-700',
+    sectionBg: 'bg-indigo-50 dark:bg-indigo-950/20',
+  },
+]
 
 const NewOrder = () => {
   const [dataOrderItems, setDataOrderItems] = useState<ProductOrder[]>([])
@@ -162,6 +221,14 @@ const NewOrder = () => {
   })
   const { data: dataCategories } = useProductCategories()
   const { data: printers } = usePrintersQuery()
+
+  const colorMap = useMemo(() => {
+    const map: Record<string, (typeof CATEGORY_COLORS)[number] | undefined> = {}
+    dataCategories?.forEach((cat, i) => {
+      map[cat.category] = CATEGORY_COLORS[i % CATEGORY_COLORS.length]
+    })
+    return map
+  }, [dataCategories])
 
   const { data: openOrders } = useOrdersAndItemsQueryV2({
     statusList: ['waiting', 'processing', 'ready'],
@@ -737,23 +804,26 @@ const NewOrder = () => {
                   category.category !== 'Werbung' &&
                   (productCountByCategory[category.category] ?? 0) > 0,
               )
-              .map((category) => (
-                <Button
-                  key={category.category}
-                  variant="ghost"
-                  className={`w-full justify-between ${
-                    selectedCategories[0] === category.category
-                      ? 'bg-amber-600 text-white hover:bg-amber-600 hover:text-white'
-                      : ''
-                  }`}
-                  onClick={() => handleSelectCategory(category.category)}
-                >
-                  <span className="truncate">{category.category}</span>
-                  <Badge variant="secondary" className="ml-2 shrink-0">
-                    {productCountByCategory[category.category] ?? 0}
-                  </Badge>
-                </Button>
-              ))}
+              .map((category) => {
+                const colors = colorMap[category.category]
+                return (
+                  <Button
+                    key={category.category}
+                    variant="ghost"
+                    className={`w-full justify-between ${
+                      selectedCategories[0] === category.category
+                        ? `${colors?.activeBg ?? 'bg-amber-600'} ${colors?.activeHoverBg ?? 'hover:bg-amber-700'} text-white hover:text-white`
+                        : `border-l-2 ${colors?.border ?? ''}`
+                    }`}
+                    onClick={() => handleSelectCategory(category.category)}
+                  >
+                    <span className="truncate">{category.category}</span>
+                    <Badge variant="secondary" className="ml-2 shrink-0">
+                      {productCountByCategory[category.category] ?? 0}
+                    </Badge>
+                  </Button>
+                )
+              })}
           </div>
         </aside>
 
@@ -793,8 +863,15 @@ const NewOrder = () => {
             {groupedProducts_filtered &&
               Object.entries(groupedProducts_filtered).map(
                 ([category, products]) => (
-                  <div key={category} className="mt-4">
-                    <h2 className="w-full font-bold">{category}</h2>
+                  <div
+                    key={category}
+                    className={`mt-4 rounded-lg border-l-4 p-3 ${colorMap[category]?.border ?? 'border-gray-300'} ${colorMap[category]?.sectionBg ?? ''}`}
+                  >
+                    <h2
+                      className={`w-full font-bold ${colorMap[category]?.text ?? ''}`}
+                    >
+                      {category}
+                    </h2>
                     {/* Iterate over each product in the current category */}
                     <ProductsInCategory
                       products={products}
