@@ -95,6 +95,15 @@ export const CATEGORY_COLOR_PRESETS = [
   { value: '#8b5e3c', label: 'Kaffee' },
   { value: '#b87333', label: 'Karamell' },
   { value: '#c8ad7f', label: 'Beige' },
+  { value: '#3c2415', label: 'Espresso' },
+  { value: '#6f4e37', label: 'Mokka' },
+  { value: '#d2b48c', label: 'Latte' },
+  { value: '#f5e6ca', label: 'Sahne' },
+  { value: '#a0522d', label: 'Zimt' },
+  { value: '#4a2c2a', label: 'Schokolade' },
+  { value: '#f3e5ab', label: 'Vanille' },
+  { value: '#e2c290', label: 'Sand' },
+  { value: '#c76b4a', label: 'Terrakotta' },
 ] as const
 
 // Fallback rotation for categories that don't have a color set yet
