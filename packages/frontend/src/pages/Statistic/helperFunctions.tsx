@@ -4,8 +4,13 @@ import { OrderItem, OrdersAndItems } from '@/data/useOrders'
 import { UserActionsType } from '@/data/useUserActions.tsx'
 import { centsToEuro } from '@/generalHelperFunctions/currencyHelperFunction'
 
+// Payment methods excluded from revenue: 'free_drink'/'youth' bring in no
+// money, and 'cafe_card' redemptions were already counted as revenue when
+// the card itself was sold (as a normal product) — counting them again here
+// would double-count that money.
+const NON_REVENUE_PAYMENT_METHODS = ['free_drink', 'youth', 'cafe_card']
+
 // Get Sum Price of Orders
-// Also filter away orders with payment_method 'free_drink' and 'youth'
 export const getSumPriceData = <
   T extends { price: number; payment_method?: string },
 >(
@@ -14,15 +19,13 @@ export const getSumPriceData = <
   const sum = dataOrders
     .filter(
       (order) =>
-        order.payment_method !== 'free_drink' &&
-        order.payment_method !== 'youth',
+        !NON_REVENUE_PAYMENT_METHODS.includes(order.payment_method ?? ''),
     )
     .reduce((total, order) => total + order.price, 0)
   return centsToEuro(sum)
 }
 
 // Like getSumPriceData but returns the raw sum in cents (for profit math).
-// Excludes free_drink and youth payments.
 export const getSumPriceCents = <
   T extends { price: number; payment_method?: string },
 >(
@@ -31,8 +34,7 @@ export const getSumPriceCents = <
   return dataOrders
     .filter(
       (order) =>
-        order.payment_method !== 'free_drink' &&
-        order.payment_method !== 'youth',
+        !NON_REVENUE_PAYMENT_METHODS.includes(order.payment_method ?? ''),
     )
     .reduce((total, order) => total + order.price, 0)
 }
