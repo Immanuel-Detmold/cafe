@@ -66,6 +66,7 @@ export type Database = {
         Row: {
           created_at: string
           id: number
+          order_id: number | null
           price: number
           purchase_group_id: string | null
           user_id: string | null
@@ -73,6 +74,7 @@ export type Database = {
         Insert: {
           created_at?: string
           id?: number
+          order_id?: number | null
           price: number
           purchase_group_id?: string | null
           user_id?: string | null
@@ -80,11 +82,20 @@ export type Database = {
         Update: {
           created_at?: string
           id?: number
+          order_id?: number | null
           price?: number
           purchase_group_id?: string | null
           user_id?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: 'CafeCards_order_id_fkey'
+            columns: ['order_id']
+            isOneToOne: false
+            referencedRelation: 'Orders'
+            referencedColumns: ['id']
+          },
+        ]
       }
       Expense: {
         Row: {

@@ -19,6 +19,7 @@ export type CafeCardInsert = Database['public']['Tables']['CafeCards']['Insert']
 export const buildCafeCardInsertsFromOrderItems = (
   orderItems: OrderItem[],
   products: Product[],
+  orderId: number,
 ): CafeCardInsert[] => {
   const inserts: CafeCardInsert[] = []
   orderItems.forEach((item) => {
@@ -29,7 +30,7 @@ export const buildCafeCardInsertsFromOrderItems = (
     const unitPrice = option ? parseFloat(option.price) : product.price
 
     for (let i = 0; i < item.quantity; i++) {
-      inserts.push({ price: unitPrice })
+      inserts.push({ price: unitPrice, order_id: orderId })
     }
   })
   return inserts
@@ -116,55 +117,6 @@ export const useCreateCafeCards = () =>
       await saveUserAction({
         action: data,
         short_description: `Created ${data.length} Cards: ${data.map((c) => `${centsToEuro(c.price)}€`).join(', ')}`,
-      })
-    },
-  })
-
-export const useDeleteCafeCards = () =>
-  useMutation({
-    mutationFn: async (ids: number[]) => {
-      const { data, error } = await supabase
-        .from('CafeCards')
-        .delete()
-        .in('id', ids)
-        .select()
-
-      if (error) {
-        throw error
-      }
-      return data
-    },
-    onSuccess: async (data) => {
-      await queryClient.invalidateQueries({ queryKey: ['cafeCards'] })
-
-      await saveUserAction({
-        action: data,
-        short_description: `Deleted ${data.length} Cards`,
-      })
-    },
-  })
-
-export const useDeleteCafeCard = () =>
-  useMutation({
-    mutationFn: async (id: number) => {
-      const { data, error } = await supabase
-        .from('CafeCards')
-        .delete()
-        .match({ id: id })
-        .select()
-
-      if (error) {
-        throw error
-      }
-
-      return data
-    },
-    onSuccess: async (data) => {
-      await queryClient.invalidateQueries({ queryKey: ['cafeCards'] })
-
-      await saveUserAction({
-        action: data,
-        short_description: `Deleted Card: ${centsToEuro(data[0]?.price ?? 0)}`,
       })
     },
   })

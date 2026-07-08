@@ -74,6 +74,7 @@ const OrderStatusPage = ({
       const cafeCardInserts = buildCafeCardInsertsFromOrderItems(
         orderItems,
         productData,
+        order.id,
       )
       if (cafeCardInserts.length > 0) {
         createCafeCards(cafeCardInserts, {

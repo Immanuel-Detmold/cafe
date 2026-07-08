@@ -82,6 +82,7 @@ const ReadyForPickup = () => {
       const cafeCardInserts = buildCafeCardInsertsFromOrderItems(
         orderItem,
         productsData,
+        orderId,
       )
       if (cafeCardInserts.length > 0) {
         createCafeCards(cafeCardInserts, {
