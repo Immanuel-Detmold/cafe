@@ -1,10 +1,13 @@
+import { CATEGORY_COLOR_PRESETS, DEFAULT_CATEGORY_COLORS } from '@/data/data'
 import {
   Category,
   useAddCategory,
   useDeleteCategory,
   useProductCategories,
+  useUpdateCategoryColorMutation,
   useUpdateCategoryOrderMutation,
 } from '@/data/useProductCategories'
+import { isValidHexColor } from '@/generalHelperFunctions/colorHelperFunctions'
 import {
   DndContext,
   DragEndEvent,
@@ -45,6 +48,11 @@ import {
 } from '@/components/ui/alert-dialog'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover'
 import { useToast } from '@/components/ui/use-toast'
 
 /** Sortable row for a single category */
@@ -70,6 +78,40 @@ function SortableCategoryItem({
     opacity: isDragging ? 0.5 : 1,
   }
 
+  const { mutate: updateColor } = useUpdateCategoryColorMutation()
+  const { toast } = useToast()
+
+  const currentColor = category.color ?? DEFAULT_CATEGORY_COLORS[0] ?? '#f59e0b'
+  const [hexInput, setHexInput] = useState(currentColor)
+
+  useEffect(() => {
+    setHexInput(currentColor)
+  }, [currentColor])
+
+  const handleColorChange = (color: string) => {
+    updateColor(
+      { id: category.id, color },
+      {
+        onSuccess: () => {
+          toast({ title: 'Farbe gespeichert ✅', duration: 2000 })
+        },
+        onError: () => {
+          toast({ title: 'Fehler beim Speichern der Farbe ❌' })
+        },
+      },
+    )
+  }
+
+  const handleHexInputCommit = () => {
+    const normalized = hexInput.startsWith('#') ? hexInput : `#${hexInput}`
+    if (isValidHexColor(normalized)) {
+      handleColorChange(normalized)
+    } else {
+      setHexInput(currentColor)
+      toast({ title: 'Ungültiger Hex-Farbwert ❌' })
+    }
+  }
+
   return (
     <div ref={setNodeRef} style={style} className="mt-2">
       <div className="flex items-center justify-between rounded-lg border p-2">
@@ -83,26 +125,73 @@ function SortableCategoryItem({
           <Label>{category.category}</Label>
         </div>
 
-        <AlertDialog>
-          <AlertDialogTrigger asChild>
-            <Trash2Icon className="cursor-pointer text-red-600" />
-          </AlertDialogTrigger>
-          <AlertDialogContent>
-            <AlertDialogHeader>
-              <AlertDialogTitle>Kategorie löschen?</AlertDialogTitle>
-            </AlertDialogHeader>
-            <AlertDialogFooter>
-              <AlertDialogCancel>Abbrechen</AlertDialogCancel>
-              <AlertDialogAction
-                onClick={() => {
-                  onDelete(category.id)
-                }}
-              >
-                Bestätigen
-              </AlertDialogAction>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialog>
+        <div className="flex items-center gap-2">
+          <Popover>
+            <PopoverTrigger asChild>
+              <button
+                type="button"
+                className="h-6 w-6 shrink-0 rounded-full border"
+                style={{ backgroundColor: currentColor }}
+                aria-label="Farbe wählen"
+              />
+            </PopoverTrigger>
+            <PopoverContent className="w-64 space-y-3">
+              <div className="grid grid-cols-7 gap-2">
+                {CATEGORY_COLOR_PRESETS.map((preset) => (
+                  <button
+                    key={preset.value}
+                    type="button"
+                    title={preset.label}
+                    className="h-6 w-6 rounded-full border"
+                    style={{ backgroundColor: preset.value }}
+                    onClick={() => handleColorChange(preset.value)}
+                  />
+                ))}
+              </div>
+
+              <div className="flex items-center gap-2">
+                <input
+                  type="color"
+                  value={currentColor}
+                  onChange={(e) => handleColorChange(e.target.value)}
+                  className="h-9 w-9 cursor-pointer rounded border p-0.5"
+                  aria-label="RGB Farbe wählen"
+                />
+                <Input
+                  value={hexInput}
+                  onChange={(e) => setHexInput(e.target.value)}
+                  onBlur={handleHexInputCommit}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') handleHexInputCommit()
+                  }}
+                  placeholder="#RRGGBB"
+                  className="h-9"
+                />
+              </div>
+            </PopoverContent>
+          </Popover>
+
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Trash2Icon className="cursor-pointer text-red-600" />
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Kategorie löschen?</AlertDialogTitle>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Abbrechen</AlertDialogCancel>
+                <AlertDialogAction
+                  onClick={() => {
+                    onDelete(category.id)
+                  }}
+                >
+                  Bestätigen
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+        </div>
       </div>
     </div>
   )
@@ -170,8 +259,12 @@ const ChangeCategories = () => {
     const maxOrder = categories.length
       ? Math.max(...categories.map((c) => c.sort_order ?? 0), -1)
       : 0
+    const defaultColor =
+      DEFAULT_CATEGORY_COLORS[
+        categories.length % DEFAULT_CATEGORY_COLORS.length
+      ] ?? DEFAULT_CATEGORY_COLORS[0]
     addCategory(
-      { category: newCategory, sort_order: maxOrder + 1 },
+      { category: newCategory, sort_order: maxOrder + 1, color: defaultColor },
       {
         onSuccess: () => {
           setNewCategory('')

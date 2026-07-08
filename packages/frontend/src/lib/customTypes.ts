@@ -31,6 +31,7 @@ export type ProductWithVariations = {
   id: number
   image: string | null
   images: string[] | null
+  is_cafe_card: boolean
   method: string | null
   name: string
   only_advertisement_screen: boolean

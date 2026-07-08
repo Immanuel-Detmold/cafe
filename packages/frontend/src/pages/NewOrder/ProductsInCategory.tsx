@@ -116,14 +116,14 @@ const ProductsInCategory = (props: propsProductInCategory) => {
       {props.products?.map((product) => (
         <div
           key={product.id}
-          className="m-1 flex w-min items-center justify-between"
+          className="m-1 flex w-full min-w-0 items-center justify-between"
         >
           <Popover>
             <PopoverTrigger asChild className="relative ml-2">
               {/* Horizontal red line */}
               <Button
                 variant="outline"
-                className={`relative h-14 overflow-hidden rounded-full px-2 ${props.dataOrderItems.some((item) => item.product_id === product.id) ? 'bg-secondary' : ''}`}
+                className={`relative h-14 w-full min-w-0 overflow-hidden rounded-full px-2 ${props.dataOrderItems.some((item) => item.product_id === product.id) ? 'bg-secondary' : ''}`}
                 onClick={() => {
                   setQuantity(1)
                   setProductComment('')
@@ -164,12 +164,12 @@ const ProductsInCategory = (props: propsProductInCategory) => {
                     }
                   />
                 </Avatar>
-                <Label className="ml-1 cursor-pointer select-none">
+                <Label className="ml-1 min-w-0 flex-1 cursor-pointer select-none truncate">
                   {product.name} ({centsToEuro(product.price)}€)
                 </Label>
 
                 {/* Show if Product is currently Selected */}
-                <Label className="ml-1 text-green-700">
+                <Label className="ml-1 shrink-0 text-green-700">
                   {(() => {
                     // Sum up the quantities for each orderItem with the matching product_id
                     const totalQuantity = props.dataOrderItems
@@ -188,8 +188,10 @@ const ProductsInCategory = (props: propsProductInCategory) => {
               <div className="flex flex-col gap-1">
                 <div className="flex w-full max-w-sm items-center justify-between">
                   <div className="flex w-full items-center justify-between">
-                    <div className="flex flex-1 flex-col">
-                      <Label className="font-bold">{product.name}</Label>
+                    <div className="flex min-w-0 flex-1 flex-col">
+                      <Label className="truncate font-bold">
+                        {product.name}
+                      </Label>
                     </div>
 
                     {/* Plus and Minus Icons */}

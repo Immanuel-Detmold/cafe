@@ -80,6 +80,31 @@ export const useAddCategory = () =>
     },
   })
 
+// Update Category Color
+export const useUpdateCategoryColorMutation = () =>
+  useMutation({
+    mutationFn: async ({ id, color }: { id: number; color: string }) => {
+      const { data, error } = await supabase
+        .from('ProductCategories')
+        .update({ color })
+        .eq('id', id)
+        .select()
+
+      if (error) {
+        throw error
+      }
+      return data
+    },
+    onSuccess: async (data) => {
+      await queryClient.invalidateQueries({ queryKey: ['categories'] })
+
+      await saveUserAction({
+        action: data,
+        short_description: `Update Category Color: ${data[0]?.category}`,
+      })
+    },
+  })
+
 // Update Category Order (batch)
 export const useUpdateCategoryOrderMutation = () =>
   useMutation({

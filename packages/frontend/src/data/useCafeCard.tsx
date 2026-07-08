@@ -4,10 +4,36 @@ import { supabase } from '@/services/supabase'
 import { Database } from '@/services/supabase.types'
 import { useMutation, useQuery } from '@tanstack/react-query'
 
+import { OrderItem } from './useOrders'
+import { Product } from './useProducts'
 import { saveUserAction } from './useUserActions.tsx'
 
 export type CafeCard = Database['public']['Tables']['CafeCards']['Row']
 export type CafeCardInsert = Database['public']['Tables']['CafeCards']['Insert']
+
+/**
+ * Build one CafeCards insert row per unit of every finished order item
+ * whose product is marked as a Cafe Card. Extras are intentionally
+ * excluded from the card face value — only the product/option price counts.
+ */
+export const buildCafeCardInsertsFromOrderItems = (
+  orderItems: OrderItem[],
+  products: Product[],
+): CafeCardInsert[] => {
+  const inserts: CafeCardInsert[] = []
+  orderItems.forEach((item) => {
+    const product = products.find((p) => p.id === item.product_id)
+    if (!product?.is_cafe_card) return
+
+    const option = item.option as { price: string } | null
+    const unitPrice = option ? parseFloat(option.price) : product.price
+
+    for (let i = 0; i < item.quantity; i++) {
+      inserts.push({ price: unitPrice })
+    }
+  })
+  return inserts
+}
 
 // Get Cafe Cards
 export const useCafeCards = ({

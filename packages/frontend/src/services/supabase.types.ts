@@ -319,18 +319,21 @@ export type Database = {
       ProductCategories: {
         Row: {
           category: string
+          color: string | null
           created_at: string
           id: number
           sort_order: number | null
         }
         Insert: {
           category: string
+          color?: string | null
           created_at?: string
           id?: number
           sort_order?: number | null
         }
         Update: {
           category?: string
+          color?: string | null
           created_at?: string
           id?: number
           sort_order?: number | null
@@ -349,6 +352,7 @@ export type Database = {
           id: number
           image: string | null
           images: string[] | null
+          is_cafe_card: boolean
           method: string | null
           name: string
           only_advertisement_screen: boolean
@@ -373,6 +377,7 @@ export type Database = {
           id?: number
           image?: string | null
           images?: string[] | null
+          is_cafe_card?: boolean
           method?: string | null
           name: string
           only_advertisement_screen?: boolean
@@ -397,6 +402,7 @@ export type Database = {
           id?: number
           image?: string | null
           images?: string[] | null
+          is_cafe_card?: boolean
           method?: string | null
           name?: string
           only_advertisement_screen?: boolean

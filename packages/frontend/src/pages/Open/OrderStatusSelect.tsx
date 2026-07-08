@@ -1,3 +1,7 @@
+import {
+  buildCafeCardInsertsFromOrderItems,
+  useCreateCafeCards,
+} from '@/data/useCafeCard'
 import { Inventory, useChangeInventoryItemQuantity } from '@/data/useInventory'
 import {
   Order,
@@ -46,6 +50,7 @@ const OrderStatusPage = ({
   )
   const { mutate: changeInventory, isPending: isPendingInventory } =
     useChangeInventoryItemQuantity()
+  const { mutate: createCafeCards } = useCreateCafeCards()
 
   // Use Effect
   useEffect(() => {
@@ -55,9 +60,28 @@ const OrderStatusPage = ({
   // Handle Status Change
   const handleStatusChange = (newStatus: OrderStatus) => {
     // Call Consumption
-    if (newStatus === 'finished' && inventory && productData && orderItems) {
+    if (
+      newStatus === 'finished' &&
+      order.status !== 'finished' &&
+      inventory &&
+      productData &&
+      orderItems
+    ) {
       const consumptions = getAllConsumptions(orderItems, productData)
       changeInventory({ consumption: consumptions, inventory })
+
+      // Mint Cafe Cards for any cafe-card products in this order
+      const cafeCardInserts = buildCafeCardInsertsFromOrderItems(
+        orderItems,
+        productData,
+      )
+      if (cafeCardInserts.length > 0) {
+        createCafeCards(cafeCardInserts, {
+          onError: () => {
+            toast({ title: 'Café-Karte konnte nicht angelegt werden! ❌' })
+          },
+        })
+      }
 
       // Update Stock for each product
       setLoadingStock(true)

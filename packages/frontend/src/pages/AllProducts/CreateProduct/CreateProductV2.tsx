@@ -62,6 +62,7 @@ const CreateProductV2 = () => {
   const [extras, setExtras] = useState<Variation[]>([])
   const [showStockColored, setShowStockColored] = useState(false)
   const [showStockMenu, setShowStockMenu] = useState(true)
+  const [isCafeCard, setIsCafeCard] = useState(false)
 
   // User State
   const [userRole, setUserRole] = useState('user')
@@ -192,6 +193,7 @@ const CreateProductV2 = () => {
       stock: parseInt(stock),
       options: cleanedOptions,
       extras: cleanedExtras,
+      is_cafe_card: isCafeCard,
     }
 
     // New Product
@@ -318,6 +320,7 @@ const CreateProductV2 = () => {
             stock,
             show_stock_colors,
             show_stock_menu,
+            is_cafe_card,
           } = data
           setName(name)
           setPrice(centsToEuro(price))
@@ -366,6 +369,9 @@ const CreateProductV2 = () => {
           }
           if (show_stock_menu !== undefined) {
             setShowStockMenu(!!show_stock_menu)
+          }
+          if (is_cafe_card !== undefined) {
+            setIsCafeCard(!!is_cafe_card)
           }
         } else if (error) {
           console.error('Error fetching product data:', error)
@@ -505,6 +511,21 @@ const CreateProductV2 = () => {
                 Produkt pausieren
               </label>
               <InfoIconPopover text="Das Produkt wird bei Aktivierung nicht mehr in der Bestellungsaufnahme und Menükarte angezeigt." />
+            </div>
+
+            {/* Cafe Card */}
+            <div className="mt-4 flex items-center">
+              <Switch
+                id="is-cafe-card"
+                checked={isCafeCard}
+                onCheckedChange={(e) => {
+                  setIsCafeCard(e)
+                }}
+              />
+              <label htmlFor="is-cafe-card" className="ml-2">
+                Café Karte
+              </label>
+              <InfoIconPopover text="Dieses Produkt wird beim Kauf zusätzlich als Café-Karte (Guthabenkarte) verbucht. Zusatzoptionen (Extras) werden dabei nicht in den Kartenwert übernommen." />
             </div>
 
             {/* Switch Show Product/Slogan only on advertisement screen */}

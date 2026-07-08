@@ -1,5 +1,5 @@
 import { queryClient } from '@/App'
-import { PAYMENT_METHODS } from '@/data/data'
+import { DEFAULT_CATEGORY_COLORS, PAYMENT_METHODS } from '@/data/data'
 import { getPrintMode, setPrintMode } from '@/data/printModeStore'
 import { getServerIp, useAppData } from '@/data/useAppData'
 import { useInventory } from '@/data/useInventory'
@@ -18,6 +18,10 @@ import {
   useRevenueStreamsQuery,
 } from '@/data/useRevenueStreams.tsx'
 import { useUser } from '@/data/useUser'
+import {
+  getContrastTextColor,
+  hexToRgba,
+} from '@/generalHelperFunctions/colorHelperFunctions'
 import {
   EuroToCents,
   centsToEuro,
@@ -87,65 +91,6 @@ export type ProductOrder = {
   extras: ProductExtra[]
   option: Variation | null
 }
-
-const CATEGORY_COLORS = [
-  {
-    border: 'border-amber-500',
-    text: 'text-amber-600',
-    activeBg: 'bg-amber-600',
-    activeHoverBg: 'hover:bg-amber-700',
-    sectionBg: 'bg-amber-50 dark:bg-amber-950/20',
-  },
-  {
-    border: 'border-sky-500',
-    text: 'text-sky-600',
-    activeBg: 'bg-sky-600',
-    activeHoverBg: 'hover:bg-sky-700',
-    sectionBg: 'bg-sky-50 dark:bg-sky-950/20',
-  },
-  {
-    border: 'border-emerald-500',
-    text: 'text-emerald-600',
-    activeBg: 'bg-emerald-600',
-    activeHoverBg: 'hover:bg-emerald-700',
-    sectionBg: 'bg-emerald-50 dark:bg-emerald-950/20',
-  },
-  {
-    border: 'border-violet-500',
-    text: 'text-violet-600',
-    activeBg: 'bg-violet-600',
-    activeHoverBg: 'hover:bg-violet-700',
-    sectionBg: 'bg-violet-50 dark:bg-violet-950/20',
-  },
-  {
-    border: 'border-rose-500',
-    text: 'text-rose-600',
-    activeBg: 'bg-rose-600',
-    activeHoverBg: 'hover:bg-rose-700',
-    sectionBg: 'bg-rose-50 dark:bg-rose-950/20',
-  },
-  {
-    border: 'border-teal-500',
-    text: 'text-teal-600',
-    activeBg: 'bg-teal-600',
-    activeHoverBg: 'hover:bg-teal-700',
-    sectionBg: 'bg-teal-50 dark:bg-teal-950/20',
-  },
-  {
-    border: 'border-orange-500',
-    text: 'text-orange-600',
-    activeBg: 'bg-orange-600',
-    activeHoverBg: 'hover:bg-orange-700',
-    sectionBg: 'bg-orange-50 dark:bg-orange-950/20',
-  },
-  {
-    border: 'border-indigo-500',
-    text: 'text-indigo-600',
-    activeBg: 'bg-indigo-600',
-    activeHoverBg: 'hover:bg-indigo-700',
-    sectionBg: 'bg-indigo-50 dark:bg-indigo-950/20',
-  },
-]
 
 const NewOrder = () => {
   const [dataOrderItems, setDataOrderItems] = useState<ProductOrder[]>([])
@@ -223,9 +168,12 @@ const NewOrder = () => {
   const { data: printers } = usePrintersQuery()
 
   const colorMap = useMemo(() => {
-    const map: Record<string, (typeof CATEGORY_COLORS)[number] | undefined> = {}
+    const map: Record<string, string> = {}
     dataCategories?.forEach((cat, i) => {
-      map[cat.category] = CATEGORY_COLORS[i % CATEGORY_COLORS.length]
+      map[cat.category] =
+        cat.color ??
+        DEFAULT_CATEGORY_COLORS[i % DEFAULT_CATEGORY_COLORS.length] ??
+        '#f59e0b'
     })
     return map
   }, [dataCategories])
@@ -519,6 +467,8 @@ const NewOrder = () => {
         }
 
         if (order_id) handleSaveOrderItems(order_id, assignedOrderNumber)
+        // Cafe Cards are minted once the order is marked "finished"
+        // (see OrderStatusSelect.tsx / ReadyForPickup.tsx), not here.
       },
       onError: (error) => {
         toast({
@@ -665,6 +615,27 @@ const NewOrder = () => {
     )
   }
 
+  // Paying for a cafe-card purchase with a cafe card doesn't make sense
+  const cartHasCafeCard = useMemo(
+    () =>
+      dataOrderItems.some(
+        (item) => products?.find((p) => p.id === item.product_id)?.is_cafe_card,
+      ),
+    [dataOrderItems, products],
+  )
+
+  useEffect(() => {
+    if (cartHasCafeCard && paymentMethod === 'cafe_card') {
+      setPaymentMethod('cash')
+      sessionStorage.setItem('paymentMethod', 'cash')
+      toast({
+        title:
+          'Bezahlung mit Café Karte nicht möglich, da eine Karte im Warenkorb ist',
+      })
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [cartHasCafeCard])
+
   const handleSaveOrderItems = (order_id: number, orderNumber: string) => {
     // Map to get Product name and Price, because OrderItems only have product_id and price could change
     const orderItems = dataOrderItems.map((item) => {
@@ -805,16 +776,25 @@ const NewOrder = () => {
                   (productCountByCategory[category.category] ?? 0) > 0,
               )
               .map((category) => {
-                const colors = colorMap[category.category]
+                const color = colorMap[category.category] ?? '#f59e0b'
+                const isSelected = selectedCategories[0] === category.category
                 return (
                   <Button
                     key={category.category}
                     variant="ghost"
                     className={`w-full justify-between ${
-                      selectedCategories[0] === category.category
-                        ? `${colors?.activeBg ?? 'bg-amber-600'} ${colors?.activeHoverBg ?? 'hover:bg-amber-700'} text-white hover:text-white`
-                        : `border-l-2 ${colors?.border ?? ''}`
+                      isSelected
+                        ? 'hover:text-white hover:brightness-90'
+                        : 'border-l-2'
                     }`}
+                    style={
+                      isSelected
+                        ? {
+                            backgroundColor: color,
+                            color: getContrastTextColor(color),
+                          }
+                        : { borderColor: color }
+                    }
                     onClick={() => handleSelectCategory(category.category)}
                   >
                     <span className="truncate">{category.category}</span>
@@ -865,10 +845,17 @@ const NewOrder = () => {
                 ([category, products]) => (
                   <div
                     key={category}
-                    className={`mt-4 rounded-lg border-l-4 p-3 ${colorMap[category]?.border ?? 'border-gray-300'} ${colorMap[category]?.sectionBg ?? ''}`}
+                    className="mt-4 rounded-lg border-l-4 p-3"
+                    style={{
+                      borderColor: colorMap[category],
+                      backgroundColor: colorMap[category]
+                        ? hexToRgba(colorMap[category], 0.12)
+                        : undefined,
+                    }}
                   >
                     <h2
-                      className={`w-full font-bold ${colorMap[category]?.text ?? ''}`}
+                      className="w-full font-bold"
+                      style={{ color: colorMap[category] }}
                     >
                       {category}
                     </h2>
@@ -940,7 +927,11 @@ const NewOrder = () => {
             >
               {PAYMENT_METHODS.map((method, index) => (
                 <div className="flex items-center space-x-2" key={index}>
-                  <RadioGroupItem value={method.name} id={`r${index + 1}`} />
+                  <RadioGroupItem
+                    value={method.name}
+                    id={`r${index + 1}`}
+                    disabled={method.name === 'cafe_card' && cartHasCafeCard}
+                  />
                   <Label htmlFor={`r${index + 1}`}>{method.label}</Label>
                 </div>
               ))}

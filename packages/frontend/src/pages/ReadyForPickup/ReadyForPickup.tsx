@@ -2,6 +2,10 @@
 import { imgPlaceHolder } from '@/data/data'
 import { getServerIp, useAppData } from '@/data/useAppData'
 import {
+  buildCafeCardInsertsFromOrderItems,
+  useCreateCafeCards,
+} from '@/data/useCafeCard'
+import {
   useChangeInventoryItemQuantity,
   useInventory,
 } from '@/data/useInventory'
@@ -63,6 +67,7 @@ const ReadyForPickup = () => {
   const { mutate: changeStatus, isPending } = useChageOrderStatusMutationV2()
   const { mutate: changeInventory, isPending: isPendingInventory } =
     useChangeInventoryItemQuantity()
+  const { mutate: createCafeCards } = useCreateCafeCards()
 
   const handleStatusUpdate = (
     orderId: number,
@@ -72,6 +77,19 @@ const ReadyForPickup = () => {
     if (status === 'finished' && productsData && inventory && orderItem) {
       const consumptions = getAllConsumptions(orderItem, productsData)
       changeInventory({ consumption: consumptions, inventory })
+
+      // Mint Cafe Cards for any cafe-card products in this order
+      const cafeCardInserts = buildCafeCardInsertsFromOrderItems(
+        orderItem,
+        productsData,
+      )
+      if (cafeCardInserts.length > 0) {
+        createCafeCards(cafeCardInserts, {
+          onError: () => {
+            toast({ title: 'Café-Karte konnte nicht angelegt werden! ❌' })
+          },
+        })
+      }
 
       // Update Stock for each product
       setLoadingStock(true)
