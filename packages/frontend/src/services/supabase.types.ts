@@ -372,6 +372,7 @@ export type Database = {
           price: number
           short_description: string | null
           show_consumption: boolean
+          show_on_menu: boolean
           show_stock_colors: boolean
           show_stock_menu: boolean
           stock: number | null
@@ -397,6 +398,7 @@ export type Database = {
           price: number
           short_description?: string | null
           show_consumption?: boolean
+          show_on_menu?: boolean
           show_stock_colors?: boolean
           show_stock_menu?: boolean
           stock?: number | null
@@ -422,6 +424,7 @@ export type Database = {
           price?: number
           short_description?: string | null
           show_consumption?: boolean
+          show_on_menu?: boolean
           show_stock_colors?: boolean
           show_stock_menu?: boolean
           stock?: number | null

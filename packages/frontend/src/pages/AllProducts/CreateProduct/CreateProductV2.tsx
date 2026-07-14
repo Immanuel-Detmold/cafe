@@ -63,6 +63,7 @@ const CreateProductV2 = () => {
   const [showStockColored, setShowStockColored] = useState(false)
   const [showStockMenu, setShowStockMenu] = useState(true)
   const [isCafeCard, setIsCafeCard] = useState(false)
+  const [showOnMenu, setShowOnMenu] = useState(true)
 
   // User State
   const [userRole, setUserRole] = useState('user')
@@ -194,6 +195,7 @@ const CreateProductV2 = () => {
       options: cleanedOptions,
       extras: cleanedExtras,
       is_cafe_card: isCafeCard,
+      show_on_menu: showOnMenu,
     }
 
     // New Product
@@ -321,6 +323,7 @@ const CreateProductV2 = () => {
             show_stock_colors,
             show_stock_menu,
             is_cafe_card,
+            show_on_menu,
           } = data
           setName(name)
           setPrice(centsToEuro(price))
@@ -372,6 +375,9 @@ const CreateProductV2 = () => {
           }
           if (is_cafe_card !== undefined) {
             setIsCafeCard(!!is_cafe_card)
+          }
+          if (show_on_menu !== undefined) {
+            setShowOnMenu(!!show_on_menu)
           }
         } else if (error) {
           console.error('Error fetching product data:', error)
@@ -599,6 +605,20 @@ const CreateProductV2 = () => {
                 Vorrätig auf Menükarte anzeigen
               </label>
               <InfoIconPopover text="Wenn aktiviert, wird die Verfügbarkeit auf der Menükarte für Kunden angezeigt." />
+            </div>
+
+            <div className="mt-4 flex items-center">
+              <Switch
+                id="show-on-menu"
+                checked={showOnMenu}
+                onCheckedChange={(e) => {
+                  setShowOnMenu(e)
+                }}
+              />
+              <label htmlFor="show-on-menu" className="ml-2">
+                Auf Menükarte anzeigen
+              </label>
+              <InfoIconPopover text="Wenn deaktiviert, wird das Produkt nicht auf der öffentlichen Menükarte angezeigt." />
             </div>
 
             {/* Stock */}

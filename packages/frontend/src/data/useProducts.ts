@@ -15,6 +15,7 @@ export const useProductsQuery = ({
   advertisement,
   only_advertisement_screen,
   paused,
+  show_on_menu,
 }: {
   searchTerm: string
   ascending?: boolean
@@ -22,6 +23,7 @@ export const useProductsQuery = ({
   advertisement?: boolean
   only_advertisement_screen?: boolean
   paused?: boolean
+  show_on_menu?: boolean
 }) => {
   return useQuery({
     queryKey: [
@@ -32,6 +34,7 @@ export const useProductsQuery = ({
       advertisement,
       only_advertisement_screen,
       paused,
+      show_on_menu,
     ],
     queryFn: async () => {
       let query = supabase
@@ -55,6 +58,10 @@ export const useProductsQuery = ({
 
       if (paused !== undefined) {
         query = query.eq('paused', paused)
+      }
+
+      if (show_on_menu !== undefined) {
+        query = query.eq('show_on_menu', show_on_menu)
       }
 
       const { data, error } = await query

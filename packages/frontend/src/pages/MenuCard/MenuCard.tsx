@@ -77,6 +77,7 @@ const MenuCard = () => {
     ascending: true,
     only_advertisement_screen: false,
     paused: false,
+    show_on_menu: true,
   })
   const { data: dataCategories } = useProductCategories()
 
