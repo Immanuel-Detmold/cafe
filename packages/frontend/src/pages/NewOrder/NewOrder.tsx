@@ -1,6 +1,10 @@
 import { queryClient } from '@/App'
 import { DEFAULT_CATEGORY_COLORS, PAYMENT_METHODS } from '@/data/data'
 import { getPrintMode, setPrintMode } from '@/data/printModeStore'
+import {
+  getStoredRevenueStream,
+  setStoredRevenueStream,
+} from '@/data/revenueStreamStore'
 import { getServerIp, useAppData } from '@/data/useAppData'
 import { useInventory } from '@/data/useInventory'
 import {
@@ -106,7 +110,10 @@ const NewOrder = () => {
   const [printReceipt, setPrintReceipt] = useState<boolean>(getPrintMode())
   const [selectedRevenueStream, setSelectedRevenueStream] = useState<
     number | null
-  >(null)
+  >(() => {
+    const stored = getStoredRevenueStream()
+    return typeof stored === 'number' ? stored : null
+  })
 
   // Payment dialogs
   const [showCashDialog, setShowCashDialog] = useState(false)
@@ -941,9 +948,11 @@ const NewOrder = () => {
             <Label className="mt-4 font-bold">Umsatzgruppe</Label>
             <Select
               value={selectedRevenueStream?.toString() || ''}
-              onValueChange={(value: string) =>
-                setSelectedRevenueStream(Number(value))
-              }
+              onValueChange={(value: string) => {
+                const next = Number(value)
+                setSelectedRevenueStream(next)
+                setStoredRevenueStream(next)
+              }}
             >
               <SelectTrigger className="mt-1 max-w-60">
                 <SelectValue placeholder="💰 Umsatzgruppe wählen" />

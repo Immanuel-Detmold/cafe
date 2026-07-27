@@ -1,3 +1,7 @@
+import {
+  getStoredRevenueStream,
+  setStoredRevenueStream,
+} from '@/data/revenueStreamStore'
 import { useCafeCards } from '@/data/useCafeCard'
 import { useExpensesQuery } from '@/data/useExpense'
 import {
@@ -59,7 +63,7 @@ const StatisticPage = () => {
   const { data: revenueStreams } = useRevenueStreamsQuery()
   const [selectedRevenueStream, setSelectedRevenueStream] = useState<
     number | string | undefined
-  >('all')
+  >(() => getStoredRevenueStream() ?? 'all')
 
   // Time range (defaults to today, updated to last revenue day once data loads)
   const [granularity, setGranularity] = useState<Granularity>('day')
@@ -283,11 +287,11 @@ const StatisticPage = () => {
                 </Label>
                 <Select
                   value={selectedRevenueStream?.toString() || 'all'}
-                  onValueChange={(value) =>
-                    setSelectedRevenueStream(
-                      value === 'all' ? 'all' : parseInt(value),
-                    )
-                  }
+                  onValueChange={(value) => {
+                    const next = value === 'all' ? 'all' : parseInt(value)
+                    setSelectedRevenueStream(next)
+                    setStoredRevenueStream(next)
+                  }}
                 >
                   <SelectTrigger
                     id="revenue-stream-select"
