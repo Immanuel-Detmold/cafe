@@ -18,8 +18,8 @@ import { useToast } from '@/components/ui/use-toast'
 import TableQrCodesPDF from './GeneratePDF/TableQrCodesPDF'
 import { buildTableQrOptions } from './tableQrCodeStyle'
 
-const getTableUrl = (tableNumber: string) =>
-  `${window.location.origin}${import.meta.env.BASE_URL}menu?table=${tableNumber}`
+const getTableUrl = (menuBaseUrl: string, tableNumber: string) =>
+  `${menuBaseUrl}?table=${tableNumber}`
 
 const blobToDataUrl = (blob: Blob): Promise<string> =>
   new Promise((resolve, reject) => {
@@ -34,6 +34,13 @@ const TableQrCodes = () => {
   const { mutate: updateAppData } = useUpdateAppData()
   const { toast } = useToast()
   const tableNumbers = useMemo(() => getTableNumbers(appData), [appData])
+  const menuBaseUrl = useMemo(() => {
+    const link = appData?.find((item) => item.key === 'menu_link')?.value
+    return (
+      link?.replace(/\/$/, '') ||
+      `${window.location.origin}${import.meta.env.BASE_URL}menu`
+    )
+  }, [appData])
 
   const [tableCount, setTableCount] = useState(String(DEFAULT_TABLE_COUNT))
   const [tableNumberSelectable, setTableNumberSelectable] = useState(true)
@@ -95,7 +102,9 @@ const TableQrCodes = () => {
       if (!container) return
       container.replaceChildren()
 
-      const qr = new QRCodeStyling(buildTableQrOptions(n, getTableUrl(n)))
+      const qr = new QRCodeStyling(
+        buildTableQrOptions(n, getTableUrl(menuBaseUrl, n)),
+      )
       qr.append(container)
       const canvasEl = container.querySelector('canvas')
       if (canvasEl) {
@@ -113,7 +122,7 @@ const TableQrCodes = () => {
     return () => {
       cancelled = true
     }
-  }, [tableNumbers])
+  }, [tableNumbers, menuBaseUrl])
 
   const qrImagesList = tableNumbers
     .map((n) => ({ table: n, dataUrl: qrImages[n] }))
