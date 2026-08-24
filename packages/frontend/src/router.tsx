@@ -55,7 +55,7 @@ export const router = createBrowserRouter(
     },
     {
       path: 'screen',
-      element: <ReadyForPickup />,
+      element: <ReadyForPickup hideTableNumber />,
     },
     {
       path: 'orders-pdf',
@@ -200,7 +200,7 @@ export const router = createBrowserRouter(
         },
         {
           path: 'ready-for-pickup',
-          element: <ReadyForPickup />,
+          element: <ReadyForPickup hideTableNumber={false} />,
         },
         {
           path: 'new-order',

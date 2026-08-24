@@ -45,7 +45,7 @@ import { useToast } from '@/components/ui/use-toast'
 
 import InProcessPage from './InProcess'
 
-const ReadyForPickup = () => {
+const ReadyForPickup = ({ hideTableNumber }: { hideTableNumber: boolean }) => {
   // States
   const [clickedButton, setClickedButton] = useState('finished')
   const [loadingStock, setLoadingStock] = useState(false)
@@ -208,7 +208,7 @@ const ReadyForPickup = () => {
                           <Label className="text-2xl font-bold sm:text-3xl md:text-4xl lg:text-7xl">
                             #{order.order_number}
                           </Label>
-                          {order.table_number && (
+                          {!hideTableNumber && order.table_number && (
                             <Badge className="flex items-center gap-1">
                               <UtensilsCrossed className="h-3 w-3" />
                               Tisch {order.table_number}
