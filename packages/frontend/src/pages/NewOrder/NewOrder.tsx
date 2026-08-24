@@ -5,7 +5,12 @@ import {
   getStoredRevenueStream,
   setStoredRevenueStream,
 } from '@/data/revenueStreamStore'
-import { getServerIp, useAppData } from '@/data/useAppData'
+import {
+  clearTableNumber,
+  getTableNumber as getStoredTableNumber,
+  setTableNumber as setStoredTableNumber,
+} from '@/data/tableNumberStore'
+import { getServerIp, getTableNumbers, useAppData } from '@/data/useAppData'
 import { useInventory } from '@/data/useInventory'
 import {
   useDeleteOrderMutation,
@@ -156,6 +161,7 @@ const NewOrder = () => {
 
   // Data & Mutate
   const { data: appData } = useAppData()
+  const tableNumbers = useMemo(() => getTableNumbers(appData), [appData])
   const { data: revenueStreams } = useRevenueStreamsQuery(true)
   const { data: inventoryData } = useInventory()
   const { data: products, error } = useProductsQuery({
@@ -304,9 +310,9 @@ const NewOrder = () => {
     if (sessionName) {
       setOrderName(sessionName)
     }
-    const sessionTableNumber = sessionStorage.getItem('tableNumber')
-    if (sessionTableNumber) {
-      setTableNumber(sessionTableNumber)
+    const storedTableNumber = getStoredTableNumber()
+    if (storedTableNumber) {
+      setTableNumber(storedTableNumber)
     }
     const sessionPaymentMethod = sessionStorage.getItem('paymentMethod')
     if (sessionPaymentMethod) {
@@ -611,11 +617,11 @@ const NewOrder = () => {
     if (!keepPaymentMethod) setPaymentMethod('cash')
     setSumOrderPrice(0)
     setTableNumber('')
+    clearTableNumber()
 
     sessionStorage.setItem('orderItems', JSON.stringify([]))
     sessionStorage.setItem('orderComment', '')
     sessionStorage.setItem('orderName', '')
-    sessionStorage.setItem('tableNumber', '')
     sessionStorage.setItem(
       'paymentMethod',
       keepPaymentMethod ? paymentMethod : 'cash',
@@ -692,8 +698,14 @@ const NewOrder = () => {
     setCustomPriceValue(inputValue)
   }
 
-  const handleSetTableNumber = (tableNumber: string) => {
-    setTableNumber(tableNumber)
+  const handleSetTableNumber = (value: string) => {
+    if (value === 'none') {
+      setTableNumber('')
+      clearTableNumber()
+      return
+    }
+    setTableNumber(value)
+    setStoredTableNumber(value)
   }
 
   // Single-select category from sidebar. null => "Alle" (no filter)
@@ -911,15 +923,23 @@ const NewOrder = () => {
             />
 
             {/* Table Number */}
-            <Input
-              className="mt-2"
-              placeholder="Tischnummer (optional)"
-              value={tableNumber}
-              onChange={(e) => {
-                handleSetTableNumber(e.target.value)
-                sessionStorage.setItem('tableNumber', e.target.value)
-              }}
-            />
+            <Label className="mt-2 font-bold">Tischnummer</Label>
+            <Select
+              value={tableNumber || 'none'}
+              onValueChange={handleSetTableNumber}
+            >
+              <SelectTrigger className="mt-1 max-w-60">
+                <SelectValue placeholder="Tisch wählen (optional)" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="none">Kein Tisch</SelectItem>
+                {tableNumbers.map((n) => (
+                  <SelectItem key={n} value={n}>
+                    Tisch {n}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
 
             {/* Payment Method */}
             <Label className="mt-2 font-bold">Bezahlung</Label>

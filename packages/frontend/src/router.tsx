@@ -32,6 +32,7 @@ import { Organisation } from './pages/Settings/Organisation'
 import NewPrinter from './pages/Settings/PrinterPage/NewPrinter'
 import PrinterPage from './pages/Settings/PrinterPage/Printer/PrinterPage'
 import SettingsPage from './pages/Settings/SettingsPage'
+import TableQrCodes from './pages/Settings/TableQrCodes'
 import UserActions from './pages/Settings/UserActions/UserActions'
 import OrdersPDF from './pages/Statistic/GeneratePDF/OrdersPDF'
 import StatisticPage from './pages/Statistic/StatisticPage'
@@ -167,6 +168,10 @@ export const router = createBrowserRouter(
         {
           path: 'settings/revenue-streams',
           element: <RevenueStreamManager />,
+        },
+        {
+          path: 'settings/table-qr-codes',
+          element: <TableQrCodes />,
         },
         {
           path: 'login',

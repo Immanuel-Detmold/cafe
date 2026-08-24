@@ -26,10 +26,10 @@ export const Navigation = () => {
   const isBigScreen = useMediaQuery({ query: '(min-width: 800px)' })
   return (
     <>
-      <div className="main-container relative flex max-h-screen flex-col">
+      <div className="main-container relative flex max-h-screen flex-col print:max-h-none">
         {!isAuthPage && (isBigScreen ? <HeaderPC /> : <Header />)}
         <div
-          className={`container flex-1 overflow-y-auto ${showNavbar && !isBigScreen ? 'mb-20' : 'mb-2'}`}
+          className={`container flex-1 overflow-y-auto print:overflow-visible ${showNavbar && !isBigScreen ? 'mb-20' : 'mb-2'}`}
         >
           {outlet}
         </div>

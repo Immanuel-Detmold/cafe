@@ -1,3 +1,4 @@
+import { setTableNumber } from '@/data/tableNumberStore'
 import { useOrdersAndItemsQueryV2 } from '@/data/useOrders'
 import { useProductCategories } from '@/data/useProductCategories'
 import { useProductsQuery } from '@/data/useProducts'
@@ -8,7 +9,7 @@ import {
 import { ProductWithVariations } from '@/lib/customTypes'
 import { MoreVertical, Share, X } from 'lucide-react'
 import { useCallback, useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useSearchParams } from 'react-router-dom'
 
 import { Button } from '@/components/ui/button'
 import { Toaster } from '@/components/ui/toaster'
@@ -24,6 +25,15 @@ import { getTrackedOrders } from './orderTrackingStore'
 const MenuCard = () => {
   const [trackedOrders] = useState(() => getTrackedOrders())
   const { toast } = useToast()
+  const [searchParams] = useSearchParams()
+
+  // QR code scan: remember table number from ?table= URL param
+  useEffect(() => {
+    const table = searchParams.get('table')
+    if (table) {
+      setTableNumber(table)
+    }
+  }, [searchParams])
 
   // PWA install prompt
   const [deferredPrompt, setDeferredPrompt] =

@@ -1,3 +1,9 @@
+import {
+  clearTableNumber,
+  getTableNumber,
+  setTableNumber,
+} from '@/data/tableNumberStore'
+import { getTableNumbers, useAppData } from '@/data/useAppData'
 import { OrdersAndItemsV2 } from '@/data/useOrders'
 import { Product } from '@/data/useProducts'
 import { centsToEuro } from '@/generalHelperFunctions/currencyHelperFunction'
@@ -10,6 +16,13 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
 import {
   Sheet,
   SheetContent,
@@ -34,8 +47,16 @@ const MenuCart = ({
   const { items, removeItem, clearCart, totalPrice, itemCount } = useMenuCart()
   const navigate = useNavigate()
   const { toast } = useToast()
+  const { data: appData } = useAppData()
+  const tableNumbers = getTableNumbers(appData)
+  const tableNumberSelectable =
+    appData?.find((item) => item.key === 'table_number_selectable')?.value !==
+    'false'
   const [open, setOpen] = useState(false)
   const [customerName, setCustomerName] = useState('')
+  const [tableNumber, setTableNumberState] = useState(
+    () => getTableNumber() ?? '',
+  )
   const [showCheckout, setShowCheckout] = useState(false)
   const [isCreatingTestOrder, setIsCreatingTestOrder] = useState(false)
 
@@ -80,11 +101,22 @@ const MenuCart = ({
     return true
   }
 
+  const handleTableNumberChange = (value: string) => {
+    if (value === 'none') {
+      setTableNumberState('')
+      clearTableNumber()
+      return
+    }
+    setTableNumberState(value)
+    setTableNumber(value)
+  }
+
   if (showCheckout) {
     return (
       <MenuCheckout
         products={products}
         customerName={customerName}
+        tableNumber={tableNumber}
         onBack={() => setShowCheckout(false)}
       />
     )
@@ -196,7 +228,7 @@ const MenuCart = ({
           )}
 
           {items.length > 0 && (
-            <SheetFooter className="flex flex-col gap-3 border-t pt-4 sm:flex-col">
+            <SheetFooter className="flex flex-col gap-3 border-t pt-4 sm:flex-col sm:justify-start sm:space-x-0">
               {/* Customer name (optional) */}
               <div className="w-full">
                 <Label htmlFor="customer-name" className="text-sm">
@@ -210,6 +242,31 @@ const MenuCart = ({
                   className="mt-1"
                 />
               </div>
+
+              {/* Table number (optional) */}
+              {tableNumberSelectable && (
+                <div className="w-full">
+                  <Label htmlFor="table-number" className="text-sm">
+                    Tischnummer (optional)
+                  </Label>
+                  <Select
+                    value={tableNumber || 'none'}
+                    onValueChange={handleTableNumberChange}
+                  >
+                    <SelectTrigger id="table-number" className="mt-1">
+                      <SelectValue placeholder="Tisch wählen" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="none">Kein Tisch</SelectItem>
+                      {tableNumbers.map((n) => (
+                        <SelectItem key={n} value={n}>
+                          Tisch {n}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              )}
 
               {/* Total */}
               <div className="flex w-full items-center justify-between">
@@ -270,6 +327,7 @@ const MenuCart = ({
                             price: total,
                             payment_method: 'online',
                             customer_name: customerName || null,
+                            table_number: tableNumber || null,
                             custom_price: false,
                             categories,
                             product_ids: items.map((i) =>

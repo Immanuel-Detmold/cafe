@@ -1,15 +1,9 @@
-## Project Structure
-- This is a monorepo using pnpm.
-- Frontend code is located in `packages/frontend`.
+# Cursor Rules — Cafe Project
 
-## Tech Stack
-- React
-- TypeScript
-- Tailwind CSS (mostly)
-- Supabase (Backend/Database)
-- Shadcn UI (Components)
+Primary source of truth: **`CLAUDE.md`** (repo root) — read it first, then `docs/` for details (architecture, data domains, routes, Supabase, conventions, deployment).
 
+Skills: `.agents/skills/<name>/SKILL.md`.
 
-## User Preferences
-loading spinner
-import { Loader2Icon } from 'lucide-react'
+This is an agent-only project. If you learn something reusable, add it to `docs/LEARNINGS.md` — see `CLAUDE.md` → Self-Improvement.
+
+Don't add project facts here — they belong in `CLAUDE.md`/`docs/` so nothing drifts out of sync.

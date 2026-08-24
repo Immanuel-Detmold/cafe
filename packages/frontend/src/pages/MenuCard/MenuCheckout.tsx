@@ -45,10 +45,12 @@ type CheckoutState = 'creating' | 'paying' | 'verifying' | 'success' | 'error'
 const MenuCheckout = ({
   products,
   customerName,
+  tableNumber,
   onBack,
 }: {
   products: Product[]
   customerName: string
+  tableNumber: string
   onBack: () => void
 }) => {
   const { items, clearCart, totalPrice } = useMenuCart()
@@ -189,6 +191,7 @@ const MenuCheckout = ({
             checkout_id: checkoutIdRef.current,
             order_items: buildOrderItems(),
             customer_name: customerName || undefined,
+            table_number: tableNumber || undefined,
           },
         },
       )

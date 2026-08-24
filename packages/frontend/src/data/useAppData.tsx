@@ -31,6 +31,17 @@ export const useAppData = () =>
     },
   })
 
+export const DEFAULT_TABLE_COUNT = 30
+
+/** Table numbers ("1".."N"), N read from the `table_count` AppData key (falls back to DEFAULT_TABLE_COUNT). */
+export const getTableNumbers = (appData: AppData): string[] => {
+  const entry = appData?.find((item) => item.key === 'table_count')
+  const parsed = entry ? parseInt(entry.value, 10) : NaN
+  const count =
+    Number.isFinite(parsed) && parsed > 0 ? parsed : DEFAULT_TABLE_COUNT
+  return Array.from({ length: count }, (_, i) => String(i + 1))
+}
+
 export type GetAppData = {
   created_at: string
   description: string | null

@@ -23,7 +23,7 @@ import { UserIcon } from '@heroicons/react/24/solid'
 import { Avatar, AvatarImage } from '@radix-ui/react-avatar'
 import { Label } from '@radix-ui/react-label'
 import { Separator } from '@radix-ui/react-select'
-import { Loader2Icon } from 'lucide-react'
+import { Loader2Icon, UtensilsCrossed } from 'lucide-react'
 import { useEffect, useState } from 'react'
 
 import { Badge } from '@/components/ui/badge'
@@ -200,11 +200,17 @@ const Open = ({
                         </div>
                       )}
                     </Label>
-                    <div className="flex">
+                    <div className="flex items-center">
                       {/* Time */}
-                      <Label>{formatDateToTime(order.created_at)}</Label>{' '}
+                      <Label>{formatDateToTime(order.created_at)}</Label>
                       {order.table_number && (
-                        <Label className="ml-1"> - {order.table_number}</Label>
+                        <Badge
+                          variant="outline"
+                          className="ml-2 flex items-center gap-1"
+                        >
+                          <UtensilsCrossed className="h-3 w-3" />
+                          Tisch {order.table_number}
+                        </Badge>
                       )}
                     </div>
                   </div>

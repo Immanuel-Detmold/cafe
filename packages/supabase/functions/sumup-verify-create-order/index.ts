@@ -19,6 +19,7 @@ type RequestBody = {
   checkout_id: string
   order_items: OrderItemInput[]
   customer_name?: string
+  table_number?: string
 }
 
 Deno.serve(async (req: Request) => {
@@ -29,7 +30,7 @@ Deno.serve(async (req: Request) => {
   // Public endpoint — no auth, but payment is verified server-side via SumUp API
 
   const body = (await req.json()) as RequestBody
-  const { checkout_id, order_items, customer_name } = body
+  const { checkout_id, order_items, customer_name, table_number } = body
 
   if (!checkout_id || !order_items?.length) {
     return new Response(JSON.stringify({ error: 'Fehlende Pflichtfelder' }), {
@@ -179,6 +180,7 @@ Deno.serve(async (req: Request) => {
       price: calculatedTotal,
       payment_method: 'online',
       customer_name: customer_name ?? null,
+      table_number: table_number ?? null,
       custom_price: false,
       categories,
       product_ids,

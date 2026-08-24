@@ -23,11 +23,17 @@ import { Json } from '@/services/supabase.types'
 // import { supabase } from '@/services/supabase'
 import { ShoppingBagIcon } from '@heroicons/react/24/outline'
 import { PopoverClose } from '@radix-ui/react-popover'
-import { Loader2Icon, PlayCircleIcon, UserRoundIcon } from 'lucide-react'
+import {
+  Loader2Icon,
+  PlayCircleIcon,
+  UserRoundIcon,
+  UtensilsCrossed,
+} from 'lucide-react'
 import { useEffect, useState } from 'react'
 
 import { LoadingOverlay } from '@/components/LoadingOverlay'
 import { Avatar, AvatarImage } from '@/components/ui/avatar'
+import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
 import {
@@ -198,9 +204,17 @@ const ReadyForPickup = () => {
                       {/* Top */}
                       <div className="flex items-center justify-between">
                         {/* ID */}
-                        <Label className="text-2xl font-bold sm:text-3xl md:text-4xl lg:text-7xl">
-                          #{order.order_number}
-                        </Label>
+                        <div className="flex items-center gap-2">
+                          <Label className="text-2xl font-bold sm:text-3xl md:text-4xl lg:text-7xl">
+                            #{order.order_number}
+                          </Label>
+                          {order.table_number && (
+                            <Badge className="flex items-center gap-1">
+                              <UtensilsCrossed className="h-3 w-3" />
+                              Tisch {order.table_number}
+                            </Badge>
+                          )}
+                        </div>
                         {/* Customer Name */}
                         <div className="flex items-center">
                           <UserRoundIcon className="mt-1 h-6" />

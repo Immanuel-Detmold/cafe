@@ -7,6 +7,7 @@ import {
   HistoryIcon,
   NetworkIcon,
   PrinterIcon,
+  QrCodeIcon,
   SettingsIcon,
   UserRoundIcon,
 } from 'lucide-react'
@@ -136,6 +137,22 @@ const SettingsPage = () => {
               <div className="flex items-center">
                 <CircleDollarSign />{' '}
                 <Label className="ml-1 cursor-pointer">Umsatzgruppen</Label>
+              </div>
+              <ChevronRightIcon className="" />
+            </Button>
+          )}
+
+          {/* Table QR Codes */}
+          {['admin', 'manager'].includes(userRole) && (
+            <Button
+              className="flex justify-between"
+              onClick={() => {
+                navigate('/admin/settings/table-qr-codes')
+              }}
+            >
+              <div className="flex items-center">
+                <QrCodeIcon />{' '}
+                <Label className="ml-1 cursor-pointer">Tisch-QR-Codes</Label>
               </div>
               <ChevronRightIcon className="" />
             </Button>
