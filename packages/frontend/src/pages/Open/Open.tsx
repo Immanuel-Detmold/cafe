@@ -1,4 +1,5 @@
 import { PAYMENT_METHODS, imgPlaceHolder } from '@/data/data'
+import { getTableNumberVisible, useAppData } from '@/data/useAppData'
 import { useInventory } from '@/data/useInventory'
 import {
   OrderItem,
@@ -53,6 +54,9 @@ const Open = ({
   currentUrlPage?: string
   paymentPage: boolean
 }) => {
+  const { data: appData } = useAppData()
+  const tableNumberVisible = getTableNumberVisible(appData)
+
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedCategories, setSelectedCategories] = useState<string[]>([])
   const [selectedProducts, setSelectedProducts] = useState<string[]>([])
@@ -203,7 +207,7 @@ const Open = ({
                     <div className="flex items-center">
                       {/* Time */}
                       <Label>{formatDateToTime(order.created_at)}</Label>
-                      {order.table_number && (
+                      {tableNumberVisible && order.table_number && (
                         <Badge
                           variant="outline"
                           className="ml-2 flex items-center gap-1"

@@ -5,7 +5,9 @@ import './globals.css'
 
 // Register service worker for mobile push notifications
 if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('/cafe/sw.js').catch(() => {})
+  navigator.serviceWorker
+    .register(`${import.meta.env.BASE_URL}sw.js`)
+    .catch((error) => console.warn('Service worker registration failed', error))
 }
 
 ReactDOM.createRoot(document.getElementById('root')!).render(<App />)

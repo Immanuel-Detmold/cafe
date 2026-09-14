@@ -14,7 +14,10 @@ self.addEventListener('notificationclick', (event) => {
         }
       }
       if (self.clients.openWindow) {
-        return self.clients.openWindow('/cafe/menu/orders')
+        // scope is the deployed base path (e.g. https://host/cafe/)
+        return self.clients.openWindow(
+          new URL('menu/orders', self.registration.scope).href,
+        )
       }
     }),
   )

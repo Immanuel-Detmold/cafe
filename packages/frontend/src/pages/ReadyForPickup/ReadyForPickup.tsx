@@ -1,6 +1,10 @@
 // import { queryClient } from '@/App'
 import { imgPlaceHolder } from '@/data/data'
-import { getServerIp, useAppData } from '@/data/useAppData'
+import {
+  getServerIp,
+  getTableNumberVisible,
+  useAppData,
+} from '@/data/useAppData'
 import {
   buildCafeCardInsertsFromOrderItems,
   useCreateCafeCards,
@@ -68,6 +72,7 @@ const ReadyForPickup = ({ hideTableNumber }: { hideTableNumber: boolean }) => {
   })
   const { data: inventory } = useInventory()
   const { data: appData } = useAppData()
+  const tableNumberVisible = getTableNumberVisible(appData)
 
   // Mutations
   const { mutate: changeStatus, isPending } = useChageOrderStatusMutationV2()
@@ -208,12 +213,14 @@ const ReadyForPickup = ({ hideTableNumber }: { hideTableNumber: boolean }) => {
                           <Label className="text-2xl font-bold sm:text-3xl md:text-4xl lg:text-7xl">
                             #{order.order_number}
                           </Label>
-                          {!hideTableNumber && order.table_number && (
-                            <Badge className="flex items-center gap-1">
-                              <UtensilsCrossed className="h-3 w-3" />
-                              Tisch {order.table_number}
-                            </Badge>
-                          )}
+                          {!hideTableNumber &&
+                            tableNumberVisible &&
+                            order.table_number && (
+                              <Badge className="flex items-center gap-1">
+                                <UtensilsCrossed className="h-3 w-3" />
+                                Tisch {order.table_number}
+                              </Badge>
+                            )}
                         </div>
                         {/* Customer Name */}
                         <div className="flex items-center">

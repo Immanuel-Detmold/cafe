@@ -14,7 +14,7 @@ packages/supabase/
 
 **Migrations quirk**: files are named `migration_<description>.sql`, not the standard CLI `<timestamp>_<name>.sql` format. Follow the existing naming style when adding a new one — don't switch to timestamped names, it'll look inconsistent with the rest.
 
-Current migrations (chronological by content, not filename order): `migration_add_category_color.sql`, `migration_add_is_cafe_card_to_products.sql`, `migration_add_order_id_to_cafe_cards.sql`, `migration_add_show_on_menu_to_products.sql`, `migration_order_number.sql`, `migration_rename_voucher_to_free_drink.sql`, `migration_sort_order.sql`, `migration_add_table_number_selectable_appdata.sql`, `migration_allow_anon_read_table_number_selectable.sql`, `migration_add_table_count_appdata.sql`, `migration_allow_anon_read_table_count.sql`.
+Current migrations (chronological by content, not filename order): `migration_add_category_color.sql`, `migration_add_is_cafe_card_to_products.sql`, `migration_add_order_id_to_cafe_cards.sql`, `migration_add_show_on_menu_to_products.sql`, `migration_order_number.sql`, `migration_rename_voucher_to_free_drink.sql`, `migration_sort_order.sql`, `migration_add_table_number_selectable_appdata.sql`, `migration_allow_anon_read_table_number_selectable.sql`, `migration_add_table_count_appdata.sql`, `migration_allow_anon_read_table_count.sql`, `migration_add_table_number_visible_appdata.sql`.
 
 ## Edge Functions (`packages/supabase/functions/`)
 
@@ -69,4 +69,5 @@ See the `sumup` skill for SumUp API details.
   CREATE POLICY "Allow anon read of <key>" ON "AppData" FOR SELECT TO anon USING (key = '<key>');
   ```
   Real example: `migration_allow_anon_read_table_number_selectable.sql`.
-- Current `AppData` keys (as of 2026-08-24): `advertisement_timer`, `feedback_code`, `menu_link`, `order_number`, `organisation_logo`, `organisation_name`, `print_mode`, `server_ip`, `server_port`, `table_count`, `table_number_selectable`, `voice`. Only the first few (org/menu display info), `table_number_selectable`, and `table_count` are public-safe; the rest should stay authenticated-only.
+- Current `AppData` keys (as of 2026-09-14): `advertisement_timer`, `feedback_code`, `menu_link`, `order_number`, `organisation_logo`, `organisation_name`, `print_mode`, `server_ip`, `server_port`, `table_count`, `table_number_selectable`, `table_number_visible`, `voice`. Only the first few (org/menu display info), `table_number_selectable`, and `table_count` are public-safe; the rest should stay authenticated-only.
+- `table_number_visible` (added 2026-09-14) deliberately has **no** anon policy: it only gates the "Tisch N" badges on the authenticated order views (`Open.tsx`, `ReadyForPickup.tsx`). The one public consumer, `/screen`, already hides the table number unconditionally via `hideTableNumber`. Don't confuse it with `table_number_selectable`, which gates the customer-facing picker in the menu cart.

@@ -44,6 +44,7 @@ const TableQrCodes = () => {
 
   const [tableCount, setTableCount] = useState(String(DEFAULT_TABLE_COUNT))
   const [tableNumberSelectable, setTableNumberSelectable] = useState(true)
+  const [tableNumberVisible, setTableNumberVisible] = useState(true)
 
   const containerRefs = useRef<Record<string, HTMLDivElement | null>>({})
   const [qrImages, setQrImages] = useState<Record<string, string>>({})
@@ -54,8 +55,10 @@ const TableQrCodes = () => {
     const selectable = appData.find(
       (item) => item.key === 'table_number_selectable',
     )
+    const visible = appData.find((item) => item.key === 'table_number_visible')
     if (count) setTableCount(count.value)
     setTableNumberSelectable(selectable?.value !== 'false')
+    setTableNumberVisible(visible?.value !== 'false')
   }, [appData])
 
   const handleTableCountUpdate = () => {
@@ -82,6 +85,21 @@ const TableQrCodes = () => {
     setTableNumberSelectable(checked)
     updateAppData(
       { key: 'table_number_selectable', value: checked ? 'true' : 'false' },
+      {
+        onSuccess: () => {
+          toast({ title: 'Einstellung gespeichert! ✅', duration: 2000 })
+        },
+        onError: () => {
+          toast({ title: 'Fehler beim Speichern! ❌' })
+        },
+      },
+    )
+  }
+
+  const handleTableNumberVisibleChange = (checked: boolean) => {
+    setTableNumberVisible(checked)
+    updateAppData(
+      { key: 'table_number_visible', value: checked ? 'true' : 'false' },
       {
         onSuccess: () => {
           toast({ title: 'Einstellung gespeichert! ✅', duration: 2000 })
@@ -197,6 +215,21 @@ const TableQrCodes = () => {
               id="table-number-selectable"
               checked={tableNumberSelectable}
               onCheckedChange={handleTableNumberSelectableChange}
+            />
+          </div>
+
+          <div className="flex items-center justify-between">
+            <div className="pr-4">
+              <Label htmlFor="table-number-visible">Tischnummer anzeigen</Label>
+              <p className="text-muted-foreground mt-1 text-xs">
+                Blendet die Tischnummer in den offenen Bestellungen und im
+                Abholbereit-Screen aus.
+              </p>
+            </div>
+            <Switch
+              id="table-number-visible"
+              checked={tableNumberVisible}
+              onCheckedChange={handleTableNumberVisibleChange}
             />
           </div>
         </div>

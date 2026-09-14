@@ -42,6 +42,11 @@ export const getTableNumbers = (appData: AppData): string[] => {
   return Array.from({ length: count }, (_, i) => String(i + 1))
 }
 
+/** Whether the table number is shown in the order views (`table_number_visible`, defaults to true). */
+export const getTableNumberVisible = (appData: AppData): boolean =>
+  appData?.find((item) => item.key === 'table_number_visible')?.value !==
+  'false'
+
 export type GetAppData = {
   created_at: string
   description: string | null
