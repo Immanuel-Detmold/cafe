@@ -165,10 +165,21 @@ const generate = async (body: GenerateBody) => {
     .maybeSingle()
   if (existingError) throw existingError
   if (existing) {
-    // Re-generating a set should pin audio that already existed unpinned.
-    if (body.pinned && !existing.pinned) {
-      await supabase.from('TtsAudio').update({ pinned: true }).eq('id', id)
-      existing.pinned = true
+    // Re-generating a set should pin audio that already existed unpinned, and
+    // adopt a sample with the same text ("Bestellnummer 42 …") into the set.
+    const changes: Record<string, unknown> = {}
+    if (body.pinned && !existing.pinned) changes.pinned = true
+    if (body.kind === 'pickup' && existing.kind !== 'pickup') {
+      changes.kind = 'pickup'
+      changes.order_number = body.orderNumber ?? null
+    }
+    if (Object.keys(changes).length > 0) {
+      const { error } = await supabase
+        .from('TtsAudio')
+        .update(changes)
+        .eq('id', id)
+      if (error) throw error
+      Object.assign(existing, changes)
     }
     return json({ audio: existing, cached: true })
   }

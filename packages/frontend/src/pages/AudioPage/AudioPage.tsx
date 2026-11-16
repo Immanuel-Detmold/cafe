@@ -12,6 +12,8 @@ import {
   PencilIcon,
   PlayIcon,
   Settings2Icon,
+  SmartphoneIcon,
+  Volume2Icon,
 } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
@@ -19,12 +21,13 @@ import { Link } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Textarea } from '@/components/ui/textarea'
 import { useToast } from '@/components/ui/use-toast'
 
 import { voiceLabel } from '../Settings/VoiceSettings/VoiceStudioCard'
 import TemplatesCard from './TemplatesCard'
-import { useSpeaker } from './useSpeaker'
+import { PlayTarget, useSpeaker } from './useSpeaker'
 
 const RECENT_COUNT = 5
 
@@ -34,7 +37,7 @@ const AudioPage = () => {
   const role = user?.user_metadata?.role as string | undefined
   const canManageVoice = ['admin', 'manager'].includes(role ?? '')
 
-  const { tts, speak, replay, playingKey } = useSpeaker()
+  const { tts, speak, replay, playingKey, target, setTarget } = useSpeaker()
   const { data: templates } = useAudioTemplatesQuery()
   const { data: audios } = useTtsAudioQuery()
   const { mutate: createTemplate, isPending: isSavingTemplate } =
@@ -100,6 +103,20 @@ const AudioPage = () => {
             </Button>
           )}
         </div>
+
+        <Tabs
+          value={target}
+          onValueChange={(value) => setTarget(value as PlayTarget)}
+        >
+          <TabsList className="grid h-auto w-full grid-cols-2">
+            <TabsTrigger value="speaker" className="py-2">
+              <Volume2Icon className="mr-1 h-4 w-4" /> Lautsprecher im Café
+            </TabsTrigger>
+            <TabsTrigger value="device" className="py-2">
+              <SmartphoneIcon className="mr-1 h-4 w-4" /> Nur hier anhören
+            </TabsTrigger>
+          </TabsList>
+        </Tabs>
 
         <Card>
           <CardHeader>
@@ -207,7 +224,7 @@ const AudioPage = () => {
                     size="icon"
                     variant="secondary"
                     className="h-10 w-10 shrink-0"
-                    onClick={() => void replay(audio.id)}
+                    onClick={() => void replay(audio)}
                     disabled={playingKey !== null}
                     aria-label="Nochmal abspielen"
                   >
