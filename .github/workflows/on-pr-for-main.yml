@@ -6,6 +6,8 @@ on:
 
 permissions:
   checks: write
+  contents: read
+  pull-requests: read
 
 env:
   VITE_SUPABASE_URL: ${{ vars.VITE_SUPABASE_URL }}

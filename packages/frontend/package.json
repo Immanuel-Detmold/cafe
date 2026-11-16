@@ -10,7 +10,7 @@
     "dev:vite": "vite",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "lint:prettier": "prettier --check .",
-    "lint:report": "pnpm run lint -- --output-file eslint_report.json --format json || exit 0",
+    "lint:report": "pnpm run lint --output-file eslint_report.json --format json || exit 0",
     "preview": "vite preview",
     "serve": "vite --port 3000 --host",
     "start": "pnpm run dev",
