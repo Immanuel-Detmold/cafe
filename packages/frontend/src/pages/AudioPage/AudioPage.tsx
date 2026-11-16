@@ -257,7 +257,7 @@ const AudioPage = () => {
                     variant="ghost"
                     size="icon"
                     aria-label="In Textfeld übernehmen"
-                    onClick={() => void setText(audio.text)}
+                    onClick={() => setText(audio.text)}
                   >
                     <PencilIcon className="h-4 w-4" />
                   </Button>
