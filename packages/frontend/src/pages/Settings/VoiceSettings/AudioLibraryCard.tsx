@@ -84,7 +84,10 @@ const AudioLibraryCard = ({ audios, active, ip, accessToken }: Props) => {
   const { mutate: deleteAudios } = useDeleteTtsAudioMutation()
 
   const pickupSets = groupPickupSets(audios)
-  const singles = audios.filter((a) => a.kind !== 'pickup')
+  // Pinned first; within each group the query's newest-first order stays.
+  const singles = audios
+    .filter((a) => a.kind !== 'pickup')
+    .sort((a, b) => Number(b.pinned) - Number(a.pinned))
 
   const showError = (error: Error) =>
     toast({ title: `Fehler: ${error.message} ❌` })
@@ -215,9 +218,14 @@ const AudioLibraryCard = ({ audios, active, ip, accessToken }: Props) => {
                           variant="ghost"
                           title="Auf Lautsprecher"
                           onClick={() =>
-                            playOnSpeaker(ip, accessToken, audio.id).catch(
-                              showError,
-                            )
+                            playOnSpeaker(ip, accessToken, audio.id)
+                              .then(() =>
+                                toast({
+                                  title: 'Durchsage abgespielt ✅',
+                                  duration: 2000,
+                                }),
+                              )
+                              .catch(showError)
                           }
                         >
                           <Volume2Icon className="h-4 w-4" />
@@ -231,7 +239,19 @@ const AudioLibraryCard = ({ audios, active, ip, accessToken }: Props) => {
                           onClick={() =>
                             updateAudios(
                               { ids: [audio.id], pinned: !audio.pinned },
-                              { onError: showError },
+                              {
+                                onSuccess: () =>
+                                  toast({
+                                    title: audio.pinned
+                                      ? 'Nicht mehr angepinnt ✅'
+                                      : 'Angepinnt ✅',
+                                    description: audio.pinned
+                                      ? 'Wird gelöscht, wenn es 90 Tage nicht abgespielt wurde.'
+                                      : 'Wird nie automatisch gelöscht und liegt immer auf dem Pi bereit.',
+                                    duration: 5000,
+                                  }),
+                                onError: showError,
+                              },
                             )
                           }
                         >
