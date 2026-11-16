@@ -7,11 +7,14 @@ import { useMutation, useQuery } from '@tanstack/react-query'
 
 export type AppData = ReturnType<typeof useAppData>['data']
 
-// Returns localhost:8080 when running locally, otherwise the IP from the database
+// Returns localhost:8080 when running locally, otherwise the IP from the database.
+// VITE_USE_REAL_PI=true in .env.local makes localhost use the real Pi too
+// (prints and plays sound in the café).
 export const getServerIp = (dbIp: string): string => {
   if (
-    window.location.hostname === 'localhost' ||
-    window.location.hostname === '127.0.0.1'
+    import.meta.env.VITE_USE_REAL_PI !== 'true' &&
+    (window.location.hostname === 'localhost' ||
+      window.location.hostname === '127.0.0.1')
   ) {
     return 'http://localhost:8080'
   }

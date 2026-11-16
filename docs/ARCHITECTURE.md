@@ -4,17 +4,17 @@ Monorepo (pnpm workspace, `packages/*`): `packages/frontend` (React SPA) + `pack
 
 ## `packages/frontend/src/` layout
 
-| Path                      | Contents                                                                                                                                                                                       |
-| ------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `App.tsx`                 | Root component; exports `queryClient` (TanStack Query) — imported directly by hooks in `data/` for cache invalidation                                                                          |
-| `main.tsx`                | Vite entry point                                                                                                                                                                               |
-| `router.tsx`              | Single `createBrowserRouter` definition for the entire app — see `ROUTES_PAGES.md`                                                                                                             |
-| `components/`             | Shared cross-page components (Navigation, Header, ProductCard, AudioTemplates, ThemeProvider); `components/ui/` = shadcn/ui + Radix primitives, owned source (edit directly, not a dependency) |
-| `data/`                   | Data-fetching hooks, one file per domain — see `DATA_DOMAINS.md`                                                                                                                               |
-| `generalHelperFunctions/` | Pure, non-React helpers (date, currency, color, consumption/statistics calculations)                                                                                                           |
-| `lib/`                    | `customTypes.ts` (shared TS types), `utils.ts` (`cn()` class-merge helper etc.)                                                                                                                |
-| `pages/`                  | Route-level page components, one folder per feature — see `ROUTES_PAGES.md`                                                                                                                    |
-| `services/`               | `supabase.ts` (client + `getUser()`), `supabase.types.ts` (generated DB types — **never hand-edit**, regenerate via `pnpm dev:generate:ts`)                                                    |
+| Path                      | Contents                                                                                                                                                                       |
+| ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `App.tsx`                 | Root component; exports `queryClient` (TanStack Query) — imported directly by hooks in `data/` for cache invalidation                                                          |
+| `main.tsx`                | Vite entry point                                                                                                                                                               |
+| `router.tsx`              | Single `createBrowserRouter` definition for the entire app — see `ROUTES_PAGES.md`                                                                                             |
+| `components/`             | Shared cross-page components (Navigation, Header, ProductCard, ThemeProvider); `components/ui/` = shadcn/ui + Radix primitives, owned source (edit directly, not a dependency) |
+| `data/`                   | Data-fetching hooks, one file per domain — see `DATA_DOMAINS.md`                                                                                                               |
+| `generalHelperFunctions/` | Pure, non-React helpers (date, currency, color, consumption/statistics calculations)                                                                                           |
+| `lib/`                    | `customTypes.ts` (shared TS types), `utils.ts` (`cn()` class-merge helper etc.)                                                                                                |
+| `pages/`                  | Route-level page components, one folder per feature — see `ROUTES_PAGES.md`                                                                                                    |
+| `services/`               | `supabase.ts` (client + `getUser()`), `supabase.types.ts` (generated DB types — **never hand-edit**, regenerate via `pnpm dev:generate:ts`)                                    |
 
 No separate `routes/` or `hooks/` folder — hooks live in `data/`, routing is centralized in `router.tsx`.
 

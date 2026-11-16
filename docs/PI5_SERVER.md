@@ -46,7 +46,9 @@ edge function via its `PRINT_SERVER_URL` / `PRINT_SERVER_API_KEY` secrets).
 Frontend callers: `announce()` / `playOnSpeaker()` in `data/useTts.tsx` (used by `AudioPage`, `ReadyForPickup`,
 `settings/voice`), `pages/NewOrder/utilityFunctions/runPrintReceipt.ts` (print). Base URL comes from
 AppData `server_ip` via `getServerIp()` (`data/useAppData.tsx`), which returns `http://localhost:8080` when the
-frontend runs on localhost.
+frontend runs on localhost, unless `VITE_USE_REAL_PI=true` is set in `packages/frontend/.env.local` (then
+localhost uses the real Pi too, so test prints and announcements really happen in the café). The Pi sends
+`access-control-allow-origin: *`, so localhost origins need no CORS change.
 
 Playback strategy (`playFile()`): `AUDIO_ENABLED=false` → skip; `AUDIO_PLAYBACK_URL` set → POST the file to
 `scripts/audio-player.py` on a host; otherwise `python src/playAudio.py <file>` (pygame) inside the container.

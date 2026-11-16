@@ -1,109 +1,248 @@
-import { getServerIp, useAppData } from '@/data/useAppData'
-import { announce, getTtsSettings } from '@/data/useTts'
+import {
+  useAudioTemplatesQuery,
+  useCreateAudioTemplateMutation,
+} from '@/data/useAudioTemplates'
+import { pickupText, ttsAudioId, useTtsAudioQuery } from '@/data/useTts'
 import { useUser } from '@/data/useUser'
-import { Label } from '@radix-ui/react-label'
-import { InfoIcon, Loader2Icon, PlayCircleIcon } from 'lucide-react'
-import { useState } from 'react'
+import { format } from 'date-fns'
+import {
+  BellRingIcon,
+  BookmarkPlusIcon,
+  Loader2Icon,
+  PencilIcon,
+  PlayIcon,
+  Settings2Icon,
+} from 'lucide-react'
+import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 
-import { AudioTemplates } from '@/components/AudioTemplates'
-import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
+import { Textarea } from '@/components/ui/textarea'
 import { useToast } from '@/components/ui/use-toast'
 
 import { voiceLabel } from '../Settings/VoiceSettings/VoiceStudioCard'
+import TemplatesCard from './TemplatesCard'
+import { useSpeaker } from './useSpeaker'
+
+const RECENT_COUNT = 5
 
 const AudioPage = () => {
-  // States
-  const [isLoading, setIsLoading] = useState(false)
-  const { access_token } = useUser()
-  const [inputValue, setInputValue] = useState('')
-
-  // Mini Functions
   const { toast } = useToast()
+  const { user } = useUser()
+  const role = user?.user_metadata?.role as string | undefined
+  const canManageVoice = ['admin', 'manager'].includes(role ?? '')
 
-  // Data
-  const { data: appData } = useAppData()
-  const tts = getTtsSettings(appData)
-  const serverIp = appData?.find((item) => item.key === 'server_ip')?.value
+  const { tts, speak, replay, playingKey } = useSpeaker()
+  const { data: templates } = useAudioTemplatesQuery()
+  const { data: audios } = useTtsAudioQuery()
+  const { mutate: createTemplate, isPending: isSavingTemplate } =
+    useCreateAudioTemplateMutation()
 
-  // Functions
-  const handleSendText = async () => {
-    if (!inputValue.trim()) {
-      toast({ title: 'Bitte gib einen Text ein.', duration: 2000 })
-      return
-    }
-    if (!serverIp) {
-      toast({ title: 'Keine Server-Adresse hinterlegt ❌' })
-      return
-    }
-    setIsLoading(true)
-    try {
-      await announce({
-        ip: getServerIp(serverIp),
-        accessToken: access_token ?? '',
-        ...tts,
-        text: inputValue,
-        kind: 'custom',
-      })
-      toast({ title: 'Ansage abgespielt ✅', duration: 2000 })
-    } catch (error) {
-      toast({ title: `Ansage fehlgeschlagen: ${(error as Error).message} ❌` })
-    } finally {
-      setIsLoading(false)
-    }
+  const [orderNumber, setOrderNumber] = useState('')
+  const [text, setText] = useState('')
+
+  // Which template texts already exist as audio for the active voice
+  const [readyTexts, setReadyTexts] = useState<Set<string>>(new Set())
+  useEffect(() => {
+    if (!templates || !audios) return
+    const ids = new Set(audios.map((a) => a.id))
+    void Promise.all(
+      templates.map(async (t) =>
+        ids.has(await ttsAudioId(tts.model, tts.voice, t.text))
+          ? t.text.trim()
+          : null,
+      ),
+    ).then((ready) => setReadyTexts(new Set(ready.filter((t) => t !== null))))
+  }, [templates, audios, tts.model, tts.voice])
+
+  const templateTexts = new Set(templates?.map((t) => t.text.trim()))
+  const recent = (audios ?? [])
+    .filter(
+      (a) =>
+        a.kind === 'custom' && a.last_played_at && !templateTexts.has(a.text),
+    )
+    .sort((a, b) =>
+      (b.last_played_at ?? '').localeCompare(a.last_played_at ?? ''),
+    )
+    .slice(0, RECENT_COUNT)
+
+  const number = Number(orderNumber)
+  const isValidNumber = Number.isInteger(number) && number >= 1 && number <= 99
+
+  const handleCallNumber = () => {
+    if (!isValidNumber) return
+    void speak('pickup', pickupText(number), 'pickup', number)
   }
 
-  const handleSelectTemplate = (templateText: string) => {
-    setInputValue(templateText)
+  const handleSaveTemplate = () => {
+    createTemplate(text, {
+      onSuccess: () =>
+        toast({ title: 'Als Vorlage gespeichert ✅', duration: 2000 }),
+      onError: (error) =>
+        toast({ title: `Vorlage nicht gespeichert: ${error.message} ❌` }),
+    })
   }
 
   return (
-    <>
-      <div className="mt-2 flex flex-col items-center">
-        <div className="w-full max-w-xl">
-          <div className="mt-2 flex flex-col">
-            <label htmlFor="textInput" className="font-bold">
-              Nachricht
-            </label>
-            <Input
-              id="textInput"
-              value={inputValue}
-              onChange={(e) => setInputValue(e.target.value)}
-              className="mt-1"
-              placeholder="Text eingeben"
-            />
+    <div className="mt-2 flex flex-col items-center">
+      <div className="flex w-full max-w-xl flex-col gap-4">
+        <div className="flex items-center justify-between gap-2">
+          <div className="text-muted-foreground text-sm">
+            Stimme: <span className="font-medium">{voiceLabel(tts.voice)}</span>
+          </div>
+          {canManageVoice && (
+            <Button variant="outline" size="sm" asChild>
+              <Link to="/admin/settings/voice">
+                <Settings2Icon className="mr-1 h-4 w-4" /> Stimmen & Audios
+              </Link>
+            </Button>
+          )}
+        </div>
 
-            <Button onClick={handleSendText} className="mt-4">
-              <PlayCircleIcon />{' '}
-              <Label className="ml-1 cursor-pointer">
-                {isLoading ? (
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-lg">
+              <BellRingIcon className="h-5 w-5" /> Abholnummer aufrufen
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <form
+              className="flex gap-2"
+              onSubmit={(e) => {
+                e.preventDefault()
+                handleCallNumber()
+              }}
+            >
+              <Input
+                type="number"
+                inputMode="numeric"
+                min={1}
+                max={99}
+                placeholder="Nr."
+                value={orderNumber}
+                onChange={(e) => setOrderNumber(e.target.value)}
+                className="h-12 w-28 text-center text-xl"
+              />
+              <Button
+                type="submit"
+                className="h-12 flex-1"
+                disabled={!isValidNumber || playingKey !== null}
+              >
+                {playingKey === 'pickup' ? (
                   <Loader2Icon className="animate-spin" />
                 ) : (
-                  'Abspielen'
+                  <PlayIcon className="mr-1" />
                 )}
-              </Label>
-            </Button>
-          </div>
+                {isValidNumber ? `„${pickupText(number)}“` : 'Aufrufen'}
+              </Button>
+            </form>
+          </CardContent>
+        </Card>
 
-          <Alert className="mt-4">
-            <InfoIcon className="h-4 w-4" />
-            <AlertDescription>
-              Stimme: {voiceLabel(tts.voice)} ({tts.model}). Jeder Text wird nur
-              einmal erzeugt, danach wird er kostenlos abgespielt. Stimme ändern
-              und anhören unter{' '}
-              <Link to="/admin/settings/voice" className="underline">
-                Einstellungen → Sprachausgabe
-              </Link>
-              .
-            </AlertDescription>
-          </Alert>
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg">Eigene Durchsage</CardTitle>
+          </CardHeader>
+          <CardContent className="flex flex-col gap-2">
+            <Textarea
+              value={text}
+              onChange={(e) => setText(e.target.value)}
+              placeholder="Text eingeben, z. B. „Das Café schließt in 10 Minuten.“"
+              rows={3}
+            />
+            <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+              <Button
+                className="h-12"
+                onClick={() => void speak('text', text, 'custom')}
+                disabled={!text.trim() || playingKey !== null}
+              >
+                {playingKey === 'text' ? (
+                  <Loader2Icon className="animate-spin" />
+                ) : (
+                  <PlayIcon className="mr-1" />
+                )}
+                Abspielen
+              </Button>
+              <Button
+                variant="outline"
+                className="h-12"
+                onClick={handleSaveTemplate}
+                disabled={
+                  !text.trim() ||
+                  templateTexts.has(text.trim()) ||
+                  isSavingTemplate
+                }
+              >
+                <BookmarkPlusIcon className="mr-1" /> Als Vorlage speichern
+              </Button>
+            </div>
+            <p className="text-muted-foreground text-xs">
+              Neue Texte werden einmal erzeugt (ein paar Sekunden), danach
+              spielen sie sofort.
+            </p>
+          </CardContent>
+        </Card>
 
-          <AudioTemplates onSelectTemplate={handleSelectTemplate} />
-        </div>
+        <TemplatesCard
+          templates={templates ?? []}
+          readyTexts={readyTexts}
+          playingKey={playingKey}
+          onPlay={(t) => void speak(`template-${t.id}`, t.text, 'custom')}
+        />
+
+        {recent.length > 0 && (
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg">Zuletzt abgespielt</CardTitle>
+            </CardHeader>
+            <CardContent className="flex flex-col gap-2">
+              {recent.map((audio) => (
+                <div
+                  key={audio.id}
+                  className="flex items-center gap-2 rounded-md border p-2"
+                >
+                  <Button
+                    size="icon"
+                    variant="secondary"
+                    className="h-10 w-10 shrink-0"
+                    onClick={() => void replay(audio.id)}
+                    disabled={playingKey !== null}
+                    aria-label="Nochmal abspielen"
+                  >
+                    {playingKey === audio.id ? (
+                      <Loader2Icon className="animate-spin" />
+                    ) : (
+                      <PlayIcon />
+                    )}
+                  </Button>
+                  <div className="min-w-0 flex-1">
+                    <div className="truncate text-sm">{audio.text}</div>
+                    <div className="text-muted-foreground text-xs">
+                      {format(
+                        new Date(audio.last_played_at ?? ''),
+                        'dd.MM. HH:mm',
+                      )}
+                      {audio.voice !== tts.voice &&
+                        ` · ${voiceLabel(audio.voice)}`}
+                    </div>
+                  </div>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    aria-label="In Textfeld übernehmen"
+                    onClick={() => setText(audio.text)}
+                  >
+                    <PencilIcon className="h-4 w-4" />
+                  </Button>
+                </div>
+              ))}
+            </CardContent>
+          </Card>
+        )}
       </div>
-    </>
+    </div>
   )
 }
 

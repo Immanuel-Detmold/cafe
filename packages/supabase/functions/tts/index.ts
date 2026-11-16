@@ -62,12 +62,13 @@ const testKey = async (key: string) => {
     }
   }
   // Account balance; not available for every key type, so optional.
-  let credits: { total_credits: number; total_usage: number } | null = null
+  type Credits = { total_credits: number; total_usage: number }
+  let credits: Credits | null = null
   const creditsRes = await fetch(`${OPENROUTER_URL}/credits`, {
     headers: { Authorization: `Bearer ${key}` },
   })
   if (creditsRes.ok) {
-    credits = ((await creditsRes.json()) as { data: typeof credits }).data
+    credits = ((await creditsRes.json()) as { data: Credits }).data
   }
   return {
     ok: true,
@@ -85,6 +86,54 @@ const extensionFor = (contentType: string) =>
     : contentType.includes('ogg')
       ? 'ogg'
       : 'mp3'
+
+// Raw PCM (Gemini TTS only returns this) → WAV, so browsers and pygame can play it.
+// Gemini sends 24 kHz 16-bit mono; a "rate=" in the content type wins if present.
+const pcmToWav = (pcm: Uint8Array, contentType: string) => {
+  const rate = Number(/rate=(\d+)/.exec(contentType)?.[1] ?? 24000)
+  const wav = new Uint8Array(44 + pcm.byteLength)
+  const view = new DataView(wav.buffer)
+  const ascii = (offset: number, value: string) =>
+    [...value].forEach((c, i) => view.setUint8(offset + i, c.charCodeAt(0)))
+  ascii(0, 'RIFF')
+  view.setUint32(4, 36 + pcm.byteLength, true)
+  ascii(8, 'WAVE')
+  ascii(12, 'fmt ')
+  view.setUint32(16, 16, true)
+  view.setUint16(20, 1, true) // PCM
+  view.setUint16(22, 1, true) // mono
+  view.setUint32(24, rate, true)
+  view.setUint32(28, rate * 2, true)
+  view.setUint16(32, 2, true)
+  view.setUint16(34, 16, true)
+  ascii(36, 'data')
+  view.setUint32(40, pcm.byteLength, true)
+  wav.set(pcm, 44)
+  return wav
+}
+
+const requestSpeech = (
+  key: string,
+  model: string,
+  voice: string,
+  text: string,
+  format: string,
+) =>
+  fetch(`${OPENROUTER_URL}/audio/speech`, {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${key}`,
+      'Content-Type': 'application/json',
+      'HTTP-Referer': 'https://immanuel-cafe.de',
+      'X-Title': 'Immanuel Cafe',
+    },
+    body: JSON.stringify({
+      model,
+      voice,
+      input: text,
+      response_format: format,
+    }),
+  })
 
 type GenerateBody = {
   text: string
@@ -127,22 +176,29 @@ const generate = async (body: GenerateBody) => {
   const secret = await getKey()
   if (!secret) return json({ error: 'Kein OpenRouter-Key hinterlegt' }, 412)
 
-  const res = await fetch(`${OPENROUTER_URL}/audio/speech`, {
-    method: 'POST',
-    headers: {
-      Authorization: `Bearer ${secret.value}`,
-      'Content-Type': 'application/json',
-      'HTTP-Referer': 'https://immanuel-cafe.de',
-      'X-Title': 'Immanuel Cafe',
-    },
-    body: JSON.stringify({ model, voice, input: text, response_format: 'mp3' }),
-  })
+  // Prefer mp3; some models only support one format and say so in a 400,
+  // e.g. 'Gemini TTS only supports response_format="pcm". Got "mp3".'
+  let format = 'mp3'
+  let res = await requestSpeech(secret.value, model, voice, text, format)
+  if (res.status === 400) {
+    const errorText = await res.text()
+    const supported = /only supports response_format=\W*(\w+)/.exec(errorText)
+    if (!supported?.[1]) {
+      return json({ error: `OpenRouter 400: ${errorText}` }, 502)
+    }
+    format = supported[1]
+    res = await requestSpeech(secret.value, model, voice, text, format)
+  }
   if (!res.ok) {
     return json({ error: `OpenRouter ${res.status}: ${await res.text()}` }, 502)
   }
 
-  const contentType = res.headers.get('content-type') ?? 'audio/mpeg'
-  const audio = new Uint8Array(await res.arrayBuffer())
+  let contentType = res.headers.get('content-type') ?? 'audio/mpeg'
+  let audio = new Uint8Array(await res.arrayBuffer())
+  if (format === 'pcm') {
+    audio = pcmToWav(audio, contentType)
+    contentType = 'audio/wav'
+  }
   const storagePath = `${id}.${extensionFor(contentType)}`
 
   const { error: uploadError } = await supabase.storage
@@ -202,8 +258,20 @@ Deno.serve(async (req: Request) => {
             403,
           )
         }
-        const key = (body.key as string | undefined)?.trim()
+        const key = (body.key as string | undefined)
+          ?.trim()
+          .replace(/^Bearer\s+/i, '')
         if (!key) return json({ error: 'Key fehlt' }, 400)
+        // OpenRouter answers anything else with a confusing
+        // "Missing Authentication header".
+        if (!/^sk-or-\S{40,}$/.test(key)) {
+          return json(
+            {
+              error: `Das ist kein vollständiger OpenRouter-Key (${key.length} Zeichen, beginnt mit „${key.slice(0, 6)}“). Ein Key beginnt mit sk-or-v1- und ist ca. 73 Zeichen lang; OpenRouter zeigt ihn nur einmal beim Erstellen an.`,
+            },
+            400,
+          )
+        }
         const test = await testKey(key)
         if (!test.ok) return json({ error: test.error }, 400)
         const { error } = await supabase.from('AppSecrets').upsert({

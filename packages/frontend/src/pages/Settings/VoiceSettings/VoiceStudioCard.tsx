@@ -1,5 +1,6 @@
 import { queryClient } from '@/App'
 import { useUpdateAppData } from '@/data/useAppData'
+import { useAudioTemplatesQuery } from '@/data/useAudioTemplates'
 import {
   PICKUP_NUMBERS,
   TtsAudio,
@@ -11,30 +12,26 @@ import {
   useGenerateTtsMutation,
 } from '@/data/useTts'
 import { saveUserAction } from '@/data/useUserActions'
-import {
-  CheckIcon,
-  HeadphonesIcon,
-  Loader2Icon,
-  MicIcon,
-  Volume2Icon,
-} from 'lucide-react'
+import { HeadphonesIcon, Loader2Icon, MicIcon, Volume2Icon } from 'lucide-react'
 import { useMemo, useState } from 'react'
 
-import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Checkbox } from '@/components/ui/checkbox'
-import { Input } from '@/components/ui/input'
 import {
   Select,
   SelectContent,
+  SelectGroup,
   SelectItem,
+  SelectLabel,
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
+import { Textarea } from '@/components/ui/textarea'
 import { useToast } from '@/components/ui/use-toast'
 
 import { formatUsd } from './OpenRouterKeyCard'
+import { groupModels, isGermanVoice, modelNote } from './modelCatalog'
 
 /** Voice ids like "de-DE-Mia:MAI-Voice-2.1-Flash" → "de-DE-Mia" */
 export const voiceLabel = (voice: string) => voice.split(':')[0]
@@ -70,17 +67,19 @@ const VoiceStudioCard = ({
   const [isPlayingSpeaker, setIsPlayingSpeaker] = useState(false)
   const [progress, setProgress] = useState<number | null>(null)
 
+  const { data: templates } = useAudioTemplatesQuery()
+  const sampleTexts = [pickupText(42), ...(templates ?? []).map((t) => t.text)]
+
   const { mutate: generate, isPending: isGenerating } = useGenerateTtsMutation()
   const { mutateAsync: updateAppData, isPending: isSavingActive } =
     useUpdateAppData()
 
   const selectedModel = models.find((m) => m.id === model)
-  const hasGermanVoices = !!selectedModel?.voices.some((v) =>
-    v.startsWith('de-'),
-  )
+  const hasGermanVoices = !!selectedModel?.voices.some(isGermanVoice)
   const voices = (selectedModel?.voices ?? []).filter(
-    (v) => !germanOnly || !hasGermanVoices || v.startsWith('de-'),
+    (v) => !germanOnly || !hasGermanVoices || isGermanVoice(v),
   )
+  const modelGroups = useMemo(() => groupModels(models), [models])
   const isActive = model === active.model && voice === active.voice
 
   const missingNumbers = useMemo(() => {
@@ -196,7 +195,7 @@ const VoiceStudioCard = ({
             onValueChange={(value) => {
               setModel(value)
               const next = models.find((m) => m.id === value)
-              const german = next?.voices.find((v) => v.startsWith('de-'))
+              const german = next?.voices.find(isGermanVoice)
               setVoice(german ?? next?.voices[0] ?? '')
             }}
           >
@@ -204,15 +203,26 @@ const VoiceStudioCard = ({
               <SelectValue placeholder="Modell wählen" />
             </SelectTrigger>
             <SelectContent>
-              {models.map((m) => (
-                <SelectItem key={m.id} value={m.id}>
-                  {m.name}
-                  {m.pricePerChar != null &&
-                    ` · ${formatUsd(m.pricePerChar * 1000)} / 1.000 Zeichen`}
-                </SelectItem>
+              {modelGroups.map((group) => (
+                <SelectGroup key={group.label}>
+                  <SelectLabel>{group.label}</SelectLabel>
+                  {group.models.map((m) => (
+                    <SelectItem key={m.id} value={m.id}>
+                      {m.name}
+                      {m.id === active.model && ' (Standard)'}
+                      {m.pricePerChar != null &&
+                        ` · ${formatUsd(m.pricePerChar * 1000)} / 1.000 Zeichen`}
+                    </SelectItem>
+                  ))}
+                </SelectGroup>
               ))}
             </SelectContent>
           </Select>
+          {selectedModel && (
+            <p className="text-muted-foreground mt-2 text-xs">
+              {modelNote(selectedModel)}
+            </p>
+          )}
         </div>
 
         <div>
@@ -236,6 +246,9 @@ const VoiceStudioCard = ({
               {voices.map((v) => (
                 <SelectItem key={v} value={v}>
                   {voiceLabel(v)}
+                  {model === active.model &&
+                    v === active.voice &&
+                    ' (Standardstimme)'}
                 </SelectItem>
               ))}
             </SelectContent>
@@ -244,11 +257,26 @@ const VoiceStudioCard = ({
 
         <div>
           <label className="text-sm font-bold">Probetext</label>
-          <Input
+          <Textarea
             value={sampleText}
             onChange={(e) => setSampleText(e.target.value)}
+            rows={2}
           />
-          <p className="text-muted-foreground mt-1 text-xs">
+          <div className="mt-2 flex flex-wrap gap-2">
+            {sampleTexts.map((t) => (
+              <Button
+                key={t}
+                size="sm"
+                variant={t === sampleText ? 'default' : 'outline'}
+                className="h-auto max-w-full px-3 py-1.5 text-left text-xs"
+                title={t}
+                onClick={() => setSampleText(t)}
+              >
+                <span className="truncate">{t}</span>
+              </Button>
+            ))}
+          </div>
+          <p className="text-muted-foreground mt-2 text-xs">
             Einmal erzeugt, danach kostenlos abspielbar · ≈{' '}
             {estimate([sampleText])}
           </p>
@@ -280,11 +308,7 @@ const VoiceStudioCard = ({
           </Button>
         </div>
 
-        {isActive ? (
-          <Badge className="w-fit">
-            <CheckIcon className="mr-1 h-4 w-4" /> Aktive Standardstimme
-          </Badge>
-        ) : (
+        {!isActive && (
           <Button
             variant="secondary"
             onClick={handleSetActive}
