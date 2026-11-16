@@ -227,13 +227,26 @@ export const useDeleteTtsAudioMutation = () =>
 
 // --- Playback ----------------------------------------------------------------
 
-/** Plays an audio in this browser (preview). */
+// Only one preview plays at a time: a new click stops the previous one.
+let previewPlayer: HTMLAudioElement | null = null
+let previewRequest = 0
+
+/** Plays an audio in this browser (preview), stopping any preview still playing. */
 export const playInBrowser = async (audio: TtsAudio) => {
+  const request = ++previewRequest
+  previewPlayer?.pause()
   const { data, error } = await supabase.storage
     .from('tts-audio')
     .createSignedUrl(audio.storage_path, 60 * 60)
   if (error) throw error
-  await new Audio(data.signedUrl).play()
+  // A later click won while the URL was loading.
+  if (request !== previewRequest) return
+  previewPlayer?.pause()
+  previewPlayer = new Audio(data.signedUrl)
+  await previewPlayer.play().catch((e: unknown) => {
+    // pause() during loading rejects play() with AbortError: not a failure.
+    if ((e as Error).name !== 'AbortError') throw e
+  })
 }
 
 const postPlay = async (ip: string, accessToken: string, id: string) => {
