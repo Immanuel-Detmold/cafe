@@ -10,6 +10,7 @@ import {
   QrCodeIcon,
   SettingsIcon,
   UserRoundIcon,
+  Volume2Icon,
 } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
@@ -153,6 +154,22 @@ const SettingsPage = () => {
               <div className="flex items-center">
                 <QrCodeIcon />{' '}
                 <Label className="ml-1 cursor-pointer">Tisch-QR-Codes</Label>
+              </div>
+              <ChevronRightIcon className="" />
+            </Button>
+          )}
+
+          {/* Voice / text-to-speech */}
+          {['admin', 'manager'].includes(userRole) && (
+            <Button
+              className="flex justify-between"
+              onClick={() => {
+                navigate('/admin/settings/voice')
+              }}
+            >
+              <div className="flex items-center">
+                <Volume2Icon />{' '}
+                <Label className="ml-1 cursor-pointer">Sprachausgabe</Label>
               </div>
               <ChevronRightIcon className="" />
             </Button>

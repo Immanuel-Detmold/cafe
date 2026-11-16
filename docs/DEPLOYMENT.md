@@ -1,6 +1,8 @@
 # Deployment
 
 - **Production**: Coolify. Domain: `immanuel-cafe.de`.
+  Coolify app `immanuel-cafe` (uuid `vwwow4ccg0soso8sw04s4ooc`) builds from `Immanuel-Detmold/cafe`, branch `main`; inspect via the coolify MCP (`diagnose_app immanuel-cafe.de`). The MCP token is read-only for logs.
+- **Supabase edge functions and migrations** are not part of this deploy; see `docs/SUPABASE.md`. **Pi5 server** (printing/TTS) is a separate repo and deploy; see `docs/PI5_SERVER.md`.
 - **Dev previews**: Netlify (PR/branch previews only — not production).
 - **Build**: `pnpm build` → `tsc && vite build` (runs per-workspace via the root `build` script).
 - **Env vars** (both environments need these set): `VITE_SUPABASE_URL`, `VITE_SUPABASE_PUBLISHABLE_KEY`.

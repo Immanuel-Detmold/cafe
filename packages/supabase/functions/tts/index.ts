@@ -1,0 +1,237 @@
+// Text-to-speech via OpenRouter with a cached audio library.
+// Actions: key-status, set-key, test-key, generate (see docs/PI5_SERVER.md).
+// The OpenRouter key lives in "AppSecrets" and never leaves this function.
+import { createClient } from '@supabase/supabase-js'
+
+const corsHeaders = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Headers':
+    'authorization, x-client-info, apikey, content-type',
+}
+
+const OPENROUTER_URL = 'https://openrouter.ai/api/v1'
+const KEY_NAME = 'openrouter_api_key'
+const BUCKET = 'tts-audio'
+const MAX_TEXT_LENGTH = 500
+
+const supabase = createClient(
+  Deno.env.get('SUPABASE_URL') ?? '',
+  Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '',
+)
+
+const json = (body: unknown, status = 200) =>
+  new Response(JSON.stringify(body), {
+    status,
+    headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+  })
+
+// Must match ttsAudioId() in packages/frontend/src/data/useTts.tsx
+const audioId = async (model: string, voice: string, text: string) => {
+  const bytes = new TextEncoder().encode(`${model}\n${voice}\n${text}`)
+  const hash = await crypto.subtle.digest('SHA-256', bytes)
+  return Array.from(new Uint8Array(hash))
+    .map((b) => b.toString(16).padStart(2, '0'))
+    .join('')
+}
+
+const getKey = async () => {
+  const { data, error } = await supabase
+    .from('AppSecrets')
+    .select('value, updated_at')
+    .eq('key', KEY_NAME)
+    .maybeSingle()
+  if (error) throw error
+  return data
+}
+
+const keyHint = (key: string) => `${key.slice(0, 6)}…${key.slice(-4)}`
+
+const testKey = async (key: string) => {
+  const res = await fetch(`${OPENROUTER_URL}/key`, {
+    headers: { Authorization: `Bearer ${key}` },
+  })
+  if (!res.ok) {
+    return { ok: false, error: `OpenRouter ${res.status}: ${await res.text()}` }
+  }
+  const { data } = (await res.json()) as {
+    data: {
+      label?: string
+      usage?: number
+      limit?: number | null
+      limit_remaining?: number | null
+    }
+  }
+  // Account balance; not available for every key type, so optional.
+  let credits: { total_credits: number; total_usage: number } | null = null
+  const creditsRes = await fetch(`${OPENROUTER_URL}/credits`, {
+    headers: { Authorization: `Bearer ${key}` },
+  })
+  if (creditsRes.ok) {
+    credits = ((await creditsRes.json()) as { data: typeof credits }).data
+  }
+  return {
+    ok: true,
+    label: data.label ?? null,
+    usage: data.usage ?? null,
+    limit: data.limit ?? null,
+    limitRemaining: data.limit_remaining ?? null,
+    balance: credits ? credits.total_credits - credits.total_usage : null,
+  }
+}
+
+const extensionFor = (contentType: string) =>
+  contentType.includes('wav')
+    ? 'wav'
+    : contentType.includes('ogg')
+      ? 'ogg'
+      : 'mp3'
+
+type GenerateBody = {
+  text: string
+  model: string
+  voice: string
+  kind?: 'pickup' | 'sample' | 'custom'
+  orderNumber?: number
+  pinned?: boolean
+}
+
+const generate = async (body: GenerateBody) => {
+  const text = body.text?.trim()
+  const { model, voice } = body
+  if (!text || !model || !voice) {
+    return json({ error: 'text, model und voice sind erforderlich' }, 400)
+  }
+  if (text.length > MAX_TEXT_LENGTH) {
+    return json(
+      { error: `Text ist länger als ${MAX_TEXT_LENGTH} Zeichen` },
+      400,
+    )
+  }
+
+  const id = await audioId(model, voice, text)
+  const { data: existing, error: existingError } = await supabase
+    .from('TtsAudio')
+    .select()
+    .eq('id', id)
+    .maybeSingle()
+  if (existingError) throw existingError
+  if (existing) {
+    // Re-generating a set should pin audio that already existed unpinned.
+    if (body.pinned && !existing.pinned) {
+      await supabase.from('TtsAudio').update({ pinned: true }).eq('id', id)
+      existing.pinned = true
+    }
+    return json({ audio: existing, cached: true })
+  }
+
+  const secret = await getKey()
+  if (!secret) return json({ error: 'Kein OpenRouter-Key hinterlegt' }, 412)
+
+  const res = await fetch(`${OPENROUTER_URL}/audio/speech`, {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${secret.value}`,
+      'Content-Type': 'application/json',
+      'HTTP-Referer': 'https://immanuel-cafe.de',
+      'X-Title': 'Immanuel Cafe',
+    },
+    body: JSON.stringify({ model, voice, input: text, response_format: 'mp3' }),
+  })
+  if (!res.ok) {
+    return json({ error: `OpenRouter ${res.status}: ${await res.text()}` }, 502)
+  }
+
+  const contentType = res.headers.get('content-type') ?? 'audio/mpeg'
+  const audio = new Uint8Array(await res.arrayBuffer())
+  const storagePath = `${id}.${extensionFor(contentType)}`
+
+  const { error: uploadError } = await supabase.storage
+    .from(BUCKET)
+    .upload(storagePath, audio, { contentType, upsert: true })
+  if (uploadError) throw uploadError
+
+  const { data: row, error: insertError } = await supabase
+    .from('TtsAudio')
+    .upsert({
+      id,
+      text,
+      model,
+      voice,
+      kind: body.kind ?? 'custom',
+      order_number: body.orderNumber ?? null,
+      storage_path: storagePath,
+      content_type: contentType,
+      bytes: audio.byteLength,
+      chars: text.length,
+      pinned: body.pinned ?? false,
+    })
+    .select()
+    .single()
+  if (insertError) throw insertError
+
+  return json({ audio: row, cached: false })
+}
+
+Deno.serve(async (req: Request) => {
+  if (req.method === 'OPTIONS') {
+    return new Response('ok', { headers: corsHeaders })
+  }
+
+  const token = (req.headers.get('Authorization') ?? '').replace('Bearer ', '')
+  const {
+    data: { user },
+  } = await supabase.auth.getUser(token)
+  if (!user) return json({ error: 'Nicht angemeldet' }, 401)
+
+  try {
+    const body = await req.json()
+    switch (body.action) {
+      case 'key-status': {
+        const secret = await getKey()
+        return json({
+          hasKey: !!secret,
+          hint: secret ? keyHint(secret.value) : null,
+          updatedAt: secret?.updated_at ?? null,
+        })
+      }
+      case 'set-key': {
+        const role = user.user_metadata?.role as string | undefined
+        if (!['admin', 'manager'].includes(role ?? '')) {
+          return json(
+            { error: 'Nur Admins/Manager dürfen den Key ändern' },
+            403,
+          )
+        }
+        const key = (body.key as string | undefined)?.trim()
+        if (!key) return json({ error: 'Key fehlt' }, 400)
+        const test = await testKey(key)
+        if (!test.ok) return json({ error: test.error }, 400)
+        const { error } = await supabase.from('AppSecrets').upsert({
+          key: KEY_NAME,
+          value: key,
+          updated_at: new Date().toISOString(),
+          updated_by: user.id,
+        })
+        if (error) throw error
+        return json({ hint: keyHint(key), test })
+      }
+      case 'test-key': {
+        const secret = await getKey()
+        if (!secret)
+          return json({ error: 'Kein OpenRouter-Key hinterlegt' }, 412)
+        const test = await testKey(secret.value)
+        return json(test, test.ok ? 200 : 400)
+      }
+      case 'generate':
+        return await generate(body as GenerateBody)
+      default:
+        return json({ error: `Unbekannte Aktion: ${body.action}` }, 400)
+    }
+  } catch (error) {
+    console.error(error)
+    return json(
+      { error: error instanceof Error ? error.message : String(error) },
+      500,
+    )
+  }
+})

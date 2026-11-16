@@ -34,6 +34,7 @@ import PrinterPage from './pages/Settings/PrinterPage/Printer/PrinterPage'
 import SettingsPage from './pages/Settings/SettingsPage'
 import TableQrCodes from './pages/Settings/TableQrCodes'
 import UserActions from './pages/Settings/UserActions/UserActions'
+import VoiceSettings from './pages/Settings/VoiceSettings/VoiceSettings'
 import OrdersPDF from './pages/Statistic/GeneratePDF/OrdersPDF'
 import StatisticPage from './pages/Statistic/StatisticPage'
 import { getUser } from './services/supabase'
@@ -172,6 +173,10 @@ export const router = createBrowserRouter(
         {
           path: 'settings/table-qr-codes',
           element: <TableQrCodes />,
+        },
+        {
+          path: 'settings/voice',
+          element: <VoiceSettings />,
         },
         {
           path: 'login',

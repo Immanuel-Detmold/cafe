@@ -35,15 +35,17 @@ React 18 + TypeScript SPA in a pnpm monorepo. Main package: `packages/frontend/`
 
 Detailed reference lives in `docs/`, kept out of this file to save tokens. Read the relevant file **before** grepping around — it's almost always faster:
 
-| File                   | Read it when...                                                                                         |
-| ---------------------- | ------------------------------------------------------------------------------------------------------- |
-| `docs/ARCHITECTURE.md` | You need the `src/` folder map, or you're about to touch a large/high-blast-radius file (list included) |
-| `docs/DATA_DOMAINS.md` | You need to find or add a `data/` hook, or map a domain to its DB table                                 |
-| `docs/ROUTES_PAGES.md` | You need to find a page/route, or add a new one                                                         |
-| `docs/SUPABASE.md`     | You're touching migrations, edge functions, or type generation                                          |
-| `docs/CONVENTIONS.md`  | You're writing a hook, mutation, toast, or need the naming rules                                        |
-| `docs/DEPLOYMENT.md`   | You're touching build/deploy config or env vars                                                         |
-| `docs/LEARNINGS.md`    | Self-updating log of gotchas — check it, and add to it (see below)                                      |
+| File                   | Read it when...                                                                                                |
+| ---------------------- | -------------------------------------------------------------------------------------------------------------- |
+| `docs/ARCHITECTURE.md` | You need the `src/` folder map, or you're about to touch a large/high-blast-radius file (list included)        |
+| `docs/DATA_DOMAINS.md` | You need to find or add a `data/` hook, or map a domain to its DB table                                        |
+| `docs/ROUTES_PAGES.md` | You need to find a page/route, or add a new one                                                                |
+| `docs/SUPABASE.md`     | You're touching migrations, edge functions, or type generation                                                 |
+| `docs/CONVENTIONS.md`  | You're writing a hook, mutation, toast, or need the naming rules                                               |
+| `docs/DEPLOYMENT.md`   | You're touching build/deploy config or env vars                                                                |
+| `docs/LEARNINGS.md`    | Self-updating log of gotchas — check it, and add to it (see below)                                             |
+| `docs/PI5_SERVER.md`   | You're touching printing, text-to-speech, `server_ip`, or need to SSH to the café's Pi5 (`ssh pi5`)            |
+| `docs/SUMUP_THREAD.md` | You're writing/replying to emails with SumUp support (Google Pay / Apple Pay activation, open since June 2026) |
 
 **Supabase gotchas (learned 2026-08-24, full detail in `docs/SUPABASE.md`):**
 

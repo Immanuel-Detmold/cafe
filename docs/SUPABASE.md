@@ -8,30 +8,35 @@
 packages/supabase/
   config.toml       CLI project config
   import_map.json   Deno import map
-  functions/         Edge Functions (Deno) — all SumUp-related, see below
+  functions/         Edge Functions (Deno) — SumUp + `tts`, see below
   migrations/         loose *.sql files (NOT the standard supabase-cli timestamped format)
 ```
 
 **Migrations quirk**: files are named `migration_<description>.sql`, not the standard CLI `<timestamp>_<name>.sql` format. Follow the existing naming style when adding a new one — don't switch to timestamped names, it'll look inconsistent with the rest.
 
-Current migrations (chronological by content, not filename order): `migration_add_category_color.sql`, `migration_add_is_cafe_card_to_products.sql`, `migration_add_order_id_to_cafe_cards.sql`, `migration_add_show_on_menu_to_products.sql`, `migration_order_number.sql`, `migration_rename_voucher_to_free_drink.sql`, `migration_sort_order.sql`, `migration_add_table_number_selectable_appdata.sql`, `migration_allow_anon_read_table_number_selectable.sql`, `migration_add_table_count_appdata.sql`, `migration_allow_anon_read_table_count.sql`, `migration_add_table_number_visible_appdata.sql`.
+Current migrations (chronological by content, not filename order): `migration_add_category_color.sql`, `migration_add_is_cafe_card_to_products.sql`, `migration_add_order_id_to_cafe_cards.sql`, `migration_add_show_on_menu_to_products.sql`, `migration_order_number.sql`, `migration_rename_voucher_to_free_drink.sql`, `migration_sort_order.sql`, `migration_add_table_number_selectable_appdata.sql`, `migration_allow_anon_read_table_number_selectable.sql`, `migration_add_table_count_appdata.sql`, `migration_allow_anon_read_table_count.sql`, `migration_add_table_number_visible_appdata.sql`, `migration_tts_openrouter.sql`, `migration_order_number_wraparound.sql` (both applied 2026-11-16).
 
 ## Edge Functions (`packages/supabase/functions/`)
 
-All four are SumUp payment integration endpoints:
+- `sumup-create-online-checkout`, `sumup-fetch-terminal-fee`, `sumup-terminal-checkout`, `sumup-verify-create-order` — SumUp payments, see the `sumup` skill.
+- `tts` — OpenRouter text-to-speech. Actions `key-status`, `set-key` (admin/manager), `test-key`, `generate`. Reads the key from `AppSecrets` (service role only), stores audio in the private `tts-audio` bucket + `TtsAudio` table. Flow and Pi5 side: `docs/PI5_SERVER.md`.
 
-- `sumup-create-online-checkout`
-- `sumup-fetch-terminal-fee`
-- `sumup-terminal-checkout`
-- `sumup-verify-create-order`
+**Deploy** (no CI; a production write, confirm first):
 
-See the `sumup` skill for SumUp API details.
+```bash
+cd packages/supabase && set -a && source ../frontend/.env.local && set +a
+supabase functions deploy <name> --project-ref hmwxeqgcfhhumndveboe --use-api --import-map functions/deno.json
+```
+
+Without `--import-map functions/deno.json` the bundler fails on the bare `@supabase/supabase-js` import ("Relative import path … not prefixed").
 
 ## Client & realtime
 
 - Client: `packages/frontend/src/services/supabase.ts`
 - Realtime: single channel `'order-db-changes'`, subscribed to all public schema changes → invalidates the `ordersAndItems` and `appData` query keys.
-- Storage: `ProductImages` bucket for product images.
+- Storage: `ProductImages` bucket for product images (public); `tts-audio` (private, authenticated read/delete; uploads only by the `tts` edge function).
+- Server-only table `AppSecrets` (RLS on, no policies, no grants to anon/authenticated) holds secrets such as `openrouter_api_key`; only service-role code (edge functions, Pi5) reads it.
+- Realtime publication `supabase_realtime` lists tables explicitly (Products, Orders, OrderItems, AppData, Inventory); new tables are **not** added automatically.
 
 ## Env vars
 
@@ -69,5 +74,5 @@ See the `sumup` skill for SumUp API details.
   CREATE POLICY "Allow anon read of <key>" ON "AppData" FOR SELECT TO anon USING (key = '<key>');
   ```
   Real example: `migration_allow_anon_read_table_number_selectable.sql`.
-- Current `AppData` keys (as of 2026-09-14): `advertisement_timer`, `feedback_code`, `menu_link`, `order_number`, `organisation_logo`, `organisation_name`, `print_mode`, `server_ip`, `server_port`, `table_count`, `table_number_selectable`, `table_number_visible`, `voice`. Only the first few (org/menu display info), `table_number_selectable`, and `table_count` are public-safe; the rest should stay authenticated-only.
+- Current `AppData` keys (as of 2026-09-14): `advertisement_timer`, `feedback_code`, `menu_link`, `order_number`, `organisation_logo`, `organisation_name`, `print_mode`, `server_ip`, `server_port`, `table_count`, `table_number_selectable`, `table_number_visible`, `tts_model`, `voice` (OpenRouter TTS model + voice id, set on `settings/voice`, see `docs/PI5_SERVER.md`). Only the first few (org/menu display info), `table_number_selectable`, and `table_count` are public-safe; the rest should stay authenticated-only.
 - `table_number_visible` (added 2026-09-14) deliberately has **no** anon policy: it only gates the "Tisch N" badges on the authenticated order views (`Open.tsx`, `ReadyForPickup.tsx`). The one public consumer, `/screen`, already hides the table number unconditionally via `hideTableNumber`. Don't confuse it with `table_number_selectable`, which gates the customer-facing picker in the menu cart.

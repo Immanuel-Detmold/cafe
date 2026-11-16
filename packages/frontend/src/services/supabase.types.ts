@@ -10,7 +10,7 @@ export type Database = {
   // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
-    PostgrestVersion: '12.0.1 (cd38da5)'
+    PostgrestVersion: '12.0.1'
   }
   public: {
     Tables: {
@@ -37,6 +37,27 @@ export type Database = {
           id?: number
           key?: string
           last_edit?: string
+          value?: string
+        }
+        Relationships: []
+      }
+      AppSecrets: {
+        Row: {
+          key: string
+          updated_at: string
+          updated_by: string | null
+          value: string
+        }
+        Insert: {
+          key: string
+          updated_at?: string
+          updated_by?: string | null
+          value: string
+        }
+        Update: {
+          key?: string
+          updated_at?: string
+          updated_by?: string | null
           value?: string
         }
         Relationships: []
@@ -510,6 +531,57 @@ export type Database = {
           id?: number
           info?: Json | null
           name?: string | null
+        }
+        Relationships: []
+      }
+      TtsAudio: {
+        Row: {
+          bytes: number | null
+          chars: number
+          content_type: string
+          created_at: string
+          id: string
+          kind: string
+          last_played_at: string | null
+          model: string
+          order_number: number | null
+          pinned: boolean
+          play_count: number
+          storage_path: string
+          text: string
+          voice: string
+        }
+        Insert: {
+          bytes?: number | null
+          chars: number
+          content_type?: string
+          created_at?: string
+          id: string
+          kind?: string
+          last_played_at?: string | null
+          model: string
+          order_number?: number | null
+          pinned?: boolean
+          play_count?: number
+          storage_path: string
+          text: string
+          voice: string
+        }
+        Update: {
+          bytes?: number | null
+          chars?: number
+          content_type?: string
+          created_at?: string
+          id?: string
+          kind?: string
+          last_played_at?: string | null
+          model?: string
+          order_number?: number | null
+          pinned?: boolean
+          play_count?: number
+          storage_path?: string
+          text?: string
+          voice?: string
         }
         Relationships: []
       }

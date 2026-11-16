@@ -20,10 +20,10 @@ import {
 } from '@/data/useOrders'
 import { OrderStatus } from '@/data/useOrders'
 import { useProductsQuery } from '@/data/useProducts'
+import { announce, getTtsSettings, pickupText } from '@/data/useTts'
 import { useUser } from '@/data/useUser'
 import { getAllConsumptions } from '@/generalHelperFunctions/consumptionHelper'
 import { supabase } from '@/services/supabase'
-import { Json } from '@/services/supabase.types'
 // import { supabase } from '@/services/supabase'
 import { ShoppingBagIcon } from '@heroicons/react/24/outline'
 import { PopoverClose } from '@radix-ui/react-popover'
@@ -59,7 +59,6 @@ const ReadyForPickup = ({ hideTableNumber }: { hideTableNumber: boolean }) => {
   const { access_token } = useUser()
   const [ip, setIp] = useState('')
   // const [port, setPort] = useState('')
-  const [voice, setVoice] = useState('nova')
 
   // Mini Functions
   const { toast } = useToast()
@@ -147,29 +146,19 @@ const ReadyForPickup = ({ hideTableNumber }: { hideTableNumber: boolean }) => {
 
   // Send Audio
   const handleSendText = async (order_number: string) => {
-    const inputValue = 'Bestellnummer ' + order_number + ' ist abholbereit!'
     setIsLoading(true) // Start loading
-    const requestURL = `${ip}/text-to-speech`
     try {
-      const response = await fetch(requestURL, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${access_token}`,
-        },
-        body: JSON.stringify({ text: inputValue, voice: voice }),
+      await announce({
+        ip,
+        accessToken: access_token ?? '',
+        ...getTtsSettings(appData),
+        text: pickupText(order_number),
+        kind: 'pickup',
+        orderNumber: parseInt(order_number, 10) || undefined,
       })
-
-      if (response.ok) {
-        const data = (await response.json()) as Json
-        toast({ title: (data as { message: string }).message, duration: 2000 })
-        setIsLoading(false)
-      } else {
-        toast({ title: 'Connection failed ❌', duration: 2000 })
-      }
-      setIsLoading(false)
+      toast({ title: 'Ansage abgespielt ✅', duration: 2000 })
     } catch (error) {
-      toast({ title: 'Connection failed ❌', duration: 2000 })
+      toast({ title: `Ansage fehlgeschlagen: ${(error as Error).message} ❌` })
     } finally {
       setIsLoading(false)
     }
@@ -178,14 +167,9 @@ const ReadyForPickup = ({ hideTableNumber }: { hideTableNumber: boolean }) => {
   // Use Effect
   useEffect(() => {
     const serverIpData = appData?.find((item) => item.key === 'server_ip')
-    const defaultVoice = appData?.find((item) => item.key === 'voice')
 
     if (serverIpData) {
       setIp(getServerIp(serverIpData.value))
-    }
-
-    if (defaultVoice) {
-      setVoice(defaultVoice.value)
     }
   }, [appData])
 

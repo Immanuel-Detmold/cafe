@@ -1,33 +1,23 @@
-import { getServerIp, useAppData, useUpdateAppData } from '@/data/useAppData'
+import { getServerIp, useAppData } from '@/data/useAppData'
+import { announce, getTtsSettings } from '@/data/useTts'
 import { useUser } from '@/data/useUser'
-import { Json } from '@/services/supabase.types'
 import { Label } from '@radix-ui/react-label'
 import { InfoIcon, Loader2Icon, PlayCircleIcon } from 'lucide-react'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
+import { Link } from 'react-router-dom'
 
 import { AudioTemplates } from '@/components/AudioTemplates'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
 import { useToast } from '@/components/ui/use-toast'
 
+import { voiceLabel } from '../Settings/VoiceSettings/VoiceStudioCard'
+
 const AudioPage = () => {
-  // Sates
+  // States
   const [isLoading, setIsLoading] = useState(false)
   const { access_token } = useUser()
-  const [ip, setIp] = useState('')
-
-  const [isSelectOpen, setIsSelectOpen] = useState(false)
-  const [voice, setVoice] = useState('nova')
   const [inputValue, setInputValue] = useState('')
 
   // Mini Functions
@@ -35,66 +25,39 @@ const AudioPage = () => {
 
   // Data
   const { data: appData } = useAppData()
-
-  // Mutation
-  const { mutate: updateAppData } = useUpdateAppData()
+  const tts = getTtsSettings(appData)
+  const serverIp = appData?.find((item) => item.key === 'server_ip')?.value
 
   // Functions
   const handleSendText = async () => {
-    if (!inputValue) {
+    if (!inputValue.trim()) {
       toast({ title: 'Bitte gib einen Text ein.', duration: 2000 })
       return
     }
-    setIsLoading(true) // Start loading
-    const requestURL = `${ip}/text-to-speech`
+    if (!serverIp) {
+      toast({ title: 'Keine Server-Adresse hinterlegt ❌' })
+      return
+    }
+    setIsLoading(true)
     try {
-      const response = await fetch(requestURL, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${access_token}`,
-        },
-        body: JSON.stringify({ text: inputValue, voice: voice }),
+      await announce({
+        ip: getServerIp(serverIp),
+        accessToken: access_token ?? '',
+        ...tts,
+        text: inputValue,
+        kind: 'custom',
       })
-
-      if (response.ok) {
-        const data = (await response.json()) as Json
-        toast({ title: (data as { message: string }).message, duration: 2000 })
-        setIsLoading(false)
-      } else {
-        toast({ title: 'Connection failed ❌', duration: 2000 })
-      }
-      setIsLoading(false)
+      toast({ title: 'Ansage abgespielt ✅', duration: 2000 })
     } catch (error) {
-      toast({ title: 'Connection failed ❌', duration: 2000 })
+      toast({ title: `Ansage fehlgeschlagen: ${(error as Error).message} ❌` })
     } finally {
       setIsLoading(false)
     }
   }
 
-  // Change Default Voice
-  const changeDefaultVoice = (voice: string) => {
-    updateAppData({ key: 'voice', value: voice })
-  }
-
   const handleSelectTemplate = (templateText: string) => {
     setInputValue(templateText)
   }
-
-  // UseEffects
-  useEffect(() => {
-    const serverIpData = appData?.find((item) => item.key === 'server_ip')
-    // const serverPortData = appData?.find((item) => item.key === 'server_port')
-    const defaultVoice = appData?.find((item) => item.key === 'voice')
-
-    if (serverIpData) {
-      setIp(getServerIp(serverIpData.value))
-    }
-
-    if (defaultVoice) {
-      setVoice(defaultVoice.value)
-    }
-  }, [appData])
 
   return (
     <>
@@ -109,48 +72,17 @@ const AudioPage = () => {
               value={inputValue}
               onChange={(e) => setInputValue(e.target.value)}
               className="mt-1"
-              placeholder="Enter text"
+              placeholder="Text eingeben"
             />
 
-            {/* Select Voic */}
-            <label htmlFor="textInput" className="mt-2 font-bold">
-              Stimme
-            </label>
-
-            {/* Unit */}
-            <Select
-              onOpenChange={(isOpen) => setIsSelectOpen(isOpen)}
-              onValueChange={(value) => {
-                setVoice(value)
-                changeDefaultVoice(value)
-              }}
-              defaultValue={voice}
-              value={voice}
-            >
-              <SelectTrigger className="w-full rounded-md">
-                <SelectValue placeholder="Stimme" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectGroup>
-                  <SelectLabel>Wähle eine Stimme</SelectLabel>
-                  <SelectItem value="nova">Nova</SelectItem>
-                  <SelectItem value="alloy">Alloy</SelectItem>
-                  <SelectItem value="echo">Echo</SelectItem>
-                  <SelectItem value="fable">Fable</SelectItem>
-                  <SelectItem value="onyx">Onyx</SelectItem>
-                  <SelectItem value="shimmer">Shimmer</SelectItem>
-                </SelectGroup>
-              </SelectContent>
-            </Select>
-
-            <Button
-              onClick={handleSendText}
-              disabled={isSelectOpen}
-              className="mt-4"
-            >
+            <Button onClick={handleSendText} className="mt-4">
               <PlayCircleIcon />{' '}
               <Label className="ml-1 cursor-pointer">
-                {isLoading ? <Loader2Icon className="animate-spin" /> : 'Send'}
+                {isLoading ? (
+                  <Loader2Icon className="animate-spin" />
+                ) : (
+                  'Abspielen'
+                )}
               </Label>
             </Button>
           </div>
@@ -158,8 +90,13 @@ const AudioPage = () => {
           <Alert className="mt-4">
             <InfoIcon className="h-4 w-4" />
             <AlertDescription>
-              Die hier ausgewählte Stimme wird als Standardstimme für alle
-              Bestellungen verwendet.
+              Stimme: {voiceLabel(tts.voice)} ({tts.model}). Jeder Text wird nur
+              einmal erzeugt, danach wird er kostenlos abgespielt. Stimme ändern
+              und anhören unter{' '}
+              <Link to="/admin/settings/voice" className="underline">
+                Einstellungen → Sprachausgabe
+              </Link>
+              .
             </AlertDescription>
           </Alert>
 
