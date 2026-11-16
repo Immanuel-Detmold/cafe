@@ -109,11 +109,19 @@ const AudioPage = () => {
           onValueChange={(value) => setTarget(value as PlayTarget)}
         >
           <TabsList className="grid h-auto w-full grid-cols-2">
-            <TabsTrigger value="speaker" className="py-2">
-              <Volume2Icon className="mr-1 h-4 w-4" /> Lautsprecher im Café
+            <TabsTrigger
+              value="speaker"
+              className="whitespace-normal px-2 py-2"
+            >
+              <Volume2Icon className="mr-1 h-4 w-4 shrink-0" />
+              Lautsprecher im Café
             </TabsTrigger>
-            <TabsTrigger value="device" className="py-2">
-              <SmartphoneIcon className="mr-1 h-4 w-4" /> Nur hier anhören
+            <TabsTrigger
+              value="device"
+              className="whitespace-normal px-2 py-2"
+            >
+              <SmartphoneIcon className="mr-1 h-4 w-4 shrink-0" />
+              Nur hier anhören
             </TabsTrigger>
           </TabsList>
         </Tabs>
@@ -140,17 +148,17 @@ const AudioPage = () => {
                 placeholder="Nr."
                 value={orderNumber}
                 onChange={(e) => setOrderNumber(e.target.value)}
-                className="h-12 w-28 text-center text-xl"
+                className="h-12 w-20 shrink-0 text-center text-xl sm:w-28"
               />
               <Button
                 type="submit"
-                className="h-12 flex-1"
+                className="h-auto min-h-12 min-w-0 flex-1 whitespace-normal"
                 disabled={!isValidNumber || playingKey !== null}
               >
                 {playingKey === 'pickup' ? (
-                  <Loader2Icon className="animate-spin" />
+                  <Loader2Icon className="shrink-0 animate-spin" />
                 ) : (
-                  <PlayIcon className="mr-1" />
+                  <PlayIcon className="mr-1 shrink-0" />
                 )}
                 {isValidNumber ? `„${pickupText(number)}“` : 'Aufrufen'}
               </Button>
@@ -249,7 +257,7 @@ const AudioPage = () => {
                     variant="ghost"
                     size="icon"
                     aria-label="In Textfeld übernehmen"
-                    onClick={() => setText(audio.text)}
+                    onClick={() => void setText(audio.text)}
                   >
                     <PencilIcon className="h-4 w-4" />
                   </Button>
