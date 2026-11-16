@@ -116,10 +116,7 @@ const AudioPage = () => {
               <Volume2Icon className="mr-1 h-4 w-4 shrink-0" />
               Lautsprecher im Café
             </TabsTrigger>
-            <TabsTrigger
-              value="device"
-              className="whitespace-normal px-2 py-2"
-            >
+            <TabsTrigger value="device" className="whitespace-normal px-2 py-2">
               <SmartphoneIcon className="mr-1 h-4 w-4 shrink-0" />
               Nur hier anhören
             </TabsTrigger>
